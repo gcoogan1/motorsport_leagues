@@ -20,6 +20,11 @@ cd motorsport_leagues
 npm install
 ```
 
+## Install Dependencies:
+```bash
+npm install
+```
+
 ## Folder Structure:
 ```
 src/
@@ -39,9 +44,10 @@ src/
 ## Setup Environment Variables
 
 Create a local environment file: 
-
+```
 VITE_SUPABASE_URL=<your-supabase-url>
 VITE_SUPABASE_ANON_KEY=<your-supabase-anon-key>
+```
 
 ## Run the Development Server
 
