@@ -25,18 +25,19 @@ npm install
 ```
 ## Folder Structure:
 
-src/  
-  app/             # Global providers, routing config, global styles
-  assets/          # Global static assets (images, fonts, icons)
-  components/      # Reusable UI components
-  features/        # Feature modules (leagues, auth, etc.)
-  pages/           # Route-based page components
-  hooks/           # Reusable hooks
-  lib/             # External lib/wrappers
-  services/        # API clients (Supabase, etc.)
-  store/           # Global state management (Redux tookit)
-  types/           # Global TypeScript types
-  utils/           # Helper Functions
+src/
+├── app/          # Global providers, routing config, global styles
+├── assets/       # Global static assets (images, fonts, icons)
+├── components/   # Reusable UI components (buttons, inputs, etc.)
+├── features/     # Feature-based modules (leagues, auth, profiles)
+├── hooks/        # Reusable custom React hooks
+├── lib/          # External library configurations/wrappers
+├── pages/        # Route-based page components
+├── services/     # API clients and data fetching (e.g., Supabase)
+├── store/        # Global state management (Redux Toolkit)
+├── types/        # Global TypeScript interfaces and types
+└── utils/        # Shared helper functions and constants
+
 
 ## Setup Environment Variables
 
