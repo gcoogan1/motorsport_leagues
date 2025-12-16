@@ -9,10 +9,6 @@ Welcome to **Motorsport Leagues**, a web platform for GT7 and iRacing players to
 Before you start, make sure you have:
 
 - **Node.js** >= 20
-- **npm** >= 9 (or Yarn)
-- **Git**
-- A code editor like **VS Code**
-- A modern web browser (Chrome, Edge, or Firefox)
 
 ---
 
@@ -23,6 +19,7 @@ git clone https://github.com/gcoogan1/motorsport_leagues.git
 cd motorsport_leagues
 npm install
 ```
+
 ## Folder Structure:
 ```
 src/
