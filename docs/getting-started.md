@@ -24,7 +24,7 @@ cd motorsport_leagues
 npm install
 ```
 ## Folder Structure:
-
+```
 src/
 ├── app/          # Global providers, routing config, global styles
 ├── assets/       # Global static assets (images, fonts, icons)
@@ -37,7 +37,7 @@ src/
 ├── store/        # Global state management (Redux Toolkit)
 ├── types/        # Global TypeScript interfaces and types
 └── utils/        # Shared helper functions and constants
-
+```
 
 ## Setup Environment Variables
 
