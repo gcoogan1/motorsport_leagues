@@ -155,3 +155,26 @@ export const typographyTokens: FontTheme = {
     },
   },
 };
+
+// Typography helper
+export const typographyCSS = {
+  body: Object.fromEntries(
+    Object.entries(typographyTokens.typography.body).map(([key, value]) => [
+      key,
+      fontCSS(value),
+    ])
+  ),
+  subtitle: Object.fromEntries(
+    Object.entries(typographyTokens.typography.subtitle).map(([key, value]) => [
+      key,
+      fontCSS(value),
+    ])
+  ),
+  title: Object.fromEntries(
+    Object.entries(typographyTokens.typography.title).map(([key, value]) => [
+      key,
+      fontCSS(value),
+    ])
+  ),
+};
+
