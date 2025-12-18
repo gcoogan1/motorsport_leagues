@@ -52,9 +52,9 @@ export const fadeGradient = (
   color: string,
   opacityLevel: Opacity,
   direction: Direction,
-  changePercent?: 30 | 50
+  endPercent: number = 100
 ) => {
-  const percentage = changePercent ? `${changePercent}%` : "100%";
+  const percentage = endPercent ? `${endPercent}%` : "100%";
   return `linear-gradient(
     ${gradientDirection[direction]}deg,
     ${withOpacity(color, opacityLevel)} 0%,
