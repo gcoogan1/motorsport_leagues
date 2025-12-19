@@ -2,6 +2,10 @@ import styled from "styled-components";
 import { designTokens } from "./design/tokens/index";
 
 import Chat from "@assets/Icon/Chat.svg?react";
+import Avatar from "@assets/Avatar/Avatar.png";
+import Badge3 from "@assets/SquadBadge/Badge3.png";
+import MLLogo from "@assets/Logos/MS/MS_Vertical.svg?react";
+import Ace from "@assets/Logos/Games/ACEvo.png"
 
 const { colors, typography, borders, effects, layout } = designTokens;
 const backgroundColor = colors.base.base1;
@@ -30,6 +34,7 @@ const Content = styled.div`
   /* border-width: ${borders.width.medium};
   border-style: solid; */
   background-color: #000000;
+  /* background: url(${Badge3}) no-repeat center center; */
   border-radius: ${borders.radius.large};
 
 `;
@@ -47,6 +52,9 @@ const App = () => {
         <h1 style={{ background: "transparent"}}>Welcome to the Motorsport Leagues App!</h1>
         <SubText>Background Color: {backgroundColor}</SubText>
         <Chat width={48} height={48} color={colors.role.director} />
+        <MLLogo color={colors.position.gold} />
+        <img src={Avatar} alt="Avatar" width={150} />
+        <img src={Ace} alt="iRacing Logo" width={150} />
       </Content>
     </Container>
   );
