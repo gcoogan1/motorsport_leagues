@@ -42,5 +42,5 @@
       "@services/*": ["./src/app/services/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "vite-env.d.ts"],
 }
