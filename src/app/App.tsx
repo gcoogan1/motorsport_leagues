@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { designTokens } from "./design/tokens/index";
 
+import Chat from "@assets/Icon/Chat.svg?react";
+
 const { colors, typography, borders, effects, layout } = designTokens;
 const backgroundColor = colors.base.base1;
 
@@ -16,12 +18,13 @@ const Container = styled.div`
 
 const Content = styled.div`
   /* ${effects.opacity.opacity50}; */
-  ${effects.boxShadow.coverBaseDown};
+  ${effects.boxShadow.coverBaseDown}
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 16px;
+  color: ${colors.text.text1};
   padding: ${layout.space.large};
   /* border-color: ${colors.base.base3}; */
   /* border-width: ${borders.width.medium};
@@ -43,6 +46,7 @@ const App = () => {
       <Content>
         <h1 style={{ background: "transparent"}}>Welcome to the Motorsport Leagues App!</h1>
         <SubText>Background Color: {backgroundColor}</SubText>
+        <Chat width={48} height={48} color={colors.role.director} />
       </Content>
     </Container>
   );
