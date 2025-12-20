@@ -8,4 +8,5 @@ export const Wrapper = styled.div`
 
 export const Main = styled.main`
   flex: 1;
+  display: flex;
 `;

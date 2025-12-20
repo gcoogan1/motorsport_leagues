@@ -1,7 +1,11 @@
-import Layout from "./components/layout/Layout";
+import AppRouter from "./routes/AppRouter";
 
 const App = () => {
-  return <Layout />;
+  return (
+    <div>
+      <AppRouter />
+    </div>
+  );
 };
 
 export default App;
