@@ -13,3 +13,13 @@
   - Authentication
   - PostgreSQL
   - Row Level Security
+
+
+## Storybook
+
+Storybook is used to build, test, and document UI components in isolation.
+
+### Run Storybook locally
+```bash
+npm run storybook
+```
