@@ -7,19 +7,10 @@
 - **React**
 - **TypeScript**
 - **styled-components**
+- ***Storybook*** — component development and documentation in isolation
 
 ### Backend
 - **Supabase**
   - Authentication
   - PostgreSQL
   - Row Level Security
-
-
-## Storybook
-
-Storybook is used to build, test, and document UI components in isolation.
-
-### Run Storybook locally
-```bash
-npm run storybook
-```
