@@ -1,10 +1,16 @@
-import { Container, Logo, SubTitle, Wrapper } from "./Homepage.styles"
+import { useAppTheme } from "@/app/design/hooks/useTheme";
+import { LogoThemes } from "@/app/design/logoThemes";
+import { Container, SubTitle, Wrapper } from "./Homepage.styles"
 
 const Homepage = () => {
+  const { themeName } = useAppTheme();
+
+  const LogoIcon = LogoThemes[themeName];
+
   return (
     <Wrapper>
       <Container>
-        <Logo />
+        <LogoIcon />
         <SubTitle>Coming Soon</SubTitle>
       </Container>
     </Wrapper>

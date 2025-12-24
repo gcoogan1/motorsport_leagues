@@ -71,6 +71,9 @@ export const themeTokens = {
   green: generateThemeColorVariants('green'),
 }
 
+// --- EXPORT TYPES --- //
+export type ThemeName = keyof typeof themeTokens;
+export type ThemeObject = ReturnType<typeof generateThemeColorVariants>;
 
 
 

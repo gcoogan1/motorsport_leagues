@@ -38,7 +38,7 @@
       "@store/*": ["./src/app/store/*"],
       "@types/*": ["./src/types/*"],
       "@utils/*": ["./src/utils/*"],
-      "@hooks/*": ["./src/app/hooks/*"],
+      "@hooks/*": ["src/app/design/hooks/*"],
       "@services/*": ["./src/app/services/*"]
     }
   },
