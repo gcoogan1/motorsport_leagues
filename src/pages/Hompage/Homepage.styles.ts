@@ -28,7 +28,7 @@ export const Container = styled.div`
   gap: ${layout.space.medium};
   background: ${({ theme }) => theme.theme.primaryGradientFadeTop10};
   border-bottom-right-radius: ${borders.radius.xxxLarge};
-  border-top-left-radius: ${borders.radius.xxxLarge};
+  border-bottom-left-radius: ${borders.radius.xxxLarge};
 `;
 
 export const SubTitle = styled.h2`
