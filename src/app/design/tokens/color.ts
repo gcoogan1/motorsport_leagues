@@ -9,10 +9,12 @@ type ColorTokens = {
     text: Record<string, string>;
     role: Record<string, string>;
     position: Record<string, string>;
+    alert: Record<string, string>;
     utility: Record<string, string>;
   };
   gradients: {
     base: Record<string, string>;
+    alert: Record<string, string>;
     position: Record<string, string>;
   };
 };
@@ -88,10 +90,15 @@ export const colorTokens: ColorTokens = {
       silver: "#7A7675",
       bronze: "#3C2617",
     },
+    alert: {
+      alertA: "#FF0000",
+      alertA2: "#CC0000",
+      alertA3: "#9C0000",
+    },
     utility: {
       focus: "#0044FF",
       link: "#00C4FF",
-      alert: "#FF0000",
+      success: "#007818",
     },
   },
   gradients: {
@@ -108,6 +115,12 @@ export const colorTokens: ColorTokens = {
         "linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%)",
       fadeOutHorizontal20:
         "linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%)",
+      fadeOutHorizontal80:
+        "linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%)",
+    },
+    alert: {
+      fadeOutHorizontal80:
+        "linear-gradient(270deg, rgba(255, 0, 0, 0) 0%, rgba(255, 0, 0, 0.8) 50%, rgba(255, 0, 0, 0) 100%)",
     },
     position: {
       goldLeft: fadeGradient("#D0BA03", 100, "left"),
