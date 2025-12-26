@@ -2,8 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react";
 import Icon from "./Icon";
 import Chat from "@assets/Icon/Chat.svg?react";
 
+// -- Meta Configuration -- //
+
 const meta: Meta<typeof Icon> = {
-  title: "App/components/Icon",
+  title: "Components/Icon",
   component: Icon,
   argTypes: {
     children: {
@@ -30,6 +32,8 @@ const meta: Meta<typeof Icon> = {
 };
 
 export default meta;
+
+// -- Stories -- //
 
 type Story = StoryObj<typeof Icon>;
 
