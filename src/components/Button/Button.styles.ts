@@ -33,12 +33,12 @@ const buttonStateStyles = ({
     state: resolvedState,
   });
 
-  const border = styles.border ? `border: ${styles.border};` : "border: none;";
+  const boxShadow = styles.boxShadow ? `box-shadow: ${styles.boxShadow};` : "box-shadow: none;";
 
   return `
     background: ${styles.background};
     color: ${styles.color};
-    ${border}
+    ${boxShadow}
   `;
 };
 
@@ -57,6 +57,7 @@ export const StyledButton = styled.button<{
   ${typography.body.mediumBold}
   display: inline-flex;
   align-items: center;
+  border: none;
   justify-content: center;
   gap: ${layout.space.xxSmall};
   cursor: pointer;
