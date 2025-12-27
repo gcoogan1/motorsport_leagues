@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 
-export function useMediaQuery(query: string) {
+// Hook to determine if a media query matches
+
+// USAGE to match layout tokens: 
+// const isMobile = useMediaQuery("(max-width: 919px)");
+// const isLargeScreen = useMediaQuery('(min-width: 920px)');
+
+export const useMediaQuery = (query: string) => {
   const [matches, setMatches] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia(query).matches : false
   );
