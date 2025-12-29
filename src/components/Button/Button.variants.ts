@@ -1,7 +1,7 @@
 import { designTokens } from "@/app/design/tokens";
 import type { DefaultTheme } from "styled-components";
 
-const { colors, borders } = designTokens;
+const { colors } = designTokens;
 
 export type ButtonVariant = "filled" | "outlined" | "ghost";
 export type ButtonColor = "system" | "base" | "primary" | "danger";
@@ -11,7 +11,7 @@ export type ButtonState = "enabled" | "hovered" | "focused" | "pressed" | "loadi
 type ButtonStyleItem = {
   background: string;
   color: string;
-  border?: string;
+  boxShadow?: string;
 };
 // Defines the overall structure for button styles
 type ButtonStyles = {
@@ -128,108 +128,108 @@ export const getButtonVariants = (theme: DefaultTheme): ButtonStyles => {
         enabled: {
           background: "transparent",
           color: colors.text.text1,
-          border: `${borders.width.medium} solid ${colors.text.text1}`,
+          boxShadow: `inset 0 0 0 2px ${colors.text.text1}`,
         },
         hovered: {
           background: colors.base.translucent10,
           color: colors.text.text1,
-          border: `${borders.width.medium} solid ${colors.text.text1}`,
+          boxShadow: `inset 0 0 0 2px ${colors.text.text1}`,
         },
         focused: {
           background: colors.base.translucent10,
           color: colors.text.text1,
-          border: `${borders.width.medium} solid ${colors.text.text1}`,
+          boxShadow: `inset 0 0 0 2px ${colors.text.text1}`,
         },
         pressed: {
           background: colors.base.translucent20,
           color: colors.text.text1,
-          border: `${borders.width.medium} solid ${colors.text.text1}`,
+          boxShadow: `inset 0 0 0 2px ${colors.text.text1}`,
         },
         loading: {
           background: colors.base.translucent20,
           color: colors.text.text1,
-          border: `${borders.width.medium} solid ${colors.text.text1}`,
+          boxShadow: `inset 0 0 0 2px ${colors.text.text1}`,
         },
       },
       base: {
         enabled: {
           background: "transparent",
           color: colors.text.text1,
-          border: `${borders.width.medium} solid ${colors.base.translucent10}`,
+          boxShadow: `inset 0 0 0 2px ${colors.base.translucent10}`,
         },
         hovered: {
           background: colors.base.translucent10,
           color: colors.text.text1,
-          border: `${borders.width.medium} solid ${colors.base.translucent20}`,
+          boxShadow: `inset 0 0 0 2px ${colors.base.translucent20}`,
         },
         focused: {
           background: colors.base.translucent10,
           color: colors.text.text1,
-          border: `${borders.width.medium} solid ${colors.base.translucent20}`,
+          boxShadow: `inset 0 0 0 2px ${colors.base.translucent20}`,
         },
         pressed: {
           background: colors.base.translucent20,
           color: colors.text.text1,
-          border: `${borders.width.medium} solid ${colors.base.translucent20}`,
+          boxShadow: `inset 0 0 0 2px ${colors.base.translucent20}`,
         },
         loading: {
           background: colors.base.translucent20,
           color: colors.text.text1,
-          border: `${borders.width.medium} solid ${colors.base.translucent20}`,
+          boxShadow: `inset 0 0 0 2px ${colors.base.translucent20}`,
         },
       },
       primary: {
         enabled: {
           background: "transparent",
           color: theme.theme.primaryA,
-          border: `${borders.width.medium} solid ${theme.theme.primary20}`,
+          boxShadow: `inset 0 0 0 2px ${theme.theme.primary20}`,
         },
         hovered: {
           background: theme.theme.primary10,
           color: theme.theme.primaryA,
-          border: `${borders.width.medium} solid ${theme.theme.primary20}`,
+          boxShadow: `inset 0 0 0 2px ${theme.theme.primary20}`,
         },
         focused: {
           background: theme.theme.primary10,
           color: theme.theme.primaryA,
-          border: `${borders.width.medium} solid ${theme.theme.primary20}`,
+          boxShadow: `inset 0 0 0 2px ${theme.theme.primary20}`,
         },
         pressed: {
           background: theme.theme.primary20,
           color: theme.theme.primaryA,
-          border: `${borders.width.medium} solid ${theme.theme.primary20}`,
+          boxShadow: `inset 0 0 0 2px ${theme.theme.primary20}`,
         },
         loading: {
           background: theme.theme.primary20,
           color: theme.theme.primaryA,
-          border: `${borders.width.medium} solid ${theme.theme.primary20}`,
+          boxShadow: `inset 0 0 0 2px ${theme.theme.primary20}`,
         },
       },
       danger: {
         enabled: {
           background: "transparent",
           color: colors.alert.alertA,
-          border: `${borders.width.medium} solid ${colors.alert.alertA}`,
+          boxShadow: `inset 0 0 0 2px ${colors.alert.alertA}`,
         },
         hovered: {
           background: "transparent",
           color: colors.alert.alertA2,
-          border: `${borders.width.medium} solid ${colors.alert.alertA2}`,
+          boxShadow: `inset 0 0 0 2px ${colors.alert.alertA2}`,
         },
         focused: {
           background: "transparent",
           color: colors.alert.alertA2,
-          border: `${borders.width.medium} solid ${colors.alert.alertA2}`,
+          boxShadow: `inset 0 0 0 2px ${colors.alert.alertA2}`,
         },
         pressed: {
           background: "transparent",
           color: colors.alert.alertA3,
-          border: `${borders.width.medium} solid ${colors.alert.alertA3}`,
+          boxShadow: `inset 0 0 0 2px ${colors.alert.alertA3}`,
         },
         loading: {
           background: "transparent",
           color: colors.alert.alertA3,
-          border: `${borders.width.medium} solid ${colors.alert.alertA3}`,
+          boxShadow: `inset 0 0 0 2px ${colors.alert.alertA3}`,
         },
       },
     },

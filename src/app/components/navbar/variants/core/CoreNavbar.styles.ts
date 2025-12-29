@@ -1,0 +1,34 @@
+import styled from "styled-components";
+import { designTokens } from "@/app/design/tokens";
+
+const { layout } = designTokens;
+
+
+export const LeftContainer = styled.div`
+  flex: 1;
+  align-items: center;
+  gap: ${layout.space.xSmall};
+  display: flex;
+  justify-content: left;
+`;
+
+
+export const CenterContainer = styled.div`
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: ${layout.space.xSmall};
+
+  ${layout.mediaQueries.mobile} {
+    justify-content: flex-end;
+  }
+`;
+
+export const RightContainer = styled.div`
+  flex: 1;
+  align-items: center;
+  gap: ${layout.space.xSmall};
+  display: flex;
+  justify-content: right;
+`;
