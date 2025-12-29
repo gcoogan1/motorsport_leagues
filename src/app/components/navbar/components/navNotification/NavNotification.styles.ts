@@ -4,8 +4,8 @@ import { gradientBorder } from "@/app/design/mixens/gradientBorder";
 
 const { gradients, colors, borders, layout, typography } = designTokens;
 
-export const AccountWrapperButton = styled.button`
-position: relative;
+export const NotificationWrapper = styled.button`
+  position: relative;
   display: flex;
   align-items: center;
   text-align: center;
@@ -24,7 +24,6 @@ position: relative;
     gradient: gradients.base.fadeRight20,
     width: borders.width.thin,
   })}
-
 
   /* Hover */
   &:hover {
@@ -46,11 +45,29 @@ position: relative;
     border-radius: ${borders.radius.xLarge};
     color: ${colors.text.text1};
     box-shadow: inset 0 0 0 2px ${colors.text.text1};
-    background: 'transparent';
+    background: "transparent";
   }
-
 `;
 
-export const SelectLabel = styled.p`
-  ${typography.body.mediumBold};
+export const CountBadge = styled.span`
+  display: flex;
+  height: 20px;
+  min-width: 20px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 ${layout.space.xxSmall};
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: ${borders.radius.round};
+  position: absolute;
+  left: -5px;
+  top: -8px;
+  background: ${colors.alert.alertA};
+`;
+
+export const CountText = styled.p`
+  ${typography.body.tinyBold};
+  color: ${colors.text.text1};
 `;

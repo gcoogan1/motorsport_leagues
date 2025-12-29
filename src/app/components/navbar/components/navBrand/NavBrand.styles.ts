@@ -9,7 +9,7 @@ export const BrandWrapperLink = styled(NavLink)`
   align-items: center;
   text-decoration: none;
   justify-content: center;
-  color: ${colors.text.text1};
+  color: ${colors.text.text2};
   border: none;
   background: transparent;
   width: 196px;

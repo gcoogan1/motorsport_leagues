@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Icon from "@/components/Icon/Icon";
 import Dropdown from "@assets/Icon/Dropdown.svg?react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -9,7 +9,7 @@ type NavSelectProps = {
   label: string;
 }
 
-const NavSelect = ({ icon, label }: NavSelectProps) => {
+const NavSelectComponent = ({ icon, label }: NavSelectProps) => {
   const [open, setOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 919px)");
 
@@ -30,4 +30,6 @@ const NavSelect = ({ icon, label }: NavSelectProps) => {
   )
 }
 
-export default NavSelect
+const NavSelect = React.memo(NavSelectComponent);
+
+export default NavSelect;
