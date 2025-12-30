@@ -1,6 +1,7 @@
 import { css } from "styled-components";
 
 // -- Mixin for gradient border -- //
+// To be used for a full border around an element
 
 type GradientBorderOptions = {
   gradient: string;
