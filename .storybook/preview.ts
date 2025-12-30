@@ -1,5 +1,7 @@
 import type { Preview } from "@storybook/react-vite";
 import "../src/app/index.css"; // Import global styles
+import "../src/app/design/tokens/index";
+
 
 const preview: Preview = {
   parameters: {
