@@ -4,7 +4,7 @@ import Squad from "@assets/Icon/Squad.svg?react";
 import League from "@assets/Icon/League.svg?react";
 import NavBrand from "../../components/navBrand/NavBrand";
 import NavSelect from "../../components/navSelect/NavSelect";
-import NavLayout from "../../layout/NavLayout";
+import NavLayout from "../../components/navLayout/NavLayout";
 import NavNotification from "../../components/navNotification/NavNotification";
 import NavAccount from "../../components/navAccount/NavAccount";
 import {
