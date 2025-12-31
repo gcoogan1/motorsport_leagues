@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
-
 import PanelSection from "./PanelSection";
 import ChevRight from "@assets/Icon/Chevron_Right.svg?react";
+
+// -- Meta Configuration -- //
 
 const Meta: Meta<typeof PanelSection> = {
   title: "App/Components/Panels/components/PanelSection",
@@ -19,6 +20,8 @@ const Meta: Meta<typeof PanelSection> = {
 };
 
 export default Meta;
+
+// -- Stories -- //
 
 type Story = StoryObj<typeof PanelSection>;
 

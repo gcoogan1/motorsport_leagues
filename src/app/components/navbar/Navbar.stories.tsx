@@ -3,6 +3,8 @@ import { BrowserRouter } from "react-router";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
 import Navbar from "./Navbar";
 
+// -- Meta Configuration -- //
+
 const meta: Meta<typeof Navbar> = {
   title: "App/Components/Navbar",
   component: Navbar,
@@ -28,10 +30,24 @@ const meta: Meta<typeof Navbar> = {
 
 export default meta;
 
+// -- Stories -- //
+
 type Story = StoryObj<typeof Navbar>;
 
 export const Default: Story = {
   args: {
     usage: "user",
+  }
+};
+
+export const CoreNavbar: Story = {
+  args: {
+    usage: "core",
+  }
+};
+
+export const GuestNavbar: Story = {
+  args: {
+    usage: "guest",
   }
 };

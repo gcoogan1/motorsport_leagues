@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Footer from "./Footer";
 
+// -- Meta Configuration -- //
+
 const meta: Meta<typeof Footer> = {
   title: "App/components/Footer",
   component: Footer,
@@ -11,6 +13,8 @@ const meta: Meta<typeof Footer> = {
 };
 
 export default meta;
+
+// -- Stories -- //
 
 type Story = StoryObj<typeof Footer>;
 
