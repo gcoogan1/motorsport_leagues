@@ -46,9 +46,8 @@ const buttonStateStyles = ({
 export const StyledButton = styled.button<{
   $variant: ButtonVariant;
   $color: ButtonColor;
-  $size: "small" | "tall";
+  $size: "small" | "medium";
   $rounded: boolean;
-  $iconOnly?: boolean;
   $isLoading?: boolean;
 }>`
 
@@ -64,13 +63,10 @@ export const StyledButton = styled.button<{
   outline: none;
   border-radius: ${({ $rounded }) =>
     $rounded ? borders.radius.round : borders.radius.medium};
-  padding: ${({ $size, $iconOnly }) => {
-    if ($iconOnly) {
-      return $size === "small" ? layout.space.xSmall : layout.space.small;
-    }
+  padding: ${({ $size }) => {
     return $size === "small"
       ? `${layout.space.xSmall} ${layout.space.small}`
-      : `${layout.space.small} ${layout.space.medium}`;
+      : `${layout.space.medium}`;
   }};
 
 

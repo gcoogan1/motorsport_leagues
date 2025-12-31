@@ -6,11 +6,10 @@ import type { ButtonVariant, ButtonColor } from "./Button.variants";
 
 type ButtonProps = {
   children?: ReactNode;
-  size?: "small" | "tall";
+  size?: "small" | "medium";
   color?: ButtonColor;
   variant?: ButtonVariant;
   rounded?: boolean;
-  iconOnly?: boolean;
   icon?: {
     left?: ReactNode;
     right?: ReactNode;
@@ -22,11 +21,10 @@ type ButtonProps = {
 const Button = ({
   children,
   onClick,
-  size = "tall",
+  size = "medium",
   color = "system",
   variant = "filled",
   rounded = false,
-  iconOnly = false,
   icon,
   isLoading = false,
 }: ButtonProps) => {
@@ -35,7 +33,6 @@ const Button = ({
       onClick={onClick}
       $size={size}
       $rounded={rounded}
-      $iconOnly={iconOnly}
       $variant={variant}
       $color={color}
       $isLoading={isLoading}
@@ -45,12 +42,12 @@ const Button = ({
           <Icon>
             <Spinner />
           </Icon>
-          {!iconOnly && <span>Loading...</span>}
+          {<span>Loading...</span>}
         </>
       ) : (
         <>
           {icon?.left && <Icon>{icon.left}</Icon>}
-          {!iconOnly && children}
+          {children}
           {icon?.right && <Icon>{icon.right}</Icon>}
         </>
       )}

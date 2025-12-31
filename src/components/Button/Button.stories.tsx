@@ -24,7 +24,7 @@ const meta: Meta<typeof Button> = {
     },
     size: {
       control: { type: "select" },
-      options: ["small", "tall"],
+      options: ["small", "medium"],
     },
     variant: {
       control: { type: "select" },
@@ -33,9 +33,6 @@ const meta: Meta<typeof Button> = {
       control: { type: "select" },
     },
     rounded: {
-      control: { type: "boolean" },
-    },
-    iconOnly: {
       control: { type: "boolean" },
     },
     isLoading: {
@@ -88,7 +85,6 @@ export const WithRightIcon: Story = {
 
 export const IconOnly: Story = {
   args: {
-    iconOnly: true,
     icon: {
       left: <Placeholder />,
     },
@@ -139,8 +135,8 @@ export const Sizes: Story = {
       <Button size="small" onClick={() => console.log("Small Clicked")}>
         Small
       </Button>
-      <Button size="tall" onClick={() => console.log("Tall Clicked")}>
-        Tall
+      <Button size="medium" onClick={() => console.log("Medium Clicked")}>
+        Medium
       </Button>
     </div>
   ),
