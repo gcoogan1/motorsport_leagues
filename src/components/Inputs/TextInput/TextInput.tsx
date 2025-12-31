@@ -20,7 +20,6 @@ type TextInputProps = {
   placeholder?: string;
   maxLength?: number;
   showCounter?: boolean;
-  count?: number;
   helperText?: string;
   hasError?: boolean;
   errorMessage?: string;
