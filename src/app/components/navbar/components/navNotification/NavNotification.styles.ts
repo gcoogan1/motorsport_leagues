@@ -15,7 +15,7 @@ export const NotificationWrapper = styled.button`
   cursor: pointer;
   border-top-left-radius: 16px;
   border-bottom-left-radius: 16px;
-  padding: ${layout.space.small} ${layout.space.medium};
+  padding: ${layout.space.medium};
   gap: ${layout.space.xxSmall};
   background: transparent;
 
