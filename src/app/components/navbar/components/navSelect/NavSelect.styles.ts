@@ -13,10 +13,7 @@ export const SelectWrapperButton = styled.button`
   color: ${colors.text.text2};
   cursor: pointer;
   border-radius: ${borders.radius.round};
-  padding-top: ${layout.space.small};
-  padding-bottom: ${layout.space.small};
-  padding-right: ${layout.space.small};
-  padding-left: ${layout.space.medium};
+  padding: ${layout.space.small} ${layout.space.medium};
   gap: ${layout.space.xxSmall};
   background: ${gradients.base.fadeTop10};
 

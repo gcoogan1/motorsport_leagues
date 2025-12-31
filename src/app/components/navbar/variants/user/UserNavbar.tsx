@@ -15,6 +15,8 @@ import {
 } from "./UserNavbar.styles";
 import { useIsWrapped } from "@/hooks/useIsWrapped";
 
+//TODO: Add onClick handlers to NavSelects and NavAccount
+
 type UserNavbarProps = {
   countNotifications?: number;
   accountLabel?: string;

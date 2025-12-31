@@ -11,6 +11,8 @@ import {
   RightContainer,
 } from "./CoreNavbar.styles";
 
+// TODO: Add onClick handler to NavAccount & on Back button
+
 type CoreNavbarProps = {
   countNotifications?: number;
   accountLabel?: string;

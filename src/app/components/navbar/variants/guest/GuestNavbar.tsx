@@ -11,6 +11,7 @@ import {
   RightContainer,
 } from "./GuestNavbar.styles";
 
+//TODO: Add onClick handlers to NavSelects and NavAccount
 
 const GuestNavbar = () => {
   return (
