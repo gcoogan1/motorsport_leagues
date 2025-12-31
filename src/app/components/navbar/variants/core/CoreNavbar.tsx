@@ -1,7 +1,7 @@
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Button from "@/components/Button/Button";
 import Back from "@assets/Icon/Arrow_Backward.svg?react";
-import NavLayout from "../../layout/NavLayout";
+import NavLayout from "../../components/navLayout/NavLayout";
 import NavBrand from "../../components/navBrand/NavBrand";
 import NavAccount from "../../components/navAccount/NavAccount";
 import NavNotification from "../../components/navNotification/NavNotification";

@@ -4,6 +4,7 @@ type IconProps = {
   size?: IconSize;
   children: React.ReactNode;
   ariaLabel?: string;
+  onClick?: () => void;
 };
 
 const ICON_SIZES: Record<IconSize, number> = {
@@ -13,11 +14,19 @@ const ICON_SIZES: Record<IconSize, number> = {
   xLarge: 28,
 };
 
-const Icon = ({ size = "medium", ariaLabel, children }: IconProps) => {
+const Icon = ({ size = "medium", ariaLabel, onClick, children }: IconProps) => {
   const sizeValue = ICON_SIZES[size];
+
+  const handleOnClick = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    e.stopPropagation();
+    if (onClick) {
+      onClick();
+    }
+  }
 
   return (
     <span
+      onClick={handleOnClick}
       style={{
         display: "inline-flex",
         width: sizeValue,
