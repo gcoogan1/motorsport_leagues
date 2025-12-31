@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
 import  Panel from "./Panel";
 
+// -- Meta Configuration -- //
+
 const Meta: Meta<typeof Panel> = {
   title: "App/Components/Panels",
   component: Panel,
@@ -18,6 +20,8 @@ const Meta: Meta<typeof Panel> = {
 };
 
 export default Meta;
+
+// -- Stories -- //
 
 type Story = StoryObj<typeof Panel>;
 
