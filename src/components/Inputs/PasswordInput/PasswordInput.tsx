@@ -1,61 +1,66 @@
 import { useFormContext } from "react-hook-form";
 import Error_Outlined from "@assets/Icon/Error_Outlined.svg?react";
 import {
-  Count,
   ErrorText,
   HelperText,
-  IconWrapper,
+  ButtonWrapper,
   InputField,
   InputWrapper,
   Label,
   LabelRow,
-} from "./TextInput.styles";
+} from "./PasswordInput.styles";
+import Button from "@/components/Button/Button";
+import { useState } from "react";
 
 // MUST BE WRAPPED IN REACT-HOOK-FORM FORM PROVIDER
 
-type TextInputProps = {
+type PasswordInputProps = {
   name: string;
   label: string;
-  icon?: React.ReactNode;
   placeholder?: string;
-  maxLength?: number;
-  showCounter?: boolean;
   helperText?: string;
   hasError?: boolean;
   errorMessage?: string;
 };
 
-const TextInput = ({
+const PasswordInput = ({
   name,
   label,
-  icon,
   placeholder,
-  maxLength = 1000,
-  showCounter,
   helperText,
   hasError,
   errorMessage,
-}: TextInputProps) => {
+}: PasswordInputProps) => {
   const { register, watch } = useFormContext();
+  const [showPassword, setShowPassword] = useState(false);
 
   const value = watch(name);
   const hasValue = Boolean(value && value.length > 0);
 
-  const count = value ? value.length : 0;
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   return (
     <InputWrapper $hasValue={hasValue}>
       <LabelRow>
         <Label>{label}</Label>
-        {!!showCounter && <Count>{count}/999</Count>}
       </LabelRow>
-      {icon && <IconWrapper $hasValue={!!value}>{icon}</IconWrapper>}
+      <ButtonWrapper>
+        <Button
+          size="small"
+          color="base"
+          variant="ghost"
+          onClick={toggleShowPassword}
+        >
+          {showPassword ? "Hide" : "Show"}
+        </Button>
+      </ButtonWrapper>
       <InputField
         id={name}
+        type={showPassword ? "text" : "password"}
         {...register(name)}
-        type="text"
         placeholder={placeholder}
-        maxLength={maxLength}
         $hasError={!!hasError}
         $hasValue={hasValue}
       />
@@ -69,4 +74,4 @@ const TextInput = ({
   );
 };
 
-export default TextInput;
+export default PasswordInput;
