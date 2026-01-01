@@ -2,9 +2,9 @@ import Button from "@/components/Button/Button";
 import Profile from "@assets/Icon/Profile.svg?react";
 import Squad from "@assets/Icon/Squad.svg?react";
 import League from "@assets/Icon/League.svg?react";
-import NavBrand from "../../components/navBrand/NavBrand";
-import NavSelect from "../../components/navSelect/NavSelect";
-import NavLayout from "../../components/navLayout/NavLayout";
+import NavBrand from "../../components/NavBrand/NavBrand";
+import NavSelect from "../../components/NavSelect/NavSelect";
+import NavLayout from "../../components/NavLayout/NavLayout";
 import {
   CenterContainer,
   LeftContainer,

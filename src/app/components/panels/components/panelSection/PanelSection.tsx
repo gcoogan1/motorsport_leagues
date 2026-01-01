@@ -1,4 +1,4 @@
-import PanelSectionOption from "./components/panelSectionOption/PanelSectionOption";
+import PanelSectionOption from "./components/PanelSectionOption/PanelSectionOption";
 import { PanelSectionContainer, SectionList, SectionTitle } from "./PanelSection.styles";
 
 type PanelOptions = {
