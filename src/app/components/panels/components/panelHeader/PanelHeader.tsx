@@ -27,7 +27,6 @@ const handleOnClick = () => {
         <Button
           color="base"
           size="small"
-          iconOnly
           rounded
           icon={{ left: <CloseIcon /> }}
           onClick={handleOnClick}

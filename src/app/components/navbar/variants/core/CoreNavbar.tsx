@@ -28,7 +28,6 @@ const CoreNavbar = ({ countNotifications, accountLabel }: CoreNavbarProps) => {
           <Button
             color="base"
             rounded
-            iconOnly
             icon={{ left: <Back /> }}
             onClick={() => {}}
           />
