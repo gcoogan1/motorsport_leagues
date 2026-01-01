@@ -6,7 +6,7 @@ import PasswordInput from "./PasswordInput";
 // -- Meta Configuration -- //
 
 const meta: Meta<typeof PasswordInput> = {
-  title: "Components/PasswordInput",
+  title: "Components/Inputs/PasswordInput",
   decorators: [withAppTheme],
   component: PasswordInput,
   argTypes: {

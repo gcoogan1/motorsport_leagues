@@ -7,7 +7,7 @@ import TextInput from "./TextInput";
 // -- Meta Configuration -- //
 
 const meta: Meta<typeof TextInput> = {
-  title: "Components/TextInput",
+  title: "Components/Inputs/TextInput",
   decorators: [withAppTheme],
   component: TextInput,
   argTypes: {

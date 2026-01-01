@@ -49,12 +49,14 @@ export const Count = styled.span`
 export const InputField = styled.input<{
   $hasError: boolean;
   $hasValue: boolean;
+  $hasIcon?: boolean;
 }>`
   width: 100%;
   border-radius: ${borders.radius.medium};
   padding-top: ${layout.space.medium};
   padding-bottom: ${layout.space.medium};
-  padding-left: 36px;
+  padding-left: ${({ $hasIcon }) =>
+    $hasIcon ? `36px` : layout.space.medium};
   padding-right: ${layout.space.medium};
   border: none;
   display: flex;

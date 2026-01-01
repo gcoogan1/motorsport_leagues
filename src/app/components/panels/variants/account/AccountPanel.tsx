@@ -2,8 +2,8 @@ import AccountIcon from "@assets/Icon/Account_Filled.svg?react";
 import EditIcon from "@assets/Icon/Edit.svg?react";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import LogoutIcon from "@assets/Icon/Logout.svg?react";
-import PanelLayout from "../../components/panelLayout/PanelLayout";
-import PanelSection from "../../components/panelSection/PanelSection";
+import PanelLayout from "../../components/PanelLayout/PanelLayout";
+import PanelSection from "../../components/PanelSection/PanelSection";
 
 /*TODO: 
   - Add user data

@@ -15,7 +15,8 @@ type ButtonProps = {
     right?: ReactNode;
   };
   isLoading?: boolean;
-  onClick: () => void;
+  onClick?: () => void;
+  type?: "button" | "submit";
 };
 
 const Button = ({
@@ -27,9 +28,11 @@ const Button = ({
   rounded = false,
   icon,
   isLoading = false,
+  type = "button",
 }: ButtonProps) => {
   return (
     <StyledButton
+      type={type}
       onClick={onClick}
       $size={size}
       $rounded={rounded}

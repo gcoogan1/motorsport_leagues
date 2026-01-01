@@ -1,4 +1,4 @@
-import PanelHeader from "../panelHeader/PanelHeader";
+import PanelHeader from "../PanelHeader/PanelHeader";
 import { PanelBody, PanelWrapper } from "./PanelLayout.styles";
 
 type PanelLayoutProps = {
