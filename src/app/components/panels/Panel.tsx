@@ -1,4 +1,4 @@
-import AccountPanel from "./variants/Account/AccountPanel";
+import AccountPanel from "./variants/account/AccountPanel";
 
 type NavbarProps = {
   types: "account" | "profile" ;

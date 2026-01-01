@@ -38,6 +38,10 @@ const meta: Meta<typeof Button> = {
     isLoading: {
       control: { type: "boolean" },
     },
+    type: {
+      control: { type: "select" },
+      options: ["button", "submit"],
+    },
   },
   tags: ["autodocs"],
 };
