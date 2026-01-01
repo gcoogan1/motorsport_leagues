@@ -42,6 +42,7 @@ const TextInput = ({
   const hasValue = Boolean(value && value.length > 0);
 
   const count = value ? value.length : 0;
+  const hasIcon = !!icon;
 
   return (
     <InputWrapper $hasValue={hasValue}>
@@ -49,7 +50,7 @@ const TextInput = ({
         <Label>{label}</Label>
         {!!showCounter && <Count>{count}/999</Count>}
       </LabelRow>
-      {icon && <IconWrapper $hasValue={!!value}>{icon}</IconWrapper>}
+      {icon && <IconWrapper $hasValue={hasValue}>{icon}</IconWrapper>}
       <InputField
         id={name}
         {...register(name)}
@@ -58,6 +59,7 @@ const TextInput = ({
         maxLength={maxLength}
         $hasError={!!hasError}
         $hasValue={hasValue}
+        $hasIcon={hasIcon}
       />
       <HelperText>{helperText}</HelperText>
       {!!hasError && (
