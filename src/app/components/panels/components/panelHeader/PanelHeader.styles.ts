@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { designTokens } from "@/app/design/tokens";
-import { gradientBorderBottom } from "@/app/design/mixens/gradientBorderBottom";
+import { bottomFadeBorder} from "@/app/design/mixens/edgeFadeBorder";
 
 const { colors, borders, gradients, layout, typography } = designTokens;
 
@@ -22,7 +22,7 @@ export const PanelHeaderContainer = styled.div<{ showShadow?: boolean }>`
 
 
   /* Gradient Border Bottom */
-  ${gradientBorderBottom({
+  ${bottomFadeBorder({
     gradient: gradients.base.fadeRight10,
     width: borders.width.thin,
   })}
