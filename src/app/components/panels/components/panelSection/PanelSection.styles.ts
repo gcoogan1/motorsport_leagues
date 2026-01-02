@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { designTokens } from "@/app/design/tokens";
-import { gradientBorderBottom } from "@/app/design/mixens/gradientBorderBottom";
+import { bottomFadeBorder } from "@/app/design/mixens/edgeFadeBorder";
 
 const { colors, borders, layout, typography } = designTokens; 
 
@@ -23,8 +23,9 @@ export const SectionList = styled.div`
   border-radius: ${borders.radius.xLarge};
   border: ${borders.width.thin} solid ${colors.base.translucent10};
 
+    /* Apply gradient border bottom to all but the last child -- */
     > *:not(:last-child) {
-    ${gradientBorderBottom({
+    ${bottomFadeBorder({
       gradient: colors.base.translucent10,
       width: borders.width.thin,
     })}

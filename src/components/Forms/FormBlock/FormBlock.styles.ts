@@ -68,8 +68,8 @@ export const BodyTitle = styled.h2`
   color: ${colors.text.text1};
 `;
 
-export const BodySubHeader = styled.p`
-  ${typography.body.medium};
+export const BodySubtitle = styled.p`
+  ${typography.body.mediumRegular};
   color: ${colors.text.text2};
 `;
 
@@ -82,7 +82,7 @@ export const BodyInputContainer = styled.div`
 export const FormActions = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: ${layout.space.large} ${layout.space.xxLarge};
+  padding: ${layout.space.large} ${layout.space.xLarge};
   gap: ${layout.space.medium};
   border-top: ${borders.width.medium} solid ${colors.base.translucent10};
   border-bottom: ${borders.width.medium} solid ${colors.base.translucent10};

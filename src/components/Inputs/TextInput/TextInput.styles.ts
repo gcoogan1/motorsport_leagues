@@ -16,7 +16,8 @@ export const IconWrapper = styled.span<{ $hasValue?: boolean }>`
 `;
 
 export const InputWrapper = styled.div<{ $hasValue?: boolean }>`
-  width: 320px;
+  min-width: 320px;
+  width: 100%;
   position: relative;
   /* When the input is focused, change the icon color */
   &:focus-within ${IconWrapper} {

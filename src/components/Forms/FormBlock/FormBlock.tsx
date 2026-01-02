@@ -1,6 +1,7 @@
 import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import Button from "../../Button/Button";
 import {
   FormWrapper,
   FormHeader,
@@ -8,12 +9,11 @@ import {
   FormBody,
   BodyHeader,
   BodyTitle,
-  BodySubHeader,
+  BodySubtitle,
   BodyInputContainer,
   FormActions,
   SecondaryButtonContainer,
 } from "./FormBlock.styles";
-import Button from "../Button/Button";
 
 type FormBlockProps = {
   title: string;
@@ -58,7 +58,7 @@ const FormBlock = ({
         <FormBody $isMobile={isMobile}>
           <BodyHeader>
             <BodyTitle>{question}</BodyTitle>
-            <BodySubHeader>{helperMessage}</BodySubHeader>
+            <BodySubtitle>{helperMessage}</BodySubtitle>
           </BodyHeader>
           <BodyInputContainer>{children}</BodyInputContainer>
         </FormBody>

@@ -1,19 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
-import FormBlock from "./FormBlock";
-import TextInput from "../Inputs/TextInput/TextInput";
-import PasswordInput from "../Inputs/PasswordInput/PasswordInput";
+import FormModal from "./FormModal";
+import TextInput from "../../Inputs/TextInput/TextInput";
+import PasswordInput from "../../Inputs/PasswordInput/PasswordInput";
 
 // -- Meta Configuration -- //
 
-const meta: Meta<typeof FormBlock> = {
-  title: "Components/FormBlock",
+const meta: Meta<typeof FormModal> = {
+  title: "Components/Forms/FormModal",
   decorators: [withAppTheme],
-  component: FormBlock,
+  component: FormModal,
   argTypes: {
-    title: {
-      control: "text",
-    },
     question: {
       control: "text",
     },
@@ -35,9 +32,9 @@ const meta: Meta<typeof FormBlock> = {
     docs: {
       description: {
         component: `
-The FormBlock component is a reusable form container that provides a structured layout for forms, including a title, question, optional helper message, and action buttons for continuing or cancelling the form submission.
+The FormModal component is a reusable form container that provides a structured layout for forms within a modal, including a question, optional helper message, and action buttons for continuing or cancelling the form submission.
 
-**Note:** Do not resize the FormBlock component. The width is managed by the parent container with a fixed width of 480px.
+Note: Clicking outside the modal or on the cancel/continue buttons will close it.
     `,
       },
     },
@@ -49,59 +46,56 @@ export default meta;
 
 // -- Stories -- //
 
-type Story = StoryObj<typeof FormBlock>;
+type Story = StoryObj<typeof FormModal>;
 
 export const Default: Story = {
   args: {
-    title: "Form Block Title",
     question: "Question",
     helperMessage: "Helper message.",
   },
   render: (args) => (
-    <FormBlock {...args}>
-      <div style={{ width: "480px" }}>
+    <div style={{ width: "480px" }}>
+      <FormModal {...args}>
         <TextInput name="name" label="Label" placeholder="Placeholder Text" />
-      </div>
-    </FormBlock>
+      </FormModal>
+    </div>
   ),
 };
 
 export const TwoInputs: Story = {
   args: {
-    title: "Create Account",
     question: "Let’s get you set up",
     helperMessage: "You can change this later.",
   },
   render: (args) => (
-    <FormBlock {...args}>
-      <div style={{ width: "480px" }}>
+    <div style={{ width: "480px" }}>
+      <FormModal {...args}>
         <TextInput name="username" label="Username" placeholder="Username" />
         <PasswordInput
           name="password"
           label="Password"
           placeholder="Password"
         />
-      </div>
-    </FormBlock>
+      </FormModal>
+    </div>
   ),
 };
 
 export const ManyInputs: Story = {
   args: {
-    title: "Profile Information",
     question: "Tell us about yourself",
     helperMessage: "This information will be displayed on your profile.",
   },
   render: (args) => (
-    <FormBlock {...args}>
-      <div
-        style={{
-          width: "480px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "16px",
-        }}
-      >
+    <div
+      style={{
+        width: "480px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+      }}
+    >
+      <FormModal {...args}>
         <TextInput
           name="firstName"
           label="First Name"
@@ -123,7 +117,7 @@ export const ManyInputs: Story = {
           label="Password"
           placeholder="Password"
         />
-      </div>
-    </FormBlock>
+      </FormModal>
+    </div>
   ),
 };
