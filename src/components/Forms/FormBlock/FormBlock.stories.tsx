@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
 import FormBlock from "./FormBlock";
-import TextInput from "../Inputs/TextInput/TextInput";
-import PasswordInput from "../Inputs/PasswordInput/PasswordInput";
+import TextInput from "../../Inputs/TextInput/TextInput";
+import PasswordInput from "../../Inputs/PasswordInput/PasswordInput";
 
 // -- Meta Configuration -- //
 
 const meta: Meta<typeof FormBlock> = {
-  title: "Components/FormBlock",
+  title: "Components/Forms/FormBlock",
   decorators: [withAppTheme],
   component: FormBlock,
   argTypes: {
@@ -58,11 +58,11 @@ export const Default: Story = {
     helperMessage: "Helper message.",
   },
   render: (args) => (
-    <FormBlock {...args}>
-      <div style={{ width: "480px" }}>
+    <div style={{ width: "480px" }}>
+      <FormBlock {...args}>
         <TextInput name="name" label="Label" placeholder="Placeholder Text" />
-      </div>
-    </FormBlock>
+      </FormBlock>
+    </div>
   ),
 };
 
@@ -73,16 +73,16 @@ export const TwoInputs: Story = {
     helperMessage: "You can change this later.",
   },
   render: (args) => (
-    <FormBlock {...args}>
-      <div style={{ width: "480px" }}>
+    <div style={{ width: "480px" }}>
+      <FormBlock {...args}>
         <TextInput name="username" label="Username" placeholder="Username" />
         <PasswordInput
           name="password"
           label="Password"
           placeholder="Password"
         />
-      </div>
-    </FormBlock>
+      </FormBlock>
+    </div>
   ),
 };
 
@@ -93,15 +93,15 @@ export const ManyInputs: Story = {
     helperMessage: "This information will be displayed on your profile.",
   },
   render: (args) => (
-    <FormBlock {...args}>
-      <div
-        style={{
-          width: "480px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "16px",
-        }}
-      >
+    <div
+      style={{
+        width: "480px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+      }}
+    >
+      <FormBlock {...args}>
         <TextInput
           name="firstName"
           label="First Name"
@@ -123,7 +123,7 @@ export const ManyInputs: Story = {
           label="Password"
           placeholder="Password"
         />
-      </div>
-    </FormBlock>
+      </FormBlock>
+    </div>
   ),
 };
