@@ -8,6 +8,8 @@
     "module": "ESNext",
     "types": ["vite/client"],
     "skipLibCheck": true,
+    /* File casing */
+    "forceConsistentCasingInFileNames": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
