@@ -2,6 +2,9 @@ import ReactGA from "react-ga4";
 
 import AppRouter from "./routes/AppRouter";
 import { AppThemeProvider } from "./design/AppThemeProvider";
+// import Toast from "@/components/Messages/Toast/Toast";
+
+//TODO: Re-enable Toast component once global state management is implemented
 
 const App = () => {
 
@@ -11,6 +14,8 @@ const App = () => {
 
   return (
     <AppThemeProvider>
+      {/* Toast component temporarily disabled */}
+      {/* <Toast usage="success" message="This is an informational message." /> */}
       <AppRouter />
     </AppThemeProvider>
   );
