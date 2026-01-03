@@ -17,6 +17,7 @@ type ButtonProps = {
   isLoading?: boolean;
   onClick?: () => void;
   type?: "button" | "submit";
+  fullWidth?: boolean;
 };
 
 const Button = ({
@@ -29,6 +30,7 @@ const Button = ({
   icon,
   isLoading = false,
   type = "button",
+  fullWidth = false,
 }: ButtonProps) => {
   return (
     <StyledButton
@@ -39,6 +41,7 @@ const Button = ({
       $variant={variant}
       $color={color}
       $isLoading={isLoading}
+      $fullWidth={fullWidth}
     >
       {isLoading ? (
         <>
