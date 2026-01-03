@@ -47,6 +47,7 @@ The **Toast** component is used to display brief, informative messages to users.
     message: {
       control: "text",
     },
+    onClose: { action: "closed" },
   },
   tags: ["autodocs"],
 };
