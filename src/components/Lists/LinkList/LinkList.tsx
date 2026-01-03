@@ -1,5 +1,5 @@
-import PanelSectionOption from "./components/PanelSectionOption/PanelSectionOption";
-import { PanelSectionContainer, SectionList, SectionTitle } from "./PanelSection.styles";
+import LinkOption from "./components/LinkOption/LinkOption";
+import { LinkListContainer, SectionList, SectionTitle } from "./LinkList.styles";
 
 type PanelOptions = {
   optionType: "text" | "profile";
@@ -10,18 +10,18 @@ type PanelOptions = {
   onOptionClick: () => void;
 }
 
-type PanelSectionProps = {
+type LinkListProps = {
   sectionTitle?: string;
   options?: PanelOptions[];
 };
 
-const PanelSection = ({ sectionTitle, options }: PanelSectionProps) => {
+const LinkList = ({ sectionTitle, options }: LinkListProps) => {
   return (
-    <PanelSectionContainer>
+    <LinkListContainer>
       {sectionTitle && <SectionTitle>{sectionTitle}</SectionTitle>}
       <SectionList>
         {options && options.map((option, index) => (
-          <PanelSectionOption
+          <LinkOption
             key={index}
             optionType={option.optionType}
             optionTitle={option.optionTitle}
@@ -32,8 +32,8 @@ const PanelSection = ({ sectionTitle, options }: PanelSectionProps) => {
           />
         ))}
       </SectionList>
-    </PanelSectionContainer>
+    </LinkListContainer>
   )
 }
 
-export default PanelSection
+export default LinkList

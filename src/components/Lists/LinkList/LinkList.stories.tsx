@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
-import PanelSection from "./PanelSection";
+import LinkList from "./LinkList";
 import ChevRight from "@assets/Icon/Chevron_Right.svg?react";
 
 // -- Meta Configuration -- //
 
-const Meta: Meta<typeof PanelSection> = {
-  title: "App/Components/Panels/components/PanelSection",
-  component: PanelSection,
+const Meta: Meta<typeof LinkList> = {
+  title: "App/Components/Lists/LinkList",
+  component: LinkList,
   parameters: {
     layout: "centered",
   },
@@ -23,10 +23,10 @@ export default Meta;
 
 // -- Stories -- //
 
-type Story = StoryObj<typeof PanelSection>;
+type Story = StoryObj<typeof LinkList>;
 
 export const Default: Story = {
-  render: (args) => <div style={{ width: "432px" }}><PanelSection {...args} /></div>,
+  render: (args) => <div style={{ width: "432px" }}><LinkList {...args} /></div>,
   args: {
     sectionTitle: "Section",
     options: [
@@ -51,7 +51,7 @@ export const Default: Story = {
 };
 
 export const SingleOption: Story = {
-  render: (args) => <div style={{ width: "432px" }}><PanelSection {...args} /></div>,
+  render: (args) => <div style={{ width: "432px" }}><LinkList {...args} /></div>,
   args: {
     sectionTitle: "Section",
     options: [
@@ -68,7 +68,7 @@ export const SingleOption: Story = {
 };
 
 export const ManyOptions: Story = {
-  render: (args) => <div style={{ width: "432px" }}><PanelSection {...args} /></div>,
+  render: (args) => <div style={{ width: "432px" }}><LinkList {...args} /></div>,
   args: {
     sectionTitle: "Section",
     options: Array.from({ length: 5 }, (_, i) => ({

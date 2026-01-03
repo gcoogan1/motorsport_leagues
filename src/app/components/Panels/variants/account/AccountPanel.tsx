@@ -2,8 +2,8 @@ import AccountIcon from "@assets/Icon/Account_Filled.svg?react";
 import EditIcon from "@assets/Icon/Edit.svg?react";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import LogoutIcon from "@assets/Icon/Logout.svg?react";
+import LinkList from "@/components/Lists/LinkList/LinkList";
 import PanelLayout from "../../components/PanelLayout/PanelLayout";
-import PanelSection from "../../components/PanelSection/PanelSection";
 
 /*TODO: 
   - Add user data
@@ -15,7 +15,7 @@ import PanelSection from "../../components/PanelSection/PanelSection";
 const AccountPanel = () => {
   return (
     <PanelLayout panelTitle="Account" panelTitleIcon={<AccountIcon />}>
-      <PanelSection
+      <LinkList
         sectionTitle="Information"
         options={[
           {
@@ -30,7 +30,7 @@ const AccountPanel = () => {
           },
         ]}
       />
-      <PanelSection
+      <LinkList
         sectionTitle="Authentication"
         options={[
           {
@@ -55,7 +55,7 @@ const AccountPanel = () => {
           },
         ]}
       />
-      <PanelSection
+      <LinkList
         sectionTitle="Management"
         options={[
           {
@@ -69,7 +69,7 @@ const AccountPanel = () => {
         ]}
       />
       <div style={{ flex: 1, width: "100%", display: "flex", alignItems: "flex-end" }}>
-        <PanelSection
+        <LinkList
           options={[
             {
               optionType: "text",

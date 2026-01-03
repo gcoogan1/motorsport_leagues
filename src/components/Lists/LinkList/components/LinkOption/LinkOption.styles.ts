@@ -3,7 +3,7 @@ import { designTokens } from "@/app/design/tokens";
 
 const { colors, gradients, borders, layout, typography } = designTokens;
 
-export const SectionOption = styled.button`
+export const Option = styled.button`
   /* Button reset */ 
   all: unset;
   box-sizing: border-box;
