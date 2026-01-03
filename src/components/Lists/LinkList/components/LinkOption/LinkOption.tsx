@@ -1,9 +1,9 @@
 import Icon from "@/components/Icon/Icon";
-import { OptionHelper, OptionTextContainer, OptionTitle, SectionOption } from "./PanelSectionOption.styles";
+import { Option, OptionHelper, OptionTextContainer, OptionTitle } from "./LinkOption.styles";
 
 //TODO: Complete profile option type rendering
 
-type PanelSectionOptionProps = {
+type LinkOptionProps = {
   optionType: "text" | "profile";
   optionTitle: string;
   optionHelper: string;
@@ -12,9 +12,9 @@ type PanelSectionOptionProps = {
   onOptionClick: () => void;
 }
 
-const PanelSectionOption = ({ optionType, optionTitle, optionHelper, optionIcon, optionIconLabel, onOptionClick }: PanelSectionOptionProps) => {
+const LinkOption = ({ optionType, optionTitle, optionHelper, optionIcon, optionIconLabel, onOptionClick }: LinkOptionProps) => {
   return (
-    <SectionOption>
+    <Option>
       {optionType === "text" ? (
         <>
           <OptionTextContainer>
@@ -30,8 +30,8 @@ const PanelSectionOption = ({ optionType, optionTitle, optionHelper, optionIcon,
           
         </>
       )}
-    </SectionOption>
+    </Option>
   )
 }
 
-export default PanelSectionOption
+export default LinkOption

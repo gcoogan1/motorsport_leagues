@@ -5,7 +5,7 @@ import { bottomFadeBorder } from "@/app/design/mixens/edgeFadeBorder";
 const { colors, borders, layout, typography } = designTokens; 
 
 
-export const PanelSectionContainer = styled.div`
+export const LinkListContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${layout.space.xSmall};

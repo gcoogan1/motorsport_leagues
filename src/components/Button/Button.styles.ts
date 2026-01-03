@@ -49,12 +49,14 @@ export const StyledButton = styled.button<{
   $size: "small" | "medium";
   $rounded: boolean;
   $isLoading?: boolean;
+  $fullWidth?: boolean;
 }>`
 
   // -- Basic button styles -- //
 
   ${typography.body.mediumBold}
   display: inline-flex;
+  width: ${({ $fullWidth }) => ($fullWidth ? "100%" : "auto")};
   align-items: center;
   border: none;
   justify-content: center;
