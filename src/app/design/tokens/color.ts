@@ -121,7 +121,7 @@ export const colorTokens: ColorTokens = {
     },
     alert: {
       fadeOutHorizontal80:
-        "linear-gradient(270deg, rgba(0, 120, 24, 0) 0%, rgba(0, 120, 24, 0.8) 50%, rgba(0, 120, 24, 0) 100%)",
+        "linear-gradient(270deg, rgba(255, 0, 0, 0) 0%, rgba(255, 0, 0, 0.8) 50%, rgba(255, 0, 0, 0) 100%)",
     },
     success: {
       fadeOutHorizontal80:
