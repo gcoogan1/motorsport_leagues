@@ -34,7 +34,22 @@ const meta: Meta<typeof FormModal> = {
         component: `
 The FormModal component is a reusable form container that provides a structured layout for forms within a modal, including a question, optional helper message, and action buttons for continuing or cancelling the form submission.
 
-Note: Clicking outside the modal or on the cancel/continue buttons will close it.
+**Note:** Clicking outside the modal or on the cancel/continue buttons will close it.
+
+### Props
+
+| Prop            | Type                     | Default       | Description                                                  |
+|-----------------|--------------------------|---------------|--------------------------------------------------------------|
+| \`question\`     | \`string\`                 | \`""\`          | A question or prompt displayed at the top of the modal.      |
+| \`helperMessage\` | \`string\`                 | \`""\`          | An optional helper message providing additional context.      |
+| \`onContinue\`   | \`() => void\`            | \`() => {}\`   | Callback function invoked when the continue button is clicked.|
+| \`onCancel\`     | \`() => void\`            | \`() => {}\`   | Callback function invoked when the cancel button is clicked.  |
+| \`children\`     | \`React.ReactNode\`       | \`undefined\`  | The form elements to be rendered within the modal.           |
+
+### Usage Notes
+
+- The \`onContinue\` and \`onCancel\` props are essential for handling form submission and cancellation actions.
+- The \`children\` prop should contain the input fields that need to be displayed within the FormModal.
     `,
       },
     },

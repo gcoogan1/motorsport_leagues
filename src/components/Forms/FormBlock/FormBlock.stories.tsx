@@ -38,6 +38,22 @@ const meta: Meta<typeof FormBlock> = {
 The FormBlock component is a reusable form container that provides a structured layout for forms, including a title, question, optional helper message, and action buttons for continuing or cancelling the form submission.
 
 **Note:** Do not resize the FormBlock component. The width is managed by the parent container with a fixed width of 480px.
+
+### Props
+
+| Prop            | Type                     | Default       | Description                                                  |
+|-----------------|--------------------------|---------------|--------------------------------------------------------------|
+| \`title\`        | \`string\`                 | \`""\`          | The main title of the form block.                             |
+| \`question\`     | \`string\`                 | \`""\`          | A question or prompt displayed below the title.               |
+| \`helperMessage\` | \`string\`                 | \`""\`          | An optional helper message providing additional context.      |
+| \`onContinue\`   | \`() => void\`            | \`() => {}\`   | Callback function invoked when the continue button is clicked.|
+| \`onCancel\`     | \`() => void\`            | \`() => {}\`   | Callback function invoked when the cancel button is clicked.  |
+| \`children\`     | \`React.ReactNode\`       | \`undefined\`  | The form elements to be rendered within the form block.       |
+
+### Usage Notes
+
+- The \`onContinue\` and \`onCancel\` props are essential for handling form submission and cancellation actions.
+- The \`children\` prop should contain the input fields that need to be displayed within the FormBlock.
     `,
       },
     },

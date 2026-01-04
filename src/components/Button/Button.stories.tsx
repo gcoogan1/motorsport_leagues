@@ -11,6 +11,48 @@ const meta: Meta<typeof Button> = {
   decorators: [withAppTheme],
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+The **Button** component is a versatile and reusable UI element that allows users to perform actions with a single click. It supports various styles, sizes, and states to fit different design requirements.
+
+### Features:
+
+**Multiple variants:** filled, ghost, outlined
+
+**Color options:** system, primary, danger
+
+**Size options:** small, medium
+
+**Icon support:** left, right, or both sides
+
+**Loading state:** indicates ongoing processes
+
+**Rounded corners:** optional rounded design
+
+### Props:
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| \`children\` | \`React.ReactNode\` | \`-\` | The content of the button, typically text or icons. |
+| \`icon\` | \`{ left?: React.ReactNode; right?: React.ReactNode; }\` | \`-\` | Icons to display on the left and/or right side of the button text. |
+| \`onClick\` | \`() => void\` | \`-\` | Function to call when the button is clicked. |
+| \`size\` | \`"small" | "medium"\` | \`"medium"\` | Defines the size of the button. |
+| \`variant\` | \`"filled" | "ghost" | "outlined"\` | \`"filled"\` | Defines the visual style of the button. |
+| \`color\` | \`"system" | "primary" | "danger"\` | \`"system"\` | Defines the color theme of the button. |
+| \`rounded\` | \`boolean\` | \`false\` | If true, the button will have rounded corners. |
+| \`isLoading\` | \`boolean\` | \`false\` | If true, the button will display a loading indicator. |
+| \`type\` | \`"button" | "submit"\` | \`"button"\` | Specifies the button type attribute. |
+
+### Usage Notes:
+- The Button component can be easily customized using the provided props to fit various use cases.
+- It is recommended to use the loading state when performing asynchronous actions to enhance user experience.
+
+### Accessibility:
+The Button component is designed with accessibility in mind, ensuring it is navigable via keyboard and screen readers.
+
+        `,
+      },
+    },
   },
   argTypes: {
     children: {

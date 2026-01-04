@@ -9,6 +9,24 @@ const Meta: Meta<typeof Panel> = {
   component: Panel,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+The \`Panel\` component is a versatile container used to display various types of content in a structured format. It supports different panel types to cater to specific use cases.
+
+### Props
+
+| Prop    | Type                     | Default       | Description                                                  |
+|---------|--------------------------|---------------|--------------------------------------------------------------|
+| \`types\` | \`"account" | "profile"\` | \`"account"\` | Specifies the type of panel to render, affecting its layout and content. |
+
+### Usage Notes
+
+- The \`types\` prop allows for easy switching between different panel styles.
+- Ensure that the content provided within the panel aligns with the selected type for optimal user experience.
+        `,
+      },
+    },
   },
   decorators: [withAppTheme],
   tags: ["autodocs"],

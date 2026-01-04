@@ -38,6 +38,32 @@ const meta: Meta<typeof TextInput> = {
   },
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+The **TextInput** component is a versatile input field designed for capturing user text input. It includes features such as icons, character counters, and error handling to enhance user experience.
+
+### Props
+
+| Prop          | Type             | Default    | Description                                                  |
+|---------------|------------------|------------|--------------------------------------------------------------|
+| \`name\`        | \`string\`        | \`-\`       | The name of the input field, used for form handling.         |
+| \`label\`       | \`string\`        | \`-\`       | The label displayed above the input field.                   |
+| \`placeholder\` | \`string\`        | \`-\`       | Placeholder text displayed inside the input field.           |
+| \`icon\`        | \`React.ReactNode\` | \`-\`       | An optional icon displayed within the input field.         |  
+| \`showCounter\` | \`boolean\`       | \`false\`   | If true, displays a character counter above the input field. |
+| \`maxLength\`   | \`number\`        | \`-\`       | The maximum number of characters allowed in the input field. |
+| \`hasError\`    | \`boolean\`       | \`false\`   | Indicates whether the input field is in an error state.      |
+| \`helperText\`  | \`string\`        | \`-\`       | Additional helper text displayed below the input field.      |
+| \`errorMessage\`| \`string\`        | \`-\`       | The error message displayed when \`hasError\` is true.       |
+
+### Usage Notes
+
+- The TextInput component is integrated with React Hook Form for seamless form management.
+- It is recommended to use the \`hasError\` and \`errorMessage\` props to provide feedback for invalid entries.
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };

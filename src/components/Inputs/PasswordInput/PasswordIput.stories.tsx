@@ -28,6 +28,29 @@ const meta: Meta<typeof PasswordInput> = {
   },
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+The **PasswordInput** component is a specialized input field designed for securely entering passwords. It includes features such as visibility toggling and error handling to enhance user experience.
+
+### Props
+
+| Prop          | Type             | Default    | Description                                                  |
+|---------------|------------------|------------|--------------------------------------------------------------|
+| \`name\`        | \`string\`        | \`-\`       | The name of the input field, used for form handling.         |
+| \`label\`       | \`string\`        | \`-\`       | The label displayed above the input field.                   |
+| \`placeholder\` | \`string\`        | \`-\`       | Placeholder text displayed inside the input field.           |
+| \`helperText\`  | \`string\`        | \`-\`       | Additional helper text displayed below the input field.      |
+| \`hasError\`    | \`boolean\`       | \`false\`   | Indicates whether the input field is in an error state.      |
+| \`errorMessage\`| \`string\`        | \`-\`       | The error message displayed when \`hasError\` is true.       |
+
+### Usage Notes
+
+- The PasswordInput component is integrated with React Hook Form for seamless form management.
+- It is recommended to use the \`hasError\` and \`errorMessage\` props to provide feedback for invalid password entries.
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };

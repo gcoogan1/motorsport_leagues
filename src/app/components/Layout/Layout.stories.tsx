@@ -9,6 +9,23 @@ const meta: Meta<typeof Layout> = {
   component: Layout,
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component: `
+The **Layout** component serves as the main layout structure for pages within the application. It typically includes common elements such as the header, footer, and navigation, providing a consistent look and feel across different pages.
+
+### Features
+
+Wraps page content with consistent layout elements.
+
+Integrates with routing to display nested page content.
+
+### Usage Notes
+
+  - Use the Layout component as a wrapper for pages to ensure uniformity in design.
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };

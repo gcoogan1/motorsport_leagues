@@ -16,6 +16,16 @@ const meta: Meta<typeof Icon> = {
     docs: {
       description: {
         component: `
+The **Icon** component is used to display SVG icons within the application. It supports various sizes and can inherit color from its parent element or have its color explicitly set via props.
+
+### Props
+
+| Prop       | Type                          | Default    | Description                                                  |
+|------------|-------------------------------|------------|--------------------------------------------------------------|
+| \`size\`     | \`"small" | "medium" | "large" | "xLarge"\` | \`"medium"\` | Defines the size of the icon.                                |
+| \`color\`    | \`string\`                     | \`undefined\` | Sets the color of the icon. If not provided, the icon inherits color from its parent element. |
+| \`children\` | \`React.ReactNode\`            | \`-\`       | The SVG icon to be displayed.                                |
+
 ### Icon Sizes
 
 | Size    | Pixels |
@@ -24,6 +34,11 @@ const meta: Meta<typeof Icon> = {
 | medium  | 20px   |
 | large   | 24px   |
 | xLarge  | 28px   |
+
+### Usage Notes
+
+- The Icon component is designed to be flexible and easily integrated into various parts of the application.
+- It is recommended to use the predefined sizes for consistency across the UI.
         `,
       },
     },

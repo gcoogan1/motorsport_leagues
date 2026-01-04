@@ -10,6 +10,29 @@ const Meta: Meta<typeof PanelHeader> = {
   component: PanelHeader,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+The \`PanelHeader\` component is used to display the header section of a panel, including the title, an optional icon, and a close button. It supports shadow styling for visual depth.
+
+### Props
+
+| Prop            | Type                     | Default       | Description                                                  |
+|-----------------|--------------------------|---------------|--------------------------------------------------------------|
+| \`panelTitle\`    | \`string\`                 | \`""\`          | The title text to be displayed in the panel header.          |
+| \`panelTitleIcon\` | \`React.ReactNode\`       | \`undefined\`  | An optional icon to display alongside the title.             |
+| \`showShadow\`    | \`boolean\`                | \`false\`      | Determines whether to show a shadow below the header.        |
+| \`onClose\`       | \`() => void\`            | \`() => {}\`   | Callback function invoked when the close button is clicked.  |
+
+
+### Usage Notes
+
+- The \`onClose\` prop is essential for handling panel closure actions.
+- The \`showShadow\` prop can be toggled to fit different design requirements.
+
+        `,
+      },
+    },
   },
   decorators: [withAppTheme],
   tags: ["autodocs"],

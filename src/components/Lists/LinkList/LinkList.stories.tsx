@@ -6,10 +6,40 @@ import ChevRight from "@assets/Icon/Chevron_Right.svg?react";
 // -- Meta Configuration -- //
 
 const Meta: Meta<typeof LinkList> = {
-  title: "App/Components/Lists/LinkList",
+  title: "Components/Lists/LinkList",
   component: LinkList,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+The \`LinkList\` component is designed to display a list of navigational links, each potentially accompanied by an icon and helper text. It is ideal for use in panels, or any context where a list of actionable items is required.
+
+
+### Props
+
+| Prop            | Type                     | Default       | Description                                                  |
+|-----------------|--------------------------|---------------|--------------------------------------------------------------|
+| \`sectionTitle\` | \`string\`                 | \`""\`          | The title of the link list section.                           |
+| \`options\`      | \`Array<LinkOption>\`     | \`[]\`         | An array of link options to be displayed in the list.        |
+
+### Usage Notes
+
+- Each option in the \`options\` array should conform to the \`LinkOption\` type for proper rendering and functionality.
+
+\` type LinkOption = {
+  optionType: "text" | "profile";
+  optionTitle: string;
+  optionHelper?: string;
+  optionIcon?: React.ReactNode;
+  optionIconLabel?: string;
+  onOptionClick: () => void;
+};
+\`
+
+`,
+      },
+    },
   },
   decorators: [withAppTheme],
   tags: ["autodocs"],

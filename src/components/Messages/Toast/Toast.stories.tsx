@@ -16,6 +16,8 @@ const meta: Meta<typeof Toast> = {
 
 The **Toast** component is used to display brief, informative messages to users. It appears at the bottom right of the screen.
 
+**Note:** Closing functionality is not implemented in this version, nor is automatic dismissal after a duration.
+
 ## Props
 
 | Prop        | Type                     | Default       | Description                                                  |
@@ -25,15 +27,17 @@ The **Toast** component is used to display brief, informative messages to users.
 
 ## Features
 
-- Supports three usage types: **success**, **error**, and **info**.
-- Automatically styled based on the usage type.
-- Includes an icon corresponding to the usage type.  
-- Positioned at the bottom right of the screen for visibility.
+Supports three usage types: **success**, **error**, and **info**.
+
+Automatically styled based on the usage type.
+
+Includes an icon corresponding to the usage type.
+
+Positioned at the bottom right of the screen for visibility.
 
 ## Usage Notes
 
 - The toast will automatically disappear after a set duration (not implemented in this version).
-- The component currently does not manage multiple toasts or their dismissal; this can be implemented with global state management solutions like Redux or Context API.
 
         `,
       },

@@ -20,19 +20,21 @@ The **EmptyMessage** component is used to display a standardized message when a 
 
 ## Props
 
-| Prop             | Type                                               | Default               | Description                                                  |
-|------------------|----------------------------------------------------|-----------------------|--------------------------------------------------------------|
-| \`title\`        | \`string\`                                         | \`"Empty Section"\`   | The main title text displayed in the empty message.          |
-| \`subtitle\`     | \`string\`                                         | \`"This section is currently empty!"\` | The subtitle text providing additional context.              |
-| \`icon\`         | \`React.ReactNode\`                                | \`<EmptyIcon />\`     | Custom icon to display above the title.                      |
-| \`primaryButton\`| \`React.ReactElement<{ fullWidth?: boolean }>\` | \`undefined\`         | Primary action button displayed below the text.              |
-| \`secondaryButton\`| \`React.ReactElement<{ fullWidth?: boolean }>\` | \`undefined\`         | Secondary action button displayed below the text.            |
+| Prop             | Type                     | Default       | Description                                                  |  
+|------------------|--------------------------|---------------|--------------------------------------------------------------|
+| \`title\`          | \`string\`                | \`"No Data Available"\` | The main title text displayed in the empty message.          |
+| \`subtitle\`       | \`string\`                | \`"There is currently no data to display."\` | The subtitle text providing additional context.              |
+| \`icon\`          | \`React.ReactNode\`       | \`Default Empty Icon\` | The icon displayed above the title. If not provided, a default empty state icon is used. |
+| \`primaryButton\`   | \`React.ReactNode\`       | \`undefined\` | An optional primary action button displayed below the subtitle. |
+| \`secondaryButton\` | \`React.ReactNode\`       | \`undefined\` | An optional secondary action button displayed below the subtitle. | 
 
 ## Features
 
-- Customizable title and subtitle text.
-- Option to provide a custom icon or use the default empty icon.
-- Supports primary and secondary action buttons, which are automatically set to full width for consistent layout.
+Customizable title and subtitle text.
+
+Option to provide a custom icon or use the default empty icon.
+
+Supports primary and secondary action buttons, which are automatically set to full width for consistent layout.
 
 ## Usage Notes
 
