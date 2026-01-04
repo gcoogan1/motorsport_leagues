@@ -10,6 +10,7 @@ export const FormWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   max-width: 480px;
+  align-self: flex-start;
   border-radius: ${borders.radius.xxxLarge};
   background: ${colors.base.base3};
   overflow: hidden;
