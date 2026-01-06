@@ -14,6 +14,7 @@ import {
 } from "./FormModal.styles";
 
 // TODO: Add logic to open and close the modal
+// TODO: Move form state management to parent component
 
 type FormModalProps = {
   question: string;
