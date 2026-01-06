@@ -1,4 +1,4 @@
-import { AppThemeProvider } from "../AppThemeProvider";
+import { AppThemeProvider } from "../../../providers/theme/AppThemeProvider";
 import ThemeSetter from "./ThemeSetter";
 import type { ThemeName } from "@/app/design/tokens/theme";
 
