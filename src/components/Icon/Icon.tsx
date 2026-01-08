@@ -17,8 +17,7 @@ const ICON_SIZES: Record<IconSize, number> = {
 const Icon = ({ size = "medium", ariaLabel, onClick, children }: IconProps) => {
   const sizeValue = ICON_SIZES[size];
 
-  const handleOnClick = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-    e.stopPropagation();
+  const handleOnClick = () => {
     if (onClick) {
       onClick();
     }
