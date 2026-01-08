@@ -5,6 +5,7 @@ import League from "@assets/Icon/League.svg?react";
 import NavBrand from "../../components/NavBrand/NavBrand";
 import NavSelect from "../../components/NavSelect/NavSelect";
 import NavLayout from "../../components/NavLayout/NavLayout";
+import { useNavigate } from "react-router";
 import {
   CenterContainer,
   LeftContainer,
@@ -14,6 +15,13 @@ import {
 //TODO: Add onClick handlers to NavSelects and NavAccount
 
 const GuestNavbar = () => {
+
+  const navigate = useNavigate();
+  
+  const handleAccountSignup= () => {
+    navigate("/create-account");
+  }
+
   return (
     <NavLayout>
       <LeftContainer>
@@ -31,7 +39,7 @@ const GuestNavbar = () => {
           <Button color="system" variant="outlined" onClick={() => {}}>
             Log In
           </Button>
-          <Button color="system" onClick={() => {}}>
+          <Button color="system" onClick={handleAccountSignup}>
             Get Started
           </Button>
         </>

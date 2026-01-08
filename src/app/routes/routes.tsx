@@ -11,10 +11,10 @@ export const ROUTES: Route[] = [
   { 
     path: "/", 
     element: <Homepage />,
-    navbar: "guest"
   },
   {
     path: "/create-account",
     element: <CreateAccount />,
+    navbar: "core",
   }
 ]

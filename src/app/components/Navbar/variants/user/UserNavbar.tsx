@@ -1,4 +1,6 @@
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useIsWrapped } from "@/hooks/useIsWrapped";
+import type { UserData } from "@/types/auth.types";
 import Profile from "@assets/Icon/Profile.svg?react";
 import Squad from "@assets/Icon/Squad.svg?react";
 import League from "@assets/Icon/League.svg?react";
@@ -13,16 +15,20 @@ import {
   MobileRightContainer,
   RightContainer,
 } from "./UserNavbar.styles";
-import { useIsWrapped } from "@/hooks/useIsWrapped";
 
 //TODO: Add onClick handlers to NavSelects and NavAccount
 
 type UserNavbarProps = {
+  user: UserData;
   countNotifications?: number;
   accountLabel?: string;
 };
 
-const UserNavbar = ({ countNotifications, accountLabel }: UserNavbarProps) => {
+const UserNavbar = ({
+  user,
+  countNotifications,
+  accountLabel,
+}: UserNavbarProps) => {
   const isMobile = useMediaQuery("(max-width: 919px)");
   const [ref, isWrapped] = useIsWrapped<HTMLDivElement>(150);
 
@@ -41,10 +47,14 @@ const UserNavbar = ({ countNotifications, accountLabel }: UserNavbarProps) => {
             </>
           </CenterContainer>
           <RightContainer>
-            <>
-              <NavNotification count={countNotifications} />
-              <NavAccount label={accountLabel} />
-            </>
+            {user && (
+              <>
+                {!!countNotifications && (
+                  <NavNotification count={countNotifications} />
+                )}
+                {!!accountLabel && <NavAccount label={accountLabel} />}
+              </>
+            )}
           </RightContainer>
         </>
       ) : (
