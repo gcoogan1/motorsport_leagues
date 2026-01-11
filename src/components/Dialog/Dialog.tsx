@@ -1,5 +1,12 @@
 import Button from "../Button/Button";
-import { DialogViewport, DialogWrapper, DialogHeader, DialogTitle, DialogSubtitle, DialogActions } from "./Dialog.styles";
+import {
+  DialogViewport,
+  DialogWrapper,
+  DialogHeader,
+  DialogTitle,
+  DialogSubtitle,
+  DialogActions,
+} from "./Dialog.styles";
 import { dialogStyles, type DialogType } from "./Dialog.variants";
 
 // TODO: Add logic to handle open/close
@@ -8,30 +15,61 @@ type DialogProps = {
   type: DialogType;
   title: string;
   subtitle?: string;
-  isOpen: boolean;
-  onClose: () => void;
-  onContinue: () => void;
-}
+  buttons?: {
+    onCancel?: {
+      label: string;
+      action?: () => void;
+      leftIcon?: React.ReactNode;
+      rightIcon?: React.ReactNode;
+    };
+    onContinue?: {
+      label: string;
+      action?: () => void;
+      leftIcon?: React.ReactNode;
+      rightIcon?: React.ReactNode;
+    };
+  };
+};
 
-const Dialog = ({ type = "core", title, subtitle, isOpen , onClose, onContinue }: DialogProps) => {
-
-  if (!isOpen) return null;
+const Dialog = ({ type = "core", title, subtitle, buttons }: DialogProps) => {
   const typeStyle = dialogStyles[type];
 
   return (
-  <DialogViewport>
+    <DialogViewport>
       <DialogWrapper $typeStyle={typeStyle}>
-      <DialogHeader>
-        <DialogTitle>{title}</DialogTitle>
-        {subtitle && <DialogSubtitle>{subtitle}</DialogSubtitle>}
-      </DialogHeader>
-      <DialogActions>
-        <Button color="base" variant="outlined" onClick={onClose}>Cancel</Button>
-        <Button onClick={onContinue}>Continue</Button>
-      </DialogActions>
-    </DialogWrapper>
-  </DialogViewport>
-  )
-}
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          {subtitle && <DialogSubtitle>{subtitle}</DialogSubtitle>}
+        </DialogHeader>
+        <DialogActions>
+          {buttons?.onCancel && (
+            <Button
+              color="base"
+              variant="outlined"
+              icon={{
+                left: buttons?.onCancel?.leftIcon,
+                right: buttons?.onCancel?.rightIcon,
+              }}
+              onClick={buttons?.onCancel?.action}
+            >
+              {buttons?.onCancel?.label}
+            </Button>
+          )}
+          {buttons?.onContinue && (
+            <Button
+              onClick={buttons?.onContinue?.action}
+              icon={{
+                left: buttons?.onContinue?.leftIcon,
+                right: buttons?.onContinue?.rightIcon,
+              }}
+            >
+              {buttons?.onContinue?.label}
+            </Button>
+          )}
+        </DialogActions>
+      </DialogWrapper>
+    </DialogViewport>
+  );
+};
 
-export default Dialog
+export default Dialog;

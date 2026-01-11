@@ -1,5 +1,4 @@
 import React from "react";
-import { FormProvider, useForm } from "react-hook-form";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Button from "../../Button/Button";
 import {
@@ -20,8 +19,21 @@ type FormBlockProps = {
   question: string;
   helperMessage?: string;
   children?: React.ReactNode;
-  onContinue?: () => void;
-  onCancel?: () => void;
+  buttons?: {
+    onCancel?: {
+      label: string;
+      action?: () => void;
+      leftIcon?: React.ReactNode;
+      rightIcon?: React.ReactNode;
+    };
+    onContinue?: {
+      label: string;
+      action?: () => void;
+      leftIcon?: React.ReactNode;
+      rightIcon?: React.ReactNode;
+    };
+  };
+  onSubmit?: (data: any) => void;
 };
 
 const FormBlock = ({
@@ -29,51 +41,66 @@ const FormBlock = ({
   question,
   helperMessage,
   children,
-  onContinue,
-  onCancel,
+  buttons,
+  onSubmit,
 }: FormBlockProps) => {
   const isMobile = useMediaQuery("(max-width: 919px)");
 
-  const formMethods = useForm();
-  const { handleSubmit } = formMethods;
-
   const handleOnContinue = () => {
-    if (onContinue) {
-      onContinue();
+    if (buttons?.onContinue?.action) {
+      buttons.onContinue.action();
     }
   };
 
   const handleOnCancel = () => {
-    if (onCancel) {
-      onCancel();
+    if (buttons?.onCancel?.action) {
+      buttons.onCancel.action();
     }
   };
 
   return (
-    <FormProvider {...formMethods}>
-      <FormWrapper onSubmit={handleSubmit(handleOnContinue)}>
-        <FormHeader>
-          <HeaderTitle>{title}</HeaderTitle>
-        </FormHeader>
-        <FormBody $isMobile={isMobile}>
-          <BodyHeader>
-            <BodyTitle>{question}</BodyTitle>
-            <BodySubtitle>{helperMessage}</BodySubtitle>
-          </BodyHeader>
-          <BodyInputContainer>{children}</BodyInputContainer>
-        </FormBody>
-        <FormActions>
-          <SecondaryButtonContainer>
-            <Button color="base" variant="ghost" onClick={handleOnCancel}>
-              Cancel
+    <FormWrapper onSubmit={onSubmit}>
+      <FormHeader>
+        <HeaderTitle>{title}</HeaderTitle>
+      </FormHeader>
+      <FormBody $isMobile={isMobile}>
+        <BodyHeader>
+          <BodyTitle>{question}</BodyTitle>
+          <BodySubtitle>{helperMessage}</BodySubtitle>
+        </BodyHeader>
+        <BodyInputContainer>{children}</BodyInputContainer>
+      </FormBody>
+      <FormActions>
+        <SecondaryButtonContainer>
+        {buttons?.onCancel && (
+            <Button
+              color="base"
+              variant="ghost"
+              onClick={handleOnCancel}
+              icon={{
+                left: buttons?.onCancel?.leftIcon,
+                right: buttons?.onCancel?.rightIcon,
+              }}
+            >
+              {buttons?.onCancel?.label || "Cancel"}
             </Button>
-          </SecondaryButtonContainer>
-          <Button type="submit" color="system">
-            Continue
+        )}
+        </SecondaryButtonContainer>
+        {buttons?.onContinue && (
+          <Button
+            type="submit"
+            color="system"
+            onClick={handleOnContinue}
+            icon={{
+              left: buttons?.onContinue?.leftIcon,
+              right: buttons?.onContinue?.rightIcon,
+            }}
+          >
+            {buttons?.onContinue?.label || "Continue"}
           </Button>
-        </FormActions>
-      </FormWrapper>
-    </FormProvider>
+        )}
+      </FormActions>
+    </FormWrapper>
   );
 };
 

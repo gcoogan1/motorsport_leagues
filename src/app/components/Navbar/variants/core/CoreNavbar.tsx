@@ -1,4 +1,6 @@
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useNavigate } from "react-router";
+import type { UserData } from "@/types/auth.types";
 import Button from "@/components/Button/Button";
 import Back from "@assets/Icon/Arrow_Backward.svg?react";
 import NavLayout from "../../components/NavLayout/NavLayout";
@@ -14,12 +16,26 @@ import {
 // TODO: Add onClick handler to NavAccount & on Back button
 
 type CoreNavbarProps = {
+  user: UserData;
   countNotifications?: number;
   accountLabel?: string;
 };
 
-const CoreNavbar = ({ countNotifications, accountLabel }: CoreNavbarProps) => {
+const CoreNavbar = ({
+  user,
+  countNotifications,
+  accountLabel,
+}: CoreNavbarProps) => {
   const isMobile = useMediaQuery("(max-width: 919px)");
+  const navigate = useNavigate();
+
+  const goBackOrHome = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/", { replace: true });
+    }
+  };
 
   return (
     <NavLayout>
@@ -29,14 +45,14 @@ const CoreNavbar = ({ countNotifications, accountLabel }: CoreNavbarProps) => {
             color="base"
             rounded
             icon={{ left: <Back /> }}
-            onClick={() => {}}
+            onClick={goBackOrHome}
           />
         ) : (
           <Button
             color="base"
             rounded
             icon={{ left: <Back /> }}
-            onClick={() => {}}
+            onClick={goBackOrHome}
           >
             Back
           </Button>
@@ -46,10 +62,14 @@ const CoreNavbar = ({ countNotifications, accountLabel }: CoreNavbarProps) => {
         <NavBrand />
       </CenterContainer>
       <RightContainer>
-        <>
-          <NavNotification count={countNotifications} />
-          <NavAccount label={accountLabel} />
-        </>
+        {user && (
+          <>
+            {!!countNotifications && (
+              <NavNotification count={countNotifications} />
+            )}
+            {!!accountLabel && <NavAccount label={accountLabel} />}
+          </>
+        )}
       </RightContainer>
     </NavLayout>
   );
