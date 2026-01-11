@@ -4,6 +4,7 @@ import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import FormBlock from "./FormBlock";
 import TextInput from "../../Inputs/TextInput/TextInput";
 import PasswordInput from "../../Inputs/PasswordInput/PasswordInput";
+import { FormProviderMock } from "@/providers/mock/FormProviderMock";
 
 // -- Meta Configuration -- //
 
@@ -23,7 +24,7 @@ const meta: Meta<typeof FormBlock> = {
     },
     buttons: {
       onCancel: { control: false },
-      onContinue: { control: false }
+      onContinue: { control: false },
     },
     children: {
       control: false,
@@ -81,13 +82,22 @@ export const Default: Story = {
     title: "Form Block Title",
     question: "Question",
     helperMessage: "Helper message.",
+    buttons: {
+      onContinue: {
+        label: "Continue",
+        action: () => alert("Continued"),
+        rightIcon: <ArrowForward />,
+      },
+    },
   },
   render: (args) => (
-    <div style={{ width: "480px" }}>
-      <FormBlock {...args}>
-        <TextInput name="name" label="Label" placeholder="Placeholder Text" />
-      </FormBlock>
-    </div>
+    <FormProviderMock>
+      <div style={{ width: "480px" }}>
+        <FormBlock {...args}>
+          <TextInput name="name" label="Label" placeholder="Placeholder Text" />
+        </FormBlock>
+      </div>
+    </FormProviderMock>
   ),
 };
 
@@ -96,18 +106,27 @@ export const TwoInputs: Story = {
     title: "Create Account",
     question: "Let’s get you set up",
     helperMessage: "You can change this later.",
+    buttons: {
+      onContinue: {
+        label: "Create Account",
+        action: () => alert("Account Created"),
+        rightIcon: <ArrowForward />,
+      },
+    },
   },
   render: (args) => (
-    <div style={{ width: "480px" }}>
-      <FormBlock {...args}>
-        <TextInput name="username" label="Username" placeholder="Username" />
-        <PasswordInput
-          name="password"
-          label="Password"
-          placeholder="Password"
-        />
-      </FormBlock>
-    </div>
+    <FormProviderMock>
+      <div style={{ width: "480px" }}>
+        <FormBlock {...args}>
+          <TextInput name="username" label="Username" placeholder="Username" />
+          <PasswordInput
+            name="password"
+            label="Password"
+            placeholder="Password"
+          />
+        </FormBlock>
+      </div>
+    </FormProviderMock>
   ),
 };
 
@@ -116,40 +135,58 @@ export const ManyInputs: Story = {
     title: "Profile Information",
     question: "Tell us about yourself",
     helperMessage: "This information will be displayed on your profile.",
+    buttons: {
+      onCancel: {
+        label: "Back",
+        action: () => alert("Going Back"),
+        rightIcon: null,
+      },
+      onContinue: {
+        label: "Save",
+        action: () => alert("Profile Saved"),
+        rightIcon: null,
+      },
+    },
   },
   render: (args) => (
-    <div
-      style={{
-        width: "480px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "16px",
-      }}
-    >
-      <FormBlock {...args}>
-        <TextInput
-          name="firstName"
-          label="First Name"
-          placeholder="First Name"
-        />
-        <TextInput name="lastName" label="Last Name" placeholder="Last Name" />
-        <TextInput
-          name="email"
-          label="Email Address"
-          placeholder="Email Address"
-        />
-        <TextInput
-          name="phone"
-          label="Phone Number"
-          placeholder="Phone Number"
-        />
-        <PasswordInput
-          name="password"
-          label="Password"
-          placeholder="Password"
-        />
-      </FormBlock>
-    </div>
+    <FormProviderMock>
+      <div
+        style={{
+          width: "480px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+        }}
+      >
+        <FormBlock {...args}>
+          <TextInput
+            name="firstName"
+            label="First Name"
+            placeholder="First Name"
+          />
+          <TextInput
+            name="lastName"
+            label="Last Name"
+            placeholder="Last Name"
+          />
+          <TextInput
+            name="email"
+            label="Email Address"
+            placeholder="Email Address"
+          />
+          <TextInput
+            name="phone"
+            label="Phone Number"
+            placeholder="Phone Number"
+          />
+          <PasswordInput
+            name="password"
+            label="Password"
+            placeholder="Password"
+          />
+        </FormBlock>
+      </div>
+    </FormProviderMock>
   ),
 };
 
@@ -162,22 +199,26 @@ export const WithButtons: Story = {
       onCancel: {
         label: "Cancel",
         action: () => alert("Cancelled"),
-        leftIon: null,
         rightIcon: null,
       },
       onContinue: {
         label: "Create Account",
         action: () => alert("Created Account"),
-        leftIon: null,
         rightIcon: <ArrowForward />,
       },
     },
   },
   render: (args) => (
-    <div style={{ width: "480px" }}>
-      <FormBlock {...args}>
-        <TextInput name="input" label="Input" placeholder="Type something..." />
-      </FormBlock>
-    </div>
+    <FormProviderMock>
+      <div style={{ width: "480px" }}>
+        <FormBlock {...args}>
+          <TextInput
+            name="input"
+            label="Input"
+            placeholder="Type something..."
+          />
+        </FormBlock>
+      </div>
+    </FormProviderMock>
   ),
 };

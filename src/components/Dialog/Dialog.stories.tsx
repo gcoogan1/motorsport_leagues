@@ -20,7 +20,6 @@ const meta: Meta<typeof Dialog> = {
         component: `
 The **Dialog** component is a versatile modal dialog box that can be used to display important information or prompt user actions. It supports different types such as \`core\`, \`alert\`, and \`success\`, each with its own styling.
 
-**Note:** \`onClose\` does not currently close the dialog; this functionality needs to be implemented. The width is managed by a parent container of 480px in the stories for demonstration purposes.
 
 ### Features
 
@@ -38,14 +37,25 @@ Callbacks for close and continue actions.
 | \`type\`       | \`DialogType\`            | \`"core"\`     | The style type of the dialog, affecting its appearance.      |
 | \`title\`      | \`string\`                 | \`""\`          | The main title text displayed at the top of the dialog.      |
 | \`subtitle\`   | \`string\`                 | \`undefined\`  | An optional subtitle providing additional context.           |
-| \`isOpen\`    | \`boolean\`                | \`false\`      | Controls whether the dialog is visible or hidden.            |
-| \`onClose\`   | \`() => void\`            | \`() => {}\`   | Callback function invoked when the dialog is closed.         |
-| \`onContinue\` | \`() => void\`            | \`() => {}\`   | Callback function invoked when the continue action is triggered. |
+| \`buttons\`      | \`object\`                 | \`undefined\`  | Configuration for the continue and cancel buttons.           |
+| \`buttons.onCancel\` | \`object\`             | \`undefined\`  | Configuration for the cancel button.                          |
+| \`buttons.onContinue\` | \`object\`          | \`undefined\`  | Configuration for the continue button.                        |
+| \`buttons.onCancel.label\` | \`string\`     | \`"Cancel"\`   | Label for the cancel button.                                  |
+| \`buttons.onCancel.action\` | \`() => void\` | \`undefined\`  | Action to perform when the cancel button is clicked.          |
+| \`buttons.onCancel.leftIon\` | \`React.ReactNode\` | \`undefined\`  | Optional left icon for the cancel button.                     |
+| \`buttons.onCancel.rightIcon\` | \`React.ReactNode\` | \`undefined\`  | Optional right icon for the cancel button.                    |
+| \`buttons.onContinue.label\` | \`string\`    | \`"Continue"\` | Label for the continue button.                                |
+| \`buttons.onContinue.action\` | \`() => void\`| \`undefined\`  | Action to perform when the continue button is clicked.         |
+| \`buttons.onContinue.leftIcon\` | \`React.ReactNode\` | \`undefined\`  | Optional left icon for the continue button.                   |
+| \`buttons.onContinue.rightIcon\` | \`React.ReactNode\` | \`undefined\`  | Optional right icon for the continue button.                  |
+
 
 ### Usage Notes
 
-- The dialog will not render if \`isOpen\` is set to \`false\`.
-- The \`onClose\` and \`onContinue\` props are essential for handling user interactions with the dialog.
+- Ensure to provide meaningful titles and subtitles to convey the purpose of the dialog effectively.
+- Use the \`buttons\` prop to define actions users can take, such as confirming or canceling an operation.
+
+
     `,
       },
     },
@@ -64,9 +74,7 @@ export const Default: Story = {
     type: "core",
     title: "Default Title",
     subtitle: "Dialog body text.",
-    isOpen: true,
-    onClose: () => {},
-    onContinue: () => {},
+    
   },
 };
 
@@ -75,9 +83,21 @@ export const CoreDialog: Story = {
     type: "core",
     title: "Core Title",
     subtitle: "Dialog body text.",
-    isOpen: true,
-    onClose: () => {},
-    onContinue: () => {},
+    buttons: {
+      onCancel: {
+        label: "Cancel",
+        action: () => {
+          console.log("Cancel clicked");
+        },
+      },
+      onContinue: {
+        label: "Continue",
+        action: () => {
+          console.log("Continue clicked");
+        },
+      },
+    },
+    
   },
   render: (args) => <div style={{ width: '480px' }}><Dialog {...args} /></div>,
 };
@@ -87,9 +107,20 @@ export const AlertDialog: Story = {
     type: "alert",
     title: "Alert Title",
     subtitle: "Dialog body text.",
-    isOpen: true,
-    onClose: () => {},
-    onContinue: () => {},
+    buttons: {
+      onCancel: {
+        label: "Cancel",
+        action: () => {
+          console.log("Cancel clicked");
+        },
+      },
+      onContinue: {
+        label: "Continue",
+        action: () => {
+          console.log("Continue clicked");
+        },
+      },
+    },
   },
   render: (args) => <div style={{ width: '480px' }}><Dialog {...args} /></div>,
 };
@@ -99,9 +130,21 @@ export const SuccessDialog: Story = {
     type: "success",
     title: "Success Title",
     subtitle: "Dialog body text.",
-    isOpen: true,
-    onClose: () => {},
-    onContinue: () => {},
+    buttons: {
+      onCancel: {
+        label: "Cancel",
+        action: () => {
+          console.log("Cancel clicked");
+        },
+      },
+      onContinue: {
+        label: "Continue",
+        action: () => {
+          console.log("Continue clicked");
+        },
+      },
+    },
+  
   },
   render: (args) => <div style={{ width: '480px' }}><Dialog {...args} /></div>,
 };

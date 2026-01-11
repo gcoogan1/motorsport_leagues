@@ -71,8 +71,8 @@ const FormBlock = ({
         <BodyInputContainer>{children}</BodyInputContainer>
       </FormBody>
       <FormActions>
+        <SecondaryButtonContainer>
         {buttons?.onCancel && (
-          <SecondaryButtonContainer>
             <Button
               color="base"
               variant="ghost"
@@ -84,8 +84,8 @@ const FormBlock = ({
             >
               {buttons?.onCancel?.label || "Cancel"}
             </Button>
-          </SecondaryButtonContainer>
         )}
+        </SecondaryButtonContainer>
         {buttons?.onContinue && (
           <Button
             type="submit"
