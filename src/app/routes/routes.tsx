@@ -1,5 +1,7 @@
 import CreateAccount from "@/pages/CreateAccount/CreateAccount";
 import Homepage from "@/pages/Hompage/Homepage";
+import Login from "@/pages/Login/Login";
+import VerifyAccount from "@/pages/VerifyAccount/VerifyAccount";
 
 export type Route = {
   path: string;
@@ -13,8 +15,18 @@ export const ROUTES: Route[] = [
     element: <Homepage />,
   },
   {
+    path: "/verify-account",
+    element: <VerifyAccount />,
+    navbar: "core",
+  },
+  {
     path: "/create-account",
     element: <CreateAccount />,
+    navbar: "core",
+  },
+  {
+    path: "/login",
+    element: <Login />,
     navbar: "core",
   }
 ]

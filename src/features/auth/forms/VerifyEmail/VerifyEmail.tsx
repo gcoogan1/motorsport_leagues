@@ -29,8 +29,8 @@ const VerifyEmail = () => {
 
   
   // -- Handlers -- //
-  const handleGoToCreateAcct = () => {
-    navigate("/create-account");
+  const handleGoToVerifyAccount = () => {
+    navigate("/verify-account");
   };
 
   const handleGoToHome = () => {
@@ -72,7 +72,7 @@ const VerifyEmail = () => {
         console.error("Resend code failed:", result.error);
         handleSupabaseError({ status: result.error.status }, openModal);
       } else {
-        openModal(<CodeResent onContinue={handleGoToCreateAcct} />);
+        openModal(<CodeResent onContinue={handleGoToVerifyAccount} />);
       }
     } catch (error) {
       console.error("Resend code error:", error);
