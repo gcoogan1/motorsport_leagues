@@ -5,20 +5,23 @@ import { Main, Wrapper } from "./Layout.styles";
 import Footer from "../Footer/Footer";
 import Navbar from "../Navbar/Navbar";
 
+//TODO: Add loading state while auth is being determined
+
 const Layout = () => {
   const location = useLocation();
-  const { user, isVerified } = useAuth();
+  const { user, isVerified, loading } = useAuth();
 
   // Find the current route based on the location
   const currentRoute = ROUTES.find((route) => route.path === location.pathname);
 
   // Determine navbar usage; if route specifies, use that, else base on auth status
   const userStatus = user && isVerified ? "user" : "guest";
-  const usage = currentRoute?.navbar || userStatus;
+  const usage = currentRoute?.navbar ? currentRoute.navbar : userStatus;
+  const userDetails = userStatus === "user" ? user : undefined;
 
   return (
     <Wrapper>
-      <Navbar usage={usage} user={userStatus && user} />
+      {!loading && <Navbar usage={usage} user={userDetails} />}
       <Main>
         <Outlet />
       </Main>

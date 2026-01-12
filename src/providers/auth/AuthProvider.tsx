@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { AuthContext } from "./AuthContext";
 import type { AuthContextType } from "../../types/auth.types";
+import { logoutUser } from "@/services/auth.service";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(null);
@@ -11,23 +12,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Check and refresh authentication state
   const refreshAuth = useCallback(async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const currentUser = sessionData.session?.user ?? null;
+    setLoading(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const currentUser = sessionData.session?.user ?? null;
 
-    let verified = false;
-    if (currentUser) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("is_verified")
-        .eq("id", currentUser.id)
-        .single();
+      let verified = false;
+      if (currentUser) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("is_verified")
+          .eq("id", currentUser.id)
+          .single();
 
-      verified = profile?.is_verified ?? false;
+        verified = profile?.is_verified ?? false;
+      }
+
+      setSession(sessionData.session);
+      setUser(currentUser);
+      setIsVerified(verified);
+    } finally {
+      setLoading(false);
     }
+  }, []);
 
-    setSession(sessionData.session);
-    setUser(currentUser);
-    setIsVerified(verified);
+  // Reset authentication state (used for logout and hard reset)
+  const resetAuth = useCallback(async () => {
+    await logoutUser();
+    setUser(null);
+    setSession(null);
+    setIsVerified(false);
+    setLoading(false);
   }, []);
 
   // Initialize and listen for auth state changes
@@ -54,11 +69,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [refreshAuth]);
 
-
   // Provide auth context values
   return (
     <AuthContext.Provider
-      value={{ user, session, isVerified, loading, refreshAuth }}
+      value={{ user, session, isVerified, loading, refreshAuth, resetAuth }}
     >
       {children}
     </AuthContext.Provider>
