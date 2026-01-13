@@ -16,6 +16,9 @@ export type AuthContextType = {
 // User data type
 export type UserData = User | null;
 
+// Purpose type for verification codes
+export type Purpose = "signup" | "reset_password";
+
 // Signup payload and result types
 export type SignupPayload = {
   email: string;

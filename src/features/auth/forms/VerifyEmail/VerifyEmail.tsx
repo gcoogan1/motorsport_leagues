@@ -46,7 +46,7 @@ const VerifyEmail = () => {
     }
 
     try {
-      const result = await verifyCode(user.email, data.verificationCode);
+      const result = await verifyCode(user.email, data.verificationCode, "signup");
       if (!result.success) {
         console.error("Verification failed:", result.error);
         handleSupabaseError({ status: result.error.status }, openModal);
@@ -67,7 +67,7 @@ const VerifyEmail = () => {
     }
 
     try {
-      const result = await sendVerificationCode(user.email);
+      const result = await sendVerificationCode(user.email, "signup");
       if (!result.success) {
         console.error("Resend code failed:", result.error);
         handleSupabaseError({ status: result.error.status }, openModal);

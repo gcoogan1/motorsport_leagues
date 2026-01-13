@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { createProfile } from "./profile.service";
 import type {
+  Purpose,
   SendVerificationResult,
   SigninPayload,
   SignInResult,
@@ -71,9 +72,10 @@ export const signUpUser = async (
 // -- Send Verification Code -- //
 export const sendVerificationCode = async (
   email: string,
+  purpose: Purpose,
 ): Promise<SendVerificationResult> => {
   const { data, error } = await supabase.functions.invoke("send-code", {
-    body: { email },
+    body: { email, purpose },
   });
 
   if (error) {
@@ -97,9 +99,10 @@ export const sendVerificationCode = async (
 export const verifyCode = async (
   email: string,
   code: string,
+  purpose: Purpose,
 ): Promise<VerifyCodeResult> => {
   const { data, error } = await supabase.functions.invoke("verify-code", {
-    body: { email, code },
+    body: { email, code, purpose },
   });
 
   if (error) {

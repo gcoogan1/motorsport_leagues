@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,7 +10,6 @@ import TextInput from "@/components/Inputs/TextInput/TextInput";
 import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import { sendVerificationCode, signUpUser } from "@/services/auth.service";
 import ExistingAccount from "../../modals/errors/ExistingAccount/ExistingAccount";
-import { useNavigate } from "react-router";
 
 // TODO: Remove console logs
 
@@ -54,7 +54,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
           // Generals modal for other errors
           handleSupabaseError({ status: result.error.status }, openModal);
         } else {
-          const res = await sendVerificationCode(data.email);
+          const res = await sendVerificationCode(data.email, "signup");
           if (!res.success) {
             // General modals for other errors
             handleSupabaseError({ status: res.error.status }, openModal);
