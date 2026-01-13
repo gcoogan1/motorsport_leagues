@@ -31,13 +31,11 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
     formState: { errors },
   } = formMethods;
 
-
   // -- Handlers -- //
   const handleGoToLogin = () => {
-    // navigate("/login");
-    navigate("/")
+    navigate("/login");
   };
-  
+
   const handleOnSubmit = async (data: SignupFormValues) => {
     try {
       try {
@@ -48,17 +46,17 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
           lastName: data.lastName,
         });
         if (!result.success) {
+          // Specific modal for existing account
           if (result.error.status === 422) {
-            // Open existing account modal
             openModal(<ExistingAccount onContinue={handleGoToLogin} />);
             return;
           }
-          // Open appropriate error modal
+          // Generals modal for other errors
           handleSupabaseError({ status: result.error.status }, openModal);
         } else {
           const res = await sendVerificationCode(data.email);
           if (!res.success) {
-            // Open appropriate error modal
+            // General modals for other errors
             handleSupabaseError({ status: res.error.status }, openModal);
             return;
           }
@@ -76,7 +74,6 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
       console.error("Signup error:", error);
     }
   };
-
 
   return (
     <FormProvider {...formMethods}>

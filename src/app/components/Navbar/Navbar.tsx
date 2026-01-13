@@ -10,13 +10,13 @@ import UserNavbar from "./variants/user/UserNavbar";
 
 type NavbarProps = {
   usage: "core" | "user" | "guest";
-  user: UserData;
+  user?: UserData;
 };
 
 const Navbar = ({ usage, user }: NavbarProps) => {
 
   // Temporary hardcoded values for demonstration
-  const count = 3;
+  const count = user ? 3 : undefined;
   const label = user ? user.user_metadata?.firstName : "Account";
 
   switch (usage) {
@@ -25,6 +25,7 @@ const Navbar = ({ usage, user }: NavbarProps) => {
     case "guest":
       return <GuestNavbar />;
     case "user":
+      return <UserNavbar countNotifications={count} accountLabel={label} user={user} />;
     default:
       return <UserNavbar countNotifications={count} accountLabel={label} user={user} />;
   }

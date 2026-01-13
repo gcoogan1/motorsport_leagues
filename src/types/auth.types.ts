@@ -8,6 +8,7 @@ export type AuthContextType = {
   isVerified: boolean;
   loading: boolean;
   refreshAuth: () => Promise<void>;
+  resetAuth: () => Promise<void>; 
 };
 
 // -- Authentication Supabase Services -- //
@@ -56,3 +57,22 @@ type VerifyCodeSuccess = {
 };
 
 export type VerifyCodeResult = VerifyCodeSuccess | SupabaseError;
+
+// Signin payload and result types
+export type SigninPayload = {
+  email: string;
+  password: string;
+};
+
+type SigninSuccess = {
+  success: true;
+  data: Awaited<ReturnType<typeof supabase.auth.signInWithPassword>>["data"];
+};
+
+export type SignInResult = SigninSuccess | SupabaseError;
+
+type SignoutSuccess = {
+  success: true;
+};
+
+export type SignOutResult = SignoutSuccess | SupabaseError;

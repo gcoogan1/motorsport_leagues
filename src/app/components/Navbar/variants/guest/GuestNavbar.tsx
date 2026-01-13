@@ -22,6 +22,10 @@ const GuestNavbar = () => {
     navigate("/create-account");
   }
 
+  const handleAccountLogin= () => {
+    navigate("/login");
+  }
+
   return (
     <NavLayout>
       <LeftContainer>
@@ -36,7 +40,7 @@ const GuestNavbar = () => {
       </CenterContainer>
       <RightContainer>
         <>
-          <Button color="system" variant="outlined" onClick={() => {}}>
+          <Button color="system" variant="outlined" onClick={handleAccountLogin}>
             Log In
           </Button>
           <Button color="system" onClick={handleAccountSignup}>

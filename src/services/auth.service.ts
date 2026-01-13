@@ -2,6 +2,9 @@ import { supabase } from "@/lib/supabase";
 import { createProfile } from "./profile.service";
 import type {
   SendVerificationResult,
+  SigninPayload,
+  SignInResult,
+  SignOutResult,
   SignupPayload,
   SignUpResult,
   VerifyCodeResult,
@@ -90,7 +93,6 @@ export const sendVerificationCode = async (
   };
 };
 
-
 // -- Verify Code-- //
 export const verifyCode = async (
   email: string,
@@ -114,5 +116,83 @@ export const verifyCode = async (
   return {
     success: true,
     data,
+  };
+};
+
+// -- Login User -- //
+export const loginUser = async (payload: SigninPayload): Promise<SignInResult> => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: payload.email,
+    password: payload.password,
+  });
+
+  // Handle login error or missing user
+  if (error || !data.user) {
+    return {
+      success: false,
+      error: {
+        message: error?.message || "No user returned",
+        code: error?.code || "UNKNOWN_ERROR",
+        status: error?.status || 500,
+      },
+    };
+  }
+
+  // Fetch profile
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("is_verified")
+    .eq("id", data.user.id)
+    .single();
+
+  // Log out if profile fetch fails and return error
+  if (profileError) {
+    return {
+      success: false,
+      error: {
+        message: profileError.message,
+        code: "PROFILE_FETCH_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  // Log out if email not verified and return error
+  if (!profile.is_verified) {
+    return {
+      success: false,
+      error: {
+        message: "Email not verified.",
+        code: "EMAIL_NOT_VERIFIED",
+        status: 401,
+      },
+    };
+  }
+
+  // Return success if login and profile verification succeed
+  return {
+    success: true,
+    data,
+  };
+};
+
+
+// -- Logout User -- //
+export const logoutUser = async (): Promise<SignOutResult> => {
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error?.code || "UNKNOWN_ERROR",
+        status: error?.status || 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
   };
 };

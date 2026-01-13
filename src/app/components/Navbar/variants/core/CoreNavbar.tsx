@@ -16,7 +16,7 @@ import {
 // TODO: Add onClick handler to NavAccount & on Back button
 
 type CoreNavbarProps = {
-  user: UserData;
+  user?: UserData;
   countNotifications?: number;
   accountLabel?: string;
 };

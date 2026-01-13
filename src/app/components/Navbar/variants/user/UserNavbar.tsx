@@ -19,7 +19,7 @@ import {
 //TODO: Add onClick handlers to NavSelects and NavAccount
 
 type UserNavbarProps = {
-  user: UserData;
+  user?: UserData;
   countNotifications?: number;
   accountLabel?: string;
 };
