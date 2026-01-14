@@ -25,12 +25,15 @@ type FormBlockProps = {
       action?: () => void;
       leftIcon?: React.ReactNode;
       rightIcon?: React.ReactNode;
+      loading?: boolean;
     };
     onContinue?: {
       label: string;
       action?: () => void;
       leftIcon?: React.ReactNode;
       rightIcon?: React.ReactNode;
+      loading?: boolean;
+      loadingText?: string;
     };
   };
   onSubmit?: (data: any) => void;
@@ -77,6 +80,8 @@ const FormBlock = ({
               color="base"
               variant="ghost"
               onClick={handleOnCancel}
+              isLoading={buttons?.onCancel?.loading}
+              loadingText={buttons?.onCancel?.loadingText}
               icon={{
                 left: buttons?.onCancel?.leftIcon,
                 right: buttons?.onCancel?.rightIcon,
@@ -91,6 +96,8 @@ const FormBlock = ({
             type="submit"
             color="system"
             onClick={handleOnContinue}
+            isLoading={buttons?.onContinue?.loading}
+            loadingText={buttons?.onContinue?.loadingText}
             icon={{
               left: buttons?.onContinue?.leftIcon,
               right: buttons?.onContinue?.rightIcon,

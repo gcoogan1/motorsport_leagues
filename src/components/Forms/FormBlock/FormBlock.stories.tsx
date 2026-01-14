@@ -52,12 +52,16 @@ The FormBlock component is a reusable form container that provides a structured 
 | \`buttons.onContinue\` | \`object\`          | \`undefined\`  | Configuration for the continue button.                        |
 | \`buttons.onCancel.label\` | \`string\`     | \`"Cancel"\`   | Label for the cancel button.                                  |
 | \`buttons.onCancel.action\` | \`() => void\` | \`undefined\`  | Action to perform when the cancel button is clicked.          |
-| \`buttons.onCancel.leftIon\` | \`React.ReactNode\` | \`undefined\`  | Optional left icon for the cancel button.                     |
+| \`buttons.onCancel.leftIcon\` | \`React.ReactNode\` | \`undefined\`  | Optional left icon for the cancel button.                     |
+| \`buttons.onCancel.loading\` | \`boolean\` | \`undefined\`  | Indicates if the cancel button is in a loading state.         |
+| \`buttons.onCancel.loadingText\` | \`string\` | \`undefined\`  | Text to display when the cancel button is in a loading state. |
 | \`buttons.onCancel.rightIcon\` | \`React.ReactNode\` | \`undefined\`  | Optional right icon for the cancel button.                    |
 | \`buttons.onContinue.label\` | \`string\`    | \`"Continue"\` | Label for the continue button.                                |
 | \`buttons.onContinue.action\` | \`() => void\`| \`undefined\`  | Action to perform when the continue button is clicked.         |
-| \`buttons.onContinue.leftIon\` | \`React.ReactNode\` | \`undefined\`  | Optional left icon for the continue button.                   |
+| \`buttons.onContinue.leftIcon\` | \`React.ReactNode\` | \`undefined\`  | Optional left icon for the continue button.                   |
 | \`buttons.onContinue.rightIcon\` | \`React.ReactNode\` | \`undefined\`  | Optional right icon for the continue button.                  |
+| \`buttons.onContinue.loading\` | \`boolean\` | \`undefined\`  | Indicates if the continue button is in a loading state.         |
+| \`buttons.onContinue.loadingText\` | \`string\` | \`undefined\`  | Text to display when the continue button is in a loading state. |
 | \`children\`     | \`React.ReactNode\`       | \`undefined\`  | The form elements to be rendered within the form block.       |
 | \`onSubmit\`     | \`(data: any) => void\`   | \`undefined\`  | Function to handle form submission.                           |
 
