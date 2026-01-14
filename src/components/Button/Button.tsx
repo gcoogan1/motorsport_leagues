@@ -15,6 +15,7 @@ type ButtonProps = {
     right?: ReactNode;
   };
   isLoading?: boolean;
+  loadingText?: string;
   onClick?: () => void;
   type?: "button" | "submit";
   fullWidth?: boolean;
@@ -29,6 +30,7 @@ const Button = ({
   rounded = false,
   icon,
   isLoading = false,
+  loadingText,
   type = "button",
   fullWidth = false,
 }: ButtonProps) => {
@@ -48,7 +50,7 @@ const Button = ({
           <Icon>
             <Spinner />
           </Icon>
-          {<span>Loading...</span>}
+          {<span>{loadingText || "Loading..."}</span>}
         </>
       ) : (
         <>

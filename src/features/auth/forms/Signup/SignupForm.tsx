@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useNavigate } from "react-router";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,9 +11,8 @@ import TextInput from "@/components/Inputs/TextInput/TextInput";
 import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import { sendVerificationCode, signUpUser } from "@/services/auth.service";
 import ExistingAccount from "../../modals/errors/ExistingAccount/ExistingAccount";
-import { useNavigate } from "react-router";
 
-// TODO: Remove console logs
+// TODO: Check if is loading is needed for buttons
 
 type SignupFormProps = {
   onSuccess?: () => void;
@@ -20,6 +21,7 @@ type SignupFormProps = {
 const SignupForm = ({ onSuccess }: SignupFormProps) => {
   const { openModal } = useModal();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   //  - Form setup -- //
   const formMethods = useForm<SignupFormValues>({
@@ -38,40 +40,43 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
 
   const handleOnSubmit = async (data: SignupFormValues) => {
     try {
-      try {
-        const result = await signUpUser({
-          email: data.email,
-          password: data.password,
-          firstName: data.firstName,
-          lastName: data.lastName,
-        });
-        if (!result.success) {
-          // Specific modal for existing account
-          if (result.error.status === 422) {
-            openModal(<ExistingAccount onContinue={handleGoToLogin} />);
-            return;
-          }
-          // Generals modal for other errors
-          handleSupabaseError({ status: result.error.status }, openModal);
-        } else {
-          const res = await sendVerificationCode(data.email);
-          if (!res.success) {
-            // General modals for other errors
-            handleSupabaseError({ status: res.error.status }, openModal);
-            return;
-          }
-          // Move to next step (verify email)
-          if (onSuccess) {
-            onSuccess();
-          }
+      // Clear any pending email on signup attempt
+      localStorage.removeItem('pending_email');
+      setIsLoading(true);
+
+      // Sign Up Process
+      const result = await signUpUser({
+        email: data.email,
+        password: data.password,
+        firstName: data.firstName,
+        lastName: data.lastName,
+      });
+      if (!result.success) {
+        // Specific modal for existing account
+        if (result.error.status === 422) {
+          openModal(<ExistingAccount onContinue={handleGoToLogin} />);
+          return;
         }
-      } catch (error) {
-        handleSupabaseError({ status: 500 }, openModal);
-        console.error("Signup error:", error);
+        // Generals modal for other errors
+        handleSupabaseError({ status: result.error.status }, openModal);
+        return;
+      }
+      const res = await sendVerificationCode(data.email, "signup");
+      if (!res.success) {
+        // General modals for other errors
+        handleSupabaseError({ status: res.error.status }, openModal);
+        return;
+      }
+      // Move to next step (verify email)
+      if (onSuccess) {
+        onSuccess();
+        return;
       }
     } catch (error) {
       handleSupabaseError({ status: 500 }, openModal);
       console.error("Signup error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -84,6 +89,8 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
           onCancel: { label: "Got to Log in", action: handleGoToLogin },
           onContinue: {
             label: "Sign Up",
+            loading: isLoading,
+            loadingText: "Please wait...",
             rightIcon: <ArrowForward />,
           },
         }}

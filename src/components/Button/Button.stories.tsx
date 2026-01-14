@@ -41,6 +41,7 @@ The **Button** component is a versatile and reusable UI element that allows user
 | \`color\` | \`"system" | "primary" | "danger"\` | \`"system"\` | Defines the color theme of the button. |
 | \`rounded\` | \`boolean\` | \`false\` | If true, the button will have rounded corners. |
 | \`isLoading\` | \`boolean\` | \`false\` | If true, the button will display a loading indicator. |
+| \`loadingText\` | \`string\` | \`-\` | Text to display when the button is in a loading state. |
 | \`type\` | \`"button" | "submit"\` | \`"button"\` | Specifies the button type attribute. |
 
 ### Usage Notes:
@@ -79,6 +80,9 @@ The Button component is designed with accessibility in mind, ensuring it is navi
     },
     isLoading: {
       control: { type: "boolean" },
+    },
+    loadingText: {
+      control: { type: "text" },
     },
     type: {
       control: { type: "select" },
@@ -140,6 +144,7 @@ export const IconOnly: Story = {
 export const LoadingState: Story = {
   args: {
     isLoading: true,
+    loadingText: "Please wait...",
   },
 };
 

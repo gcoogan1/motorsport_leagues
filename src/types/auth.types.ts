@@ -16,6 +16,9 @@ export type AuthContextType = {
 // User data type
 export type UserData = User | null;
 
+// Purpose type for verification codes
+export type Purpose = "signup" | "reset_password";
+
 // Signup payload and result types
 export type SignupPayload = {
   email: string;
@@ -76,3 +79,10 @@ type SignoutSuccess = {
 };
 
 export type SignOutResult = SignoutSuccess | SupabaseError;
+
+type ResetPasswordSuccess = {
+  success: true;
+  data: Awaited<ReturnType<typeof supabase.auth.updateUser>>["data"];
+};
+
+export type ResetPasswordResult = ResetPasswordSuccess | SupabaseError;

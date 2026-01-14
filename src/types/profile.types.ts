@@ -7,7 +7,7 @@ export type ProfileTable = {
   email: string;
   firstName: string;
   lastName: string;
-  isVerified: boolean;
+//   isVerified: boolean; --- IGNORE ---
 };
 
 // Create profile result type

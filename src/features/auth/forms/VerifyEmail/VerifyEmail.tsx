@@ -12,11 +12,24 @@ import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import AccountVerified from "../../modals/success/AccountVerifed/AccountVerified";
 import CodeResent from "../../modals/success/CodeResent/CodeResent";
 
-const VerifyEmail = () => {
+type VerifyEmailProps = {
+  purpose: "signup" | "reset_password";
+};
+
+const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
   const { user, refreshAuth } = useAuth();
   const { openModal } = useModal();
   const navigate = useNavigate();
 
+  // --  Content based on purpose -- //
+  const pendingEmail = localStorage.getItem("pending_email");
+  const title = purpose === "signup" ? "Create Account" : "Reset Password";
+  const email = (purpose === "signup" && user) ? user?.email : pendingEmail;
+  const helperMessage =
+    purpose === "signup"
+      ? `We’ve sent a verification code to you at ${email}. Enter it below to finish creating your account.`
+      : `If an account exists with the email, ${email}, you’ll receive a verification code. Enter it below to reset your password.`;
+      
   // -- Form setup -- //
   const formMethods = useForm<VerifyEmailSchema>({
     resolver: zodResolver(verifyEmailSchema),
@@ -27,30 +40,37 @@ const VerifyEmail = () => {
     formState: { errors },
   } = formMethods;
 
-  
   // -- Handlers -- //
   const handleGoToVerifyAccount = () => {
-    navigate("/verify-account");
+    navigate(`/verify-account?purpose=${purpose}`);
   };
 
   const handleGoToHome = () => {
     refreshAuth();
     navigate("/");
-  }
+  };
 
   const handleOnSubmit = async (data: VerifyEmailSchema) => {
-    if (!user || !user.email) {
+    if (!email) {
       handleSupabaseError({ status: 500 }, openModal);
       console.error("No user or user email found for verification.");
       return;
     }
 
     try {
-      const result = await verifyCode(user.email, data.verificationCode);
+      const result = await verifyCode(
+        email,
+        data.verificationCode,
+        purpose
+      );
       if (!result.success) {
         console.error("Verification failed:", result.error);
         handleSupabaseError({ status: result.error.status }, openModal);
       } else {
+        if (purpose === "reset_password") {
+          navigate("/reset-password?status=new_password");
+          return;
+        }
         openModal(<AccountVerified onContinue={handleGoToHome} />);
       }
     } catch (error) {
@@ -60,14 +80,14 @@ const VerifyEmail = () => {
   };
 
   const resendCode = async () => {
-    if (!user || !user.email) {
+    if (!email) {
       handleSupabaseError({ status: 500 }, openModal);
       console.error("No user or user email found to resend code.");
       return;
     }
 
     try {
-      const result = await sendVerificationCode(user.email);
+      const result = await sendVerificationCode(email, purpose);
       if (!result.success) {
         console.error("Resend code failed:", result.error);
         handleSupabaseError({ status: result.error.status }, openModal);
@@ -83,9 +103,9 @@ const VerifyEmail = () => {
   return (
     <FormProvider {...formMethods}>
       <FormBlock
-        title={"Create Account"}
+        title={title}
         question={"Check your email."}
-        helperMessage={`We’ve sent a verification code to you at ${user?.email}. Enter it below to finish creating your account.`}
+        helperMessage={helperMessage}
         onSubmit={handleSubmit(handleOnSubmit)}
         buttons={{
           onCancel: { label: "Resend Code", action: resendCode },

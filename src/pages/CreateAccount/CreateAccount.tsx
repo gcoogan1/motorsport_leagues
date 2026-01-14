@@ -7,7 +7,7 @@ const CreateAccount = () => {
   const navigate = useNavigate();
 
   const handleOnSuccess = () => {
-    navigate("/verify-account");
+    navigate("/verify-account?purpose=signup");
   }
 
   return (

@@ -9,7 +9,7 @@ import Navbar from "../Navbar/Navbar";
 
 const Layout = () => {
   const location = useLocation();
-  const { user, isVerified, loading } = useAuth();
+  const { user, isVerified } = useAuth();
 
   // Find the current route based on the location
   const currentRoute = ROUTES.find((route) => route.path === location.pathname);
@@ -21,7 +21,7 @@ const Layout = () => {
 
   return (
     <Wrapper>
-      {!loading && <Navbar usage={usage} user={userDetails} />}
+      <Navbar usage={usage} user={userDetails} />
       <Main>
         <Outlet />
       </Main>
