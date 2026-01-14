@@ -1,3 +1,4 @@
+import { useAuth } from "@/providers/auth/useAuth";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useNavigate } from "react-router";
 import type { UserData } from "@/types/auth.types";
@@ -26,6 +27,7 @@ const CoreNavbar = ({
   countNotifications,
   accountLabel,
 }: CoreNavbarProps) => {
+  const {loading } = useAuth();
   const isMobile = useMediaQuery("(max-width: 919px)");
   const navigate = useNavigate();
 
@@ -62,7 +64,7 @@ const CoreNavbar = ({
         <NavBrand />
       </CenterContainer>
       <RightContainer>
-        {user && (
+        {(user && !loading) && (
           <>
             {!!countNotifications && (
               <NavNotification count={countNotifications} />
