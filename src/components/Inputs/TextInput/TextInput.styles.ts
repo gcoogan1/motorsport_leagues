@@ -71,6 +71,13 @@ export const InputField = styled.input<{
       ? `inset 0 0 0 2px ${colors.alert.alertA}`
       : `inset 0 0 0 2px transparent`};
 
+    // Text is too long style
+    padding-right: 28px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+
   &::placeholder {
     ${typography.body.mediumRegular}
   }

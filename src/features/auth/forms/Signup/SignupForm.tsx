@@ -40,7 +40,11 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
 
   const handleOnSubmit = async (data: SignupFormValues) => {
     try {
+      // Clear any pending email on signup attempt
+      localStorage.removeItem('pending_email');
       setIsLoading(true);
+
+      // Sign Up Process
       const result = await signUpUser({
         email: data.email,
         password: data.password,

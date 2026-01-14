@@ -42,6 +42,10 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
 
   const handleOnSubmit = async (data: LoginFormValues) => {
     try {
+      // Clear any pending email on login attempt
+      localStorage.removeItem('pending_email');
+
+      // Log In Process
       const result = await loginUser({
         email: data.email,
         password: data.password,

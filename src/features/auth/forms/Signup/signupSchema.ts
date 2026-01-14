@@ -3,8 +3,18 @@ import * as z from "zod";
 export type SignupFormValues = z.infer<typeof signupSchema>;
 
 export const signupSchema = z.object({
-  firstName: z.string().min(1, "Please enter your first name.").max(50, "First name must be less than 50 characters."),
-  lastName: z.string().min(1, "Please enter your last name.").max(50, "Last name must be less than 50 characters."),
-  email: z.email({ message: "Please enter a valid email address." }),
-  password: z.string().min(8, "Your password must be at least 8 characters."),
-})
+  firstName: z.string().min(1, "Please enter your first name.").max(
+    64,
+    "First Name can not be longer than 64 characters.",
+  ),
+  lastName: z.string().min(1, "Please enter your last name.").max(
+    64,
+    "Last Name can not be longer than 64 characters.",
+  ),
+  email: z
+    .string()
+    .email({ message: "Please enter a valid email address." })
+    .max(128, { message: "Email cannot be longer than 128 characters." }),
+  password: z.string().min(8, "Your password must be at least 8 characters.")
+    .max(64, "Your password can not be longer than 64 characters."),
+});
