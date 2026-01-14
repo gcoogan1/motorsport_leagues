@@ -26,6 +26,7 @@ type FormBlockProps = {
       leftIcon?: React.ReactNode;
       rightIcon?: React.ReactNode;
       loading?: boolean;
+      loadingText?: string;
     };
     onContinue?: {
       label: string;
