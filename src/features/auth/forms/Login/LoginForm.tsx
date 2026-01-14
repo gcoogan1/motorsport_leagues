@@ -32,22 +32,20 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
   } = formMethods;
 
   // -- Handlers -- //
-  const handleForgotPassword = () => {
-    // Redirect to password reset page;
-    navigate("/");
-  };
-
   const handleResetPassword = () => {
-    navigate("/reset-password");
+    navigate("/reset-password?status=verify");
   };
 
   const handleVerify = () => {
-    navigate("/verify-account");
+    navigate("/verify-account?purpose=signup");
   };
 
   const handleOnSubmit = async (data: LoginFormValues) => {
     try {
-      const result = await loginUser({ email: data.email, password: data.password });
+      const result = await loginUser({
+        email: data.email,
+        password: data.password,
+      });
       if (!result.success && result?.error?.status) {
         // Specific modals for incorrect credentials and unverified accounts
         if (result.error.status === 400) {
@@ -69,14 +67,17 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
 
         // General modals for other errors
         handleSupabaseError({ status: result.error.status }, openModal);
+        return;
       } else {
         if (onSuccess) {
           onSuccess();
+          return;
         }
       }
     } catch (error) {
       handleSupabaseError({ status: 500 }, openModal);
       console.error("Login error:", error);
+      return;
     }
   };
 
@@ -86,7 +87,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
         title={"Log In"}
         question="Welcome Back"
         buttons={{
-          onCancel: { label: "Forgot Password?", action: handleForgotPassword },
+          onCancel: { label: "Forgot Password?", action: handleResetPassword },
           onContinue: {
             label: "Log In",
             rightIcon: <ArrowForward />,
