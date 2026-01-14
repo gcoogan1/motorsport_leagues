@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { createProfile } from "./profile.service";
 import type {
   Purpose,
+  ResetPasswordResult,
   SendVerificationResult,
   SigninPayload,
   SignInResult,
@@ -10,6 +11,7 @@ import type {
   SignUpResult,
   VerifyCodeResult,
 } from "@/types/auth.types";
+import { FunctionsHttpError } from "@supabase/supabase-js";
 
 // -- Authentication Supabase Services -- //
 
@@ -24,7 +26,6 @@ export const signUpUser = async (
       data: {
         first_name: payload.firstName,
         last_name: payload.lastName,
-        verified: false,
       },
     },
   });
@@ -47,7 +48,6 @@ export const signUpUser = async (
       email: payload.email,
       firstName: payload.firstName,
       lastName: payload.lastName,
-      isVerified: false,
     });
 
     if (!profileRes.success) {
@@ -79,6 +79,21 @@ export const sendVerificationCode = async (
   });
 
   if (error) {
+    // Special handling for unverified account during password reset
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json()
+      if (purpose === "reset_password" && errorMessage.error === "User is not verified") {
+        return {
+          success: false,
+          error: {
+            message: "Account is unverified.",
+            code: "UNVERIFIED_ACCOUNT",
+            status: 403,
+          },
+        };
+      }
+    }
+    // General error handling
     return {
       success: false,
       error: {
@@ -199,3 +214,29 @@ export const logoutUser = async (): Promise<SignOutResult> => {
     success: true,
   };
 };
+
+// -- Reset Password -- //
+export const resetPassword = async (
+  newPassword: string,
+  email: string,
+): Promise<ResetPasswordResult> => {
+  const { data, error } = await supabase.functions.invoke("update-password", {
+    body: { newPassword, email },
+  });
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error?.code || "UNKNOWN_ERROR",
+        status: error?.status || 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data
+  };
+}

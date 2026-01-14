@@ -79,3 +79,10 @@ type SignoutSuccess = {
 };
 
 export type SignOutResult = SignoutSuccess | SupabaseError;
+
+type ResetPasswordSuccess = {
+  success: true;
+  data: Awaited<ReturnType<typeof supabase.auth.updateUser>>["data"];
+};
+
+export type ResetPasswordResult = ResetPasswordSuccess | SupabaseError;
