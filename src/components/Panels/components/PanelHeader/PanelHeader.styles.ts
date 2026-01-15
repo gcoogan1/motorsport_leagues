@@ -11,7 +11,7 @@ export const PanelHeaderContainer = styled.div<{ showShadow?: boolean }>`
   padding: ${layout.space.large};
   gap: ${layout.space.medium};
   background: ${gradients.base.fadeRight10};
-  width: 432px;
+  width: 100%;
   border-top-left-radius: ${borders.radius.xxLarge};
   border-top-right-radius: ${borders.radius.xxLarge};
 

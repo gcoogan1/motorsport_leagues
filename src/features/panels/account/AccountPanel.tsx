@@ -1,18 +1,38 @@
+import { useSelector } from "react-redux";
 import AccountIcon from "@assets/Icon/Account_Filled.svg?react";
 import EditIcon from "@assets/Icon/Edit.svg?react";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import LogoutIcon from "@assets/Icon/Logout.svg?react";
 import LinkList from "@/components/Lists/LinkList/LinkList";
-import PanelLayout from "../../components/PanelLayout/PanelLayout";
+import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
+import type { RootState } from "@/store";
+import { logoutUser } from "@/services/auth.service";
+import { usePanel } from "@/providers/panel/PanelProvider";
+import { useModal } from "@/providers/modal/ModalProvider";
+import UpdateName from "./forms/UpdateName/UpdateName";
 
 /*TODO: 
-  - Add user data
-  - Implement edit functionality
-  - Implement delete account functionality
-  - Implement logout functionality
+  - Add functionality for when !profile exists
 */
 
 const AccountPanel = () => {
+  const { openModal } = useModal();
+  const { closePanel } = usePanel();
+
+  const profile = useSelector((state: RootState) => state.profile.data);
+
+  if (!profile) return null;
+
+  // -- Handlers -- //
+  const handleLogout = async () => {
+    try {
+      closePanel();
+      await logoutUser();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <PanelLayout panelTitle="Account" panelTitleIcon={<AccountIcon />}>
       <LinkList
@@ -21,11 +41,12 @@ const AccountPanel = () => {
           {
             optionType: "text",
             optionTitle: "Name",
-            optionHelper: "Firstname Lastname",
+            optionHelper: `${profile.firstName} ${profile.lastName}`,
             optionIcon: <EditIcon />,
             optionIconLabel: "Edit Fullname Icon",
             onOptionClick: () => {
-              console.log("Edit Fullname Clicked");
+              console.log("Edit Name Clicked");
+              openModal(<UpdateName profile={profile} />);
             },
           },
         ]}
@@ -36,7 +57,7 @@ const AccountPanel = () => {
           {
             optionType: "text",
             optionTitle: "Email",
-            optionHelper: "email@example.com",
+            optionHelper: profile.email,
             optionIcon: <EditIcon />,
             optionIconLabel: "Edit Email Icon",
             onOptionClick: () => {
@@ -61,14 +82,21 @@ const AccountPanel = () => {
           {
             optionType: "text",
             optionTitle: "Delete Account",
-            optionHelper: "Permanntly Delete All Data",
+            optionHelper: "Permanently Delete All Data",
             optionIcon: <DeleteIcon />,
             optionIconLabel: "Delete Account Icon",
             onOptionClick: () => console.log("Delete Account Clicked"),
           },
         ]}
       />
-      <div style={{ flex: 1, width: "100%", display: "flex", alignItems: "flex-end" }}>
+      <div
+        style={{
+          flex: 1,
+          width: "100%",
+          display: "flex",
+          alignItems: "flex-end",
+        }}
+      >
         <LinkList
           options={[
             {
@@ -77,7 +105,7 @@ const AccountPanel = () => {
               optionHelper: "See You Later!",
               optionIcon: <LogoutIcon />,
               optionIconLabel: "Log Out Icon",
-              onOptionClick: () => console.log("Log Out Clicked"),
+              onOptionClick: handleLogout,
             },
           ]}
         />

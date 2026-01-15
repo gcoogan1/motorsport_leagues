@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
-import Toast from "./Toast";
+import ToastLayout from "./ToastLayout";
 
 // -- Meta Configuration -- //
 
-const meta: Meta<typeof Toast> = {
-  title: "Components/Messages/Toast",
-  component: Toast,
+const meta: Meta<typeof ToastLayout> = {
+  title: "Components/Messages/components/ToastLayout/ToastLayout",
+  component: ToastLayout,
   decorators: [withAppTheme],
   parameters: {
     layout: "centered",
@@ -14,7 +14,7 @@ const meta: Meta<typeof Toast> = {
       description: {
         component: `
 
-The **Toast** component is used to display brief, informative messages to users. It appears at the bottom right of the screen.
+The **ToastLayout** component is used to display brief, informative messages to users. It appears at the bottom right of the screen.
 
 **Note:** Closing functionality is not implemented in this version, nor is automatic dismissal after a duration.
 
@@ -60,7 +60,7 @@ export default meta;
 
 // -- Stories -- //
 
-type Story = StoryObj<typeof Toast>;
+type Story = StoryObj<typeof ToastLayout>;
 
 export const SuccessToast: Story = {
   args: {

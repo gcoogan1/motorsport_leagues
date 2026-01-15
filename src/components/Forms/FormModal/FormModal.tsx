@@ -1,8 +1,7 @@
-import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Button from "@/components/Button/Button";
-import ModalOverlay from "@/components/ModalOverlay/ModalOverlay";
 import {
+  ModalOverlay,
   FormWrapper,
   FormBody,
   BodyHeader,
@@ -13,64 +12,95 @@ import {
   SecondaryButtonContainer,
 } from "./FormModal.styles";
 
-// TODO: Add logic to open and close the modal
-// TODO: Move form state management to parent component
-
 type FormModalProps = {
   question: string;
   helperMessage?: string;
   children?: React.ReactNode;
-  onContinue?: () => void;
-  onCancel?: () => void;
+  buttons?: {
+    onCancel?: {
+      label: string;
+      action?: () => void;
+      leftIcon?: React.ReactNode;
+      rightIcon?: React.ReactNode;
+      loading?: boolean;
+      loadingText?: string;
+    };
+    onContinue?: {
+      label: string;
+      action?: () => void;
+      leftIcon?: React.ReactNode;
+      rightIcon?: React.ReactNode;
+      loading?: boolean;
+      loadingText?: string;
+    };
+  };
+  onSubmit?: (data: any) => void;
 };
 
 const FormModal = ({
   question,
   helperMessage,
   children,
-  onContinue,
-  onCancel,
+  buttons,
+  onSubmit,
 }: FormModalProps) => {
-  const formMethods = useForm();
-  const { handleSubmit } = formMethods;
-
-  const [isOpen, setIsOpen] = useState(true);
-
   const handleOnContinue = () => {
-    if (onContinue) {
-      onContinue();
+    if (buttons?.onContinue?.action) {
+      buttons.onContinue.action();
     }
   };
 
   const handleOnCancel = () => {
-    if (onCancel) {
-      onCancel();
+    if (buttons?.onCancel?.action) {
+      buttons.onCancel.action();
     }
   };
 
   return (
-    <ModalOverlay isOpen={isOpen} onClose={() => setIsOpen(false)}>
-      <FormProvider {...formMethods}>
-        <FormWrapper onSubmit={handleSubmit(handleOnContinue)}>
-          <FormBody>
-            <BodyHeader>
-              <BodyTitle>{question}</BodyTitle>
-              <BodySubtitle>{helperMessage}</BodySubtitle>
-            </BodyHeader>
-            <BodyInputContainer>{children} </BodyInputContainer>
-          </FormBody>
-          <FormActions>
-            <SecondaryButtonContainer>
-              <Button color="base" variant="ghost" onClick={handleOnCancel}>
-                Cancel
+    <ModalOverlay>
+      <FormWrapper onSubmit={onSubmit}>
+        <FormBody>
+          <BodyHeader>
+            <BodyTitle>{question}</BodyTitle>
+            <BodySubtitle>{helperMessage}</BodySubtitle>
+          </BodyHeader>
+          <BodyInputContainer>{children} </BodyInputContainer>
+        </FormBody>
+        <FormActions>
+          <SecondaryButtonContainer>
+            {buttons?.onCancel && (
+              <Button
+                color="base"
+                variant="ghost"
+                onClick={handleOnCancel}
+                isLoading={buttons?.onCancel?.loading}
+                loadingText={buttons?.onCancel?.loadingText}
+                icon={{
+                  left: buttons?.onCancel?.leftIcon,
+                  right: buttons?.onCancel?.rightIcon,
+                }}
+              >
+                {buttons?.onCancel?.label || "Cancel"}
               </Button>
-            </SecondaryButtonContainer>
-            <Button type="submit" color="system">
-              Continue
+            )}
+          </SecondaryButtonContainer>
+          {buttons?.onContinue && (
+            <Button
+              type="submit"
+              color="system"
+              onClick={handleOnContinue}
+              isLoading={buttons?.onContinue?.loading}
+              loadingText={buttons?.onContinue?.loadingText}
+              icon={{
+                left: buttons?.onContinue?.leftIcon,
+                right: buttons?.onContinue?.rightIcon,
+              }}
+            >
+              {buttons?.onContinue?.label || "Continue"}
             </Button>
-          </FormActions>
-        </FormWrapper>
-      </FormProvider>
+          )}
+        </FormActions>
+      </FormWrapper>
     </ModalOverlay>
   );
 };

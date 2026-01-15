@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Button from "../../Button/Button";

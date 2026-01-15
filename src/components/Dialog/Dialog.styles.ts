@@ -6,7 +6,7 @@ const { colors, layout, borders, typography } = designTokens;
 
 /* Places the dialog container at the center of the screen */
 export const DialogViewport = styled.div`
-    position: fixed;
+  position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.8);
   display: flex;

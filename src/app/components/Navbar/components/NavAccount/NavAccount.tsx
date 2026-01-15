@@ -6,15 +6,23 @@ import { AccountWrapperButton, SelectLabel } from "./NavAccount.styles";
 
 type NavAccountProps = {
   label?: string;
+  onClick?: () => void;
 };
 
-const NavAccountComponent = ({ label = "Account" }: NavAccountProps) => {
+const NavAccountComponent = ({ label = "Account", onClick }: NavAccountProps) => {
   const [open, setOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 919px)");
 
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } 
+    setOpen(!open);
+  }
+
   return (
     <AccountWrapperButton
-      onClick={() => setOpen(!open)}
+      onClick={handleClick}
       aria-expanded={open}
       aria-label={"account menu"}
     >

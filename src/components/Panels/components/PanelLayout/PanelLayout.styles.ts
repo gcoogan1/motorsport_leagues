@@ -8,9 +8,14 @@ export const PanelWrapper = styled.div`
   flex-direction: column;
   border-radius: ${borders.radius.xxLarge};
   background: ${colors.base.base3};
-
+  box-shadow: 0 0 80px 80px rgba(0, 0, 0, 0.20);
   width: 432px;
   min-height: 992px;
+  height: 100%;
+
+  ${layout.mediaQueries.mobile} {
+    width: 100%;
+  }
 `;
 
 export const PanelBody = styled.div`
