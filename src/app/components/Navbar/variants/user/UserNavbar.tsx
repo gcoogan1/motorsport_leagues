@@ -16,6 +16,7 @@ import {
   MobileRightContainer,
   RightContainer,
 } from "./UserNavbar.styles";
+import { usePanel } from "@/providers/panel/PanelProvider";
 
 //TODO: Add onClick handlers to NavSelects and NavAccount
 
@@ -31,8 +32,13 @@ const UserNavbar = ({
   accountLabel,
 }: UserNavbarProps) => {
   const { loading } = useAuth();
+  const { openPanel } = usePanel();
   const isMobile = useMediaQuery("(max-width: 919px)");
   const [ref, isWrapped] = useIsWrapped<HTMLDivElement>(150);
+
+  const openAccountPanel = () => {
+    openPanel("ACCOUNT");
+  }
 
   return (
     <NavLayout ref={ref}>
@@ -54,7 +60,7 @@ const UserNavbar = ({
                 {!!countNotifications && (
                   <NavNotification count={countNotifications} />
                 )}
-                {!!accountLabel && <NavAccount label={accountLabel} />}
+                {!!accountLabel && <NavAccount label={accountLabel} onClick={openAccountPanel} />}
               </>
             )}
           </RightContainer>
@@ -75,7 +81,7 @@ const UserNavbar = ({
                   {!!countNotifications && (
                     <NavNotification count={countNotifications} />
                   )}
-                  {!!accountLabel && <NavAccount label={accountLabel} />}
+                  {!!accountLabel && <NavAccount label={accountLabel} onClick={openAccountPanel} />}
                 </>
               )}
             </>

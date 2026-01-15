@@ -17,7 +17,7 @@ const Navbar = ({ usage, user }: NavbarProps) => {
 
   // Temporary hardcoded values for demonstration
   const count = user ? 3 : undefined;
-  const label = user ? user.user_metadata?.firstName : "Account";
+  const label = user ? user.user_metadata?.first_name : "Account";
 
   switch (usage) {
     case "core":

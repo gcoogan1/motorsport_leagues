@@ -3,7 +3,8 @@ import EditIcon from "@assets/Icon/Edit.svg?react";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import LogoutIcon from "@assets/Icon/Logout.svg?react";
 import LinkList from "@/components/Lists/LinkList/LinkList";
-import PanelLayout from "../../components/PanelLayout/PanelLayout";
+import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
+
 
 /*TODO: 
   - Add user data

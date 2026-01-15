@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
-import  Panel from "./Panel";
+import  Panel from "./panel.variants";
 
 // -- Meta Configuration -- //
 
