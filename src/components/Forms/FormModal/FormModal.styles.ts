@@ -5,7 +5,18 @@ import { topFadeBorder } from "@/app/design/mixens/edgeFadeBorder";
 
 const { colors, gradients, layout, borders, typography } = designTokens;
 
-export const FormWrapper = styled.div`
+export const ModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 200px ${layout.space.large};
+  z-index: 2000;
+`;
+
+export const FormWrapper = styled.form`
   display: flex;
   flex-direction: column;
   width: 100%;
