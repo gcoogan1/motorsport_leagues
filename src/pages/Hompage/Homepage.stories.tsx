@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import Homepage from "./Homepage";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
 import type { ThemeName } from "@/app/design/tokens/theme";
-import { MockAuthProvider } from "@/providers/mock/MockAuthProvider";
 import { withAppProviders } from "@/app/design/storybook/withAppProviders";
 
 // Storybook metadata for the Homepage component
