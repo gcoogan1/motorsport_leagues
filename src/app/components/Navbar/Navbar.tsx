@@ -3,6 +3,8 @@ import type { UserData } from "@/types/auth.types";
 import CoreNavbar from "./variants/core/CoreNavbar";
 import GuestNavbar from "./variants/guest/GuestNavbar";
 import UserNavbar from "./variants/user/UserNavbar";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 //TODO:
 // Get user data from context or global state
@@ -15,9 +17,11 @@ type NavbarProps = {
 
 const Navbar = ({ usage, user }: NavbarProps) => {
 
+  const profile = useSelector((state: RootState) => state.profile.data);
+
   // Temporary hardcoded values for demonstration
-  const count = user ? 3 : undefined;
-  const label = user ? user.user_metadata?.first_name : "Account";
+  const count = user ? 1 : undefined;
+  const label = profile ? `${profile.firstName}` : "Account";
 
   switch (usage) {
     case "core":
