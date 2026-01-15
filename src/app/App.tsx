@@ -1,10 +1,13 @@
 import ReactGA from "react-ga4";
+import { Provider } from "react-redux";
 
+import store from "@/store";
 import AppRouter from "./routes/AppRouter";
 import { AppThemeProvider } from "../providers/theme/AppThemeProvider";
 import { ModalProvider } from "../providers/modal/ModalProvider";
 import { AuthProvider } from "@/providers/auth/AuthProvider";
 import { PanelProvider } from "@/providers/panel/PanelProvider";
+import { ToastProvider } from "@/providers/toast/ToastProvider";
 // import Toast from "@/components/Messages/Toast/Toast";
 
 //TODO: Re-enable Toast component once global state management is implemented
@@ -18,18 +21,19 @@ const App = () => {
   });
 
   return (
-    <AuthProvider>
-      <AppThemeProvider>
-        <ModalProvider>
-          <PanelProvider>
-
-          {/* Toast component temporarily disabled */}
-          {/* <Toast usage="success" message="This is an informational message." /> */}
-          <AppRouter />
-          </PanelProvider>
-        </ModalProvider>
-      </AppThemeProvider>
-    </AuthProvider>
+    <Provider store={store}>
+      <AuthProvider>
+        <AppThemeProvider>
+          <ToastProvider>
+            <ModalProvider>
+              <PanelProvider>
+                <AppRouter />
+              </PanelProvider>
+            </ModalProvider>
+          </ToastProvider>
+        </AppThemeProvider>
+      </AuthProvider>
+    </Provider>
   );
 };
 
