@@ -102,3 +102,25 @@ type ChangeEmailSuccess = {
 
 // Change Email --> Result type
 export type ChangeEmailResult = ChangeEmailSuccess | SupabaseError;
+
+
+// Verify Password --> Payload type
+export type VerifyPasswordPayload = {
+  password: string;
+  email: string;
+};
+
+// Verify Password --> Success type
+export type VerifyPasswordSuccess ={
+  success: true;
+};
+
+// Verify Password --> Result type
+export type VerifyPasswordResult = VerifyPasswordSuccess | SupabaseError;
+
+
+export type ChangePasswordSucess = {
+  success: true;
+};
+
+export type ChangePasswordResult = ChangePasswordSucess | SupabaseError;
