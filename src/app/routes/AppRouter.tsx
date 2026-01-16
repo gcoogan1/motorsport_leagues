@@ -2,10 +2,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router";
 
 import { ROUTES } from "./routes";
 import Layout from "../components/Layout/Layout";
+import { setNavigate } from "../navigation/navigation";
+import NavigatorBridge from "../navigation/NavigatorBridge";
 
 const AppRouter = () => {
   return (
     <Router>
+      <NavigatorBridge onReady={setNavigate} />
       <Routes>
         <Route element={<Layout />}>
           {ROUTES.map(({ path, element }) => (

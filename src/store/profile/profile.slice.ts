@@ -2,6 +2,9 @@ import type { ProfileState } from "@/types/profile.types";
 import { createSlice } from "@reduxjs/toolkit";
 import { changeEmailThunk, fetchProfileThunk, updateProfileNameThunk } from "./profile.thunks";
 
+// NOTE: Create, Change Password, and Delete Profiles are done in auth.service.ts
+// This is because auth holds password management and user sessions.
+
 const initialState: ProfileState = {
   data: null,
   status: "idle",
@@ -31,7 +34,7 @@ const profileSlice = createSlice({
       .addCase(fetchProfileThunk.rejected, (state) => {
         state.status = "rejected";
       })
-      /* Update Profile */
+      /* Update Name */
       .addCase(updateProfileNameThunk.pending, (state) => {
         state.status = "loading";
       })

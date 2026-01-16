@@ -14,7 +14,7 @@ import {
 
 type FormModalProps = {
   question: string;
-  helperMessage?: string;
+  helperMessage?: string | React.ReactNode;
   children?: React.ReactNode;
   buttons?: {
     onCancel?: {

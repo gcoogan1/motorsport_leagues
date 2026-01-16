@@ -342,3 +342,24 @@ export const changePassword = async (
     success: true,
   };
 };
+
+export const deleteAccount = async (userId: string): Promise<SignOutResult> => {
+  const { error } = await supabase.functions.invoke("delete-account", {
+    body: { userId },
+  });
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error?.code || "UNKNOWN_ERROR",
+        status: error?.status || 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+}

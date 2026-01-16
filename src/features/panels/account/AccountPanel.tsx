@@ -12,6 +12,7 @@ import { useModal } from "@/providers/modal/ModalProvider";
 import UpdateName from "./forms/UpdateName/UpdateName";
 import ChangeEmail from "./forms/ChangeEmail/ChangeEmail";
 import ChangePassword from "./forms/ChangePassword/ChangePassword";
+import DeleteAccount from "./forms/DeleteAccount/DeleteAccount";
 
 /*TODO: 
   - Add functionality for when !profile exists
@@ -84,7 +85,9 @@ const AccountPanel = () => {
             optionHelper: "Permanently Delete All Data",
             optionIcon: <DeleteIcon />,
             optionIconLabel: "Delete Account Icon",
-            onOptionClick: () => console.log("Delete Account Clicked"),
+            onOptionClick: () => {
+              openModal(<DeleteAccount profile={profile} closePanel={closePanel} />);
+            },
           },
         ]}
       />
