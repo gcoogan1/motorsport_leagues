@@ -1,4 +1,4 @@
-import { usePanel } from "@/providers/panel/PanelProvider";
+import { usePanel } from "@/providers/panel/usePanel";
 import PanelHeader from "../PanelHeader/PanelHeader";
 import {
   PanelActionsContainer,

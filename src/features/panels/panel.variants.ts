@@ -1,9 +1,15 @@
+import type { PanelTypes } from "@/types/panel.types";
 import AccountPanel from "./account/AccountPanel";
-import NotificationPanel from "./notifications/NotificationPanel";
+import NotificationsPanel from "./notifications/NotificationsPanel";
+import ProfilesPanel from "./profiles/ProfilesPanel";
+import SquadsPanel from "./squads/SquadsPanel";
+import LeaguesPanel from "./leagues/LeaguesPanel";
 
-type PanelTypes = 'ACCOUNT' | 'NOTIFICATIONS';
 
 export const panelVariants: Record<PanelTypes, React.FC> = {
   ACCOUNT: AccountPanel,
-  NOTIFICATIONS: NotificationPanel,
+  NOTIFICATIONS: NotificationsPanel,
+  PROFILES: ProfilesPanel,
+  SQUADS: SquadsPanel,
+  LEAGUES: LeaguesPanel
 };

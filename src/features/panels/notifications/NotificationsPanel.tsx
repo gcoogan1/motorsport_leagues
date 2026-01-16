@@ -2,7 +2,7 @@ import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import Announcements from "@assets/Icon/Announcements.svg?react";
 
-const NotificationPanel = () => {
+const NotificationsPanel = () => {
   return (
     <PanelLayout 
       panelTitle="Announcments" 
@@ -17,4 +17,4 @@ const NotificationPanel = () => {
   );
 };
 
-export default NotificationPanel;
+export default NotificationsPanel;
