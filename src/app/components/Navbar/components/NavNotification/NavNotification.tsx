@@ -8,12 +8,14 @@ import {
 
 type NavNotificationProps = {
   count?: number;
+  onClick?: () => void;
 };
 
-const NavNotificationComponent = ({ count }: NavNotificationProps) => {
+const NavNotificationComponent = ({ count, onClick }: NavNotificationProps) => {
+  
   return (
-    <NotificationWrapper aria-label="Notifications">
-      {!!count && count > 0 && (
+    <NotificationWrapper aria-label="Notifications" onClick={onClick}>
+      {!!count && (
         <CountBadge aria-label={`${count} new notifications`}>
           <CountText>{count}</CountText>
         </CountBadge>
