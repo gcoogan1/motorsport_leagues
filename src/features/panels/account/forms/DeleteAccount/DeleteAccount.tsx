@@ -37,7 +37,7 @@ const DeleteAccountForm = ({ profile, closePanel }: DeleteAccountProps) => {
   } = formMethods;
 
   // -- Handlers -- //
-  const handleOnSubmit = async (data: ConfirmDeleteAccountSchema) => {
+  const handleOnSubmit = async () => {
     try {
       const res = await deleteAccount(profile.id);
 
