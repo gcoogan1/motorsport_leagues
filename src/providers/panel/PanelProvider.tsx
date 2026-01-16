@@ -2,7 +2,7 @@ import Panel from "@/components/Panels/Panel";
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 
-export type PanelType = "none" | "ACCOUNT";
+export type PanelType = "none" | "ACCOUNT" | "NOTIFICATIONS";
 
 type PanelContextType = {
   openPanel: (type: Exclude<PanelType, "none">) => void;
