@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { getProfileById, updateProfileName } from "@/services/profile.service";
-import type { ProfileNameUpdatePayload } from "@/types/profile.types";
+import type { ChangeEmailPayload, ProfileNameUpdatePayload } from "@/types/profile.types";
+import { changeEmail } from "@/services/auth.service";
 
 
 export const fetchProfileThunk = createAsyncThunk(
@@ -20,3 +21,12 @@ export const updateProfileNameThunk = createAsyncThunk(
     return updateProfileName(firstName, lastName, userId);
   }
 );
+
+// Update both auth email and profile email
+export const changeEmailThunk = createAsyncThunk(
+  "profile/changeEmail",
+  async ({
+    newEmail, userId,
+  }: ChangeEmailPayload) => {
+    return changeEmail(newEmail, userId);
+  })

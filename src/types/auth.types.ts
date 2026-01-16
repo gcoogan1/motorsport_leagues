@@ -17,7 +17,7 @@ export type AuthContextType = {
 export type UserData = User | null;
 
 // Purpose type for verification codes
-export type Purpose = "signup" | "reset_password";
+export type Purpose = "signup" | "reset_password" | "change_email";
 
 // Signup --> Payload type
 export type SignupPayload = {
@@ -58,7 +58,6 @@ export type SendVerificationResult = SendVerificationSuccess | SupabaseError;
 // Verify code --> Success type
 type VerifyCodeSuccess = {
   success: true;
-  data: Awaited<ReturnType<typeof supabase.functions.invoke>>["data"];
 };
 
 // Verify code --> Result type
@@ -95,3 +94,11 @@ type ResetPasswordSuccess = {
 
 // Reset Password --> Result type
 export type ResetPasswordResult = ResetPasswordSuccess | SupabaseError;
+
+// Change Email --> Success type
+type ChangeEmailSuccess = {
+  success: true;
+};
+
+// Change Email --> Result type
+export type ChangeEmailResult = ChangeEmailSuccess | SupabaseError;
