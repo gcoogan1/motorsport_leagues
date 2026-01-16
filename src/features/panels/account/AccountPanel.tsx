@@ -10,6 +10,7 @@ import { logoutUser } from "@/services/auth.service";
 import { usePanel } from "@/providers/panel/PanelProvider";
 import { useModal } from "@/providers/modal/ModalProvider";
 import UpdateName from "./forms/UpdateName/UpdateName";
+import ChangeEmail from "./forms/ChangeEmail/ChangeEmail";
 
 /*TODO: 
   - Add functionality for when !profile exists
@@ -45,7 +46,6 @@ const AccountPanel = () => {
             optionIcon: <EditIcon />,
             optionIconLabel: "Edit Fullname Icon",
             onOptionClick: () => {
-              console.log("Edit Name Clicked");
               openModal(<UpdateName profile={profile} />);
             },
           },
@@ -60,9 +60,7 @@ const AccountPanel = () => {
             optionHelper: profile.email,
             optionIcon: <EditIcon />,
             optionIconLabel: "Edit Email Icon",
-            onOptionClick: () => {
-              console.log("Edit Email Clicked");
-            },
+            onOptionClick: () => {openModal(<ChangeEmail profile={profile} />);},
           },
           {
             optionType: "text",
