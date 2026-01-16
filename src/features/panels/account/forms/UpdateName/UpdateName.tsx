@@ -36,7 +36,6 @@ const UpdateName = ({ profile }: UpdateNameProps) => {
 
   // -- Handlers -- //
   const handleOnSubmit = async (data: UpdateNameSchema) => {
-    console.log("Form Data:", data);
     try {
       const res = await dispatch(
         updateProfileNameThunk({
@@ -56,7 +55,7 @@ const UpdateName = ({ profile }: UpdateNameProps) => {
       closeModal();
     } catch (error) {
       openModal(<NameUpdateFail />);
-      console.error("Reset password error:", error);
+      console.error("Update name error:", error);
       return;
     }
   };
