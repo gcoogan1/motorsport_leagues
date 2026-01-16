@@ -79,7 +79,7 @@ const ChangePassword = ({ profile }: ChangePasswordProps) => {
         helperMessage={`Enter your current and your new password. If you do not remember your current password, you can log out and reset your password by your email.`}
         onSubmit={handleSubmit(handleOnSubmit)}
         buttons={{
-          onCancel: { label: "Cancel" },
+          onCancel: { label: "Cancel", action: closeModal },
           onContinue: {
             label: "Update Password",
             rightIcon: <ArrowForward />,
