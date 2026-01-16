@@ -8,10 +8,11 @@ import IncorrectCred from "../features/auth/modals/errors/IncorrectCred/Incorrec
 import UnverifiedAccount from "../features/auth/modals/errors/UnverifiedAccount/UnverifiedAccount";
 import AccountSuspended from "../features/auth/modals/errors/AccountSuspended/AccountSuspended";
 import ExistingEmail from "@/features/panels/account/modals/errors/ExistingEmail/ExistingEmail";
+import IncorrectPassword from "@/features/panels/account/modals/errors/IncorrectPassword/IncorrectPassword";
 
 // -- Modal Types & Variants -- //
 
-export type MODAL_TYPES = 'EXISTING_ACCOUNT' | 'SERVER_ERROR' | 'ATTEMPT_MAX' | 'REQUEST_MAX' | 'CODE_RESENT' | 'ACCOUNT_VERIFIED' | 'INCORRECT_CRED' | 'ACCOUNT_UNVERIFIED' | 'ACCOUNT_SUSPENDED' | 'EXISTING_EMAIL';
+export type MODAL_TYPES = 'EXISTING_ACCOUNT' | 'SERVER_ERROR' | 'ATTEMPT_MAX' | 'REQUEST_MAX' | 'CODE_RESENT' | 'ACCOUNT_VERIFIED' | 'INCORRECT_CRED' | 'ACCOUNT_UNVERIFIED' | 'ACCOUNT_SUSPENDED' | 'EXISTING_EMAIL' | 'INCORRECT_PASSWORD';
 
 export const modalVariants: Record<MODAL_TYPES, React.FC> = {
   EXISTING_ACCOUNT: ExistingAccount,
@@ -24,4 +25,5 @@ export const modalVariants: Record<MODAL_TYPES, React.FC> = {
   ACCOUNT_VERIFIED: AccountVerified,
   ACCOUNT_UNVERIFIED: UnverifiedAccount,
   ACCOUNT_SUSPENDED: AccountSuspended,
+  INCORRECT_PASSWORD: IncorrectPassword
 };

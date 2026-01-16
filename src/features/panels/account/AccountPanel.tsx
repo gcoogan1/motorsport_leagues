@@ -11,6 +11,7 @@ import { usePanel } from "@/providers/panel/PanelProvider";
 import { useModal } from "@/providers/modal/ModalProvider";
 import UpdateName from "./forms/UpdateName/UpdateName";
 import ChangeEmail from "./forms/ChangeEmail/ChangeEmail";
+import ChangePassword from "./forms/ChangePassword/ChangePassword";
 
 /*TODO: 
   - Add functionality for when !profile exists
@@ -69,7 +70,7 @@ const AccountPanel = () => {
             optionIcon: <EditIcon />,
             optionIconLabel: "Edit Password Icon",
             onOptionClick: () => {
-              console.log("Edit Password Clicked");
+              openModal(<ChangePassword profile={profile} />);
             },
           },
         ]}
