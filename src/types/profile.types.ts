@@ -78,3 +78,9 @@ export type ProfilePasswordUpdatePayload = {
   userId: string;
 };
 
+// Change Email --> Payload Type
+export type ChangeEmailPayload = {
+  newEmail: string;
+  userId: string;
+};
+

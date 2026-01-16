@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { createProfile } from "./profile.service";
 import type {
+  ChangeEmailResult,
   Purpose,
   ResetPasswordResult,
   SendVerificationResult,
@@ -86,6 +87,17 @@ export const sendVerificationCode = async (
           },
         };
       }
+
+      if (purpose === "change_email" && errorMessage.error === "Email already in use") {
+        return {
+          success: false,
+          error: {
+            message: "Email already in use",
+            code: "EXISTING_EMAIL",
+            status: 409,
+          },
+        };
+      }
     }
     // General error handling
     return {
@@ -110,11 +122,24 @@ export const verifyCode = async (
   code: string,
   purpose: Purpose,
 ): Promise<VerifyCodeResult> => {
-  const { data, error } = await supabase.functions.invoke("verify-code", {
+  const { error } = await supabase.functions.invoke("verify-code", {
     body: { email, code, purpose },
   });
 
   if (error) {
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json()
+      if (errorMessage.error === "Invalid or expired code") {
+        return {
+          success: false,
+          error: {
+            message: "Invalid or expired code",
+            code: "INVALID_OR_EXPIRED_CODE",
+            status: 400,
+          },
+        };
+      }
+    }
     return {
       success: false,
       error: {
@@ -127,7 +152,6 @@ export const verifyCode = async (
 
   return {
     success: true,
-    data,
   };
 };
 
@@ -188,7 +212,6 @@ export const loginUser = async (payload: SigninPayload): Promise<SignInResult> =
   };
 };
 
-
 // -- Logout User -- //
 export const logoutUser = async (): Promise<SignOutResult> => {
   const { error } = await supabase.auth.signOut();
@@ -234,3 +257,28 @@ export const resetPassword = async (
     data
   };
 }
+
+// -- Change Email -- //
+export const changeEmail = async (
+  newEmail: string,
+  userId: string,
+): Promise<ChangeEmailResult> => {
+  const { error } = await supabase.functions.invoke("change-email", {
+    body: { newEmail, userId },
+  });
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error?.code || "UNKNOWN_ERROR",
+        status: error?.status || 500,
+      },
+    };
+  }
+
+  return {
+    success: true
+  };
+} 

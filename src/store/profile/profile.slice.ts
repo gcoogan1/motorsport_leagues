@@ -1,6 +1,6 @@
 import type { ProfileState } from "@/types/profile.types";
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchProfileThunk, updateProfileNameThunk } from "./profile.thunks";
+import { changeEmailThunk, fetchProfileThunk, updateProfileNameThunk } from "./profile.thunks";
 
 const initialState: ProfileState = {
   data: null,
@@ -40,7 +40,20 @@ const profileSlice = createSlice({
         if ('data' in action.payload && action.payload.data) {
           state.data = action.payload.data;
         }
-      });
+      })
+      .addCase(updateProfileNameThunk.rejected, (state) => {
+        state.status = "rejected";
+      })
+      /* Change Email */
+      .addCase(changeEmailThunk.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(changeEmailThunk.fulfilled, (state) => {
+        state.status = "fulfilled";
+      })
+      .addCase(changeEmailThunk.rejected, (state) => {
+        state.status = "rejected";
+      })
   },
 });
 
