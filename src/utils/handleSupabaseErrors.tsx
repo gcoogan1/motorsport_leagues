@@ -1,5 +1,5 @@
-import { modalVariants } from "@/features/auth/modals/modal.variants";
 import { useModal } from "@/providers/modal/ModalProvider";
+import { modalVariants } from "@/types/modal.types";
 
 // -- Supabase Modal Error Handler -- //
 
@@ -13,6 +13,7 @@ export const handleSupabaseError = (
 ) => {
   // Map of supabase status codes to modal types
   const statusModalMap: Record<number, keyof typeof modalVariants> = {
+    409: "EXISTING_EMAIL",
     422: "EXISTING_ACCOUNT",
     429: "ATTEMPT_MAX",        
     430: "REQUEST_MAX", 
