@@ -3,6 +3,8 @@ import { modalVariants } from "@/types/modal.types";
 
 // -- Supabase Modal Error Handler -- //
 
+// Used to handle general supabase errors and open appropriate modals
+
 type SupabaseError = {
   status?: number;
 };

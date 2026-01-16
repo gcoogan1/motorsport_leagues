@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { createProfile } from "./profile.service";
 import type {
   ChangeEmailResult,
+  ChangePasswordResult,
   Purpose,
   ResetPasswordResult,
   SendVerificationResult,
@@ -11,6 +12,8 @@ import type {
   SignupPayload,
   SignUpResult,
   VerifyCodeResult,
+  VerifyPasswordPayload,
+  VerifyPasswordResult,
 } from "@/types/auth.types";
 import { FunctionsHttpError } from "@supabase/supabase-js";
 
@@ -76,8 +79,11 @@ export const sendVerificationCode = async (
   if (error) {
     // Special handling for unverified account during password reset
     if (error instanceof FunctionsHttpError) {
-      const errorMessage = await error.context.json()
-      if (purpose === "reset_password" && errorMessage.error === "User is not verified") {
+      const errorMessage = await error.context.json();
+      if (
+        purpose === "reset_password" &&
+        errorMessage.error === "User is not verified"
+      ) {
         return {
           success: false,
           error: {
@@ -88,7 +94,10 @@ export const sendVerificationCode = async (
         };
       }
 
-      if (purpose === "change_email" && errorMessage.error === "Email already in use") {
+      if (
+        purpose === "change_email" &&
+        errorMessage.error === "Email already in use"
+      ) {
         return {
           success: false,
           error: {
@@ -128,7 +137,7 @@ export const verifyCode = async (
 
   if (error) {
     if (error instanceof FunctionsHttpError) {
-      const errorMessage = await error.context.json()
+      const errorMessage = await error.context.json();
       if (errorMessage.error === "Invalid or expired code") {
         return {
           success: false,
@@ -156,7 +165,9 @@ export const verifyCode = async (
 };
 
 // -- Login User -- //
-export const loginUser = async (payload: SigninPayload): Promise<SignInResult> => {
+export const loginUser = async (
+  payload: SigninPayload,
+): Promise<SignInResult> => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email: payload.email,
     password: payload.password,
@@ -232,7 +243,7 @@ export const logoutUser = async (): Promise<SignOutResult> => {
   };
 };
 
-// -- Reset Password -- //
+// -- Reset Password (Sign In) -- //
 export const resetPassword = async (
   newPassword: string,
   email: string,
@@ -254,9 +265,9 @@ export const resetPassword = async (
 
   return {
     success: true,
-    data
+    data,
   };
-}
+};
 
 // -- Change Email -- //
 export const changeEmail = async (
@@ -279,6 +290,55 @@ export const changeEmail = async (
   }
 
   return {
-    success: true
+    success: true,
   };
-} 
+};
+
+// -- Verify Password (Before password change) -- //
+export const verifyPassword = async (
+  payload: VerifyPasswordPayload,
+): Promise<VerifyPasswordResult> => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: payload.email,
+    password: payload.password,
+  });
+
+  if (error || !data.user) {
+    return {
+      success: false,
+      error: {
+        message: error?.message || "Password verification failed",
+        code: error?.code || "PASSWORD_VERIFICATION_FAILED",
+        status: error?.status || 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
+// -- Change Password (Already Authenticated) -- //
+export const changePassword = async (
+  newPassword: string,
+): Promise<ChangePasswordResult> => {
+  const { error } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error?.code || "UNKNOWN_ERROR",
+        status: error?.status || 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
