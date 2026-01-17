@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/providers/auth/useAuth";
-import { useModal } from "@/providers/modal/ModalProvider";
+import { useModal } from "@/providers/modal/useModal";
 import { sendVerificationCode, verifyCode } from "@/services/auth.service";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { verifyEmailSchema, type VerifyEmailSchema } from "./verifyEmailSchema";

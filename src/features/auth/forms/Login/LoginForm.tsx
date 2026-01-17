@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useModal } from "@/providers/modal/ModalProvider";
+import { useModal } from "@/providers/modal/useModal";
 import { loginSchema, type LoginFormValues } from "./loginSchema";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { loginUser } from "@/services/auth.service";

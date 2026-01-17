@@ -1,5 +1,5 @@
 import Dialog from '@/components/Dialog/Dialog'
-import { useModal } from '@/providers/modal/ModalProvider';
+import { useModal } from '@/providers/modal/useModal';
 
 type AccountVerifiedProps = {
   onContinue?: () => void;

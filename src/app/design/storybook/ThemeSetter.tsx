@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useAppTheme } from "../hooks/useTheme";
 import type { ThemeName } from "@/app/design/tokens/theme";
+import { useAppTheme } from "@/providers/theme/useTheme";
 
 type Props = {
   themeName: ThemeName;

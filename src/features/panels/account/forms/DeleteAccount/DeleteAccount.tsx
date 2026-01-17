@@ -1,7 +1,7 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormModal from "@/components/Forms/FormModal/FormModal";
-import { useModal } from "@/providers/modal/ModalProvider";
+import { useModal } from "@/providers/modal/useModal";
 import TextInput from "@/components/Inputs/TextInput/TextInput.tsx";
 import type { ProfileTable } from "@/types/profile.types";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";

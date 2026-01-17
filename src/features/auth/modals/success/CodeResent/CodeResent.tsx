@@ -1,4 +1,4 @@
-import { useModal } from '@/providers/modal/ModalProvider';
+import { useModal } from '@/providers/modal/useModal';
 import Dialog from '@/components/Dialog/Dialog'
 
 type CodeResentProps = {

@@ -1,15 +1,10 @@
-import { createContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ThemeProvider } from "styled-components";
+import type { ThemeName } from "@/app/design/tokens/theme";
 import { designTokens } from "@/app/design/tokens";
 import { themeTokens } from "@/app/design/tokens/theme";
-import type { ThemeName } from "@/app/design/tokens/theme";
+import { ThemeContext } from "./AppThemeContaxt";
 
-type ThemeContextType = {
-  themeName: ThemeName;
-  setThemeName: (theme: ThemeName) => void;
-};
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 // This provider wraps the app and provides theme context
 export const AppThemeProvider = ({ children }: { children: React.ReactNode }) => {

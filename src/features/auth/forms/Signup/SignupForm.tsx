@@ -4,7 +4,7 @@ import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema, type SignupFormValues } from "./signupSchema";
-import { useModal } from "@/providers/modal/ModalProvider";
+import { useModal } from "@/providers/modal/useModal";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
 import TextInput from "@/components/Inputs/TextInput/TextInput";

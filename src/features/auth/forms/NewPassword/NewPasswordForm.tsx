@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/providers/auth/useAuth";
-import { useModal } from "@/providers/modal/ModalProvider";
+import { useModal } from "@/providers/modal/useModal";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import { newPasswordSchema, type NewPasswordSchema } from "./newPasswordSchema";

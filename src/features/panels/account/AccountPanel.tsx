@@ -8,7 +8,7 @@ import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout"
 import type { RootState } from "@/store";
 import { logoutUser } from "@/services/auth.service";
 import { usePanel } from "@/providers/panel/usePanel";
-import { useModal } from "@/providers/modal/ModalProvider";
+import { useModal } from "@/providers/modal/useModal";
 import UpdateName from "./forms/UpdateName/UpdateName";
 import ChangeEmail from "./forms/ChangeEmail/ChangeEmail";
 import ChangePassword from "./forms/ChangePassword/ChangePassword";

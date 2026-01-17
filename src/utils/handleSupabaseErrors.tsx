@@ -1,4 +1,4 @@
-import { useModal } from "@/providers/modal/ModalProvider";
+import { useModal } from "@/providers/modal/useModal";
 import { modalVariants } from "@/types/modal.types";
 
 // -- Supabase Modal Error Handler -- //

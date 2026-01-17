@@ -2,7 +2,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UpdateNameSchema, updateNameSchema } from "./updateNameSchema";
 import FormModal from "@/components/Forms/FormModal/FormModal";
-import { useModal } from "@/providers/modal/ModalProvider";
+import { useModal } from "@/providers/modal/useModal";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import type { ProfileTable } from "@/types/profile.types";
 import { useDispatch } from "react-redux";

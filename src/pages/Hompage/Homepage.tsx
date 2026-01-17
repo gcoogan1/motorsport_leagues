@@ -1,10 +1,10 @@
-import { useAppTheme } from "@/app/design/hooks/useTheme";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useAppTheme } from "@/providers/theme/useTheme";
 import { LogoThemes } from "@/app/design/logoThemes";
 import { Container, SubTitle, Wrapper } from "./Homepage.styles";
-import { useDispatch } from "react-redux";
 import { useAuth } from "@/providers/auth/useAuth";
 import type { AppDispatch } from "@/store";
-import { useEffect } from "react";
 import { fetchProfileThunk } from "@/store/profile/profile.thunks";
 
 const Homepage = () => {

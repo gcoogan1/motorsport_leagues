@@ -1,5 +1,6 @@
 import { useContext } from "react";
-import { ThemeContext } from "../../../providers/theme/AppThemeProvider";
+import { ThemeContext } from "./AppThemeContaxt";
+
 
 // Custom hook to access theme context
 export const useAppTheme = () => {

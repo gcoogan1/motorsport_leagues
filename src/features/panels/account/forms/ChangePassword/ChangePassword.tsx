@@ -3,7 +3,7 @@ import { useToast } from "@/providers/toast/useToast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
-import { useModal } from "@/providers/modal/ModalProvider";
+import { useModal } from "@/providers/modal/useModal";
 import type { ProfileTable } from "@/types/profile.types";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import {
