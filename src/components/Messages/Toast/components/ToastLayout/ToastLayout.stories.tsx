@@ -5,7 +5,7 @@ import ToastLayout from "./ToastLayout";
 // -- Meta Configuration -- //
 
 const meta: Meta<typeof ToastLayout> = {
-  title: "Components/Messages/components/ToastLayout/ToastLayout",
+  title: "Components/Messages/ToastLayout",
   component: ToastLayout,
   decorators: [withAppTheme],
   parameters: {

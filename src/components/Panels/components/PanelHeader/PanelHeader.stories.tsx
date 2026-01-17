@@ -6,7 +6,7 @@ import Placeholder from "@assets/Icon/Placeholder.svg?react";
 // -- Meta Configuration -- //
 
 const Meta: Meta<typeof PanelHeader> = {
-  title: "App/Components/Panels/components/PanelHeader",
+  title: "Components/Panels/components/PanelHeader",
   component: PanelHeader,
   parameters: {
     layout: "centered",

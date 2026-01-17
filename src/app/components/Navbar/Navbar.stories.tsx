@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { BrowserRouter } from "react-router";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
+import { withAppProviders } from "@/app/design/storybook/withAppProviders";
 import Navbar from "./Navbar";
 
 // -- Meta Configuration -- //
 
 const meta: Meta<typeof Navbar> = {
   title: "App/Components/Navbar",
+  decorators: [withAppTheme, withAppProviders],
   component: Navbar,
   parameters: {
     layout: "fullscreen",
@@ -44,14 +45,6 @@ The **Navbar** component serves as the primary navigation bar for the applicatio
       options: ["core", "user", "guest"],
     },
   },
-  decorators: [
-    (Story) => (
-      <BrowserRouter>
-        <Story />
-      </BrowserRouter>
-    ),
-    withAppTheme,
-  ],
   tags: ["autodocs"],
 };
 

@@ -3,12 +3,15 @@ import { withAppTheme } from "@/app/design/storybook/withAppTheme";
 import FormModal from "./FormModal";
 import TextInput from "../../Inputs/TextInput/TextInput";
 import PasswordInput from "../../Inputs/PasswordInput/PasswordInput";
+import { withAppProviders } from "@/app/design/storybook/withAppProviders";
+import { FormProviderMock } from "@/providers/mock/FormProviderMock";
+import { Form } from "react-router";
 
 // -- Meta Configuration -- //
 
 const meta: Meta<typeof FormModal> = {
   title: "Components/Forms/FormModal",
-  decorators: [withAppTheme],
+  decorators: [withAppTheme, withAppProviders],
   component: FormModal,
   argTypes: {
     question: {
@@ -17,7 +20,7 @@ const meta: Meta<typeof FormModal> = {
     helperMessage: {
       control: "text",
     },
-        buttons: {
+    buttons: {
       onCancel: { control: false },
       onContinue: { control: false },
     },
@@ -77,13 +80,22 @@ export const Default: Story = {
   args: {
     question: "Question",
     helperMessage: "Helper message.",
+    buttons: {
+      onContinue: {
+        label: "Okay",
+        action: () => alert("Form Submitted"),
+        rightIcon: null,
+      },
+    },
   },
   render: (args) => (
-    <div style={{ width: "480px" }}>
-      <FormModal {...args}>
-        <TextInput name="name" label="Label" placeholder="Placeholder Text" />
-      </FormModal>
-    </div>
+    <FormProviderMock>
+      <div style={{ width: "480px" }}>
+        <FormModal {...args}>
+          <TextInput name="name" label="Label" placeholder="Placeholder Text" />
+        </FormModal>
+      </div>
+    </FormProviderMock>
   ),
 };
 
@@ -97,19 +109,21 @@ export const TwoInputs: Story = {
         action: () => alert("Account Created"),
         rightIcon: null,
       },
-    },  
+    },
   },
   render: (args) => (
-    <div style={{ width: "480px" }}>
-      <FormModal {...args}>
-        <TextInput name="username" label="Username" placeholder="Username" />
-        <PasswordInput
-          name="password"
-          label="Password"
-          placeholder="Password"
-        />
-      </FormModal>
-    </div>
+    <FormProviderMock>
+      <div style={{ width: "480px" }}>
+        <FormModal {...args}>
+          <TextInput name="username" label="Username" placeholder="Username" />
+          <PasswordInput
+            name="password"
+            label="Password"
+            placeholder="Password"
+          />
+        </FormModal>
+      </div>
+    </FormProviderMock>
   ),
 };
 
@@ -126,37 +140,43 @@ export const ManyInputs: Story = {
     },
   },
   render: (args) => (
-    <div
-      style={{
-        width: "480px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "16px",
-      }}
-    >
-      <FormModal {...args}>
-        <TextInput
-          name="firstName"
-          label="First Name"
-          placeholder="First Name"
-        />
-        <TextInput name="lastName" label="Last Name" placeholder="Last Name" />
-        <TextInput
-          name="email"
-          label="Email Address"
-          placeholder="Email Address"
-        />
-        <TextInput
-          name="phone"
-          label="Phone Number"
-          placeholder="Phone Number"
-        />
-        <PasswordInput
-          name="password"
-          label="Password"
-          placeholder="Password"
-        />
-      </FormModal>
-    </div>
+    <FormProviderMock>
+      <div
+        style={{
+          width: "480px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+        }}
+      >
+        <FormModal {...args}>
+          <TextInput
+            name="firstName"
+            label="First Name"
+            placeholder="First Name"
+          />
+          <TextInput
+            name="lastName"
+            label="Last Name"
+            placeholder="Last Name"
+          />
+          <TextInput
+            name="email"
+            label="Email Address"
+            placeholder="Email Address"
+          />
+          <TextInput
+            name="phone"
+            label="Phone Number"
+            placeholder="Phone Number"
+          />
+          <PasswordInput
+            name="password"
+            label="Password"
+            placeholder="Password"
+          />
+        </FormModal>
+      </div>
+    </FormProviderMock>
   ),
 };

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { BrowserRouter as Router } from "react-router";
 import { Provider } from "react-redux";
 import store from "@/store";
 import { ModalProvider } from "@/providers/modal/ModalProvider";
@@ -6,7 +7,6 @@ import { PanelProvider } from "@/providers/panel/PanelProvider";
 import { MockAuthProvider } from "@/providers/mock/MockAuthProvider";
 
 export const withAppProviders = (Story: any) => {
-
   return (
     <Provider store={store}>
       <MockAuthProvider
@@ -19,11 +19,13 @@ export const withAppProviders = (Story: any) => {
           resetAuth: async () => {},
         }}
       >
-          <ModalProvider>
-            <PanelProvider>
+        <ModalProvider>
+          <PanelProvider>
+            <Router>
               <Story />
-            </PanelProvider>
-          </ModalProvider>
+            </Router>
+          </PanelProvider>
+        </ModalProvider>
       </MockAuthProvider>
     </Provider>
   );

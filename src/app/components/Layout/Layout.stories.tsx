@@ -1,11 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { MemoryRouter, Routes, Route } from "react-router";
+import { withAppTheme } from "@/app/design/storybook/withAppTheme";
+import { withAppProviders } from "@/app/design/storybook/withAppProviders";
 import Layout from "./Layout";
 
 // -- Meta Configuration -- //
 
 const meta: Meta<typeof Layout> = {
   title: "App/Components/Layout",
+  decorators: [withAppTheme, withAppProviders],
   component: Layout,
   parameters: {
     layout: "fullscreen",
@@ -38,30 +40,5 @@ export default meta;
 
 type Story = StoryObj<typeof Layout>;
 
-//  --> Dummy page to render within the layout
-const DummyPage = () => (
-  <div
-    style={{
-      display: "flex",
-      width: "100%",
-      justifyContent: "center",
-      alignItems: "center",
-    }}
-  >
-    This is the page content
-  </div>
-);
 
-export const Default: Story = {
-  decorators: [
-    () => (
-      <MemoryRouter initialEntries={["/"]}>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<DummyPage />} />
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    ),
-  ],
-};
+export const Default: Story = {}
