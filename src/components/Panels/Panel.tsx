@@ -1,12 +1,12 @@
 import React from "react";
 import { panelVariants} from "@/features/panels/panel.variants";
-import type { PanelType } from "@/providers/panel/PanelProvider";
 import { createPortal } from "react-dom";
 import { Overlay, PanelContainer } from "./Panel.styles";
+import type { PanelProviderTypes } from "@/types/panel.types";
 
 
 type PanelProps = {
-  panel: PanelType;
+  panel: PanelProviderTypes;
   onClose: () => void;
 };
 

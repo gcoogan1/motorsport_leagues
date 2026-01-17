@@ -20,7 +20,7 @@ const Navbar = ({ usage, user }: NavbarProps) => {
   const profile = useSelector((state: RootState) => state.profile.data);
 
   // Temporary hardcoded values for demonstration
-  const count = user ? 1 : undefined;
+  const count = user ? 0 : undefined;
   const label = profile ? `${profile.firstName}` : "Account";
 
   switch (usage) {

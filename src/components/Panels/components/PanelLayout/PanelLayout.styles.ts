@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { designTokens } from "@/app/design/tokens";
 
-const { colors, borders, layout } = designTokens;
+const { colors, borders, layout, effects } = designTokens;
 
 export const PanelWrapper = styled.div`
   display: flex;
@@ -18,6 +18,13 @@ export const PanelWrapper = styled.div`
   }
 `;
 
+export const PanelTabs = styled.div`
+  display: flex;
+  padding: ${layout.space.xLarge} ${layout.space.large} 0 ${layout.space.large};
+  background: ${colors.base.base3};
+  ${effects.boxShadow.coverBaseDown};
+`;
+
 export const PanelBody = styled.div`
   display: flex;
   flex-direction: column;
@@ -29,4 +36,17 @@ export const PanelBody = styled.div`
   flex: 1;
   border-bottom-left-radius: ${borders.radius.xxLarge};
   border-bottom-right-radius: ${borders.radius.xxLarge};
+`;
+
+export const PanelActionsContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  padding: ${layout.space.large};
+  gap: ${layout.space.xSmall};
+  ${effects.boxShadow.coverBaseTop};
+`;
+
+export const PrimaryButtonContainer = styled.div`
+  flex: 1;
 `;

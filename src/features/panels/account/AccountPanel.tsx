@@ -7,7 +7,7 @@ import LinkList from "@/components/Lists/LinkList/LinkList";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import type { RootState } from "@/store";
 import { logoutUser } from "@/services/auth.service";
-import { usePanel } from "@/providers/panel/PanelProvider";
+import { usePanel } from "@/providers/panel/usePanel";
 import { useModal } from "@/providers/modal/ModalProvider";
 import UpdateName from "./forms/UpdateName/UpdateName";
 import ChangeEmail from "./forms/ChangeEmail/ChangeEmail";
