@@ -1,6 +1,8 @@
-import { useAuth } from "@/providers/auth/useAuth";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useNavigate } from "react-router";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useAuth } from "@/providers/auth/useAuth";
+import { usePanel } from "@/providers/panel/usePanel";
+import type { PanelTypes } from "@/types/panel.types";
 import type { UserData } from "@/types/auth.types";
 import Button from "@/components/Button/Button";
 import Back from "@assets/Icon/Arrow_Backward.svg?react";
@@ -14,8 +16,6 @@ import {
   RightContainer,
 } from "./CoreNavbar.styles";
 
-// TODO: Add onClick handler to NavAccount & on Back button
-
 type CoreNavbarProps = {
   user?: UserData;
   countNotifications?: number;
@@ -27,9 +27,10 @@ const CoreNavbar = ({
   countNotifications,
   accountLabel,
 }: CoreNavbarProps) => {
-  const {loading } = useAuth();
+  const { loading } = useAuth();
   const isMobile = useMediaQuery("(max-width: 919px)");
   const navigate = useNavigate();
+  const { openPanel } = usePanel();
 
   const goBackOrHome = () => {
     if (window.history.length > 1) {
@@ -37,6 +38,10 @@ const CoreNavbar = ({
     } else {
       navigate("/", { replace: true });
     }
+  };
+
+  const openPanelOfType = (type: PanelTypes) => {
+    openPanel(type);
   };
 
   return (
@@ -64,12 +69,20 @@ const CoreNavbar = ({
         <NavBrand />
       </CenterContainer>
       <RightContainer>
-        {(user && !loading) && (
+        {user && !loading && (
           <>
             {!!countNotifications && (
-              <NavNotification count={countNotifications} />
+              <NavNotification
+                count={countNotifications}
+                onClick={() => openPanelOfType("NOTIFICATIONS")}
+              />
             )}
-            {!!accountLabel && <NavAccount label={accountLabel} />}
+            {!!accountLabel && (
+              <NavAccount
+                label={accountLabel}
+                onClick={() => openPanelOfType("ACCOUNT")}
+              />
+            )}
           </>
         )}
       </RightContainer>
