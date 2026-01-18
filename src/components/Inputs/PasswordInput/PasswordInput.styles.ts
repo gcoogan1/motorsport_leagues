@@ -78,7 +78,7 @@ export const InputField = styled.input<{
 `;
 
 export const HelperText = styled.span`
-  ${typography.body.tinyRegular}
+  ${typography.body.smallRegular}
   color: ${colors.text.text2};
   display: flex;
   margin-top: 3px;
