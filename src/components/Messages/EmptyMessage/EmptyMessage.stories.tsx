@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
 import ProfileIcon from "@assets/Icon/Profile.svg?react";
-import Button from "@/components/Button/Button";
 import EmptyMessage from "./EmptyMessage";
 
 // -- Meta Configuration -- //
@@ -25,8 +24,17 @@ The **EmptyMessage** component is used to display a standardized message when a 
 | \`title\`          | \`string\`                | \`"No Data Available"\` | The main title text displayed in the empty message.          |
 | \`subtitle\`       | \`string\`                | \`"There is currently no data to display."\` | The subtitle text providing additional context.              |
 | \`icon\`          | \`React.ReactNode\`       | \`Default Empty Icon\` | The icon displayed above the title. If not provided, a default empty state icon is used. |
-| \`primaryButton\`   | \`React.ReactNode\`       | \`undefined\` | An optional primary action button displayed below the subtitle. |
-| \`secondaryButton\` | \`React.ReactNode\`       | \`undefined\` | An optional secondary action button displayed below the subtitle. | 
+| \`actions\`       | \`object\`                | \`undefined\` | An object containing optional primary and secondary action buttons. |
+| \`actions.primary\`   | \`object\`                | \`undefined\` | Configuration for the primary action button.                 |
+| \`actions.primary.onClick\` | \`() => void\`      | \`undefined\` | Function to call when the primary button is clicked.         |
+| \`actions.primary.label\`   | \`string\`          | \`""\`          | Label text for the primary button.                           |
+| \`actions.primary.rightIcon\` | \`React.ReactNode\` | \`undefined\` | Optional right icon for the primary button.                  |
+| \`actions.primary.leftIcon\`  | \`React.ReactNode\` | \`undefined\` | Optional left icon for the primary button.                   |
+| \`actions.secondary\` | \`object\`                | \`undefined\` | Configuration for the secondary action button.               |
+| \`actions.secondary.onClick\` | \`() => void\`      | \`undefined\` | Function to call when the secondary button is clicked.       |
+| \`actions.secondary.label\`   | \`string\`          | \`""\`          | Label text for the secondary button.                         |
+| \`actions.secondary.rightIcon\` | \`React.ReactNode\` | \`undefined\` | Optional right icon for the secondary button.                |
+| \`actions.secondary.leftIcon\`  | \`React.ReactNode\` | \`undefined\` | Optional left icon for the secondary button.                 |
 
 ## Features
 
@@ -34,7 +42,7 @@ Customizable title and subtitle text.
 
 Option to provide a custom icon or use the default empty icon.
 
-Supports primary and secondary action buttons, which are automatically set to full width for consistent layout.
+Supports primary and secondary action buttons.
 
 ## Usage Notes
 
@@ -54,8 +62,7 @@ Supports primary and secondary action buttons, which are automatically set to fu
       control: "text",
     },
     icon: { control: false },
-    primaryButton: { control: false },
-    secondaryButton: { control: false },
+    actions: { control: false },
   },
   tags: ["autodocs"],
 };
@@ -80,8 +87,16 @@ export const WithCustomIcon: Story = {
 
 export const WithActions: Story = {
   args: {
-    primaryButton: <Button color="base" onClick={() => {}}>Button Label</Button>,
-    secondaryButton: <Button color="base" variant="outlined" onClick={() => {}}>Button Label</Button>,
+    actions: {
+      primary: {
+        onClick: () => {},
+        label: "Primary Action",
+      },
+      secondary: {
+        onClick: () => {},
+        label: "Secondary Action",
+      },
+    },
   },
   render: (args) => <div style={{ width: '500px', display: 'flex', justifyContent: 'center' }}><EmptyMessage {...args} /></div>,
 }

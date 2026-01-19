@@ -20,9 +20,9 @@ export const CenterContainer = styled.div`
   align-items: center;
   gap: ${layout.space.xSmall};
 
-  ${layout.mediaQueries.mobile} {
+  /* ${layout.mediaQueries.mobile} {
     justify-content: flex-end;
-  }
+  } */
 `;
 
 export const RightContainer = styled.div`

@@ -1,3 +1,4 @@
+import Button from "@/components/Button/Button";
 import EmptyIcon from "@assets/Icon/Empty.svg?react";
 import {
   ActionsContainer,
@@ -8,35 +9,34 @@ import {
   TextContainer,
   Title,
 } from "./EmptyMessage.styles";
-import { cloneElement, isValidElement } from "react";
 
 type EmptyMessageProps = {
   title?: string;
   subtitle?: string;
   icon?: React.ReactNode;
-  primaryButton?: React.ReactElement<{ fullWidth?: boolean }>;
-  secondaryButton?: React.ReactElement<{ fullWidth?: boolean }>;
+  actions?: {
+    primary?: {
+      onClick: () => void;
+      label: string;
+      rightIcon?: React.ReactNode;
+      leftIcon?: React.ReactNode;
+    };
+    secondary?: {
+      onClick: () => void;
+      label: string;
+      icon?: React.ReactNode;
+      rightIcon?: React.ReactNode;
+      leftIcon?: React.ReactNode;
+    };
+  };
 };
 
 function EmptyMessage({
   title = "Empty Section",
   subtitle = "This section is currently empty!",
   icon,
-  primaryButton,
-  secondaryButton,
+  actions,
 }: EmptyMessageProps) {
-
-  // Forces buttons to be full width for consistent layout
-  const forceFullWidth = (
-    button?: React.ReactElement<{ fullWidth?: boolean }>
-  ) => {
-    if (!button || !isValidElement(button)) return button;
-
-    return cloneElement(button, {
-      fullWidth: true,
-    } as Partial<{ fullWidth?: boolean }>);
-  };
-
   return (
     <MessageContainer>
       <GraphicContainer>
@@ -46,10 +46,33 @@ function EmptyMessage({
         <Title>{title}</Title>
         <Subtitle>{subtitle}</Subtitle>
       </TextContainer>
-        <ActionsContainer>
-          {forceFullWidth(primaryButton)}
-          {forceFullWidth(secondaryButton)}
-        </ActionsContainer>
+      <ActionsContainer>
+        {actions?.primary && (
+          <Button
+            color="system"
+            onClick={actions.primary.onClick}
+            icon={{
+              right: actions.primary.rightIcon,
+              left: actions.primary.leftIcon,
+            }}
+          >
+            {actions.primary.label}
+          </Button>
+        )}
+        {actions?.secondary && (
+          <Button
+            color="system"
+            variant="outlined"
+            onClick={actions.secondary.onClick}
+            icon={{
+              right: actions.secondary.rightIcon,
+              left: actions.secondary.leftIcon,
+            }}
+          >
+            {actions.secondary.label}
+          </Button>
+        )}
+      </ActionsContainer>
     </MessageContainer>
   );
 }
