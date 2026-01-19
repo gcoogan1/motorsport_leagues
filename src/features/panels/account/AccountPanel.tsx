@@ -82,7 +82,6 @@ const AccountPanel = () => {
           {
             optionType: "text",
             optionTitle: "Delete Account",
-            optionHelper: "Permanently Delete All Data",
             optionIcon: <DeleteIcon />,
             optionIconLabel: "Delete Account Icon",
             onOptionClick: () => {
