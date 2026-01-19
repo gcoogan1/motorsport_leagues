@@ -26,14 +26,14 @@ const LinkOption = ({
   onOptionClick,
 }: LinkOptionProps) => {
   return (
-    <Option>
+    <Option onClick={onOptionClick}>
       {optionType === "text" ? (
         <>
           <OptionTextContainer>
             <OptionTitle>{optionTitle}</OptionTitle>
             <OptionHelper>{optionHelper}</OptionHelper>
           </OptionTextContainer>
-          <Icon onClick={onOptionClick} ariaLabel={optionIconLabel}>
+          <Icon ariaLabel={optionIconLabel}>
             {optionIcon}
           </Icon>
         </>
