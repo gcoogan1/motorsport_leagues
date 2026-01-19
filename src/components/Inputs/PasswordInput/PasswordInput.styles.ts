@@ -11,7 +11,6 @@ export const ButtonWrapper = styled.span`
 `;
 
 export const InputWrapper = styled.div<{ $hasValue?: boolean }>`
-  min-width: 320px;
   width: 100%;
   position: relative;
 `;
