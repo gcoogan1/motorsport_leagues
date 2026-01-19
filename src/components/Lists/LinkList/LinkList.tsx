@@ -4,7 +4,7 @@ import { LinkListContainer, SectionList, SectionTitle } from "./LinkList.styles"
 type PanelOptions = {
   optionType: "text" | "profile";
   optionTitle: string;
-  optionHelper: string;
+  optionHelper?: string;
   optionIcon: React.ReactNode;
   optionIconLabel: string;
   onOptionClick: () => void;

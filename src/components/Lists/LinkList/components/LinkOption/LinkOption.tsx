@@ -11,7 +11,7 @@ import {
 type LinkOptionProps = {
   optionType: "text" | "profile";
   optionTitle: string;
-  optionHelper: string;
+  optionHelper?: string;
   optionIcon: React.ReactNode;
   optionIconLabel: string;
   onOptionClick: () => void;
@@ -26,14 +26,14 @@ const LinkOption = ({
   onOptionClick,
 }: LinkOptionProps) => {
   return (
-    <Option>
+    <Option onClick={onOptionClick}>
       {optionType === "text" ? (
         <>
           <OptionTextContainer>
             <OptionTitle>{optionTitle}</OptionTitle>
             <OptionHelper>{optionHelper}</OptionHelper>
           </OptionTextContainer>
-          <Icon onClick={onOptionClick} ariaLabel={optionIconLabel}>
+          <Icon ariaLabel={optionIconLabel}>
             {optionIcon}
           </Icon>
         </>

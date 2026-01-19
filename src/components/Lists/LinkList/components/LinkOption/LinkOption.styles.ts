@@ -14,7 +14,7 @@ export const Option = styled.button`
   padding: ${layout.space.medium};
   align-items: center;
   gap: ${layout.space.medium};
-  color: ${colors.text.text2};
+  color: ${colors.text.text1};
   cursor: pointer;
   background: transparent;
 
