@@ -19,6 +19,7 @@ type ButtonProps = {
   onClick?: () => void;
   type?: "button" | "submit";
   fullWidth?: boolean;
+  ariaLabel?: string;
 };
 
 const Button = ({
@@ -33,7 +34,9 @@ const Button = ({
   loadingText,
   type = "button",
   fullWidth = false,
+  ariaLabel,
 }: ButtonProps) => {
+  
   return (
     <StyledButton
       type={type}
@@ -44,6 +47,7 @@ const Button = ({
       $color={color}
       $isLoading={isLoading}
       $fullWidth={fullWidth}
+      aria-label={ariaLabel}
     >
       {isLoading ? (
         <>

@@ -5,8 +5,10 @@ const { colors, layout, typography, borders } = designTokens;
 
 export const ButtonWrapper = styled.span`
   position: absolute;
-  right: ${layout.space.xSmall};
   margin-top: ${layout.space.xSmall};
+  right: ${layout.space.xSmall};
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
 `;
 

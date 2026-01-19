@@ -6,8 +6,10 @@ const { colors, layout, typography, borders } = designTokens;
 export const IconWrapper = styled.span<{ $hasValue?: boolean }>`
   position: absolute;
   left: ${layout.space.xSmall};
-  margin-top: ${layout.space.small};
+  margin-top: ${layout.space.xxSmall};
   pointer-events: none;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   color: ${({ $hasValue }) =>
     $hasValue ? colors.text.text1 : colors.text.text2};

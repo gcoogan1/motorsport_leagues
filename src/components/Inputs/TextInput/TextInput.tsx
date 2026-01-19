@@ -50,7 +50,6 @@ const TextInput = ({
         <Label>{label}</Label>
         {!!showCounter && <Count>{count}/999</Count>}
       </LabelRow>
-      {icon && <IconWrapper $hasValue={hasValue}>{icon}</IconWrapper>}
       <InputField
         id={name}
         {...register(name)}
@@ -60,7 +59,8 @@ const TextInput = ({
         $hasError={!!hasError}
         $hasValue={hasValue}
         $hasIcon={hasIcon}
-      />
+        />
+        {icon && <IconWrapper $hasValue={hasValue}>{icon}</IconWrapper>}
       <HelperText>{helperText}</HelperText>
       {!!hasError && (
         <ErrorText>

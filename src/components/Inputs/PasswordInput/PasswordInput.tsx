@@ -46,16 +46,6 @@ const PasswordInput = ({
       <LabelRow>
         <Label>{label}</Label>
       </LabelRow>
-      <ButtonWrapper>
-        <Button
-          size="small"
-          color="base"
-          variant="ghost"
-          onClick={toggleShowPassword}
-        >
-          {showPassword ? "Hide" : "Show"}
-        </Button>
-      </ButtonWrapper>
       <InputField
         id={name}
         type={showPassword ? "text" : "password"}
@@ -64,6 +54,17 @@ const PasswordInput = ({
         $hasError={!!hasError}
         $hasValue={hasValue}
       />
+      <ButtonWrapper>
+        <Button
+          size="small"
+          color="base"
+          variant="ghost"
+          onClick={toggleShowPassword}
+          ariaLabel={showPassword ? "Hide password" : "Show password"}
+        >
+          {showPassword ? "Hide" : "Show"}
+        </Button>
+      </ButtonWrapper>
       <HelperText>{helperText}</HelperText>
       {!!hasError && (
         <ErrorText>
