@@ -1,18 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useToast } from "@/providers/toast/useToast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import FormModal from "@/components/Forms/FormModal/FormModal";
-import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import { useModal } from "@/providers/modal/useModal";
-import type { ProfileTable } from "@/types/profile.types";
+import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
+import { changePassword, verifyPassword } from "@/services/auth.service";
+import type { ProfileTable } from "@/types/profile.types";
 import {
   changePasswordSchema,
   type ChangePasswordSchema,
 } from "./changePasswordSchema";
+import FormModal from "@/components/Forms/FormModal/FormModal";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
-import { changePassword, verifyPassword } from "@/services/auth.service";
+import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import IncorrectPassword from "../../modals/errors/IncorrectPassword/IncorrectPassword";
+import SamePassword from "@/features/auth/modals/errors/SamePassword/SamePassword";
 
 type ChangePasswordProps = {
   profile: ProfileTable;
@@ -21,6 +25,7 @@ type ChangePasswordProps = {
 const ChangePassword = ({ profile }: ChangePasswordProps) => {
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   // -- Form setup -- //
   const formMethods = useForm<ChangePasswordSchema>({
@@ -38,12 +43,18 @@ const ChangePassword = ({ profile }: ChangePasswordProps) => {
 
   // -- Handlers -- //
   const handleOnSubmit = async (data: ChangePasswordSchema) => {
+    setIsLoading(true);
     try {
       // Verify current password
-      const res = await verifyPassword({
-        password: data.currentPassword,
-        email: profile.email,
-      });
+      const res = await withMinDelay(
+        verifyPassword({
+          password: data.currentPassword,
+          email: profile.email,
+        }),
+        1000,
+      );
+
+      // If current password is incorrect
       if (!res.success) {
         openModal(<IncorrectPassword />);
         return;
@@ -52,23 +63,25 @@ const ChangePassword = ({ profile }: ChangePasswordProps) => {
       // Update to new password
       const updateRes = await changePassword(data.newPassword);
       if (!updateRes.success) {
-        handleSupabaseError(
-          { status: updateRes.error?.status },
-          openModal
-        );
-        return;
+        // Same password error handling
+        if (updateRes?.error?.code === "same_password") {
+          openModal(<SamePassword />);
+          return;
+        }
+        throw updateRes.error;
       }
 
+      // Success
       showToast({
         usage: "success",
         message: "Password updated.",
       });
-
       closeModal();
-    } catch (error) {
-      console.error("Check email error:", error);
-      handleSupabaseError({ status: 500 }, openModal);
+    } catch (error: any) {
+      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
       return;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -82,6 +95,8 @@ const ChangePassword = ({ profile }: ChangePasswordProps) => {
           onCancel: { label: "Cancel", action: closeModal },
           onContinue: {
             label: "Update Password",
+            loading: isLoading,
+            loadingText: "Loading...",
             rightIcon: <ArrowForward />,
           },
         }}

@@ -1,16 +1,17 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/providers/auth/useAuth";
 import { useModal } from "@/providers/modal/useModal";
-import { sendVerificationCode } from "@/services/auth.service";
+import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
+import { sendVerificationCode } from "@/services/auth.service";
+import { resetPasswordSchema, type ResetPasswordSchema } from "./resetPasswordSchema";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
-import { resetPasswordSchema, type ResetPasswordSchema } from "./resetPasswordSchema";
 import UnverifiedAccount from "../../modals/errors/UnverifiedAccount/UnverifiedAccount";
-import { useAuth } from "@/providers/auth/useAuth";
-import { useEffect } from "react";
 
 type ResetPasswordFormProps = {
   onSuccess?: () => void;
@@ -20,6 +21,7 @@ const ResetPasswordForm = ({ onSuccess }: ResetPasswordFormProps) => {
   const { resetAuth } = useAuth();
   const { openModal } = useModal();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   // -- Clear Auth //
   useEffect(() => {
@@ -43,24 +45,29 @@ const ResetPasswordForm = ({ onSuccess }: ResetPasswordFormProps) => {
   };
 
   const handleOnSubmit = async (data: ResetPasswordSchema) => {
+    setIsLoading(true);
     try {
       localStorage.setItem("pending_email", data.email);
-      const res = await sendVerificationCode(data.email, "reset_password");
+      const res = await withMinDelay(
+        sendVerificationCode(data.email, "reset_password"),
+        1000,
+      );
+
       if (!res.success) {
+        // Unverified account modal
         if (res.error.status === 403) {
           openModal(<UnverifiedAccount email={data.email} onVerify={handleVerify} />);
           return;
         }
-        handleSupabaseError({ status: res.error.status }, openModal);
-        return;
+        throw res.error;
       }
-      if (onSuccess) {
-        onSuccess();
-        return;
-      }
+      // Success
+      onSuccess?.();
     } catch (error) {
       handleSupabaseError({ status: 500 }, openModal);
       console.error("Reset password error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -74,6 +81,8 @@ const ResetPasswordForm = ({ onSuccess }: ResetPasswordFormProps) => {
         buttons={{
           onContinue: {
             label: "Send Code",
+            loading: isLoading,
+            loadingText: "Loading...",
             rightIcon: <ArrowForward />,
           },
         }}

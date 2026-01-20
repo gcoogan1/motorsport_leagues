@@ -1,17 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import type { AppDispatch } from "@/store";
+import type { ProfileTable } from "@/types/profile.types";
 import { changeEmailThunk, fetchProfileThunk } from "@/store/profile/profile.thunks";
 import { useToast } from "@/providers/toast/useToast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import FormModal from "@/components/Forms/FormModal/FormModal";
-import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
+import { sendVerificationCode, verifyCode } from "@/services/auth.service";
 import { useModal } from "@/providers/modal/useModal";
-import TextInput from "@/components/Inputs/TextInput/TextInput";
-import type { ProfileTable } from "@/types/profile.types";
+import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { checkEmailSchema, type CheckEmailSchema } from "./checkEmailSchema";
-import { sendVerificationCode, verifyCode } from "@/services/auth.service";
+import FormModal from "@/components/Forms/FormModal/FormModal";
+import TextInput from "@/components/Inputs/TextInput/TextInput";
+import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import CodeResent from "@/features/auth/modals/success/CodeResent/CodeResent";
 
 type CheckEmailProps = {
@@ -22,6 +25,7 @@ type CheckEmailProps = {
 const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
   // -- Form setup -- //
@@ -40,26 +44,25 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
 
   // -- Handlers -- //
   const handleOnSubmit = async (data: CheckEmailSchema) => {
+    setIsLoading(true);
     try {
-
       // Veify code
-      const res = await verifyCode(
+      const res = await withMinDelay(verifyCode(
         newEmail,
         data.verificationCode,
         "change_email"
-      );
+      ), 1000);
 
       // Handle verification errors
       if (!res.success) {
         if (res.error.status === 400) {
+          // Set form error for invalid code
           setError("verificationCode", {
             type: "manual",
             message: "Invalid verification code. Please try again.",
           });
-          return;
         }
-        handleSupabaseError({ status: res.error.status }, openModal);
-        return;
+        throw res.error;
       }
 
       // Update email in profile
@@ -71,9 +74,8 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
       ).unwrap();
 
       // Handle profile update errors
-      if (!profileRes.success) {
-        handleSupabaseError({ status: 500 }, openModal);
-        return;
+      if (!profileRes.success && profileRes.error) {
+        throw profileRes.error;
       }
 
       // Refresh profile data
@@ -84,10 +86,11 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
         message: "Email Address updated.",
       });
       closeModal();
-    } catch (error) {
-      console.error("Check email error:", error);
-      handleSupabaseError({ status: 500 }, openModal);
+    } catch (error: any) {
+      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
       return;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -99,13 +102,12 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
     try {
       const res = await sendVerificationCode(newEmail, "change_email");
       if (!res.success) {
-        handleSupabaseError({ status: res.error.status }, openModal);
-        return;
+        throw res.error;
       }
-      openModal(<CodeResent onContinue={handleRedirectBackToCheckEmail} />);
-    } catch (error) {
-      console.error("Check email error:", error);
-      handleSupabaseError({ status: 500 }, openModal);
+      // Open code resent modal
+      openModal(<CodeResent onContinue={handleRedirectBackToCheckEmail} email={newEmail} />);
+    } catch (error: any) {
+      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
       return;
     }
   };
@@ -120,6 +122,8 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
           onCancel: { label: "Resend Code", action: handleResendCode },
           onContinue: {
             label: "Submit",
+            loading: isLoading,
+            loadingText: "Loading...",
             rightIcon: <ArrowForward />,
           },
         }}

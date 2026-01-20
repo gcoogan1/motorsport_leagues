@@ -1,15 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { FormProvider, useForm } from "react-hook-form";
+import { resetPassword } from "@/services/auth.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/providers/auth/useAuth";
 import { useModal } from "@/providers/modal/useModal";
+import { withMinDelay } from "@/utils/withMinDelay";
+import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
+import { newPasswordSchema, type NewPasswordSchema } from "./newPasswordSchema";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
-import { newPasswordSchema, type NewPasswordSchema } from "./newPasswordSchema";
+import SamePassword from "../../modals/errors/SamePassword/SamePassword";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
-import { resetPassword } from "@/services/auth.service";
-import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 
 const NewPasswordForm = () => {
   const { resetAuth } = useAuth();
@@ -17,6 +20,7 @@ const NewPasswordForm = () => {
   const navigate = useNavigate();
   const email = localStorage.getItem("pending_email");
   const [passwordUpdated, setPasswordUpdated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // -- Clear Auth //
   useEffect(() => {
@@ -33,73 +37,90 @@ const NewPasswordForm = () => {
     formState: { errors },
   } = formMethods;
 
-  
   // -- Handlers -- //
 
   const handleOnSubmit = async (data: NewPasswordSchema) => {
+    if (!email) {
+      handleSupabaseError({ status: 500 }, openModal);
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
-      if (!email) {
-        handleSupabaseError({ status: 500 }, openModal);
-        console.error("No pending email found for password reset.");
-        return;
+      // Reset Password
+      // Adding minimum delay for better UX (1s)
+      const result = await withMinDelay(
+        resetPassword(data.newPassword, email),
+        1000,
+      );
+
+      if (!result.success) {
+        // Same password error handling
+        if (result.error?.code === "same_password") {
+          openModal(<SamePassword />);
+          return;
+        }
+        // Throw other errors
+        throw result.error;
       }
 
-      const result = await resetPassword(data.newPassword, email);
-
-      if (!result.success && result?.error?.status) {
-        handleSupabaseError({ status: result.error.status }, openModal);
-        return;
-      } 
+      // Success
       setPasswordUpdated(true);
-    } catch (error) {
-      handleSupabaseError({ status: 500 }, openModal);
-      console.error("Error resetting password:", error);
-    }   
+    } catch (error: any) {
+      // General error handling
+      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoToLogin = () => {
     localStorage.removeItem("pending_email");
     navigate("/login");
-  }
+    return;
+  };
 
   return (
     <>
-    {!passwordUpdated ? (
-      <FormProvider {...formMethods}>
-      <FormBlock
-        title={"Reset Password"}
-        question={"Create New Password"}
-        onSubmit={handleSubmit(handleOnSubmit)}
-        buttons={{
-          onContinue: {
-            label: "Update Password",
-            rightIcon: <ArrowForward />,
-          },
-        }}
-      >
-        <PasswordInput
-          name={"newPassword"}
-          label={"Create Password"}
-          helperText="Minimum of 8 characters."
-          hasError={!!errors.newPassword}
-          errorMessage={errors.newPassword?.message}
+      {!passwordUpdated ? (
+        <FormProvider {...formMethods}>
+          <FormBlock
+            title={"Reset Password"}
+            question={"Create New Password"}
+            onSubmit={handleSubmit(handleOnSubmit)}
+            buttons={{
+              onContinue: {
+                label: "Update Password",
+                loading: isLoading,
+                loadingText: "Loading...",
+                rightIcon: <ArrowForward />,
+              },
+            }}
+          >
+            <PasswordInput
+              name={"newPassword"}
+              label={"Create Password"}
+              helperText="Minimum of 8 characters."
+              hasError={!!errors.newPassword}
+              errorMessage={errors.newPassword?.message}
+            />
+          </FormBlock>
+        </FormProvider>
+      ) : (
+        <FormBlock
+          title={"Reset Password"}
+          question={"Successfully Updated"}
+          helperMessage="Your password has been changed."
+          onSubmit={handleSubmit(handleGoToLogin)}
+          buttons={{
+            onContinue: {
+              label: "Go to Log in",
+              rightIcon: <ArrowForward />,
+            },
+          }}
         />
-      </FormBlock>
-    </FormProvider>
-    ) : (
-      <FormBlock
-        title={"Reset Password"}
-        question={"Successfully Updated"}
-        helperMessage="Your password has been changed."
-        onSubmit={handleSubmit(handleGoToLogin)}
-        buttons={{
-          onContinue: {
-            label: "Go to Log in",
-            rightIcon: <ArrowForward />,
-          },
-        }}
-      />
-    )}
+      )}
     </>
   );
 };
