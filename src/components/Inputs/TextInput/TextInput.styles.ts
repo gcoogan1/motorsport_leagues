@@ -6,7 +6,7 @@ const { colors, layout, typography, borders } = designTokens;
 export const IconWrapper = styled.span<{ $hasValue?: boolean }>`
   position: absolute;
   left: ${layout.space.xSmall};
-  margin-top: ${layout.space.xxSmall};
+  margin-top: -3px;  // Temp fix for vertical alignment
   pointer-events: none;
   top: 50%;
   transform: translateY(-50%);
@@ -46,6 +46,11 @@ export const Label = styled.label`
 export const Count = styled.span`
   ${typography.body.tinyRegular}
   color: ${colors.text.text3};
+`;
+
+export const InputContainer = styled.div`
+  position: relative;
+  width: 100%;
 `;
 
 export const InputField = styled.input<{

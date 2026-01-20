@@ -8,6 +8,7 @@ import {
   InputWrapper,
   Label,
   LabelRow,
+  InputContainer,
 } from "./PasswordInput.styles";
 import Button from "@/components/Button/Button";
 import { useState } from "react";
@@ -46,25 +47,27 @@ const PasswordInput = ({
       <LabelRow>
         <Label>{label}</Label>
       </LabelRow>
-      <InputField
-        id={name}
-        type={showPassword ? "text" : "password"}
-        {...register(name)}
-        placeholder={placeholder}
-        $hasError={!!hasError}
-        $hasValue={hasValue}
-      />
-      <ButtonWrapper>
-        <Button
-          size="small"
-          color="base"
-          variant="ghost"
-          onClick={toggleShowPassword}
-          ariaLabel={showPassword ? "Hide password" : "Show password"}
-        >
-          {showPassword ? "Hide" : "Show"}
-        </Button>
-      </ButtonWrapper>
+      <InputContainer>
+        <InputField
+          id={name}
+          type={showPassword ? "text" : "password"}
+          {...register(name)}
+          placeholder={placeholder}
+          $hasError={!!hasError}
+          $hasValue={hasValue}
+        />
+        <ButtonWrapper>
+          <Button
+            size="small"
+            color="base"
+            variant="ghost"
+            onClick={toggleShowPassword}
+            ariaLabel={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? "Hide" : "Show"}
+          </Button>
+        </ButtonWrapper>
+      </InputContainer>
       <HelperText>{helperText}</HelperText>
       {!!hasError && (
         <ErrorText>

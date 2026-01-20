@@ -5,6 +5,7 @@ import {
   ErrorText,
   HelperText,
   IconWrapper,
+  InputContainer,
   InputField,
   InputWrapper,
   Label,
@@ -50,17 +51,19 @@ const TextInput = ({
         <Label>{label}</Label>
         {!!showCounter && <Count>{count}/999</Count>}
       </LabelRow>
-      <InputField
-        id={name}
-        {...register(name)}
-        type="text"
-        placeholder={placeholder}
-        maxLength={maxLength}
-        $hasError={!!hasError}
-        $hasValue={hasValue}
-        $hasIcon={hasIcon}
+      <InputContainer>
+        <InputField
+          id={name}
+          {...register(name)}
+          type="text"
+          placeholder={placeholder}
+          maxLength={maxLength}
+          $hasError={!!hasError}
+          $hasValue={hasValue}
+          $hasIcon={hasIcon}
         />
         {icon && <IconWrapper $hasValue={hasValue}>{icon}</IconWrapper>}
+      </InputContainer>
       <HelperText>{helperText}</HelperText>
       {!!hasError && (
         <ErrorText>
