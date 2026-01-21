@@ -1,18 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { FormProvider, useForm } from "react-hook-form";
+import { sendVerificationCode, signUpUser } from "@/services/auth.service";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signupSchema, type SignupFormValues } from "./signupSchema";
 import { useModal } from "@/providers/modal/useModal";
+import { withMinDelay } from "@/utils/withMinDelay";
+import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
+import { signupSchema, type SignupFormValues } from "./signupSchema";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
-import { sendVerificationCode, signUpUser } from "@/services/auth.service";
 import ExistingAccount from "../../modals/errors/ExistingAccount/ExistingAccount";
-
-// TODO: Check if is loading is needed for buttons
 
 type SignupFormProps = {
   onSuccess?: () => void;
@@ -36,49 +36,58 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
   // -- Handlers -- //
   const handleGoToLogin = () => {
     navigate("/login");
+    return;
   };
 
   const handleOnSubmit = async (data: SignupFormValues) => {
-    try {
-      // Clear any pending email on signup attempt
-      localStorage.removeItem('pending_email');
-      setIsLoading(true);
+  setIsLoading(true);
 
-      // Sign Up Process
-      const result = await signUpUser({
+  try {
+    // Clear any pending email on signup attempt
+    localStorage.removeItem("pending_email");
+
+    // Sign Up Process 
+    // Adding minimum delay for better UX (1s)
+    const result = await withMinDelay(
+      signUpUser({
         email: data.email,
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
-      });
-      if (!result.success) {
-        // Specific modal for existing account
-        if (result.error.status === 422) {
-          openModal(<ExistingAccount onContinue={handleGoToLogin} />);
-          return;
-        }
-        // Generals modal for other errors
-        handleSupabaseError({ status: result.error.status }, openModal);
+      }),
+      1000
+    );
+
+    if (!result.success) {
+      // Specific modal for existing account
+      if (result.error.status === 422) {
+        openModal(<ExistingAccount onContinue={handleGoToLogin} />);
         return;
       }
-      const res = await sendVerificationCode(data.email, "signup");
-      if (!res.success) {
-        // General modals for other errors
-        handleSupabaseError({ status: res.error.status }, openModal);
-        return;
-      }
-      // Move to next step (verify email)
-      if (onSuccess) {
-        onSuccess();
-        return;
-      }
-    } catch (error) {
-      handleSupabaseError({ status: 500 }, openModal);
-      console.error("Signup error:", error);
-    } finally {
-      setIsLoading(false);
+
+      // Throw for other errors
+      throw result.error;
     }
-  };
+
+    // On successful signup, send verification code
+    const res = await sendVerificationCode(data.email, "signup");
+
+    if (!res.success) {
+      throw res.error;
+    }
+
+    // Move to next step (verify email)
+    onSuccess?.();
+  } catch (error: any) {
+    handleSupabaseError(
+      { status: error?.status ?? 500 },
+      openModal
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <FormProvider {...formMethods}>
@@ -86,11 +95,11 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
         title={"Create Account"}
         question={"Let's get started"}
         buttons={{
-          onCancel: { label: "Got to Log in", action: handleGoToLogin },
+          onCancel: { label: "Go to Log in", action: handleGoToLogin },
           onContinue: {
             label: "Sign Up",
             loading: isLoading,
-            loadingText: "Please wait...",
+            loadingText: "Loading...",
             rightIcon: <ArrowForward />,
           },
         }}

@@ -8,7 +8,7 @@ const IncorrectPassword = () => {
     <Dialog
       type="alert"
       title="Incorrect Password"
-      subtitle="Your current password is incorrect. Try again or log out to reset your password.."
+      subtitle="Your current password is incorrect. Try again or log out to reset your password."
       buttons={{
         onCancel: {
           label: "Okay",

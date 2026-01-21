@@ -1,15 +1,17 @@
+import { useDispatch } from "react-redux";
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/providers/toast/useToast";
+import { useModal } from "@/providers/modal/useModal";
+import { withMinDelay } from "@/utils/withMinDelay";
+import { updateProfileNameThunk } from "@/store/profile/profile.thunks";
+import type { AppDispatch } from "@/store";
+import type { ProfileTable } from "@/types/profile.types";
 import { type UpdateNameSchema, updateNameSchema } from "./updateNameSchema";
 import FormModal from "@/components/Forms/FormModal/FormModal";
-import { useModal } from "@/providers/modal/useModal";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
-import type { ProfileTable } from "@/types/profile.types";
-import { useDispatch } from "react-redux";
-import { type AppDispatch } from "@/store";
-import { updateProfileNameThunk } from "@/store/profile/profile.thunks";
 import NameUpdateFail from "../../modals/errors/NameUpdateFail/NameUpdateFail";
-import { useToast } from "@/providers/toast/useToast";
 
 type UpdateNameProps = {
   profile: ProfileTable;
@@ -18,6 +20,7 @@ type UpdateNameProps = {
 const UpdateName = ({ profile }: UpdateNameProps) => {
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
   // -- Form setup -- //
@@ -36,27 +39,32 @@ const UpdateName = ({ profile }: UpdateNameProps) => {
 
   // -- Handlers -- //
   const handleOnSubmit = async (data: UpdateNameSchema) => {
+    setIsLoading(true);
     try {
-      const res = await dispatch(
+      // Update name (thunk)
+      const res = await withMinDelay(dispatch(
         updateProfileNameThunk({
           firstName: data.firstName,
           lastName: data.lastName,
           userId: profile.id,
         })
-      ).unwrap();
+      ).unwrap(), 1000);
+
       if (!res.success) {
         openModal(<NameUpdateFail />);
       }
+
+      // Show success toast on success
       showToast({
         usage: "success",
         message: "Account Name updated.",
       });
-
       closeModal();
-    } catch (error) {
+    } catch {
       openModal(<NameUpdateFail />);
-      console.error("Update name error:", error);
       return;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -76,6 +84,8 @@ const UpdateName = ({ profile }: UpdateNameProps) => {
           },
           onContinue: {
             label: "Save",
+            loading: isLoading,
+            loadingText: "Loading...",
           },
         }}
       >

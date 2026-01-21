@@ -13,7 +13,7 @@ export const DialogViewport = styled.div`
   align-items: center;
   justify-content: center;
   padding: 200px ${layout.space.large};
-  z-index: 1000;
+  z-index: 3000;
 `;
 
 

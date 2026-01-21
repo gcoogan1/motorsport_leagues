@@ -12,6 +12,8 @@ import {
 import { deleteAccount } from "@/services/auth.service";
 import { useAuth } from "@/providers/auth/useAuth";
 import { navigate } from "@/app/navigation/navigation";
+import { useState } from "react";
+import { withMinDelay } from "@/utils/withMinDelay";
 
 type DeleteAccountProps = {
   profile: ProfileTable;
@@ -21,6 +23,7 @@ type DeleteAccountProps = {
 const DeleteAccountForm = ({ profile, closePanel }: DeleteAccountProps) => {
   const { openModal, closeModal } = useModal();
   const { resetAuth } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   // -- Form setup -- //
   const formMethods = useForm<ConfirmDeleteAccountSchema>({
@@ -38,25 +41,29 @@ const DeleteAccountForm = ({ profile, closePanel }: DeleteAccountProps) => {
 
   // -- Handlers -- //
   const handleOnSubmit = async () => {
+    setIsLoading(true);
     try {
-      const res = await deleteAccount(profile.id);
+      const res = await withMinDelay(deleteAccount(profile.id), 1000);
 
       if (!res.success) {
+        // Set form error on failure
         setError("confirmation", {
           type: "manual",
           message: res.error?.message || "Failed to delete account.",
         });
         return;
       }
+      // On success, reset auth and navigate to home
       resetAuth();
       closeModal();
       closePanel();
       navigate("/");
       return
-    } catch (error) {
-      console.error("Delete account error:", error);
+    } catch {
       handleSupabaseError({ status: 500 }, openModal);
       return;
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -80,6 +87,8 @@ const DeleteAccountForm = ({ profile, closePanel }: DeleteAccountProps) => {
           onCancel: { label: "Cancel", action: closeModal },
           onContinue: {
             label: "Delete Account",
+            loading: isLoading,
+            loadingText: "Loading...",
           },
         }}
       >

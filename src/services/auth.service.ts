@@ -252,13 +252,29 @@ export const resetPassword = async (
     body: { newPassword, email },
   });
 
+  
   if (error) {
+    // Specific handling for same password error
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json();
+      if (errorMessage.error === "New password must be different from your current password") {
+        return {
+          success: false,
+          error: {
+            message: "New password cannot be the same as the previous password.",
+            code: "same_password",
+            status: 409,
+          },
+        };
+      } 
+    }
+    // Should not have a specific status code, so default to 500
     return {
       success: false,
       error: {
         message: error.message,
         code: error?.code || "UNKNOWN_ERROR",
-        status: error?.status || 500,
+        status: 500,
       },
     };
   }
@@ -327,13 +343,14 @@ export const changePassword = async (
     password: newPassword,
   });
 
+  // Should not have a specific status code, so default to 500
   if (error) {
     return {
       success: false,
       error: {
         message: error.message,
         code: error?.code || "UNKNOWN_ERROR",
-        status: error?.status || 500,
+        status: 500,
       },
     };
   }

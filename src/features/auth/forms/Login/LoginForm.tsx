@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useModal } from "@/providers/modal/useModal";
-import { loginSchema, type LoginFormValues } from "./loginSchema";
+import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { loginUser } from "@/services/auth.service";
+import { loginSchema, type LoginFormValues } from "./loginSchema";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
@@ -20,6 +23,7 @@ type LoginFormProps = {
 const LoginForm = ({ onSuccess }: LoginFormProps) => {
   const { openModal } = useModal();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   //  - Form setup -- //
   const formMethods = useForm<LoginFormValues>({
@@ -34,54 +38,64 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
   // -- Handlers -- //
   const handleResetPassword = () => {
     navigate("/reset-password?status=verify");
+    return;
   };
 
   const handleVerify = () => {
     navigate("/verify-account?purpose=signup");
+    return
   };
 
   const handleOnSubmit = async (data: LoginFormValues) => {
+    setIsLoading(true);
+
     try {
       // Clear any pending email on login attempt
-      localStorage.removeItem('pending_email');
+      localStorage.removeItem("pending_email");
 
       // Log In Process
-      const result = await loginUser({
-        email: data.email,
-        password: data.password,
-      });
-      if (!result.success && result?.error?.status) {
+      // Adding minimum delay for better UX (1s)
+      const result = await withMinDelay(
+        loginUser({
+          email: data.email,
+          password: data.password,
+        }),
+        1000,
+      );
+
+      if (!result.success) {
         // Specific modals for incorrect credentials and unverified accounts
+        // same status but different cases
         if (result.error.status === 400) {
-          // Special modal for banned users (rare case)
+          // Case 1. Special modal for banned users (rare case)
           if (result.error.code === "user_banned") {
             openModal(<AccountSuspended />);
             return;
           }
-          // else show incorrect credentials modal
+
+          // Case 2. Incorrect credentials modal
           openModal(<IncorrectCred onResetPassword={handleResetPassword} />);
           return;
         }
+
+        // Unverified account modal
         if (result.error.status === 401) {
           openModal(
-            <UnverifiedAccount onVerify={handleVerify} email={data.email} />
+            <UnverifiedAccount onVerify={handleVerify} email={data.email} />,
           );
           return;
         }
 
-        // General modals for other errors
-        handleSupabaseError({ status: result.error.status }, openModal);
-        return;
-      } else {
-        if (onSuccess) {
-          onSuccess();
-          return;
-        }
+        // Throw for other errors
+        throw result.error;
       }
-    } catch (error) {
-      handleSupabaseError({ status: 500 }, openModal);
-      console.error("Login error:", error);
-      return;
+
+      // Successful login
+      onSuccess?.();
+    } catch (error: any) {
+      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -95,6 +109,8 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
           onContinue: {
             label: "Log In",
             rightIcon: <ArrowForward />,
+            loading: isLoading,
+            loadingText: "Loading...",
           },
         }}
         onSubmit={handleSubmit(handleOnSubmit)}

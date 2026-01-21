@@ -3,9 +3,10 @@ import Dialog from '@/components/Dialog/Dialog'
 
 type CodeResentProps = {
   onContinue?: () => void;
+  email: string;
 };
 
-const CodeResent = ({ onContinue }: CodeResentProps) => {
+const CodeResent = ({ onContinue, email }: CodeResentProps) => {
   const { closeModal } = useModal();
 
   const handleOnContinue = () => {
@@ -19,7 +20,7 @@ const CodeResent = ({ onContinue }: CodeResentProps) => {
     <Dialog 
       type='success'
       title='Verification Code Resent'
-      subtitle='Another code has been sent to you at email@address.com. If you’ve still not received the code, check your spam folder and try again in 60 seconds.'
+      subtitle={`Another code has been sent to you at ${email}. If you’ve still not received the code, check your spam folder and try again in 60 seconds.`}
       buttons={{
         onContinue: {
           label: 'Okay',

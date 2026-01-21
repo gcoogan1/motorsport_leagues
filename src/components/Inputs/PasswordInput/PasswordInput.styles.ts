@@ -6,7 +6,8 @@ const { colors, layout, typography, borders } = designTokens;
 export const ButtonWrapper = styled.span`
   position: absolute;
   right: ${layout.space.xSmall};
-  margin-top: ${layout.space.xSmall};
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
 `;
 
@@ -25,6 +26,11 @@ export const LabelRow = styled.div`
 export const Label = styled.label`
   ${typography.body.smallBold}
   color: ${colors.text.text2};
+`;
+
+export const InputContainer = styled.div`
+  position: relative;
+  width: 100%;
 `;
 
 export const InputField = styled.input<{
