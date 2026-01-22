@@ -11,7 +11,6 @@ import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { verifyEmailSchema, type VerifyEmailSchema } from "./verifyEmailSchema";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
-import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import AccountVerified from "../../modals/success/AccountVerifed/AccountVerified";
 import CodeResent from "../../modals/success/CodeResent/CodeResent";
 
@@ -24,6 +23,7 @@ const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
   const { openModal } = useModal();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
 
   // --  Content based on purpose -- //
   const pendingEmail = localStorage.getItem("pending_email");
@@ -41,6 +41,7 @@ const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
 
   const {
     handleSubmit,
+    setError,
     formState: { errors },
   } = formMethods;
 
@@ -53,6 +54,7 @@ const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
   const handleGoToHome = () => {
     refreshAuth();
     navigate("/");
+    openModal(<AccountVerified />);
     return;
   };
 
@@ -60,7 +62,7 @@ const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
     setIsLoading(true);
     // Ensure email is available
     if (!email) {
-      handleSupabaseError({ status: 500 }, openModal);
+      handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
       return;
     }
 
@@ -72,6 +74,14 @@ const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
       );
 
       if (!result.success) {
+        // Set form error for invalid/expired code
+        if (result.error.code === "INVALID_OR_EXPIRED_CODE") {
+          setError("verificationCode", {
+            type: "manual",
+            message: "Incorrect code. Please try again.",
+          });
+          return;
+        }
         throw result.error;
       }
 
@@ -81,11 +91,11 @@ const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
         return;
       }
 
-      // For signup, show success modal
-      openModal(<AccountVerified onContinue={handleGoToHome} />);
+      // For signup, go to home and show success modal
+      handleGoToHome();
       return;
     } catch (error: any) {
-      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
+      handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
       return;
     } finally {
       setIsLoading(false);
@@ -93,8 +103,9 @@ const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
   };
 
   const resendCode = async () => {
+    setResendLoading(true);
     if (!email) {
-      handleSupabaseError({ status: 500 }, openModal);
+      handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
       return;
     }
 
@@ -109,8 +120,10 @@ const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
       );
       return;
     } catch (error: any) {
-      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
+      handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
       return;
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -118,16 +131,15 @@ const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
     <FormProvider {...formMethods}>
       <FormBlock
         title={title}
-        question={"Check your email."}
+        question={"Check your email"}
         helperMessage={helperMessage}
         onSubmit={handleSubmit(handleOnSubmit)}
         buttons={{
-          onCancel: { label: "Resend Code", action: resendCode },
+          onCancel: { label: "Resend Code", action: resendCode, loading: resendLoading, loadingText: "Loading..." },
           onContinue: {
             label: "Submit",
             loading: isLoading,
             loadingText: "Loading...",
-            rightIcon: <ArrowForward />,
           },
         }}
       >
