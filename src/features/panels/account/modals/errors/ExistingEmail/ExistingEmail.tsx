@@ -11,7 +11,7 @@ const ExistingEmail = () => {
       subtitle="An account already exists with this email."
       buttons={{
         onCancel: {
-          label: "Cancel",
+          label: "Okay",
           action: () => {
             closeModal();
           },

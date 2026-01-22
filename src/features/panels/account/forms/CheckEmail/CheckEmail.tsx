@@ -5,7 +5,10 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { AppDispatch } from "@/store";
 import type { ProfileTable } from "@/types/profile.types";
-import { changeEmailThunk, fetchProfileThunk } from "@/store/profile/profile.thunks";
+import {
+  changeEmailThunk,
+  fetchProfileThunk,
+} from "@/store/profile/profile.thunks";
 import { useToast } from "@/providers/toast/useToast";
 import { sendVerificationCode, verifyCode } from "@/services/auth.service";
 import { useModal } from "@/providers/modal/useModal";
@@ -14,8 +17,8 @@ import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { checkEmailSchema, type CheckEmailSchema } from "./checkEmailSchema";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
-import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import CodeResent from "@/features/auth/modals/success/CodeResent/CodeResent";
+import Button from "@/components/Button/Button";
 
 type CheckEmailProps = {
   profile: ProfileTable;
@@ -26,6 +29,7 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
   // -- Form setup -- //
@@ -47,20 +51,20 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
     setIsLoading(true);
     try {
       // Veify code
-      const res = await withMinDelay(verifyCode(
-        newEmail,
-        data.verificationCode,
-        "change_email"
-      ), 1000);
+      const res = await withMinDelay(
+        verifyCode(newEmail, data.verificationCode, "change_email"),
+        1000,
+      );
 
       // Handle verification errors
       if (!res.success) {
-        if (res.error.status === 400) {
-          // Set form error for invalid code
+        // Set form error for invalid/expired code
+        if (res.error.code === "INVALID_OR_EXPIRED_CODE") {
           setError("verificationCode", {
             type: "manual",
-            message: "Invalid verification code. Please try again.",
+            message: "Incorrect code. Please try again.",
           });
+          return;
         }
         throw res.error;
       }
@@ -70,7 +74,7 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
         changeEmailThunk({
           newEmail: newEmail,
           userId: profile.id,
-        })
+        }),
       ).unwrap();
 
       // Handle profile update errors
@@ -99,32 +103,39 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
   };
 
   const handleResendCode = async () => {
+    setIsResending(true);
     try {
       const res = await sendVerificationCode(newEmail, "change_email");
       if (!res.success) {
         throw res.error;
       }
       // Open code resent modal
-      openModal(<CodeResent onContinue={handleRedirectBackToCheckEmail} email={newEmail} />);
+      openModal(
+        <CodeResent
+          onContinue={handleRedirectBackToCheckEmail}
+          email={newEmail}
+        />,
+      );
     } catch (error: any) {
       handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
       return;
+    } finally {
+      setIsResending(false);
     }
   };
 
   return (
     <FormProvider {...formMethods}>
       <FormModal
-        question={"Check Email"}
+        question={"Check Your Email"}
         helperMessage={`We’ve sent a verification code to your new email address, ${newEmail}. Enter the code below to finalize changing your account’s email address.`}
         onSubmit={handleSubmit(handleOnSubmit)}
         buttons={{
-          onCancel: { label: "Resend Code", action: handleResendCode },
+          onCancel: { label: "Cancel", action: closeModal },
           onContinue: {
             label: "Submit",
             loading: isLoading,
             loadingText: "Loading...",
-            rightIcon: <ArrowForward />,
           },
         }}
       >
@@ -134,6 +145,18 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
           hasError={!!errors.verificationCode}
           errorMessage={errors.verificationCode?.message}
         />
+        <div style={{ alignSelf: "center" }}>
+          <Button
+            onClick={handleResendCode}
+            variant="ghost"
+            color="base"
+            ariaLabel="Resend Code"
+            isLoading={isResending}
+            loadingText="Loading..."
+          >
+            Resend Code
+          </Button>
+        </div>
       </FormModal>
     </FormProvider>
   );
