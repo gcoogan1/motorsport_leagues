@@ -5,6 +5,7 @@ import {
   CountText,
   NotificationWrapper,
 } from "./NavNotification.styles";
+import Icon from "@/components/Icon/Icon";
 
 type NavNotificationProps = {
   count?: number;
@@ -14,13 +15,13 @@ type NavNotificationProps = {
 const NavNotificationComponent = ({ count, onClick }: NavNotificationProps) => {
   
   return (
-    <NotificationWrapper aria-label="Notifications" onClick={onClick}>
+    <NotificationWrapper aria-label="Notification Button" onClick={onClick}>
       {!!count && (
         <CountBadge aria-label={`${count} new notifications`}>
           <CountText>{count}</CountText>
         </CountBadge>
       )}
-      <NotificationIcon />
+      <Icon><NotificationIcon /></Icon>
     </NotificationWrapper>
   );
 };

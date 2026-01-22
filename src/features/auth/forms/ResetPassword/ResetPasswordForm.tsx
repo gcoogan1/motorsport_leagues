@@ -11,7 +11,6 @@ import { sendVerificationCode } from "@/services/auth.service";
 import { resetPasswordSchema, type ResetPasswordSchema } from "./resetPasswordSchema";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
-import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import UnverifiedAccount from "../../modals/errors/UnverifiedAccount/UnverifiedAccount";
 
 type ResetPasswordFormProps = {
@@ -83,7 +82,6 @@ const ResetPasswordForm = ({ onSuccess }: ResetPasswordFormProps) => {
             label: "Send Code",
             loading: isLoading,
             loadingText: "Loading...",
-            rightIcon: <ArrowForward />,
           },
         }}
       >
