@@ -45,7 +45,7 @@ const ChangeEmail = ({ profile }: ChangeEmailProps) => {
       // Open check email modal on success
       openModal(<CheckEmail profile={profile} newEmail={data.email} />);
     } catch (error: any) {
-      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
+      handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
       return;
     } finally {
       setIsLoading(false);

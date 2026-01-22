@@ -13,6 +13,7 @@ const AccountVerified = ({ onContinue }: AccountVerifiedProps) => {
     if (onContinue) {
       onContinue();
     }
+    return
   }
   
   return (
@@ -22,7 +23,7 @@ const AccountVerified = ({ onContinue }: AccountVerifiedProps) => {
       subtitle='Your account has been successfully verified. Welcome to Motorsport Leagues.'
       buttons={{
         onContinue: {
-          label: 'Okay',
+          label: 'Yay!',
           action: handleContinue
         }
       }}
