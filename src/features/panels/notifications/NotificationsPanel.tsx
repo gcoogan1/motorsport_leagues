@@ -9,9 +9,9 @@ const NotificationsPanel = () => {
       panelTitleIcon={<Notifications />}
       >
       <EmptyMessage
-        title="No Notifications"
+        title="All Caught Up!"
         icon={<Notifications />}
-        subtitle="You have no new notifications."
+        subtitle="You currently do not have any notifications."
       />
     </PanelLayout>
   );
