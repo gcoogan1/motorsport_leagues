@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { FormProvider, useForm } from "react-hook-form";
@@ -55,7 +56,7 @@ const ResetPasswordForm = ({ onSuccess }: ResetPasswordFormProps) => {
 
       if (!res.success) {
         // Unverified account modal
-        if (res.error.status === 403) {
+        if (res.error.code === "UNVERIFIED_ACCOUNT") {
           openModal(<UnverifiedAccount email={data.email} onVerify={handleVerify} />);
           return;
         }
@@ -63,9 +64,8 @@ const ResetPasswordForm = ({ onSuccess }: ResetPasswordFormProps) => {
       }
       // Success
       onSuccess?.();
-    } catch (error) {
-      handleSupabaseError({ status: 500 }, openModal);
-      console.error("Reset password error:", error);
+    } catch (error: any) {
+      handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
     } finally {
       setIsLoading(false);
     }

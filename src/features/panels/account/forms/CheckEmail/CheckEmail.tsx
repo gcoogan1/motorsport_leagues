@@ -87,7 +87,7 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
       });
       closeModal();
     } catch (error: any) {
-      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
+      handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
       return;
     } finally {
       setIsLoading(false);
@@ -107,7 +107,7 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
       // Open code resent modal
       openModal(<CodeResent onContinue={handleRedirectBackToCheckEmail} email={newEmail} />);
     } catch (error: any) {
-      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
+      handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
       return;
     }
   };

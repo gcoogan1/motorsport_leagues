@@ -60,7 +60,7 @@ const DeleteAccountForm = ({ profile, closePanel }: DeleteAccountProps) => {
       navigate("/");
       return
     } catch {
-      handleSupabaseError({ status: 500 }, openModal);
+      handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
       return;
     } finally {
       setIsLoading(false);

@@ -1,5 +1,6 @@
 import type { supabase } from "@/lib/supabase";
 import type { User, Session } from "@supabase/supabase-js";
+import type { modalVariants } from "./modal.types";
 
 // -- Authentication Context Type -- //
 export type AuthContextType = {
@@ -38,7 +39,7 @@ type SupabaseError = {
   success: false;
   error: {
     message: string;
-    code: string;
+    code: keyof typeof modalVariants | string;
     status: number;
   };
 };
