@@ -33,7 +33,7 @@ export const signUpUser = async (
       success: false,
       error: {
         message: error.message,
-        code: error?.code || "UNKNOWN_ERROR",
+        code: error?.code || "SERVER_ERROR",
         status: error?.status || 500,
       },
     };
@@ -80,9 +80,11 @@ export const sendVerificationCode = async (
     // Special handling for unverified account during password reset
     if (error instanceof FunctionsHttpError) {
       const errorMessage = await error.context.json();
+      
+      // Unverified account during password reset
       if (
         purpose === "reset_password" &&
-        errorMessage.error === "User is not verified"
+        errorMessage.code === "UNVERIFIED_ACCOUNT"
       ) {
         return {
           success: false,
@@ -94,9 +96,10 @@ export const sendVerificationCode = async (
         };
       }
 
+      // Existing email during email change
       if (
         purpose === "change_email" &&
-        errorMessage.error === "Email already in use"
+        errorMessage.code === "EXISTING_EMAIL"
       ) {
         return {
           success: false,
@@ -107,13 +110,27 @@ export const sendVerificationCode = async (
           },
         };
       }
+
+      // Too many requests
+      if (errorMessage.code === "REQUEST_MAX") {
+        return {
+          success: false,
+          error: {
+            message: "Too many requests. Please try again in 1 minute.",
+            code: "REQUEST_MAX",
+            status: 429,
+          },
+        };
+      }
     }
-    // General error handling
+
+  
+    // General errors
     return {
       success: false,
       error: {
         message: error.message,
-        code: error?.code || "UNKNOWN_ERROR",
+        code: error?.code || "SERVER_ERROR",
         status: error?.status || 500,
       },
     };
@@ -138,7 +155,9 @@ export const verifyCode = async (
   if (error) {
     if (error instanceof FunctionsHttpError) {
       const errorMessage = await error.context.json();
-      if (errorMessage.error === "Invalid or expired code") {
+
+      // Expired or invalid code
+      if (errorMessage.code === "INVALID_OR_EXPIRED_CODE") {
         return {
           success: false,
           error: {
@@ -148,12 +167,26 @@ export const verifyCode = async (
           },
         };
       }
+
+      // Too many attempts
+      if (errorMessage.code === "ATTEMPT_MAX") {
+        return {
+          success: false,
+          error: {
+            message: "Too many attempts. Please request a new code.",
+            code: "ATTEMPT_MAX",
+            status: 429,
+          },
+        };
+      }
     }
+
+    // General errors
     return {
       success: false,
       error: {
         message: error.message,
-        code: error?.code || "UNKNOWN_ERROR",
+        code: error?.code || "SERVER_ERROR",
         status: error?.status || 500,
       },
     };
@@ -179,7 +212,7 @@ export const loginUser = async (
       success: false,
       error: {
         message: error?.message || "No user returned",
-        code: error?.code || "UNKNOWN_ERROR",
+        code: error?.code || "SERVER_ERROR",
         status: error?.status || 500,
       },
     };
@@ -232,7 +265,7 @@ export const logoutUser = async (): Promise<SignOutResult> => {
       success: false,
       error: {
         message: error.message,
-        code: error?.code || "UNKNOWN_ERROR",
+        code: error?.code || "SERVER_ERROR",
         status: error?.status || 500,
       },
     };
@@ -257,12 +290,12 @@ export const resetPassword = async (
     // Specific handling for same password error
     if (error instanceof FunctionsHttpError) {
       const errorMessage = await error.context.json();
-      if (errorMessage.error === "New password must be different from your current password") {
+      if (errorMessage.code === "SAME_PASSWORD") {
         return {
           success: false,
           error: {
             message: "New password cannot be the same as the previous password.",
-            code: "same_password",
+            code: "SAME_PASSWORD",
             status: 409,
           },
         };
@@ -273,7 +306,7 @@ export const resetPassword = async (
       success: false,
       error: {
         message: error.message,
-        code: error?.code || "UNKNOWN_ERROR",
+        code: error?.code || "SERVER_ERROR",
         status: 500,
       },
     };
@@ -295,11 +328,27 @@ export const changeEmail = async (
   });
 
   if (error) {
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json();
+
+      // Existing email during email change
+      if (errorMessage.code === "EXISTING_EMAIL") {
+        return {
+          success: false,
+          error: {
+            message: "Email already in use",
+            code: "EXISTING_EMAIL",
+            status: 409,
+          },
+        };
+      }
+    }
+    // General errors
     return {
       success: false,
       error: {
         message: error.message,
-        code: error?.code || "UNKNOWN_ERROR",
+        code: error?.code || "SERVER_ERROR",
         status: error?.status || 500,
       },
     };
@@ -343,13 +392,25 @@ export const changePassword = async (
     password: newPassword,
   });
 
-  // Should not have a specific status code, so default to 500
+  // Same password error handling from supabase error code (not FunctionsHttpError)
+  if (error?.code === "same_password") {
+    return {
+      success: false,
+      error: {
+        message: "New password cannot be the same as the previous password.",
+        code: "SAME_PASSWORD",
+        status: 409,
+      },
+    };
+  }
+
+  // General error
   if (error) {
     return {
       success: false,
       error: {
         message: error.message,
-        code: error?.code || "UNKNOWN_ERROR",
+        code: error?.code || "SERVER_ERROR",
         status: 500,
       },
     };
@@ -370,7 +431,7 @@ export const deleteAccount = async (userId: string): Promise<SignOutResult> => {
       success: false,
       error: {
         message: error.message,
-        code: error?.code || "UNKNOWN_ERROR",
+        code: error?.code || "SERVER_ERROR",
         status: error?.status || 500,
       },
     };
