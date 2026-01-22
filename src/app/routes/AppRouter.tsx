@@ -5,6 +5,8 @@ import Layout from "../components/Layout/Layout";
 import { setNavigate } from "../navigation/navigation";
 import NavigatorBridge from "../navigation/NavigatorBridge";
 
+//TODO: Add route protection logic based on authentication status
+
 const AppRouter = () => {
   return (
     <Router>

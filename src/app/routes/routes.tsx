@@ -46,5 +46,11 @@ export const ROUTES: Route[] = [
     path: "/unavailable",
     element: <Unavailable />,
     navbar: "core",
-  }
+  },
+  // Catch-all route for undefined paths (MUST BE LAST )
+  {
+    path: "*",
+    element: <Unavailable />,
+    navbar: "core", 
+  },
 ]
