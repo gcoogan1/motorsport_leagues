@@ -11,7 +11,6 @@ import { loginSchema, type LoginFormValues } from "./loginSchema";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
-import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import IncorrectCred from "../../modals/errors/IncorrectCred/IncorrectCred";
 import UnverifiedAccount from "../../modals/errors/UnverifiedAccount/UnverifiedAccount";
 import AccountSuspended from "../../modals/errors/AccountSuspended/AccountSuspended";
@@ -93,7 +92,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
       // Successful login
       onSuccess?.();
     } catch (error: any) {
-      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
+      handleSupabaseError({ code: error?.code ?? "SERVER_ERROR"}, openModal);
     } finally {
       setIsLoading(false);
     }
@@ -108,7 +107,6 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
           onCancel: { label: "Forgot Password?", action: handleResetPassword },
           onContinue: {
             label: "Log In",
-            rightIcon: <ArrowForward />,
             loading: isLoading,
             loadingText: "Loading...",
           },

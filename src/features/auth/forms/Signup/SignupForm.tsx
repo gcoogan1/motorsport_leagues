@@ -11,7 +11,6 @@ import { signupSchema, type SignupFormValues } from "./signupSchema";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
-import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import ExistingAccount from "../../modals/errors/ExistingAccount/ExistingAccount";
 
 type SignupFormProps = {
@@ -80,7 +79,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
     onSuccess?.();
   } catch (error: any) {
     handleSupabaseError(
-      { status: error?.status ?? 500 },
+      { code: error?.code ?? "SERVER_ERROR" },
       openModal
     );
   } finally {
@@ -100,7 +99,6 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
             label: "Sign Up",
             loading: isLoading,
             loadingText: "Loading...",
-            rightIcon: <ArrowForward />,
           },
         }}
         onSubmit={handleSubmit(handleOnSubmit)}
@@ -119,13 +117,13 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
         />
         <TextInput
           name={"email"}
-          label={"Email"}
+          label={"Email Address"}
           hasError={!!errors.email}
           errorMessage={errors.email?.message}
         />
         <PasswordInput
           name={"password"}
-          label={"Password"}
+          label={"Create Password"}
           helperText="Minimum of 8 characters."
           hasError={!!errors.password}
           errorMessage={errors.password?.message}
