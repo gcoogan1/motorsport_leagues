@@ -11,7 +11,6 @@ import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { newPasswordSchema, type NewPasswordSchema } from "./newPasswordSchema";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
-import SamePassword from "../../modals/errors/SamePassword/SamePassword";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
 
 const NewPasswordForm = () => {
@@ -41,7 +40,7 @@ const NewPasswordForm = () => {
 
   const handleOnSubmit = async (data: NewPasswordSchema) => {
     if (!email) {
-      handleSupabaseError({ status: 500 }, openModal);
+      handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
       return;
     }
 
@@ -56,11 +55,6 @@ const NewPasswordForm = () => {
       );
 
       if (!result.success) {
-        // Same password error handling
-        if (result.error?.code === "same_password") {
-          openModal(<SamePassword />);
-          return;
-        }
         // Throw other errors
         throw result.error;
       }
@@ -69,7 +63,7 @@ const NewPasswordForm = () => {
       setPasswordUpdated(true);
     } catch (error: any) {
       // General error handling
-      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
+      handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
     } finally {
       setIsLoading(false);
     }

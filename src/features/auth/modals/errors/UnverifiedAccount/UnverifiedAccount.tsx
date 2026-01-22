@@ -23,7 +23,7 @@ const UnverifiedAccount = ({ email, onVerify }: UnverifiedAccountProps) => {
       onVerify?.();
       closeModal();
     } catch (error: any) {
-      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
+      handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
     } 
   };
 

@@ -16,7 +16,6 @@ import FormModal from "@/components/Forms/FormModal/FormModal";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
 import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import IncorrectPassword from "../../modals/errors/IncorrectPassword/IncorrectPassword";
-import SamePassword from "@/features/auth/modals/errors/SamePassword/SamePassword";
 
 type ChangePasswordProps = {
   profile: ProfileTable;
@@ -63,11 +62,6 @@ const ChangePassword = ({ profile }: ChangePasswordProps) => {
       // Update to new password
       const updateRes = await changePassword(data.newPassword);
       if (!updateRes.success) {
-        // Same password error handling
-        if (updateRes?.error?.code === "same_password") {
-          openModal(<SamePassword />);
-          return;
-        }
         throw updateRes.error;
       }
 
@@ -78,7 +72,7 @@ const ChangePassword = ({ profile }: ChangePasswordProps) => {
       });
       closeModal();
     } catch (error: any) {
-      handleSupabaseError({ status: error?.status ?? 500 }, openModal);
+      handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
       return;
     } finally {
       setIsLoading(false);

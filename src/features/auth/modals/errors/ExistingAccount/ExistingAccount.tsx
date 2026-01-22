@@ -20,14 +20,14 @@ const ExistingAccount = ({ onContinue }: ExistingAccountProps) => {
     <Dialog 
       type='alert'
       title='Existing Account'
-      subtitle='An account with this email address already exists. Please log in to continue.'
+      subtitle='An account already exists with this email. Go to log in with this email address, or reset your password.'
       buttons={{
         onContinue: {
-          label: 'Continue',
+          label: 'Go to Log In',
           action: handleContinue
         },
         onCancel: {
-          label: 'Cancel',
+          label: 'Close',
           action: () => {
             closeModal();
           }

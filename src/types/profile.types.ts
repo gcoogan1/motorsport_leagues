@@ -1,4 +1,6 @@
 
+import type { modalVariants } from "./modal.types";
+
 // -- Profile Types -- //
 
 
@@ -17,7 +19,7 @@ type SupabaseError = {
   success: false;
   error: {
     message: string;
-    code: string;
+    code: keyof typeof modalVariants | string;
     status: number;
   };
 };

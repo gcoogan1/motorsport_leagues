@@ -50,12 +50,11 @@ export const getProfileById = async (
     .single();
 
   if (error) {
-    console.error("Error fetching profile:", error);
     return {
       success: false,
       error: {
         message: error.message,
-        code: error?.code || "UNKNOWN_ERROR",
+        code: error?.code || "SERVER_ERROR",
         status: 500, // Supabase select errors do not have status codes
       },
     };
@@ -100,7 +99,7 @@ export const updateProfileName = async (
       success: false,
       error: {
         message: error.message,
-        code: error?.code || "UNKNOWN_ERROR",
+        code: error?.code || "SERVER_ERROR",
         status: 500,
       },
     };
