@@ -4,6 +4,7 @@ import { ROUTES } from "./routes";
 import Layout from "../components/Layout/Layout";
 import { setNavigate } from "../navigation/navigation";
 import NavigatorBridge from "../navigation/NavigatorBridge";
+import { AppErrorBoundary } from "./AppErrorBoundry";
 
 //TODO: Add route protection logic based on authentication status
 
@@ -11,13 +12,15 @@ const AppRouter = () => {
   return (
     <Router>
       <NavigatorBridge onReady={setNavigate} />
-      <Routes>
-        <Route element={<Layout />}>
-          {ROUTES.map(({ path, element }) => (
-            <Route key={path} path={path} element={element} />
-          ))}
-        </Route>
-      </Routes>
+      <AppErrorBoundary>
+        <Routes>
+          <Route element={<Layout />}>
+            {ROUTES.map(({ path, element }) => (
+              <Route key={path} path={path} element={element} />
+            ))}
+          </Route>
+        </Routes>
+      </AppErrorBoundary>
     </Router>
   );
 };
