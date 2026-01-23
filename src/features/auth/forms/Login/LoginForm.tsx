@@ -102,7 +102,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
     <FormProvider {...formMethods}>
       <FormBlock
         title={"Log In"}
-        question="Welcome Back"
+        question="Welcome Back!"
         buttons={{
           onCancel: { label: "Forgot Password?", action: handleResetPassword },
           onContinue: {
@@ -122,7 +122,6 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
         <PasswordInput
           name={"password"}
           label={"Password"}
-          helperText="Minimum of 8 characters."
           hasError={!!errors.password}
           errorMessage={errors.password?.message}
         />
