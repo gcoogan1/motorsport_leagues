@@ -57,6 +57,7 @@ The FormModal component is a reusable form container that provides a structured 
 | \`buttons.onContinue.rightIcon\` | \`React.ReactNode\` | \`undefined\`  | Optional right icon for the continue button.                  |
 | \`buttons.onContinue.loading\` | \`boolean\` | \`undefined\`  | Indicates if the continue button is in a loading state.         |
 | \`buttons.onContinue.loadingText\` | \`string\` | \`undefined\`  | Text to display when the continue button is in a loading state. |
+| \`buttons.onContinue.isDanger\` | \`boolean\` | \`undefined\`  | Indicates if the continue button is styled as a danger action.  |
 | \`children\`     | \`React.ReactNode\`       | \`undefined\`  | The form elements to be rendered within the modal.           |
 
 ### Usage Notes

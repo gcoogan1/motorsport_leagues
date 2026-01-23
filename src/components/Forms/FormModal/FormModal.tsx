@@ -32,6 +32,7 @@ type FormModalProps = {
       rightIcon?: React.ReactNode;
       loading?: boolean;
       loadingText?: string;
+      isDanger?: boolean;
     };
   };
   onSubmit?: (data: any) => void;
@@ -87,7 +88,7 @@ const FormModal = ({
           {buttons?.onContinue && (
             <Button
               type="submit"
-              color="system"
+              color={buttons?.onContinue?.isDanger ? "danger" : "system"}
               onClick={handleOnContinue}
               isLoading={buttons?.onContinue?.loading}
               loadingText={buttons?.onContinue?.loadingText}

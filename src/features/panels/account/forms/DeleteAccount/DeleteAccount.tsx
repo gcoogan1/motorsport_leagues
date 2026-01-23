@@ -89,6 +89,7 @@ const DeleteAccountForm = ({ profile, closePanel }: DeleteAccountProps) => {
             label: "Delete Account",
             loading: isLoading,
             loadingText: "Loading...",
+            isDanger: true,
           },
         }}
       >
@@ -97,6 +98,7 @@ const DeleteAccountForm = ({ profile, closePanel }: DeleteAccountProps) => {
           label={"Confirm Deletion"}
           hasError={!!errors.confirmation}
           errorMessage={errors.confirmation?.message}
+          placeholder={'"delete account"'}
         />
       </FormModal>
     </FormProvider>
