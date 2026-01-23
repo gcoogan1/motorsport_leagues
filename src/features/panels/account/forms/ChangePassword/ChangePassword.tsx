@@ -105,6 +105,7 @@ const ChangePassword = ({ profile }: ChangePasswordProps) => {
           name="newPassword"
           label="New Password"
           hasError={!!errors.newPassword}
+          helperText="Minimum of 8 characters."
           errorMessage={errors.newPassword?.message}
         />
       </FormModal>
