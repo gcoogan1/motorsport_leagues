@@ -21,7 +21,7 @@ const Unavailable = () => {
           icon={{ right: <ArrowFoward />}}
           onClick={handleGotoHomePage}
         >
-          Go to HomePage
+          Go to Homepage
         </Button>
       </ContentContainer>
     </PageWrapper>

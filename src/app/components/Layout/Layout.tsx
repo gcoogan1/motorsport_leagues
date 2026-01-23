@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from "react-router";
 import { useAuth } from "@/providers/auth/useAuth";
-import { ROUTES } from "@/app/routes/routes";
+import { ROUTES, type Route } from "@/app/routes/routes";
 import { Main, Wrapper } from "./Layout.styles";
 import Footer from "../Footer/Footer";
 import Navbar from "../Navbar/Navbar";
@@ -16,8 +16,17 @@ const Layout = () => {
 
   // Determine navbar usage; if route specifies, use that, else base on auth status
   const userStatus = user && isVerified ? "user" : "guest";
-  const usage = currentRoute?.navbar ? currentRoute.navbar : userStatus;
+  // Helper to get current usage
+  const getCurrentUsage = (userSt: "user" | "guest", currentRt?: Route,) => {
+    if (!currentRt) {
+      return "core";
+    }
+    return currentRt.navbar ? currentRt.navbar : userSt;
+  }
+
+  const usage = getCurrentUsage(userStatus, currentRoute);
   const userDetails = userStatus === "user" ? user : undefined;
+
 
   return (
     <Wrapper>

@@ -13,9 +13,10 @@ import type { RootState } from "@/store";
 type NavbarProps = {
   usage: "core" | "user" | "guest";
   user?: UserData;
+  manualGoBack?: () => void;
 };
 
-const Navbar = ({ usage, user }: NavbarProps) => {
+const Navbar = ({ usage, user, manualGoBack }: NavbarProps) => {
 
   const profile = useSelector((state: RootState) => state.profile.data);
 
@@ -25,7 +26,7 @@ const Navbar = ({ usage, user }: NavbarProps) => {
 
   switch (usage) {
     case "core":
-      return <CoreNavbar user={user} countNotifications={count} accountLabel={label} />;
+      return <CoreNavbar user={user} countNotifications={count} accountLabel={label} manualGoBack={manualGoBack} />;
     case "guest":
       return <GuestNavbar />;
     case "user":
