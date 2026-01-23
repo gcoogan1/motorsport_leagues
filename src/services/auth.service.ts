@@ -208,6 +208,18 @@ export const loginUser = async (
 
   // Handle login error or missing user
   if (error || !data.user) {
+    // Supabase rate limit error handling
+    if (error?.status === 429) {
+      return {
+        success: false,
+        error: {
+          message: "Too many login attempts. Please try again later.",
+          code: "MAX_ATTEMPTS",
+          status: 429,
+        },
+      };
+    }
+
     return {
       success: false,
       error: {
