@@ -20,12 +20,14 @@ type CoreNavbarProps = {
   user?: UserData;
   countNotifications?: number;
   accountLabel?: string;
+  manualGoBack?: () => void;
 };
 
 const CoreNavbar = ({
   user,
   countNotifications,
   accountLabel,
+  manualGoBack,
 }: CoreNavbarProps) => {
   const { loading } = useAuth();
   const isMobile = useMediaQuery("(max-width: 919px)");
@@ -33,6 +35,11 @@ const CoreNavbar = ({
   const { openPanel } = usePanel();
 
   const goBackOrHome = () => {
+    if (manualGoBack) {
+      manualGoBack();
+      return;
+    }
+
     if (window.history.length > 1) {
       navigate(-1);
     } else {
