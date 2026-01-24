@@ -9,7 +9,7 @@ const AttemptMax = () => {
     <Dialog 
       type='alert'
       title='Too Many Failed Attempts'
-      subtitle='Please wait a few minutes before trying again, or request a code to be resent.'
+      subtitle='Please wait a few minutes before trying again.'
       buttons={{
         onContinue: {
           label: 'Okay',

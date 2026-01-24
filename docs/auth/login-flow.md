@@ -44,7 +44,7 @@
   - Code: `ATTEMPT_MAX`
   - Status: 429
   - System shows "Attempt Max" error modal
-  - Message: "Too many login attempts. Please try again later."
+  - Message: "Please wait a few minutes before trying again."
   - Displays when user fails login 5 consecutive times
   - Rate limiting based on user's IP address and email
   - User must wait 5 minutes before attempting login again
@@ -72,7 +72,7 @@
   - Code: `REQUEST_MAX`
   - Status: 429
   - System shows "Request Max" error modal
-  - Message: "Too many requests. Please try again in 1 minute."
+  - Message: "Please wait a minute before requesting a new code."
   - Displays when user requests verification code 5 consecutive times
   - User must wait 1 minute before requesting another code
 
@@ -116,7 +116,7 @@
 
 - Login proxy provides centralized authentication control
 - Rate limiting on login attempts (ATTEMPT_MAX): 5 attempts, then 5-minute timeout based on IP and email
-- Rate limiting on verification code requests (REQUEST_MAX): 5 requests per minute
+- Rate limiting on verification code requests (REQUEST_MAX): 5 requests, then 1-minute timeout
 - Rate limiting on verification code attempts (ATTEMPT_MAX): 5 attempts, then 5-minute timeout
 - Email verification required before account access
 - Account suspension/banning capability (user_banned)

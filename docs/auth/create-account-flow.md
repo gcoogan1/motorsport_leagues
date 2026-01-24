@@ -85,7 +85,7 @@
   - Code: `REQUEST_MAX`
   - Status: 429
   - System shows "Request Max" error modal
-  - Message: "Too many requests. Please try again in 1 minute."
+  - Message: "Please wait a minute before requesting a new code."
   - Displays when user requests verification code 5 consecutive times
   - User must wait 1 minute before requesting another code
 
@@ -93,7 +93,7 @@
   - Code: `ATTEMPT_MAX`
   - Status: 429
   - System shows "Attempt Max" error modal
-  - Message: "Too many attempts. Please request a new code."
+  - Message: "Please wait a few minutes before trying again."
   - Displays when user inputs incorrect code 5 times
   - User must wait 5 minutes or request a new code
 
@@ -122,7 +122,7 @@
 
 ## Security Features
 
-- Rate limiting on code requests (REQUEST_MAX): 5 requests per minute
+- Rate limiting on code requests (REQUEST_MAX): 5 requests, then 1-minute timeout
 - Rate limiting on code attempts (ATTEMPT_MAX): 5 attempts, then 5-minute timeout
 - Email verification required before account access
 - Verification codes expire after set time period
