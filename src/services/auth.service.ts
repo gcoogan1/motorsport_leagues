@@ -201,23 +201,35 @@ export const verifyCode = async (
 export const loginUser = async (
   payload: SigninPayload,
 ): Promise<SignInResult> => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: payload.email,
-    password: payload.password,
+  const { data, error } = await supabase.functions.invoke("login-proxy", {
+    body: { email: payload.email, password: payload.password },
   });
 
   // Handle login error or missing user
   if (error || !data.user) {
-    // Supabase rate limit error handling
-    if (error?.status === 429) {
-      return {
-        success: false,
-        error: {
-          message: "Too many login attempts. Please try again later.",
-          code: "MAX_ATTEMPTS",
-          status: 429,
-        },
-      };
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json();
+      if (errorMessage.code === "INCORRECT_CRED") {
+        return {
+          success: false,
+          error: {
+            message: "Incorrect credentials.",
+            code: "INCORRECT_CRED",
+            status: 403,
+          },
+        };
+      }
+
+      if (errorMessage.code === "ATTEMPT_MAX") {
+        return {
+          success: false,
+          error: {
+            message: "Too many login attempts. Please try again later.",
+            code: "ATTEMPT_MAX",
+            status: 429,
+          },
+        };
+      }
     }
 
     return {
