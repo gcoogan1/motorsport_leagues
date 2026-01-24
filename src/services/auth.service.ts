@@ -242,6 +242,23 @@ export const loginUser = async (
     };
   }
 
+  // Establish session from returned tokens from login proxy
+  const { error: sessionError } = await supabase.auth.setSession({
+    access_token: data.session.access_token,
+    refresh_token: data.session.refresh_token,
+  });
+
+  if (sessionError) {
+    return {
+      success: false,
+      error: {
+        message: "Failed to establish session.",
+        code: "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
   // Fetch profile
   const { data: profile, error: profileError } = await supabase
     .from("profiles")

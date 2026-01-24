@@ -12,8 +12,8 @@ export const ModalOverlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 200px ${layout.space.large};
   z-index: 2000;
+  padding: ${layout.space.xxxLarge} ${layout.space.medium};
 `;
 
 export const FormWrapper = styled.form`
@@ -21,7 +21,6 @@ export const FormWrapper = styled.form`
   flex-direction: column;
   width: 100%;
   max-width: 480px;
-  align-self: flex-start;
   border-radius: ${borders.radius.xxxLarge};
   background: ${colors.base.base3};
   overflow: hidden;
@@ -38,8 +37,8 @@ export const FormBody = styled.div`
   flex-direction: column;
   flex: 1;
   border-radius: ${borders.radius.xxxLarge};
-  padding: ${layout.space.xxLarge} ${layout.space.xLarge};
-  gap: ${layout.space.xLarge};
+  padding: ${layout.space.xLarge};
+  gap: ${layout.space.large};
 `;
 
 export const BodyHeader = styled.div`

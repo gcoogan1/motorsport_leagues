@@ -12,7 +12,7 @@ export const DialogViewport = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 200px ${layout.space.large};
+  padding: ${layout.space.xxxLarge} ${layout.space.medium};
   z-index: 3000;
 `;
 
@@ -20,7 +20,6 @@ export const DialogViewport = styled.div`
 export const DialogWrapper = styled.div<{ $typeStyle: RuleSet<object> }>`
   display: flex;
   flex-direction: column;
-  align-self: flex-start;
   width: 100%;
   max-width: 480px;
   border-radius: ${borders.radius.xxLarge};
