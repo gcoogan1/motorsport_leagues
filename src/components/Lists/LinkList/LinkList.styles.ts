@@ -13,8 +13,8 @@ export const LinkListContainer = styled.div`
 `;
 
 export const SectionTitle = styled.h3`
-  ${typography.title.small};
-  color: ${colors.text.text2};
+  ${typography.subtitle.large};
+  color: ${colors.text.text3};
 `;
 
 export const SectionList = styled.div`
