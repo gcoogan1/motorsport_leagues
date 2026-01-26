@@ -16,6 +16,8 @@ const slideIn = keyframes`
 
 export const PanelContainer = styled.div`
   position: fixed;
+  min-height: 400px;
+  height: 100%;
   min-width: 360px;
   width: 100%;
   max-width: 480px;
@@ -25,7 +27,6 @@ export const PanelContainer = styled.div`
   align-items: flex-start;
   z-index: 1000;
   animation: ${slideIn} 0.25s ease-out;
-    top: 0;
+  top: 0;
   right: 0;
-  height: 100vh;
 `;

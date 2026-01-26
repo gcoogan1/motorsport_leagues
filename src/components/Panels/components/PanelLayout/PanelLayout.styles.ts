@@ -31,8 +31,9 @@ export const PanelBody = styled.div`
   gap: ${layout.space.xLarge};
   background: ${colors.base.base3};
   align-items: flex-start;
-  height: 100%;
   flex: 1;
+  min-height: 0;
+  overflow-y: auto; 
   border-bottom-left-radius: ${borders.radius.xxLarge};
   border-bottom-right-radius: ${borders.radius.xxLarge};
 `;

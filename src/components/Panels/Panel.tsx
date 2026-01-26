@@ -3,6 +3,7 @@ import { panelVariants} from "@/features/panels/panel.variants";
 import { createPortal } from "react-dom";
 import { Overlay, PanelContainer } from "./Panel.styles";
 import type { PanelProviderTypes } from "@/types/panel.types";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 
 type PanelProps = {
@@ -11,7 +12,10 @@ type PanelProps = {
 };
 
 const Panel: React.FC<PanelProps> = ({ panel, onClose }) => {
-  if (panel=== "none") return null;
+  // Lock body scroll when panel is open and unlock when closed
+  useLockBodyScroll(panel !== "none");
+  if (panel === "none") return null;
+
 
   return createPortal(
     <>
