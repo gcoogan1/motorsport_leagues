@@ -38,13 +38,14 @@ export const FormBody = styled.div`
   flex: 1;
   border-radius: ${borders.radius.xxxLarge};
   padding: ${layout.space.xLarge};
-  gap: ${layout.space.large};
+  gap: ${layout.space.medium};
 `;
 
 export const BodyHeader = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${layout.space.xxxSmall};
+  padding: ${layout.space.medium} 0;
 `;
 
 export const BodyTitle = styled.h2`
