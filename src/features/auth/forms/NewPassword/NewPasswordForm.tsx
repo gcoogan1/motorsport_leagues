@@ -88,7 +88,6 @@ const NewPasswordForm = () => {
                 label: "Update Password",
                 loading: isLoading,
                 loadingText: "Loading...",
-                rightIcon: <ArrowForward />,
               },
             }}
           >

@@ -75,7 +75,7 @@ const ResetPasswordForm = ({ onSuccess }: ResetPasswordFormProps) => {
       <FormBlock
         title={"Reset Password"}
         question={"Enter Your Email"}
-        helperMessage={"We’ll send you a verification code."}
+        helperMessage={"If an account exists with this email, we’ll send you a verification code."}
         onSubmit={handleSubmit(handleOnSubmit)}
         buttons={{
           onContinue: {

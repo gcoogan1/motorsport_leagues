@@ -32,7 +32,7 @@ const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
   const helperMessage =
     purpose === "signup"
       ? `We’ve sent a verification code to you at ${email}. Enter it below to finish creating your account.`
-      : `If an account exists with the email, ${email}, you’ll receive a verification code. Enter it below to reset your password.`;
+      : `Enter the verification code below to reset your password.`;
 
   // -- Form setup -- //
   const formMethods = useForm<VerifyEmailSchema>({
