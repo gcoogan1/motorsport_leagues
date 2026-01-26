@@ -14,7 +14,6 @@ import {
 } from "./changePasswordSchema";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
-import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import IncorrectPassword from "../../modals/errors/IncorrectPassword/IncorrectPassword";
 
 type ChangePasswordProps = {
@@ -91,7 +90,6 @@ const ChangePassword = ({ profile }: ChangePasswordProps) => {
             label: "Update Password",
             loading: isLoading,
             loadingText: "Loading...",
-            rightIcon: <ArrowForward />,
           },
         }}
       >
