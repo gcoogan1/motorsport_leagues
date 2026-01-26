@@ -1,18 +1,15 @@
+import { navigate } from '@/app/navigation/navigation';
 import Dialog from '@/components/Dialog/Dialog'
 import { useModal } from '@/providers/modal/useModal';
 
-type IncorrectCredProps = {
-  onResetPassword?: () => void;
-}
 
-const IncorrectCred = ({ onResetPassword }: IncorrectCredProps) => {
+const IncorrectCred = () => {
   const { closeModal } = useModal();
 
   const handleResetPassword = () => {
-    if (onResetPassword) {
-      onResetPassword();
-      closeModal();
-    }
+    navigate("/reset-password?status=verify");
+    closeModal();
+    return;
   }
   
   return (

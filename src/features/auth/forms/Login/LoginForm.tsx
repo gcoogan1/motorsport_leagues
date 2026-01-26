@@ -11,7 +11,6 @@ import { loginSchema, type LoginFormValues } from "./loginSchema";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
-import IncorrectCred from "../../modals/errors/IncorrectCred/IncorrectCred";
 import UnverifiedAccount from "../../modals/errors/UnverifiedAccount/UnverifiedAccount";
 import AccountSuspended from "../../modals/errors/AccountSuspended/AccountSuspended";
 
@@ -63,18 +62,12 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
       );
 
       if (!result.success) {
-        // Specific modals for incorrect credentials and unverified accounts
-        // same status but different cases
+        // Special modal for banned users (rare case)
         if (result.error.status === 400) {
-          // Case 1. Special modal for banned users (rare case)
           if (result.error.code === "user_banned") {
             openModal(<AccountSuspended />);
             return;
           }
-
-          // Case 2. Incorrect credentials modal
-          openModal(<IncorrectCred onResetPassword={handleResetPassword} />);
-          return;
         }
 
         // Unverified account modal
