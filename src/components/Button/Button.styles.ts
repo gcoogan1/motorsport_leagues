@@ -1,13 +1,35 @@
-import styled, { type DefaultTheme } from "styled-components";
+import styled, { css, type DefaultTheme, keyframes } from "styled-components";
 import { designTokens } from "@/app/design/tokens";
 import type {
-  ButtonVariant,
   ButtonColor,
   ButtonState,
+  ButtonVariant,
 } from "./Button.variants";
 import { resolveButtonStyles } from "./Button.variants";
 
 const { layout, borders, typography } = designTokens;
+
+// Spinner animation for loading state
+const spin = keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+export const Spinner = styled.span`
+  width: 20px;
+  height: 20px;
+  border: 3px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 2s linear infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
 
 // Generates the CSS styles for a given button state using the variant resolver from Button.variants.ts
 const buttonStateStyles = ({
@@ -24,7 +46,7 @@ const buttonStateStyles = ({
   isLoading?: boolean;
 }) => {
   // If button is loading, always use the "loading" state styles
-  const resolvedState = isLoading  ? "loading" : state;
+  const resolvedState = isLoading ? "loading" : state;
 
   const styles = resolveButtonStyles({
     theme,
@@ -33,7 +55,9 @@ const buttonStateStyles = ({
     state: resolvedState,
   });
 
-  const boxShadow = styles.boxShadow ? `box-shadow: ${styles.boxShadow};` : "box-shadow: none;";
+  const boxShadow = styles.boxShadow
+    ? `box-shadow: ${styles.boxShadow};`
+    : "box-shadow: none;";
 
   return `
     background: ${styles.background};
@@ -51,11 +75,9 @@ export const StyledButton = styled.button<{
   $isLoading?: boolean;
   $fullWidth?: boolean;
 }>`
-
   // -- Basic button styles -- //
 
-  ${typography.body.mediumBold}
-  display: inline-flex;
+  ${typography.body.mediumBold} display: inline-flex;
   width: ${({ $fullWidth }) => ($fullWidth ? "100%" : "auto")};
   align-items: center;
   border: none;
@@ -71,10 +93,20 @@ export const StyledButton = styled.button<{
       : `${layout.space.medium}`;
   }};
 
+  // -- Make Loading Icon Spin -- //
+  ${({ $isLoading }) =>
+    $isLoading &&
+    css`
+      pointer-events: none;
 
-  // -- Dynamic styles based on button state -- //
+      svg {
+        animation: ${spin} 2s linear infinite;
+      }
+    `} 
+    
+  
+    // -- Dynamic styles based on button state -- //
   // Note: Theme is automatically provided by styled-components useing the ThemeProvider in App.tsx
-
   // Enabled state (default)
   ${({ theme, $variant, $color, $isLoading }) =>
     buttonStateStyles({
@@ -83,10 +115,8 @@ export const StyledButton = styled.button<{
       color: $color,
       state: "enabled",
       isLoading: $isLoading,
-    })}
-
-  // Hover state
-  &:hover {
+    })}  // Hover state
+    &:hover {
     ${({ theme, $variant, $color, $isLoading }) =>
       buttonStateStyles({
         theme,
@@ -94,7 +124,7 @@ export const StyledButton = styled.button<{
         color: $color,
         state: "hovered",
         isLoading: $isLoading,
-      })}
+      })};
   }
 
   // Focus state
@@ -106,8 +136,7 @@ export const StyledButton = styled.button<{
         color: $color,
         state: "focused",
         isLoading: $isLoading,
-      })}
-    outline: 2px solid ${({ theme }) => theme.colors.utility.focus};
+      })} outline: 2px solid ${({ theme }) => theme.colors.utility.focus};
     outline-offset: 2px;
   }
 
@@ -120,6 +149,6 @@ export const StyledButton = styled.button<{
         color: $color,
         state: "pressed",
         isLoading: $isLoading,
-      })}
+      })};
   }
 `;

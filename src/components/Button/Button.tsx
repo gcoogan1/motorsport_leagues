@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import Icon from "../Icon/Icon";
-import Spinner from "@assets/Icon/Spinner.svg?react";
-import { StyledButton } from "./Button.styles";
+import { StyledButton, Spinner } from "./Button.styles";
 import type { ButtonVariant, ButtonColor } from "./Button.variants";
 
 type ButtonProps = {
@@ -51,9 +50,7 @@ const Button = ({
     >
       {isLoading ? (
         <>
-          <Icon>
-            <Spinner />
-          </Icon>
+          <Spinner />
           {<span>{loadingText || "Loading..."}</span>}
         </>
       ) : (

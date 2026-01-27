@@ -44,11 +44,14 @@ Callbacks for close and continue actions.
 | \`buttons.onCancel.action\` | \`() => void\` | \`undefined\`  | Action to perform when the cancel button is clicked.          |
 | \`buttons.onCancel.leftIon\` | \`React.ReactNode\` | \`undefined\`  | Optional left icon for the cancel button.                     |
 | \`buttons.onCancel.rightIcon\` | \`React.ReactNode\` | \`undefined\`  | Optional right icon for the cancel button.                    |
+| \`buttons.onCancel.loading\` | \`boolean\` | \`undefined\`  | Loading state for the cancel button.                           |
+| \`buttons.onCancel.loadingText\` | \`string\` | \`undefined\`  | Loading text for the cancel button.                            |
 | \`buttons.onContinue.label\` | \`string\`    | \`"Continue"\` | Label for the continue button.                                |
 | \`buttons.onContinue.action\` | \`() => void\`| \`undefined\`  | Action to perform when the continue button is clicked.         |
 | \`buttons.onContinue.leftIcon\` | \`React.ReactNode\` | \`undefined\`  | Optional left icon for the continue button.                   |
 | \`buttons.onContinue.rightIcon\` | \`React.ReactNode\` | \`undefined\`  | Optional right icon for the continue button.                  |
-
+| \`buttons.onContinue.loading\` | \`boolean\` | \`undefined\`  | Loading state for the continue button.                        |
+| \`buttons.onContinue.loadingText\` | \`string\` | \`undefined\`  | Loading text for the continue button.                         |
 
 ### Usage Notes
 

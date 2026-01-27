@@ -21,12 +21,16 @@ type DialogProps = {
       action?: () => void;
       leftIcon?: React.ReactNode;
       rightIcon?: React.ReactNode;
+      loading?: boolean;
+      loadingText?: string;
     };
     onContinue?: {
       label: string;
       action?: () => void;
       leftIcon?: React.ReactNode;
       rightIcon?: React.ReactNode;
+      loading?: boolean;
+      loadingText?: string;
     };
   };
 };
@@ -46,6 +50,8 @@ const Dialog = ({ type = "core", title, subtitle, buttons }: DialogProps) => {
             <Button
               color="base"
               variant="outlined"
+              isLoading={buttons?.onCancel?.loading}
+              loadingText={buttons?.onCancel?.loadingText}
               icon={{
                 left: buttons?.onCancel?.leftIcon,
                 right: buttons?.onCancel?.rightIcon,
@@ -62,6 +68,8 @@ const Dialog = ({ type = "core", title, subtitle, buttons }: DialogProps) => {
                 left: buttons?.onContinue?.leftIcon,
                 right: buttons?.onContinue?.rightIcon,
               }}
+              isLoading={buttons?.onContinue?.loading}
+              loadingText={buttons?.onContinue?.loadingText}
             >
               {buttons?.onContinue?.label}
             </Button>

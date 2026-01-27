@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Dialog from "@/components/Dialog/Dialog";
+import { useState } from "react";
 import { useModal } from "@/providers/modal/useModal";
 import { sendVerificationCode } from "@/services/auth.service";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
+import Dialog from "@/components/Dialog/Dialog";
 
 type UnverifiedAccountProps = {
   email: string;
@@ -11,8 +12,10 @@ type UnverifiedAccountProps = {
 
 const UnverifiedAccount = ({ email, onVerify }: UnverifiedAccountProps) => {
   const { openModal, closeModal } = useModal();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleVerify = async () => {
+    setIsLoading(true);
     // Send verification code
     try {
       const result = await sendVerificationCode(email, "signup");
@@ -24,6 +27,8 @@ const UnverifiedAccount = ({ email, onVerify }: UnverifiedAccountProps) => {
       closeModal();
     } catch (error: any) {
       handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
+    } finally {
+      setIsLoading(false);
     } 
   };
 
@@ -36,6 +41,8 @@ const UnverifiedAccount = ({ email, onVerify }: UnverifiedAccountProps) => {
         onContinue: {
           label: "Verify",
           action: handleVerify,
+          loading: isLoading,
+          loadingText: "Loading...",
         },
         onCancel: {
           label: "Cancel",
