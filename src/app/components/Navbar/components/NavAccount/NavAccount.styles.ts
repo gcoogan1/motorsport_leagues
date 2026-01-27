@@ -55,4 +55,5 @@ export const SelectLabel = styled.p`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  text-transform: capitalize;
 `;

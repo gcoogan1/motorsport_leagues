@@ -121,6 +121,5 @@ export const ErrorText = styled.span`
   ${typography.body.smallBold}
   color: ${colors.alert.alertA};
   display: flex;
-  align-items: center;
   gap: ${layout.space.xxxSmall};
 `;

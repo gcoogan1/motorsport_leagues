@@ -28,7 +28,7 @@ The \`LinkList\` component is designed to display a list of navigational links, 
 - Each option in the \`options\` array should conform to the \`LinkOption\` type for proper rendering and functionality.
 
 \` type LinkOption = {
-  optionType: "text" | "profile";
+  optionType: "text" | "account";
   optionTitle: string;
   optionHelper?: string;
   optionIcon?: React.ReactNode;

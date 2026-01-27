@@ -6,17 +6,17 @@ import { sendVerificationCode } from "@/services/auth.service";
 import { useModal } from "@/providers/modal/useModal";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
-import type { ProfileTable } from "@/types/profile.types";
+import type { AccountTable } from "@/types/account.types";
 import { changeEmailSchema, type ChangeEmailSchema } from "./changeEmailSchema";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import CheckEmail from "../CheckEmail/CheckEmail";
 
 type ChangeEmailProps = {
-  profile: ProfileTable;
+  account: AccountTable;
 };
 
-const ChangeEmail = ({ profile }: ChangeEmailProps) => {
+const ChangeEmail = ({ account }: ChangeEmailProps) => {
   const { openModal, closeModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +24,7 @@ const ChangeEmail = ({ profile }: ChangeEmailProps) => {
   const formMethods = useForm<ChangeEmailSchema>({
     resolver: zodResolver(changeEmailSchema),
     defaultValues: {
-      email: profile.email,
+      email: account.email,
     },
   });
 
@@ -43,7 +43,7 @@ const ChangeEmail = ({ profile }: ChangeEmailProps) => {
         throw res.error;
       }
       // Open check email modal on success
-      openModal(<CheckEmail profile={profile} newEmail={data.email} />);
+      openModal(<CheckEmail account={account} newEmail={data.email} />);
     } catch (error: any) {
       handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
       return;

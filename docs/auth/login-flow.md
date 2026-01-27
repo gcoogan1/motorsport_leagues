@@ -20,8 +20,8 @@
    - System invokes login proxy function with credentials
    - System verifies credentials against Supabase Auth
    - System establishes session with access and refresh tokens
-   - System fetches user profile from profiles table
-   - System checks profile `is_verified` flag
+   - System fetches user account from accounts table
+   - System checks account `is_verified` flag
 
 5. **Login Success**
    - User is redirected to homepage (`/`)
@@ -86,8 +86,8 @@
 
 ### System Errors
 
-- **Profile Fetch Fails**
-  - Code: `PROFILE_FETCH_FAILED`
+- **Account Fetch Fails**
+  - Code: `ACCOUNT_FETCH_FAILED`
   - Status: 500
   - Login process fails even if credentials are correct
   - Generic error handling via `handleSupabaseError` utility

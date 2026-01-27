@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
-import ProfileIcon from "@assets/Icon/Profile.svg?react";
+import AccountIcon from "@assets/Icon/Account.svg?react";
 import EmptyMessage from "./EmptyMessage";
 
 // -- Meta Configuration -- //
@@ -78,9 +78,9 @@ export const Default: Story = {};
 
 export const WithCustomIcon: Story = {
   args: {
-    title: "No Profile Found",
+    title: "No Account Found",
     subtitle: "Please create a profile to get started.",
-    icon: <ProfileIcon />,
+    icon: <AccountIcon />,
   },
   render: (args) => <div style={{ width: '500px', display: 'flex', justifyContent: 'center' }}><EmptyMessage {...args} /></div>,
 }

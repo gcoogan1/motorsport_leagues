@@ -2,7 +2,7 @@ import LinkOption from "./components/LinkOption/LinkOption";
 import { LinkListContainer, SectionList, SectionTitle } from "./LinkList.styles";
 
 type PanelOptions = {
-  optionType: "text" | "profile";
+  optionType: "text" | "account";
   optionTitle: string;
   optionHelper?: string;
   optionIcon: React.ReactNode;

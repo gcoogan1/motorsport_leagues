@@ -84,9 +84,21 @@ const UserNavbar = ({
         <MobileRightContainer>
           <CenterContainer>
             <>
-              <NavSelect icon={<Profile />} label={"Profiles"} />
-              <NavSelect icon={<Squad />} label={"Squads"} />
-              <NavSelect icon={<League />} label={"Leagues"} />
+              <NavSelect
+                icon={<Profile />}
+                label={"Profiles"}
+                onClick={() => openPanelOfType("PROFILES")}
+              />
+              <NavSelect
+                icon={<Squad />}
+                label={"Squads"}
+                onClick={() => openPanelOfType("SQUADS")}
+              />
+              <NavSelect
+                icon={<League />}
+                label={"Leagues"}
+                onClick={() => openPanelOfType("LEAGUES")}
+              />
             </>
           </CenterContainer>
           <RightContainer>

@@ -4,11 +4,11 @@ import { useDispatch } from "react-redux";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { AppDispatch } from "@/store";
-import type { ProfileTable } from "@/types/profile.types";
+import type { AccountTable } from "@/types/account.types";
 import {
   changeEmailThunk,
-  fetchProfileThunk,
-} from "@/store/profile/profile.thunks";
+  fetchAccountThunk,
+} from "@/store/account/account.thunks";
 import { useToast } from "@/providers/toast/useToast";
 import { sendVerificationCode, verifyCode } from "@/services/auth.service";
 import { useModal } from "@/providers/modal/useModal";
@@ -21,11 +21,11 @@ import CodeResent from "@/features/auth/modals/success/CodeResent/CodeResent";
 import Button from "@/components/Button/Button";
 
 type CheckEmailProps = {
-  profile: ProfileTable;
+  account: AccountTable;
   newEmail: string;
 };
 
-const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
+const CheckEmail = ({ account, newEmail }: CheckEmailProps) => {
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -69,21 +69,21 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
         throw res.error;
       }
 
-      // Update email in profile
-      const profileRes = await dispatch(
+      // Update email in account
+      const accountRes = await dispatch(
         changeEmailThunk({
           newEmail: newEmail,
-          userId: profile.id,
+          userId: account.id,
         }),
       ).unwrap();
 
-      // Handle profile update errors
-      if (!profileRes.success && profileRes.error) {
-        throw profileRes.error;
+      // Handle account update errors
+      if (!accountRes.success && accountRes.error) {
+        throw accountRes.error;
       }
 
-      // Refresh profile data
-      dispatch(fetchProfileThunk(profile.id));
+      // Refresh account data
+      dispatch(fetchAccountThunk(account.id));
       // Show success toast and close modal
       showToast({
         usage: "success",
@@ -99,7 +99,7 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
   };
 
   const handleRedirectBackToCheckEmail = () => {
-    openModal(<CheckEmail profile={profile} newEmail={newEmail} />);
+    openModal(<CheckEmail account={account} newEmail={newEmail} />);
   };
 
   const handleResendCode = async () => {

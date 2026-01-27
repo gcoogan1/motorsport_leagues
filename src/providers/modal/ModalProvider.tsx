@@ -1,11 +1,15 @@
-import{ useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { ModalContext } from "./ModalContext";
 
 export const ModalProvider = ({ children }: { children: ReactNode }) => {
-  const [modal, setModal] = useState<ReactNode | null>(null);
+  const [modal, setModal] = useState<ReactNode[]>([]);
 
-  const openModal = (modalComponent: ReactNode) => setModal(modalComponent);
-  const closeModal = () => setModal(null);
+  const openModal = (modalComponent: ReactNode) => {
+    setModal((prev) => [...prev, modalComponent]);
+  };
+  const closeModal = () => {
+    setModal((prev) => prev.slice(0, -1));
+  };
 
   return (
     <ModalContext.Provider value={{ openModal, closeModal }}>

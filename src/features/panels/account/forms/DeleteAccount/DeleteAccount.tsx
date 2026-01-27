@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import { useModal } from "@/providers/modal/useModal";
 import TextInput from "@/components/Inputs/TextInput/TextInput.tsx";
-import type { ProfileTable } from "@/types/profile.types";
+import type { AccountTable } from "@/types/account.types";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import {
   confirmDeleteAccountSchema,
@@ -16,11 +16,11 @@ import { useState } from "react";
 import { withMinDelay } from "@/utils/withMinDelay";
 
 type DeleteAccountProps = {
-  profile: ProfileTable;
+  account: AccountTable;
   closePanel: () => void;
 };
 
-const DeleteAccountForm = ({ profile, closePanel }: DeleteAccountProps) => {
+const DeleteAccountForm = ({ account, closePanel }: DeleteAccountProps) => {
   const { openModal, closeModal } = useModal();
   const { resetAuth } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +43,7 @@ const DeleteAccountForm = ({ profile, closePanel }: DeleteAccountProps) => {
   const handleOnSubmit = async () => {
     setIsLoading(true);
     try {
-      const res = await withMinDelay(deleteAccount(profile.id), 1000);
+      const res = await withMinDelay(deleteAccount(account.id), 1000);
 
       if (!res.success) {
         // Set form error on failure
@@ -72,7 +72,7 @@ const DeleteAccountForm = ({ profile, closePanel }: DeleteAccountProps) => {
         question={"Delete Account"}
         helperMessage={
           <>
-            Your entire account, including your Profiles, will be deleted and
+            Your entire account, including your Accounts, will be deleted and
             unrecoverable. Squads that you are the sole Founder of, and Leagues
             that you are the only Director of, will also be deleted. All data
             that you contributed to a Squad or League, including your results,

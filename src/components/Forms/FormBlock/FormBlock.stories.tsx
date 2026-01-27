@@ -136,9 +136,9 @@ export const TwoInputs: Story = {
 
 export const ManyInputs: Story = {
   args: {
-    title: "Profile Information",
+    title: "Account Information",
     question: "Tell us about yourself",
-    helperMessage: "This information will be displayed on your profile.",
+    helperMessage: "This information will be displayed on your account.",
     buttons: {
       onCancel: {
         label: "Back",
@@ -147,7 +147,7 @@ export const ManyInputs: Story = {
       },
       onContinue: {
         label: "Save",
-        action: () => alert("Profile Saved"),
+        action: () => alert("Account Saved"),
         rightIcon: null,
       },
     },

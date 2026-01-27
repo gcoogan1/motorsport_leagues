@@ -46,8 +46,8 @@
 
 8. **Update Email**
    - System invokes change-email function with new email and user ID
-   - System updates both Supabase Auth email and profiles table email
-   - System refreshes profile data in Redux store
+   - System updates both Supabase Auth email and accounts table email
+   - System refreshes account data in Redux store
 
 9. **Update Success**
    - Modal closes automatically
@@ -115,7 +115,7 @@
 - Form pre-populated with current email using `defaultValues`
 - Two-step modal flow: Change Email → Check Email
 - Uses same verification code system as signup and password reset
-- Updates both Supabase Auth and profiles table
+- Updates both Supabase Auth and accounts table
 - Redux store refreshed after successful email change
 - Toast notification confirms successful update
 - Cancel button available at each step

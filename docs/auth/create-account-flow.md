@@ -25,7 +25,7 @@
 4. **Account Creation**
    - System clears any pending email from localStorage
    - System creates user account in Supabase Auth
-   - System automatically creates user profile in profiles table with:
+   - System automatically creates user account in accounts table with:
      - User ID
      - Email
      - First name
@@ -48,7 +48,7 @@
    - If successful, system marks account as verified
 
 7. **Account Verification Success**
-   - System updates profile `is_verified` flag to `true`
+   - System updates account `is_verified` flag to `true`
    - User is redirected to homepage (`/`)
    - Auth context is refreshed to reflect verified status
    - "Account Verified!" success modal displays with message: "Your account has been successfully verified. Welcome to Motorsport Leagues."
@@ -63,10 +63,10 @@
   - Modal message: "An account already exists with this email. Go to log in with this email address, or reset your password."
   - User can click "Go to Log In" to navigate to login page or "Close" to dismiss
 
-- **Profile Creation Fails**
-  - Code: `PROFILE_CREATION_FAILED`
+- **Account Creation Fails**
+  - Code: `ACCOUNT_CREATION_FAILED`
   - Status: 500
-  - If auth signup succeeds but profile creation fails, returns error
+  - If auth signup succeeds but account creation fails, returns error
   - Generic error handling via `handleSupabaseError` utility
 
 - **Verification Code Send Fails**
@@ -115,7 +115,7 @@
 
 - Minimum 1-second loading delay for better UX during signup
 - Clears any pending email from localStorage on signup attempt
-- Profile is created with `is_verified: false` initially
+- Account is created with `is_verified: false` initially
 - Users cannot log in until email is verified (checked during login flow)
 - Verification flow uses same component for both signup and password reset purposes
 - Two-step process: Registration → Email Verification
@@ -126,5 +126,5 @@
 - Rate limiting on code attempts (ATTEMPT_MAX): 5 attempts, then 5-minute timeout
 - Email verification required before account access
 - Verification codes expire after set time period
-- Profile verification flag enforced during login
+- Account verification flag enforced during login
 - Duplicate email prevention (EXISTING_ACCOUNT check)

@@ -14,7 +14,7 @@
 
 3. **Review Warning Information**
    - Modal displays comprehensive warning:
-     - "Your entire account, including your Profiles, will be deleted and unrecoverable."
+     - "Your entire account, including your Accounts, will be deleted and unrecoverable."
      - "Squads that you are the sole Founder of, and Leagues that you are the only Director of, will also be deleted."
      - "All data that you contributed to a Squad or League, including your results, will remain there until deleted."
    - Bold instruction: "Please type "delete account" below to confirm."
@@ -61,7 +61,7 @@
 
 - **Irreversible Action**
   - No way to recover account once deleted
-  - All profile data permanently removed
+  - All Account data permanently removed
   - Squads/Leagues where user is sole owner also deleted
   - User contributions to other squads/leagues remain
 
@@ -99,7 +99,7 @@
 
 ### Deleted:
 - User account (Supabase Auth)
-- User profile (profiles table)
+- User account (accounts table)
 - Squads where user is sole Founder
 - Leagues where user is only Director
 

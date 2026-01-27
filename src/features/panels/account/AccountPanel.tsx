@@ -9,22 +9,25 @@ import type { RootState } from "@/store";
 import { logoutUser } from "@/services/auth.service";
 import { usePanel } from "@/providers/panel/usePanel";
 import { useModal } from "@/providers/modal/useModal";
+import { capitalizeString } from "@/utils/capitalizeString";
 import UpdateName from "./forms/UpdateName/UpdateName";
 import ChangeEmail from "./forms/ChangeEmail/ChangeEmail";
 import ChangePassword from "./forms/ChangePassword/ChangePassword";
 import DeleteAccount from "./forms/DeleteAccount/DeleteAccount";
 
 /*TODO: 
-  - Add functionality for when !profile exists
+  - Add functionality for when !account exists
 */
 
 const AccountPanel = () => {
   const { openModal } = useModal();
   const { closePanel } = usePanel();
 
-  const profile = useSelector((state: RootState) => state.profile.data);
+  const account = useSelector((state: RootState) => state.account.data);
 
-  if (!profile) return null;
+  if (!account) return null;
+
+  const fullName = `${capitalizeString(account.firstName)} ${capitalizeString(account.lastName)}`;
 
   // -- Handlers -- //
   const handleLogout = async () => {
@@ -44,11 +47,11 @@ const AccountPanel = () => {
           {
             optionType: "text",
             optionTitle: "Name",
-            optionHelper: `${profile.firstName} ${profile.lastName}`,
+            optionHelper: fullName,
             optionIcon: <EditIcon />,
             optionIconLabel: "Edit Fullname Icon",
             onOptionClick: () => {
-              openModal(<UpdateName profile={profile} />);
+              openModal(<UpdateName account={account} />);
             },
           },
         ]}
@@ -59,10 +62,10 @@ const AccountPanel = () => {
           {
             optionType: "text",
             optionTitle: "Email",
-            optionHelper: profile.email,
+            optionHelper: account.email,
             optionIcon: <EditIcon />,
             optionIconLabel: "Edit Email Icon",
-            onOptionClick: () => {openModal(<ChangeEmail profile={profile} />);},
+            onOptionClick: () => {openModal(<ChangeEmail account={account} />);},
           },
           {
             optionType: "text",
@@ -71,7 +74,7 @@ const AccountPanel = () => {
             optionIcon: <EditIcon />,
             optionIconLabel: "Edit Password Icon",
             onOptionClick: () => {
-              openModal(<ChangePassword profile={profile} />);
+              openModal(<ChangePassword account={account} />);
             },
           },
         ]}
@@ -85,7 +88,7 @@ const AccountPanel = () => {
             optionIcon: <DeleteIcon />,
             optionIconLabel: "Delete Account Icon",
             onOptionClick: () => {
-              openModal(<DeleteAccount profile={profile} closePanel={closePanel} />);
+              openModal(<DeleteAccount account={account} closePanel={closePanel} />);
             },
           },
         ]}
