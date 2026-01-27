@@ -88,6 +88,7 @@ const ResetPasswordForm = ({ onSuccess }: ResetPasswordFormProps) => {
         <TextInput
           name={"email"}
           label={"Email"}
+          type="email"
           hasError={!!errors.email}
           errorMessage={errors.email?.message}
         />

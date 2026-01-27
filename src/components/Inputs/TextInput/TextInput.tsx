@@ -17,6 +17,7 @@ import {
 type TextInputProps = {
   name: string;
   label: string;
+  type?: "text" | "email" | "number";
   icon?: React.ReactNode;
   placeholder?: string;
   maxLength?: number;
@@ -36,6 +37,7 @@ const TextInput = ({
   helperText,
   hasError,
   errorMessage,
+  type = "text",
 }: TextInputProps) => {
   const { register, watch } = useFormContext();
 
@@ -55,7 +57,7 @@ const TextInput = ({
         <InputField
           id={name}
           {...register(name)}
-          type="text"
+          type={type}
           placeholder={placeholder}
           maxLength={maxLength}
           $hasError={!!hasError}

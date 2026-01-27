@@ -118,6 +118,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
         <TextInput
           name={"email"}
           label={"Email Address"}
+          type="email"
           hasError={!!errors.email}
           errorMessage={errors.email?.message}
         />

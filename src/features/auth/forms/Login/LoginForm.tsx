@@ -109,6 +109,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
         <TextInput
           name={"email"}
           label={"Email"}
+          type="email"
           hasError={!!errors.email}
           errorMessage={errors.email?.message}
         />

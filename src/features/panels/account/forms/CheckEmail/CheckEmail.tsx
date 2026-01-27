@@ -142,6 +142,7 @@ const CheckEmail = ({ profile, newEmail }: CheckEmailProps) => {
         <TextInput
           name={"verificationCode"}
           label={"Verification Code"}
+          type="number"
           hasError={!!errors.verificationCode}
           errorMessage={errors.verificationCode?.message}
         />

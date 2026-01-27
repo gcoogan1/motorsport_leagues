@@ -77,6 +77,7 @@ const ChangeEmail = ({ profile }: ChangeEmailProps) => {
         <TextInput
           name={"email"}
           label={"New Email Address"}
+          type="email"
           hasError={!!errors.email}
           errorMessage={errors.email?.message}
         />
