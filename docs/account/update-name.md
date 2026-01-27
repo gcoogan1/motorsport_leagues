@@ -26,9 +26,9 @@
 
 5. **Update Name**
    - User clicks "Save" button
-   - System dispatches updateProfileNameThunk action
-   - System updates profiles table with new first_name and last_name
-   - System updates Redux store with new profile data
+   - System dispatches updateAccountNameThunk action
+   - System updates accounts table with new first_name and last_name
+   - System updates Redux store with new account data
 
 6. **Update Success**
    - Modal closes automatically
@@ -47,10 +47,10 @@
   - Modal message: "Please try again."
   - User can click "Okay" to dismiss modal
 
-- **Profile Not Found**
+- **Account Not Found**
   - Code: `NOT_FOUND`
   - Status: 404
-  - Update fails if user profile doesn't exist in database
+  - Update fails if user account doesn't exist in database
   - Shows "Name Change Failed" modal
 
 ### General Errors
@@ -68,5 +68,5 @@
 ## Key Implementation Details
 
 - Minimum 1-second loading delay for better UX during update
-- Form pre-populated with current profile values using `defaultValues`
+- Form pre-populated with current account values using `defaultValues`
 - Uses

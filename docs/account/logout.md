@@ -69,7 +69,7 @@
 - Auth provider's resetAuth function handles state cleanup
 - onAuthStateChange listener triggers auth refresh across app
 - No minimum delay - logout happens immediately
-- Redux profile store not cleared (will be cleared on next login)
+- Redux account store not cleared (will be cleared on next login)
 
 ## Security Features
 

@@ -1,50 +1,51 @@
-import type { ProfileState } from "@/types/profile.types";
+import type { AccountState } from "@/types/account.types";
 import { createSlice } from "@reduxjs/toolkit";
-import { changeEmailThunk, fetchProfileThunk, updateProfileNameThunk } from "./profile.thunks";
+import { fetchAccountThunk, updateAccountNameThunk, changeEmailThunk } from "./account.thunks";
 
-// NOTE: Create, Change Password, and Delete Profiles are done in auth.service.ts
+
+// NOTE: Create, Change Password, and Delete Accounts are done in auth.service.ts
 // This is because auth holds password management and user sessions.
 
-const initialState: ProfileState = {
+const initialState: AccountState = {
   data: null,
   status: "idle",
 };
 
-const profileSlice = createSlice({
-  name: "profile",
+const accountSlice = createSlice({
+  name: "account",
   initialState,
   reducers: {
-    clearProfile: (state) => {
+    clearAccount: (state) => {
       state.data = null;
       state.status = "idle";
     },
   },
   extraReducers: (builder) => {
     builder
-       /* Fetch Profile */
-      .addCase(fetchProfileThunk.pending, (state) => {
+       /* Fetch Account */
+      .addCase(fetchAccountThunk.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(fetchProfileThunk.fulfilled, (state, action) => {
+      .addCase(fetchAccountThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
         if ('data' in action.payload && action.payload.data) {
           state.data = action.payload.data;
         }
       })
-      .addCase(fetchProfileThunk.rejected, (state) => {
+      .addCase(fetchAccountThunk.rejected, (state) => {
         state.status = "rejected";
       })
       /* Update Name */
-      .addCase(updateProfileNameThunk.pending, (state) => {
+      .addCase(updateAccountNameThunk.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(updateProfileNameThunk.fulfilled, (state, action) => {
+      .addCase(updateAccountNameThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
         if ('data' in action.payload && action.payload.data) {
           state.data = action.payload.data;
         }
       })
-      .addCase(updateProfileNameThunk.rejected, (state) => {
+      .addCase(updateAccountNameThunk.rejected, (state) => {
         state.status = "rejected";
       })
       /* Change Email */
@@ -60,5 +61,5 @@ const profileSlice = createSlice({
   },
 });
 
-export const { clearProfile } = profileSlice.actions;
-export default profileSlice.reducer;
+export const { clearAccount } = accountSlice.actions;
+export default accountSlice.reducer;

@@ -4,8 +4,8 @@ import NotificationsPanel from "./notifications/NotificationsPanel";
 import ProfilesPanel from "./profiles/ProfilesPanel";
 import GuestProfilesPanel from "./profiles/GuestProfilesPanel";
 import SquadsPanel from "./squads/SquadsPanel";
-import GuestSquadsPanel from "./squads/GuestSquadsPanel";
 import LeaguesPanel from "./leagues/LeaguesPanel";
+import GuestSquadsPanel from "./squads/GuestSquadsPanel";
 import GuestLeaguesPanel from "./leagues/GuestLeaguesPanel";
 
 

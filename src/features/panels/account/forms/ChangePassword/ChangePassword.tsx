@@ -7,7 +7,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { changePassword, verifyPassword } from "@/services/auth.service";
-import type { ProfileTable } from "@/types/profile.types";
+import type { AccountTable } from "@/types/account.types";
 import {
   changePasswordSchema,
   type ChangePasswordSchema,
@@ -17,10 +17,10 @@ import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
 import IncorrectPassword from "../../modals/errors/IncorrectPassword/IncorrectPassword";
 
 type ChangePasswordProps = {
-  profile: ProfileTable;
+  account: AccountTable;
 };
 
-const ChangePassword = ({ profile }: ChangePasswordProps) => {
+const ChangePassword = ({ account }: ChangePasswordProps) => {
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +47,7 @@ const ChangePassword = ({ profile }: ChangePasswordProps) => {
       const res = await withMinDelay(
         verifyPassword({
           password: data.currentPassword,
-          email: profile.email,
+          email: account.email,
         }),
         1000,
       );

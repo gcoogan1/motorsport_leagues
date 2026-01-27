@@ -31,7 +31,7 @@ src/
 ├── app/          # Global providers, routing config, global styles
 ├── assets/       # Global static assets (images, fonts, icons)
 ├── components/   # Reusable UI components (buttons, inputs, etc.)
-├── features/     # Feature-based modules (leagues, auth, profiles)
+├── features/     # Feature-based modules (leagues, auth, accounts)
 ├── hooks/        # Reusable custom React hooks
 ├── lib/          # External library configurations/wrappers
 ├── pages/        # Route-based page components

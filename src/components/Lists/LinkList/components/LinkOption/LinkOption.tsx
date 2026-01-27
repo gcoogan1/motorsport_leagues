@@ -6,10 +6,10 @@ import {
   OptionTitle,
 } from "./LinkOption.styles";
 
-//TODO: Complete profile option type rendering
+//TODO: Complete account option type rendering
 
 type LinkOptionProps = {
-  optionType: "text" | "profile";
+  optionType: "text" | "account";
   optionTitle: string;
   optionHelper?: string;
   optionIcon: React.ReactNode;

@@ -5,19 +5,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/providers/toast/useToast";
 import { useModal } from "@/providers/modal/useModal";
 import { withMinDelay } from "@/utils/withMinDelay";
-import { updateProfileNameThunk } from "@/store/profile/profile.thunks";
+import { updateAccountNameThunk } from "@/store/account/account.thunks";
 import type { AppDispatch } from "@/store";
-import type { ProfileTable } from "@/types/profile.types";
+import type { AccountTable } from "@/types/account.types";
 import { type UpdateNameSchema, updateNameSchema } from "./updateNameSchema";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import NameUpdateFail from "../../modals/errors/NameUpdateFail/NameUpdateFail";
 
 type UpdateNameProps = {
-  profile: ProfileTable;
+  account: AccountTable;
 };
 
-const UpdateName = ({ profile }: UpdateNameProps) => {
+const UpdateName = ({ account }: UpdateNameProps) => {
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -27,8 +27,8 @@ const UpdateName = ({ profile }: UpdateNameProps) => {
   const formMethods = useForm<UpdateNameSchema>({
     resolver: zodResolver(updateNameSchema),
     defaultValues: {
-      firstName: profile.firstName,
-      lastName: profile.lastName,
+      firstName: account.firstName,
+      lastName: account.lastName,
     },
   });
 
@@ -43,10 +43,10 @@ const UpdateName = ({ profile }: UpdateNameProps) => {
     try {
       // Update name (thunk)
       const res = await withMinDelay(dispatch(
-        updateProfileNameThunk({
+        updateAccountNameThunk({
           firstName: data.firstName,
           lastName: data.lastName,
-          userId: profile.id,
+          userId: account.id,
         })
       ).unwrap(), 1000);
 

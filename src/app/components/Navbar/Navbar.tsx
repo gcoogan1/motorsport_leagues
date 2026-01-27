@@ -18,11 +18,11 @@ type NavbarProps = {
 
 const Navbar = ({ usage, user, manualGoBack }: NavbarProps) => {
 
-  const profile = useSelector((state: RootState) => state.profile.data);
+  const account = useSelector((state: RootState) => state.account.data);
 
   // Temporary hardcoded values for demonstration
   const count = user ? 0 : undefined;
-  const label = profile ? `${profile.firstName}` : "Account";
+  const label = account ? `${account.firstName}` : "Account";
 
   switch (usage) {
     case "core":

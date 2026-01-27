@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { createProfile } from "./profile.service";
+import { createAccount } from "./account.service";
 import type {
   ChangeEmailResult,
   ChangePasswordResult,
@@ -19,7 +19,7 @@ import { FunctionsHttpError } from "@supabase/supabase-js";
 
 // -- Authentication Supabase Services -- //
 
-// -- Sign Up User and Create Profile -- //
+// -- Sign Up User and Create Account -- //
 export const signUpUser = async (
   payload: SignupPayload,
 ): Promise<SignUpResult> => {
@@ -39,28 +39,28 @@ export const signUpUser = async (
     };
   }
 
-  // Create user profile in profiles table
+  // Create user account in accounts table
   if (data.user) {
-    const profileRes = await createProfile({
+    const accountRes = await createAccount({
       id: data.user.id,
       email: payload.email,
       firstName: payload.firstName,
       lastName: payload.lastName,
     });
 
-    if (!profileRes.success) {
+    if (!accountRes.success) {
       return {
         success: false,
         error: {
-          message: profileRes.error?.message || "Failed to create profile",
-          code: profileRes.error?.code || "PROFILE_CREATION_FAILED",
-          status: profileRes.error?.status || 500,
+          message: accountRes.error?.message || "Failed to create account",
+          code: accountRes.error?.code || "ACCOUNT_CREATION_FAILED",
+          status: accountRes.error?.status || 500,
         },
       };
     }
   }
 
-  // Return success if both auth sign-up and profile creation succeed
+  // Return success if both auth sign-up and account creation succeed
   return {
     success: true,
     data,
@@ -259,27 +259,27 @@ export const loginUser = async (
     };
   }
 
-  // Fetch profile
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
+  // Fetch account
+  const { data: account, error: accountError } = await supabase
+    .from("accounts")
     .select("is_verified")
     .eq("id", data.user.id)
     .single();
 
-  // Log out if profile fetch fails and return error
-  if (profileError) {
+  // Log out if account fetch fails and return error
+  if (accountError) {
     return {
       success: false,
       error: {
-        message: profileError.message,
-        code: "PROFILE_FETCH_FAILED",
+        message: accountError.message,
+        code: "ACCOUNT_FETCH_FAILED",
         status: 500,
       },
     };
   }
 
   // Log out if email not verified and return error
-  if (!profile.is_verified) {
+  if (!account.is_verified) {
     return {
       success: false,
       error: {
@@ -290,7 +290,7 @@ export const loginUser = async (
     };
   }
 
-  // Return success if login and profile verification succeed
+  // Return success if login and account verification succeed
   return {
     success: true,
     data,

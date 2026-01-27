@@ -19,13 +19,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       let verified = false;
       if (currentUser) {
-        const { data: profile } = await supabase
-          .from("profiles")
+        const { data: account } = await supabase
+          .from("accounts")
           .select("is_verified")
           .eq("id", currentUser.id)
           .single();
 
-        verified = profile?.is_verified ?? false;
+        verified = account?.is_verified ?? false;
       }
 
       setSession(sessionData.session);

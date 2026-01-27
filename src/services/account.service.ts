@@ -1,21 +1,21 @@
 import { supabase } from "@/lib/supabase";
 import type {
-  CreateProfileResult,
-  GetProfileResult,
-  ProfileTable,
-  UpdateProfileResult,
-} from "@/types/profile.types";
+  CreateAccountResult,
+  GetAccountResult,
+  AccountTable,
+  UpdateAccountResult,
+} from "@/types/account.types";
 
-// --- Profile Supabase Services -- //
+// --- Account Supabase Services -- //
 
-// -- Create Profile -- //
-export const createProfile = async ({
+// -- Create Account -- //
+export const createAccount = async ({
   id: userId,
   email,
   firstName,
   lastName,
-}: ProfileTable): Promise<CreateProfileResult> => {
-  const { error } = await supabase.from("profiles").insert({
+}: AccountTable): Promise<CreateAccountResult> => {
+  const { error } = await supabase.from("accounts").insert({
     id: userId,
     email,
     first_name: firstName,
@@ -39,12 +39,12 @@ export const createProfile = async ({
   };
 };
 
-// -- Get Profile by User ID -- //
-export const getProfileById = async (
+// -- Get Account by User ID -- //
+export const getAccountById = async (
   userId: string,
-): Promise<GetProfileResult> => {
+): Promise<GetAccountResult> => {
   const { data, error } = await supabase
-    .from("profiles")
+    .from("accounts")
     .select("*")
     .eq("id", userId)
     .single();
@@ -74,18 +74,18 @@ export const getProfileById = async (
 
   return {
     success: false,
-    error: { message: "Profile not found", code: "NOT_FOUND", status: 404 },
+    error: { message: "Account not found", code: "NOT_FOUND", status: 404 },
   };
 };
 
-// -- Update Profile -- //
-export const updateProfileName = async (
+// -- Update Account -- //
+export const updateAccountName = async (
   firstName: string,
   lastName: string,
   userId: string,
-): Promise<UpdateProfileResult> => {
+): Promise<UpdateAccountResult> => {
   const { data, error } = await supabase
-    .from("profiles")
+    .from("accounts")
     .update({
       first_name: firstName,
       last_name: lastName,
@@ -119,6 +119,6 @@ export const updateProfileName = async (
 
   return {
     success: false,
-    error: { message: "Profile not found", code: "NOT_FOUND", status: 404 },
+    error: { message: "Account not found", code: "NOT_FOUND", status: 404 },
   };
 };

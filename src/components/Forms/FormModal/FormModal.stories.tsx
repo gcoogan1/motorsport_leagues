@@ -130,7 +130,7 @@ export const TwoInputs: Story = {
 export const ManyInputs: Story = {
   args: {
     question: "Tell us about yourself",
-    helperMessage: "This information will be displayed on your profile.",
+    helperMessage: "This information will be displayed on your account.",
     buttons: {
       onContinue: {
         label: "Submit",
