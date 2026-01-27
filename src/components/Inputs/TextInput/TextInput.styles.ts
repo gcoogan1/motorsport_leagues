@@ -84,6 +84,9 @@ export const InputField = styled.input<{
     white-space: nowrap;
     min-width: 0;
 
+    // Stop Safari focus state on mobile
+    font-size: 16px;
+
   &::placeholder {
     ${typography.body.mediumRegular}
   }
