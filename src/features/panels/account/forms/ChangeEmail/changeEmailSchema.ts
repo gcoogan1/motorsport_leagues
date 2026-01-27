@@ -6,5 +6,7 @@ export const changeEmailSchema = z.object({
   email: z
     .string()
     .email({ message: "Please enter a valid email address." })
-    .max(128, { message: "Email cannot be longer than 128 characters." }),
+    .max(128, { message: "Email cannot be longer than 128 characters." })
+    .trim()
+    .transform((val) => val.toLowerCase()),
 });
