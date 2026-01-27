@@ -61,6 +61,7 @@ export const OptionTextContainer = styled.div`
 export const OptionTitle = styled.h3`
   ${typography.body.mediumBold};
   color: ${colors.text.text1};
+  text-transform: capitalize;
 `;
 
 export const OptionHelper = styled.p`

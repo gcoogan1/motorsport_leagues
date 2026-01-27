@@ -9,6 +9,7 @@ import type { RootState } from "@/store";
 import { logoutUser } from "@/services/auth.service";
 import { usePanel } from "@/providers/panel/usePanel";
 import { useModal } from "@/providers/modal/useModal";
+import { capitalizeString } from "@/utils/capitalizeString";
 import UpdateName from "./forms/UpdateName/UpdateName";
 import ChangeEmail from "./forms/ChangeEmail/ChangeEmail";
 import ChangePassword from "./forms/ChangePassword/ChangePassword";
@@ -25,6 +26,8 @@ const AccountPanel = () => {
   const account = useSelector((state: RootState) => state.account.data);
 
   if (!account) return null;
+
+  const fullName = `${capitalizeString(account.firstName)} ${capitalizeString(account.lastName)}`;
 
   // -- Handlers -- //
   const handleLogout = async () => {
@@ -44,7 +47,7 @@ const AccountPanel = () => {
           {
             optionType: "text",
             optionTitle: "Name",
-            optionHelper: `${account.firstName} ${account.lastName}`,
+            optionHelper: fullName,
             optionIcon: <EditIcon />,
             optionIconLabel: "Edit Fullname Icon",
             onOptionClick: () => {
