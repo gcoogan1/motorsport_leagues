@@ -14,6 +14,7 @@ type ColorTokens = {
   };
   gradients: {
     base: Record<string, string>;
+    cover: Record<string, string>;
     alert: Record<string, string>;
     success: Record<string, string>;
     position: Record<string, string>;
@@ -118,6 +119,10 @@ export const colorTokens: ColorTokens = {
         "linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%)",
       fadeOutHorizontal80:
         "linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%)",
+    },
+    cover: {
+      coverLeft: "linear-gradient(270deg, rgba(21, 21, 21, 0) 0%, #151515 100%)",
+      coverRight: "linear-gradient(270deg, #151515 0%, rgba(21, 21, 21, 0) 100%)",
     },
     alert: {
       fadeOutHorizontal80:
