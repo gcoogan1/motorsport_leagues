@@ -3,7 +3,9 @@ import { designTokens } from "@/app/design/tokens";
 
 const { colors, layout, borders, typography, effects } = designTokens;
 
-export const ButtonLinkContainer = styled.button<{ $isSelected: boolean, $shouldExpand?: boolean }>`
+export const ButtonLinkContainer = styled.button<
+  { $isSelected: boolean; $shouldExpand?: boolean; $isPrimary?: boolean }
+>`
   padding: ${layout.space.small} ${layout.space.large};
   border: none;
   border-radius: ${borders.radius.round};
@@ -13,24 +15,24 @@ export const ButtonLinkContainer = styled.button<{ $isSelected: boolean, $should
   gap: ${layout.space.xSmall};
   cursor: pointer;
 
-  // Dynamic flex based on selection and expansion props
-  flex: ${({ $isSelected, $shouldExpand }) =>
-    $shouldExpand && $isSelected ? "3 1 0%" : "1 1 0%"};
+  // Dynamic flex based on expansion and primary props
+  ${({ $shouldExpand, $isPrimary }) => {
+    const shouldFlex = $shouldExpand && $isPrimary;
 
-  min-width: max-content;
+    return `
+    flex: ${shouldFlex ? "3 1 0%" : "1 1 0%"};
+    `;
+  }} min-width: max-content;
 
   background: ${({ $isSelected }) =>
     $isSelected ? colors.text.text1 : "transparent"};
 
   color: ${({ $isSelected }) =>
     $isSelected ? colors.base.base3 : colors.text.text2};
-  ${typography.subtitle.medium}
-
-  // -- Box shadow for selected state -- //
-  ${({ $isSelected }) => $isSelected && effects.boxShadow.glowWhite}
-
-  // Hover state
-  &:hover {
+  ${typography.subtitle.medium} // -- Box shadow for selected state -- //
+  ${({ $isSelected }) =>
+    $isSelected && effects.boxShadow.glowWhite}  // Hover state
+    &:hover {
     background: ${({ $isSelected }) =>
       $isSelected ? colors.text.text2 : colors.base.translucent10};
   }
@@ -38,7 +40,7 @@ export const ButtonLinkContainer = styled.button<{ $isSelected: boolean, $should
   // Focus state
   &:focus {
     outline: 2px solid ${({ theme }) => theme.colors.utility.focus};
-    outline-offset: 2px;  
+    outline-offset: 2px;
   }
 
   // Pressed state
@@ -46,5 +48,4 @@ export const ButtonLinkContainer = styled.button<{ $isSelected: boolean, $should
     background: ${({ $isSelected }) =>
       $isSelected ? colors.text.text3 : colors.base.translucent20};
   }
-  
-`
+`;

@@ -5,12 +5,13 @@ export type TabLinkProps = {
   label?: string;
   onClick?: () => void;
   shouldExpand?: boolean;
+  isPrimary?: boolean;
 }
 
-const TabLink = ({ isSelected = false, label, onClick, shouldExpand }: TabLinkProps) => {
+const TabLink = ({ isSelected = false, label, onClick, shouldExpand, isPrimary = false }: TabLinkProps) => {
 
   return (
-    <ButtonLinkContainer $isSelected={isSelected} onClick={onClick} $shouldExpand={shouldExpand}>
+    <ButtonLinkContainer $isSelected={isSelected} onClick={onClick} $shouldExpand={shouldExpand} $isPrimary={isPrimary}>
       {label}
     </ButtonLinkContainer>
   )
