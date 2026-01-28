@@ -72,7 +72,7 @@ const DeleteAccountForm = ({ account, closePanel }: DeleteAccountProps) => {
         question={"Delete Account"}
         helperMessage={
           <>
-            Your entire account, including your Accounts, will be deleted and
+            Your entire account, including your Profiles, will be deleted and
             unrecoverable. Squads that you are the sole Founder of, and Leagues
             that you are the only Director of, will also be deleted. All data
             that you contributed to a Squad or League, including your results,

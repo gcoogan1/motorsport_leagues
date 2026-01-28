@@ -51,7 +51,7 @@ const TextInput = ({
     <InputWrapper $hasValue={hasValue}>
       <LabelRow>
         <Label>{label}</Label>
-        {!!showCounter && <Count>{count}/999</Count>}
+        {!!showCounter && <Count>{count}/{maxLength}</Count>}
       </LabelRow>
       <InputContainer>
         <InputField
@@ -63,6 +63,8 @@ const TextInput = ({
           $hasError={!!hasError}
           $hasValue={hasValue}
           $hasIcon={hasIcon}
+          inputMode={type === "number" ? "numeric" : "text"}
+          pattern={type === "number" ? "[0-9]*" : undefined}
         />
         {icon && <IconWrapper $hasValue={hasValue}>{icon}</IconWrapper>}
       </InputContainer>
