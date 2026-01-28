@@ -4,7 +4,7 @@ import { designTokens } from "@/app/design/tokens";
 const { colors, layout, borders, typography, effects } = designTokens;
 
 export const ButtonLinkContainer = styled.button<
-  { $isSelected: boolean; $shouldExpand?: boolean; $isPrimary?: boolean }
+  { $isSelected: boolean; $shouldExpand?: boolean }
 >`
   padding: ${layout.space.small} ${layout.space.large};
   border: none;
@@ -16,11 +16,10 @@ export const ButtonLinkContainer = styled.button<
   cursor: pointer;
 
   // Dynamic flex based on expansion and primary props
-  ${({ $shouldExpand, $isPrimary }) => {
-    const shouldFlex = $shouldExpand && $isPrimary;
+  ${({ $shouldExpand }) => {
 
     return `
-    flex: ${shouldFlex ? "3 1 0%" : "1 1 0%"};
+    flex: ${$shouldExpand ? "3 1 0%" : "1 1 0%"};
     `;
   }} min-width: max-content;
 
