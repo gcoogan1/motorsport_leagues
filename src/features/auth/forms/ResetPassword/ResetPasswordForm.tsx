@@ -59,7 +59,9 @@ const ResetPasswordForm = ({ onSuccess }: ResetPasswordFormProps) => {
           openModal(<UnverifiedAccount email={data.email} onVerify={handleVerify} />);
           return;
         }
-        throw res.error;
+        // Other errors - navigate to verification page (this is to prevent info leakage  about account existence)
+        navigate("/verify-account?purpose=reset_password");
+        return;
       }
       // Success
       onSuccess?.();

@@ -11,7 +11,7 @@
 
 2. **Enter Email Address**
    - User provides **email address** (required, valid email format, max 128 characters)
-   - Helper message displays: "We'll send you a verification code."
+   - Helper message displays: "If an account exists with this email, we'll send you a verification code."
 
 3. **Form Validation**
    - System validates email format and length
@@ -20,13 +20,14 @@
 4. **Send Verification Code**
    - System stores email in localStorage as `pending_email`
    - System invokes send-code function with email and purpose `reset_password`
-   - System sends verification code to user's email
+   - System sends verification code to user's email (if account exists and is verified)
    - User redirects to `/verify-account?purpose=reset_password` page
+   - **Note:** System always navigates to verification page regardless of success/failure to prevent account enumeration
 
 ### Part 2: Verify Email with Code
 
 5. **Enter Verification Code**
-   - User receives verification code via email
+   - User receives verification code via email (if account exists and is verified)
    - Page displays: "If an account exists with the email, {email}, you'll receive a verification code. Enter it below to reset your password."
    - User enters 6-digit verification code on verify account page
    - User can click "Resend Code" to receive a new code
@@ -69,13 +70,26 @@
   - User can click "Cancel" to dismiss modal
   - User must complete account verification before resetting password
 
+- **Account Does Not Exist**
+  - System navigates to verification page regardless
+  - User will not receive a code
+  - Prevents information leakage about account existence
+  - User can attempt to enter code but will fail validation
+
 - **Too Many Code Requests**
   - Code: `REQUEST_MAX`
   - Status: 429
-  - System shows "Request Max" error modal
-  - Message: "Please wait a minute before requesting a new code."
+  - System navigates to verification page
+  - User can still attempt resend from verification page
+  - Will show "Request Max" error modal: "Please wait a minute before requesting a new code."
   - Displays when user requests verification code 5 consecutive times
   - User must wait 1 minute before requesting another code
+
+- **Server/Network Errors (During Send)**
+  - System navigates to verification page regardless of error
+  - Prevents information leakage about account existence
+  - User will not receive code if error occurred
+  - Generic error handling only for critical failures via `handleSupabaseError`
 
 ### During Code Verification (Step 6)
 
@@ -92,6 +106,14 @@
   - Message: "Please wait a few minutes before trying again."
   - Displays when user inputs incorrect code 5 times
   - User must wait 5 minutes or request a new code
+
+- **Too Many Code Requests (During Resend)**
+  - Code: `REQUEST_MAX`
+  - Status: 429
+  - System shows "Request Max" error modal
+  - Message: "Please wait a minute before requesting a new code."
+  - Displays when user clicks "Resend Code" 5 consecutive times
+  - User must wait 1 minute before requesting another code
 
 - **Code Resent Successfully**
   - "Code Resent" success modal displays
@@ -127,9 +149,13 @@
 - Verification flow enforces rate limiting on both requests and attempts
 - Password update validates against previous password to prevent reuse
 - Three-step process: Email Entry → Code Verification → New Password
+- **Always navigates to verification page after email submission** (success or most failures) to prevent account enumeration
+- Only UNVERIFIED_ACCOUNT error shows modal instead of navigating
 
 ## Security Features
 
+- **Account enumeration prevention**: Always navigates to verification page regardless of whether account exists
+- Helper text uses conditional language: "If an account exists with this email..."
 - Rate limiting on code requests (REQUEST_MAX): 5 requests, then 1-minute timeout
 - Rate limiting on code attempts (ATTEMPT_MAX): 5 attempts, then 5-minute timeout
 - Password history validation prevents password reuse (SAME_PASSWORD)
