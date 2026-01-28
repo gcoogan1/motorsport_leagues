@@ -1,18 +1,22 @@
 import TabLink from "./components/TabLink/TabLink";
 import { SwitchContainer } from "./SegmentedTab.styles";
 
-type SegmentedTabProps = {
-  tabs: string[];
-  activeTab: string;
+type Tabs = {
+  label: string;
   shouldExpand?: boolean;
+}
+
+type SegmentedTabProps = {
+  tabs: Tabs[];
+  activeTab: string;
   onChange: (tab: string) => void;
 };
 
-const SegmentedTab = ({ tabs, activeTab, shouldExpand, onChange }: SegmentedTabProps) => {
+const SegmentedTab = ({ tabs, activeTab, onChange }: SegmentedTabProps) => {
 
   return (
     <SwitchContainer>
-      {tabs.map((label) => (
+      {tabs.map(({ label, shouldExpand }) => (
         <TabLink
           key={label}
           isSelected={label === activeTab}
