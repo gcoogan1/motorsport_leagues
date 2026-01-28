@@ -6,7 +6,7 @@ import Create from "@assets/Icon/Create.svg?react";
 import Search from "@assets/Icon/Search.svg?react";
 
 const PROFILE_TABS = [
-  { label: "My Profiles", isPrimary: true },
+  { label: "My Profiles", shouldExpand: true },
   { label: "Following" },
 ];
 

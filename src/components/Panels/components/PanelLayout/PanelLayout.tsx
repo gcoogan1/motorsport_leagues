@@ -14,7 +14,7 @@ import { useState } from "react";
 
 type Tabs = {
   label: string;
-  isPrimary?: boolean;
+  shouldExpand?: boolean;
 }
 
 type PanelLayoutProps = {
@@ -74,7 +74,6 @@ const PanelLayout = ({
             tabs={tabs}
             activeTab={activeTab}
             onChange={handleTabChange}
-            shouldExpand
           />
         </PanelTabs>
       )}
