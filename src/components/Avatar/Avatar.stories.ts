@@ -21,8 +21,8 @@ const meta: Meta<typeof Avatar> = {
   },
   parameters: {
     docs: {
-      description: {story: `
-Avatar component is used to display user profile images with various sizes and styles.
+      description: {component: `
+The **Avatar** component is used to display user profile images with various sizes and styles.
 
 **Props:**
 | Prop | Type | Default | Description |
@@ -31,8 +31,10 @@ Avatar component is used to display user profile images with various sizes and s
 | \`type\` | \`"none" | "black" | "blue" | "green" | "red" | "yellow" | "email"\` | \`"none"\` | Defines the avatar variant to display. |
 
 ### Usage Notes:
-- The Avatar component can be customized using the \`size\` and \`type\` props to fit various design requirements.
-- If \`type\` is set to \`"none"\`, no avatar image will be displayed.
+
+The Avatar component can be customized using the \`size\` and \`type\` props to fit various design requirements.
+
+If \`type\` is set to \`"none"\`, no avatar image will be displayed.
 
       `},
     }
@@ -49,7 +51,7 @@ type Story = StoryObj<typeof Avatar>;
 export const Default: Story = {
   args: {
     size: "medium",
-    type: "none", // change if needed
+    type: "none",
   },
 };
 
