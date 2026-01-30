@@ -11,6 +11,12 @@ import Button from "@/components/Button/Button";
 import SegmentedTab from "@/components/SegmentedTabs/SegmentedTab";
 import { useState } from "react";
 
+
+type Tabs = {
+  label: string;
+  shouldExpand?: boolean;
+}
+
 type PanelLayoutProps = {
   children?: React.ReactNode;
   panelTitle?: string;
@@ -33,7 +39,8 @@ type PanelLayoutProps = {
       loadingText?: string;
     };
   };
-  tabs?: string[];
+  tabs?: Tabs[];
+  onTabChange?: (tab: string) => void;
 };
 
 const PanelLayout = ({
@@ -42,9 +49,17 @@ const PanelLayout = ({
   panelTitleIcon,
   actions,
   tabs,
+  onTabChange
 }: PanelLayoutProps) => {
   const { closePanel } = usePanel();
-  const [activeTab, setActiveTab] = useState<string>(tabs ? tabs[0] : "");
+  const [activeTab, setActiveTab] = useState<string>(tabs ? tabs[0].label : "");
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (onTabChange) {
+      onTabChange(tab);
+    }
+  }
 
   return (
     <PanelWrapper>
@@ -58,8 +73,7 @@ const PanelLayout = ({
           <SegmentedTab
             tabs={tabs}
             activeTab={activeTab}
-            onChange={setActiveTab}
-            shouldExpand
+            onChange={handleTabChange}
           />
         </PanelTabs>
       )}

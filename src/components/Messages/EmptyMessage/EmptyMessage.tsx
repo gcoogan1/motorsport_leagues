@@ -49,7 +49,7 @@ function EmptyMessage({
       <ActionsContainer>
         {actions?.primary && (
           <Button
-            color="system"
+            color="base"
             onClick={actions.primary.onClick}
             icon={{
               right: actions.primary.rightIcon,
@@ -61,7 +61,7 @@ function EmptyMessage({
         )}
         {actions?.secondary && (
           <Button
-            color="system"
+            color="base"
             variant="outlined"
             onClick={actions.secondary.onClick}
             icon={{

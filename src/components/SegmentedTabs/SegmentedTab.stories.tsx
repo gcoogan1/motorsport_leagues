@@ -20,7 +20,7 @@ The **SegmentedTab** component provides a user interface element that allows use
 
 | Prop            | Type                     | Default       | Description                                                  |
 |-----------------|--------------------------|---------------|--------------------------------------------------------------|
-| \`tabs\`         | \`string[]\`              | \`[]\`         | An array of strings representing the labels of each tab.     |
+| \`tabs\`         | \`Array<{ label: string; shouldExpand?: boolean }>\` | \`[]\`          | An array of tab objects, each containing a label and an optional flag to indicate if the tab should expand. |
 | \`activeTab\`    | \`string\`                | \`""\`          | The label of the currently active tab.                        |
 | \`shouldExpand\` | \`boolean\`               | \`false\`      | Determines whether the active tab should expand. |
 | \`onChange\`      | \`(tab: string) => void\` | \`() => {}\`   | Callback function invoked when a tab is selected, receiving the selected tab label as an argument. |
@@ -52,14 +52,13 @@ export const Default: Story = {
   render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [activeTab, setActiveTab] = useState("Primary");
-    const tabs = ["Primary", "Secondary"];
+    const tabs = [{ label: "Primary", shouldExpand: true }, { label: "Secondary" }];
 
     return (
       <div style={{ padding: "20px", maxWidth: "480px" }}>
         <SegmentedTab
           tabs={tabs}
           activeTab={activeTab}
-          shouldExpand
           onChange={setActiveTab}
         />
       </div>
@@ -71,7 +70,7 @@ export const WithoutExpand: Story = {
   render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [activeTab, setActiveTab] = useState("Overview");
-    const tabs = ["Overview", "Details", "Settings"];
+    const tabs = [{ label: "Overview" }, { label: "Details" }, { label: "Settings" }];
 
     return (
       <div style={{ padding: "20px", maxWidth: "480px" }}>

@@ -27,7 +27,7 @@ The **PanelLayout** component provides a structured layout for panels within the
 | Prop          | Type                     | Default       | Description                                                  | 
 |---------------|--------------------------|---------------|--------------------------------------------------------------|
 | \`panelTitle\` | \`string\`                | \`""\`          | The title text displayed at the top of the panel.            |
-| \`tabs\`       | \`string[]\`              | \`undefined\`  | An optional array of tab labels for navigation within the panel. |
+| \`tabs\`         | \`Array<{ label: string; shouldExpand?: boolean }>\` | \`[]\`          | An array of tab objects, each containing a label and an optional flag to indicate if the tab should expand. |
 | \`actions\`    | \`object\`                | \`undefined\`  | Configuration for primary and secondary action buttons.       |
 | \`actions.primary\` | \`object\`            | \`undefined\`  | Configuration for the primary action button.                  |
 | \`actions.primary.label\` | \`string\`      | \`""\`          | Label for the primary action button.                          |
@@ -65,7 +65,7 @@ Default.args = {
 export const WithTabs = Template.bind({});
 WithTabs.args = {
   panelTitle: "Panel with Tabs",
-  tabs: ["Overview", "Settings"],
+  tabs: [{ label: "Tab 1" }, { label: "Tab 2" }],
 };
 
 export const WithActions = Template.bind({});
@@ -86,7 +86,7 @@ WithActions.args = {
 export const TabsAndActions = Template.bind({});
 TabsAndActions.args = {
   panelTitle: "Full Panel",
-  tabs: ["Overview", "Settings"],
+  tabs: [{ label: "Overview", shouldExpand: true }, { label: "Settings" }],
   actions: {
     primary: {
       label: "Save",
