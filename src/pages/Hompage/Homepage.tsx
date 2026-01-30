@@ -6,6 +6,7 @@ import { Container, SubTitle, Wrapper } from "./Homepage.styles";
 import { useAuth } from "@/providers/auth/useAuth";
 import type { AppDispatch } from "@/store";
 import { fetchAccountThunk } from "@/store/account/account.thunks";
+import { fetchProfilesThunk } from "@/store/profile/profile.thunk";
 
 const Homepage = () => {
   // Theme
@@ -19,6 +20,7 @@ const Homepage = () => {
   useEffect(() => {
     if (user?.id) {
       dispatch(fetchAccountThunk(user.id));
+      dispatch(fetchProfilesThunk(user.id));
     }
   }, [user?.id, dispatch]);
 
