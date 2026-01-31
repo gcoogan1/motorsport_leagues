@@ -5,7 +5,7 @@ import SelectBox from "./components/SelectBox";
 // TODO: Move isSelected state management to parent component via onChange and value props
 
 type SelectBoxInputProps = {
-  options: Array<{ label: string; value: string; helperMessage?: string }>;
+  options: Array<{ label: string; value: string; helperMessage?: string, icon?: React.ReactNode }>;
   defaultSelected?: string;
 }
 
@@ -22,6 +22,7 @@ const SelectBoxInput = ({ options, defaultSelected }: SelectBoxInputProps) => {
           helperMessage={option.helperMessage}
           isSelected={isSelected === option.value}
           onClick={() => setIsSelected(option.value)}
+          icon={option.icon}
         />
       ))}
     </SelectBoxInputContainer>

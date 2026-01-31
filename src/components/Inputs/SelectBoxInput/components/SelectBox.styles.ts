@@ -88,5 +88,5 @@ export const HelperMessage = styled.span`
 `;
 
 export const IconContainer = styled.span`
-  align-self: flex-end;
+  align-self: center;
 `;

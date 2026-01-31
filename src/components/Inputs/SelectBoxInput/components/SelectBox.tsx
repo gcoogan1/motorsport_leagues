@@ -16,13 +16,16 @@ type SelectBoxProps = {
   helperMessage?: string;
   isSelected?: boolean;
   onClick?: () => void;
+  icon?: React.ReactNode;
 };
 
-const SelectBox = ({ label, helperMessage, isSelected, onClick }: SelectBoxProps) => {
+const SelectBox = ({ label, helperMessage, isSelected, onClick, icon }: SelectBoxProps) => {
   return (
     <SelectBoxContainer $isSelected={isSelected} onClick={onClick}>
       <SelectBoxContent>
-        <Placeholder />
+        <IconContainer>
+          {icon ? icon : <Placeholder />}
+        </IconContainer>
         <TextContent>
           <Label>{label}</Label>
           <HelperMessage>{helperMessage}</HelperMessage>

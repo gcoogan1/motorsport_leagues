@@ -1,6 +1,9 @@
-import type { Meta, StoryObj } from "@storybook/react"
-import SelectBoxInput from "./SelectBoxInput"
-import { withAppTheme } from "@/app/design/storybook/withAppTheme"
+import type { Meta, StoryObj } from "@storybook/react";
+import SelectBoxInput from "./SelectBoxInput";
+import { withAppTheme } from "@/app/design/storybook/withAppTheme";
+import GameGt7 from "@assets/Graphics/Game_GT7.svg?react";
+import GameIRace from "@assets/Graphics/Game_iRacing.svg?react";
+import GameAce from "@assets/Graphics/Game_ACEvo.svg?react";
 
 // ---  Meta Configuration --- //
 
@@ -24,7 +27,10 @@ The **SelectBoxInput** component is a composite UI element that allows users to 
 
 | Prop      | Type       | Default | Description                                                                 |
 |-----------|------------|---------|-----------------------------------------------------------------------------|
-| \`options\` | \`Array<{ label: string; value: string; helperMessage?: string }>\` | \`[]\`   | An array of option objects, each containing a label, value, and optional helper message. |
+| \`options.label\` | \`string\` |         | The text label displayed on each SelectBox option.                          |
+| \`options.value\` | \`string\` |         | The unique value associated with each SelectBox option.                     |
+| \`options.helperMessage\` | \`string\` | \`undefined\` | An optional helper message displayed below the label in each SelectBox.      |
+| \`options.icon\` | \`React.ReactNode\` | \`undefined\` | An optional icon displayed alongside the label in each SelectBox.      |
 | \`defaultSelected\` | \`string\` | \`undefined\` | The value of the option that should be selected by default when the component mounts. |
 
 ### Features
@@ -42,32 +48,59 @@ The **SelectBoxInput** component is a composite UI element that allows users to 
       },
     },
   },
-  tags: ["autodocs"], 
-}
+  tags: ["autodocs"],
+};
 
 export default meta;
 
 // ---  Stories --- //
 
-type Story = StoryObj<typeof SelectBoxInput>
+type Story = StoryObj<typeof SelectBoxInput>;
 
 export const Default: Story = {
   args: {
     options: [
-      { label: "Option 1", value: "option1", helperMessage: "This is the first option." },
-      { label: "Option 2", value: "option2", helperMessage: "This is the second option." },
-      { label: "Option 3", value: "option3", helperMessage: "This is the third option." },
+      {
+        label: "Option 1",
+        value: "option1",
+        helperMessage: "This is the first option.",
+        icon: <GameGt7 />,
+      },
+      {
+        label: "Option 2",
+        value: "option2",
+        helperMessage: "This is the second option.",
+        icon: <GameIRace />,
+      },
+      {
+        label: "Option 3",
+        value: "option3",
+        helperMessage: "This is the third option.",
+        icon: <GameAce />,
+      },
     ],
   },
-}
+};
 
 export const WithDefaultSelected: Story = {
   args: {
     options: [
-      { label: "Option 1", value: "option1", helperMessage: "This is the first option." },
-      { label: "Option 2", value: "option2", helperMessage: "This is the second option." },
-      { label: "Option 3", value: "option3", helperMessage: "This is the third option." },
+      {
+        label: "Option 1",
+        value: "option1",
+        helperMessage: "This is the first option.",
+      },
+      {
+        label: "Option 2",
+        value: "option2",
+        helperMessage: "This is the second option.",
+      },
+      {
+        label: "Option 3",
+        value: "option3",
+        helperMessage: "This is the third option.",
+      },
     ],
     defaultSelected: "option2",
   },
-}
+};
