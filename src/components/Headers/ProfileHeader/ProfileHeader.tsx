@@ -24,7 +24,7 @@ import type { AvatarVariants } from "@/components/Avatar/Avatar.variants";
 type ProfileHeaderProps = {
   gameType: string;
   username: string;
-  editInClick: () => void;
+  editOnClick: () => void;
   avatarType?: AvatarVariants;
   imageUrl?: string;
   followersOnClick?: () => void;
@@ -35,7 +35,7 @@ type ProfileHeaderProps = {
 const ProfileHeader = ({
   gameType,
   username,
-  editInClick,
+  editOnClick,
   avatarType = "none",
   imageUrl,
   followersOnClick,
@@ -81,7 +81,7 @@ const ProfileHeader = ({
             <Button
               color="base"
               icon={{ left: <EditIcon /> }}
-              onClick={editInClick}
+              onClick={editOnClick}
               fullWidth
             >
               {isMobile ? null : "Edit Profile"}
