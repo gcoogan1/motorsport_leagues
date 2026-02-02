@@ -4,9 +4,10 @@ import { getAvatarVariants, type AvatarSize, type AvatarVariants } from "./Avata
 type AvatarProps = {
   size?: AvatarSize;
   type: AvatarVariants;
+  imageUrl?: string;
 }
 
-const Avatar = ({ size = "medium", type }: AvatarProps) => {
+const Avatar = ({ size = "medium", type, imageUrl }: AvatarProps) => {
 
   const AVATAR_SIZES: Record<AvatarSize, number> = {
     tiny: 20,
@@ -18,7 +19,7 @@ const Avatar = ({ size = "medium", type }: AvatarProps) => {
   };
 
   const sizeValue = AVATAR_SIZES[size];
-  const avatarImg = getAvatarVariants()[type].avatar;
+  const avatarImg = imageUrl ? imageUrl : getAvatarVariants()[type].avatar;
 
   return (
     <AvatarWrapper $sizeValue={sizeValue}>
