@@ -13,7 +13,7 @@ import {
   UploadContainer,
 } from "./ImageUploadInput.styles";
 
-//TODO: Add IMG or Avatar to global state (save in backend)
+//TODO: Add IMG or Avatar to global state (save in backend) (fileName)
 
 type ImageUploadInputProps = {
   isAvatar?: boolean;
@@ -33,8 +33,7 @@ const ImageUploadInput = ({
   onChange,
 }: ImageUploadInputProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [fileName, setFileName] = useState<string>("");
+  const [, setFileName] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
 
   // Handle file input change and preview
