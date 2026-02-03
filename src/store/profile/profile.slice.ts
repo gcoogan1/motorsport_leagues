@@ -5,6 +5,7 @@ import { fetchProfilesThunk } from "./profile.thunk";
 const initialState: ProfilesState = {
   data: null,
   status: "idle",
+  draft: {},
 };
 
 const profileSlice = createSlice({
@@ -15,6 +16,20 @@ const profileSlice = createSlice({
       state.data = null;
       state.status = "idle";
     },
+
+    // update draft for create/edit profile for form data storage
+    updateProfileDraft: (state, action) => {
+      state.draft = {
+        ...state.draft,
+        ...action.payload,
+      };
+    },
+
+    // clear draft when form is canceled or completed
+    clearProfileDraft: (state) => {
+      state.draft = {};
+    },
+
   },
   extraReducers: (builder) => {
     builder
@@ -33,6 +48,6 @@ const profileSlice = createSlice({
   },
 });
 
-export const { clearProfiles } = profileSlice.actions;
+export const { clearProfiles, updateProfileDraft, clearProfileDraft } = profileSlice.actions;
 
 export default profileSlice.reducer;
