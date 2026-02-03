@@ -21,7 +21,7 @@ type SelectBoxProps = {
 
 const SelectBox = ({ label, helperMessage, isSelected, onClick, icon }: SelectBoxProps) => {
   return (
-    <SelectBoxContainer $isSelected={isSelected} onClick={onClick}>
+    <SelectBoxContainer type="button" $isSelected={isSelected} onClick={onClick}>
       <SelectBoxContent>
         <IconContainer>
           {icon ? icon : <Placeholder />}
