@@ -10,6 +10,7 @@ type SelectBoxInputProps = {
     value: string;
     helperMessage?: string;
     icon?: React.ReactNode;
+    isDisabled?: boolean;
   }>;
   defaultSelected?: string;
   value?: string;
@@ -65,6 +66,7 @@ const SelectBoxInput = ({
           }
           onClick={() => handleSelectionChange(option.value)}
           icon={option.icon}
+          isDisabled={option.isDisabled}
         />
       ))}
     </SelectBoxInputContainer>

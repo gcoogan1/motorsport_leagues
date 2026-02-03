@@ -10,11 +10,12 @@ type Option = {
   value: GameType;
   helperMessage: string;
   icon: React.ReactNode;
+  isDisabled?: boolean;
 };
 
 export const gameOptions: Option[] = [
   { label: "Gran Turismo 7", value: "gt7", helperMessage: "Playstation 5.", icon: <Game_GT7 /> },
-  { label: "iRacing", value: "iRacing", helperMessage: "Online racing simulation.", icon: <Game_iRacing /> },
-  { label: "Assetto Corsa Evo", value: "assetoCorsaEvo", helperMessage: "Realistic racing simulator.", icon: <Game_ACEvo /> },
-  { label: "Le Mans Ultimate", value: "leMansUltimate", helperMessage: "Endurance racing experience.", icon: <Game_LMU /> },
+  { label: "iRacing", value: "iRacing", helperMessage: "Online racing simulation.", icon: <Game_iRacing />, isDisabled: true },
+  { label: "Assetto Corsa Evo", value: "assetoCorsaEvo", helperMessage: "Realistic racing simulator.", icon: <Game_ACEvo />, isDisabled: true },
+  { label: "Le Mans Ultimate", value: "leMansUltimate", helperMessage: "Endurance racing experience.", icon: <Game_LMU />, isDisabled: true },
 ];
