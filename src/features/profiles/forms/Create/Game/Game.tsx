@@ -11,10 +11,10 @@ import SelectBoxInput from "@/components/Inputs/SelectBoxInput/SelectBoxInput";
 import { gameOptions } from "./Game.variants";
 import { gameSchema, type GameValues } from "./gameSchema";
 
-//TODO: MAYBE GO BACK TO PROFILE WHEN COMPLETED? 
+//TODO: MAYBE GO BACK TO PROFILE WHEN COMPLETED?
 
 type GameProps = {
-  onSuccess?: () => void; 
+  onSuccess?: () => void;
 };
 
 const Game = ({ onSuccess }: GameProps) => {
@@ -30,6 +30,8 @@ const Game = ({ onSuccess }: GameProps) => {
 
   const { handleSubmit } = formMethods;
 
+  // - Handlers -- //
+
   const handleGoBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
@@ -44,12 +46,12 @@ const Game = ({ onSuccess }: GameProps) => {
       (async () => {
         // Update draft in Redux store
         dispatch(updateProfileDraft({ gameType: data.game }));
-
-        // Call onSuccess callback if provided
-        onSuccess?.();
       })(),
       1000,
     );
+
+    // Move to next step
+    onSuccess?.();
     setIsLoading(false);
   };
 
