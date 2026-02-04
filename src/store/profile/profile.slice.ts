@@ -1,6 +1,6 @@
 import type { ProfilesState } from "@/types/profile.types";
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchProfilesThunk } from "./profile.thunk";
+import { fetchProfilesThunk, createProfileThunk } from "./profile.thunk";
 
 const initialState: ProfilesState = {
   data: null,
@@ -39,9 +39,33 @@ const profileSlice = createSlice({
       })
       .addCase(fetchProfilesThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
-        state.data = action.payload.data || null;
+        if (action.payload && "data" in action.payload) {
+          state.data = action.payload.data || null;
+        } else {
+          state.data = null;
+        }
       })
       .addCase(fetchProfilesThunk.rejected, (state, action) => {
+        state.status = "rejected";
+        state.error = action.error.message;
+      })
+
+      // Create Profile
+      .addCase(createProfileThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = undefined;
+      })
+      .addCase(createProfileThunk.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        if (action.payload && "data" in action.payload) {
+          if (state.data) {
+            state.data.push(action.payload.data);
+          } else {
+            state.data = [action.payload.data];
+          }
+        }
+      })
+      .addCase(createProfileThunk.rejected, (state, action) => {
         state.status = "rejected";
         state.error = action.error.message;
       });
