@@ -3,11 +3,12 @@ import { getAvatarVariants, type AvatarSize, type AvatarVariants } from "./Avata
 
 type AvatarProps = {
   size?: AvatarSize;
-  type: AvatarVariants;
-  imageUrl?: string;
-}
+  avatarType: "preset" | "upload";
+  avatarValue: AvatarVariants | string;
+};
 
-const Avatar = ({ size = "medium", type, imageUrl }: AvatarProps) => {
+
+const Avatar = ({ size = "medium", avatarType, avatarValue }: AvatarProps) => {
 
   const AVATAR_SIZES: Record<AvatarSize, number> = {
     tiny: 20,
@@ -19,11 +20,17 @@ const Avatar = ({ size = "medium", type, imageUrl }: AvatarProps) => {
   };
 
   const sizeValue = AVATAR_SIZES[size];
-  const avatarImg = imageUrl ? imageUrl : getAvatarVariants()[type].avatar;
+
+    const avatarImg =
+    avatarType === "preset"
+      ? getAvatarVariants()[avatarValue as AvatarVariants].avatar
+      : avatarValue;
+
+    if (!avatarImg) return null;
 
   return (
     <AvatarWrapper $sizeValue={sizeValue}>
-      {avatarImg && <AvatarImage src={avatarImg} alt={`${type} avatar`} />}
+      {avatarImg && <AvatarImage src={avatarImg} alt={`${avatarType} avatar`} />}
     </AvatarWrapper>
   )
 }
