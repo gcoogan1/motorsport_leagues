@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
@@ -5,12 +6,16 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { type AppDispatch, type RootState } from "@/store";
+import { useModal } from "@/providers/modal/useModal";
 import { updateProfileDraft } from "@/store/profile/profile.slice";
+import { isProfileUsernameAvailable } from "@/services/profile.service";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import ProfileIcon from "@assets/Icon/Profile.svg?react";
 import { USERNAME_VARIANTS } from "./Username.variants";
 import { getUsernameSchema, type UsernameFormValues } from "./usernameSchema";
+import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
+import ExistingUsername from "@/features/profiles/modals/errors/ExistingUsername/ExistingUsername";
 
 type UsernameProps = {
   onSuccess?: () => void;
@@ -18,6 +23,7 @@ type UsernameProps = {
 };
 
 const Username = ({ onSuccess, onBack }: UsernameProps) => {
+  const { openModal } = useModal();
   const draft = useSelector((state: RootState) => state.profile.draft);
   const schema = getUsernameSchema(draft.gameType);
   const content = USERNAME_VARIANTS[draft.gameType || "gt7"];
@@ -48,20 +54,35 @@ const Username = ({ onSuccess, onBack }: UsernameProps) => {
     }
   };
 
-  const handleOnSubmit = async (data: UsernameFormValues) => {
-    setIsLoading(true);
-    await withMinDelay(
-      (async () => {
-        // Update draft in Redux store
-        dispatch(updateProfileDraft({ username: data.username }));
-      })(),
+const handleOnSubmit = async (data: UsernameFormValues) => {
+  setIsLoading(true);
+  try {
+    const res = await withMinDelay(
+      isProfileUsernameAvailable(data.username, draft.gameType),
       1000,
     );
 
-    // Move to next step
+    // If username exists
+    if (!res.success) {
+      if (res.error?.code === "EXISTING_USERNAME") {
+        openModal(<ExistingUsername />);
+        return;
+      }
+      throw res.error; 
+    }
+
+    // Success
+    dispatch(updateProfileDraft({ username: data.username }));
     onSuccess?.();
+
+  } catch (error: any) {
+    // General error handling
+    handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
+  } finally {
     setIsLoading(false);
-  };
+  }
+};
+
 
   return (
     <FormProvider {...formMethods}>
@@ -70,7 +91,7 @@ const Username = ({ onSuccess, onBack }: UsernameProps) => {
         question={content.question}
         onSubmit={handleSubmit(handleOnSubmit)}
         buttons={{
-          onCancel: { label: "Close", action: handleGoBack },
+          onCancel: { label: "Back", action: handleGoBack },
           onContinue: {
             label: "Continue",
             loading: isLoading,

@@ -66,6 +66,11 @@ export type CreateProfileSuccess = {
 // Create Profile --> Result type
 export type CreateProfileResult = CreateProfileSuccess | SupabaseError;
 
+// Check Username Availability Result type
+export type CheckUsernameAvailabilityResult =
+  | { success: true }
+  | SupabaseError;
+
 
 
 // Redux Types //

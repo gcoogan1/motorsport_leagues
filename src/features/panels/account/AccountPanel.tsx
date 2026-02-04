@@ -14,6 +14,7 @@ import UpdateName from "./forms/UpdateName/UpdateName";
 import ChangeEmail from "./forms/ChangeEmail/ChangeEmail";
 import ChangePassword from "./forms/ChangePassword/ChangePassword";
 import DeleteAccount from "./forms/DeleteAccount/DeleteAccount";
+import { navigate } from "@/app/navigation/navigation";
 
 /*TODO: 
   - Add functionality for when !account exists
@@ -34,6 +35,7 @@ const AccountPanel = () => {
     try {
       closePanel();
       await logoutUser();
+      navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
     }

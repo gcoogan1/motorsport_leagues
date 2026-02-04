@@ -64,7 +64,8 @@ const ProfilesPanel = () => {
                 userGame={prof.game_type}
                 username={prof.username}
                 cardSize="medium"
-                type={"black"}
+                avatarType={prof.avatar_type}
+                avatarValue={prof.avatar_value}
               />
             ))
           ) : (

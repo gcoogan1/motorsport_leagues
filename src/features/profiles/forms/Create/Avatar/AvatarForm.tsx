@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -11,14 +12,17 @@ import SelectGraphicInput from "@/components/Inputs/SelectGraphicInput/SelectGra
 import { avatarFormSchema, type AvatarFormValues } from "./avatarFormSchema";
 import { createProfileThunk } from "@/store/profile/profile.thunk";
 import { clearProfileDraft } from "@/store/profile/profile.slice";
+import ProfileCreated from "@/features/profiles/modals/success/ProfileCreated/ProfileCreated";
+import { useModal } from "@/providers/modal/useModal";
+import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 
 type AvatarFormProps = {
-  onSuccess?: () => void;
   onBack?: () => void;
 };
 
-const AvatarForm = ({ onSuccess, onBack }: AvatarFormProps) => {
+const AvatarForm = ({ onBack }: AvatarFormProps) => {
   const navigate = useNavigate();
+  const { openModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -54,7 +58,7 @@ const { handleSubmit, formState: { errors } } = formMethods;
     try {
       await withMinDelay(
       (async () => {
-        if (!account) throw new Error("No account found for creating profile");
+        if (!account) throw new Error("SERVER_ERROR");
 
         const payload = {
           accountId: account.id,
@@ -62,15 +66,20 @@ const { handleSubmit, formState: { errors } } = formMethods;
           gameType: draft.gameType as string,
           avatar: data.avatar,
         };
+
+        // Should throw error if unsuccessful bc unwrap() is used
         await dispatch(createProfileThunk(payload)).unwrap();
         await dispatch(clearProfileDraft());
 
       })(),
       1000,
     );
-    onSuccess?.();
-    } catch (error) {
-      console.error("Error submitting avatar data:", error);
+    
+    navigate("/"); // Redirect profile when created
+    openModal(<ProfileCreated />);
+    } catch (error: any) {
+      // General error handling
+      handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
     } finally {
       setIsLoading(false);
     }
@@ -94,7 +103,6 @@ const { handleSubmit, formState: { errors } } = formMethods;
         <ImageUploadInput
           name="avatar"
           isAvatar
-          avatarType="black"
           hasError={!!errors.avatar}
           errorMessage={errors.avatar?.message}
         />

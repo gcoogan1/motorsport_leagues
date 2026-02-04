@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { CreateProfilePayload, CreateProfileResult, GetProfilesResult } from "@/types/profile.types";
+import type { CheckUsernameAvailabilityResult, CreateProfilePayload, CreateProfileResult, GetProfilesResult } from "@/types/profile.types";
 // --- Profile Supabase Services -- //
 
 // -- Get Profiles by User ID -- //
@@ -23,15 +23,23 @@ export const getProfilesByUserId = async (userId: string): Promise<GetProfilesRe
   if (data) {
     return {
       success: true,
-      data: data.map((profile) => ({
-        id: profile.id,
-        created_at: profile.created_at,
-        account_id: profile.account_id,
-        username: profile.username,
-        game_type: profile.game_type,
-        avatar_type: profile.avatar_type,
-        avatar_value: profile.avatar_value,
-      })),
+      data: data.map((profile) => {
+        let finalAvatarValue = profile.avatar_value;
+
+        // If it's an upload, resolve the full public URL from Supabase
+        if (profile.avatar_type === "upload") {
+          const { data: urlData } = supabase.storage
+            .from("avatars")
+            .getPublicUrl(profile.avatar_value);
+          
+          finalAvatarValue = urlData.publicUrl;
+        }
+
+        return {
+          ...profile,
+          avatar_value: finalAvatarValue,
+        };
+      }),
     };
   }
 
@@ -45,22 +53,40 @@ export const getProfilesByUserId = async (userId: string): Promise<GetProfilesRe
 export const isProfileUsernameAvailable = async (
   username: string,
   game_type?: string,
-): Promise<boolean> => {
+): Promise<CheckUsernameAvailabilityResult> => {
   const { data, error } = await supabase
     .from("profiles")
     .select("id")
     .eq("username", username)
     .eq("game_type", game_type)
-    .single();
-
-  console.log("Username check data:", data, "error:", error);
+    .maybeSingle();
 
   if (data) {
-    return false;
+    return {
+      success: false,
+      error: {
+        message: "Username already exists",
+        code: "EXISTING_USERNAME",
+        status: 409,
+      },
+    };
+  }
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
   }
 
   // If no data is returned, the username is available
-  return true;
+  return {
+    success: true,
+  };
 };
 
 // -- Create Profile with Avatar -- //
@@ -81,7 +107,7 @@ export const createProfileWithAvatar = async ({
     avatarType = "upload";
 
     const fileExt = avatar.file.name.split(".").pop();
-    const filePath = `avatars/${accountId}/${crypto.randomUUID()}.${fileExt}`;
+    const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
 
     const { error: uploadError } = await supabase.storage
       .from("avatars")
