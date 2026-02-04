@@ -5,7 +5,6 @@ const { colors, gradients, typography, borders, layout } = designTokens;
 
 export const InputContainer = styled.div`
   display: flex;
-  width: 400px;
   gap: ${layout.space.xxxSmall};
   flex-direction: column;
 `

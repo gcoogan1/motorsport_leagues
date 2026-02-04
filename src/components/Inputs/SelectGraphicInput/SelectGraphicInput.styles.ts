@@ -6,7 +6,6 @@ const { colors, layout, borders, typography } = designTokens;
 export const SelectGraphicInputContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 400px;
   gap: ${layout.space.xxSmall};
 `;
 
