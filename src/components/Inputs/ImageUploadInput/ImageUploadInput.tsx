@@ -6,6 +6,7 @@ import Error_Outlined from "@assets/Icon/Error_Outlined.svg?react";
 import {
   ErrorText,
   HelperMessage,
+  ImageUpload,
   ImageUploadContainer,
   InputContainer,
   UploadContainer,
@@ -15,6 +16,7 @@ import type { AvatarFormValues } from "@/features/profiles/forms/Create/Avatar/a
 
 type Props = {
   name: "avatar";
+  isAvatar?: boolean;
   helperMessage?: string;
   hasError?: boolean;
   errorMessage?: string;
@@ -22,6 +24,7 @@ type Props = {
 
 const ImageUploadInput = ({
   name,
+  isAvatar = false,
   helperMessage,
   hasError,
   errorMessage,
@@ -73,12 +76,20 @@ const ImageUploadInput = ({
   return (
     <InputContainer>
       <ImageUploadContainer>
-        <Avatar
-          size="xLarge"
-          avatarType={avatarType}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          avatarValue={avatarValue as any}
-        />
+        {isAvatar ? (
+          <Avatar
+            size="xLarge"
+            avatarType={avatarType}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            avatarValue={avatarValue as any}
+          />
+        ) : (
+          <ImageUpload>
+            {avatarValue ? (
+              <img src={avatarValue} alt="Uploaded preview" />
+            ) : null}
+          </ImageUpload>
+        )}
 
         <UploadContainer>
           <input
