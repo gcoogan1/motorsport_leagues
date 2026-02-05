@@ -6,7 +6,7 @@ import { css } from "styled-components";
 type EdgeFadeBorderOptions = {
   gradient: string;
   width?: string;
-  edge?: "top" | "bottom";
+  edge?: "top" | "bottom" | "both";
 };
 
 const edgeFadeBorder = ({
@@ -24,18 +24,39 @@ const edgeFadeBorder = ({
     height: ${width};
     background: ${gradient};
     pointer-events: none;
-    ${edge === "top"
-      ? `
+    ${edge === "top" &&  `
       top: 0;
       border-top-left-radius: inherit;
       border-top-right-radius: inherit;
-    `
-      : `
+    `}
+
+    ${edge === "bottom" && `
       bottom: 0;
       border-bottom-left-radius: inherit;
       border-bottom-right-radius: inherit;
     `}
+    
+    ${edge === "both" && `
+      top: 0;
+      border-top-left-radius: inherit;
+      border-top-right-radius: inherit;
+    `}
   }
+
+  ${edge === "both" && `
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: ${width};
+      background: ${gradient};
+      pointer-events: none;
+      border-bottom-left-radius: inherit;
+      border-bottom-right-radius: inherit;
+    }
+  `}
 `;
 
 // -- Specific Mixins -- //
@@ -44,3 +65,6 @@ export const topFadeBorder = (opts: Omit<EdgeFadeBorderOptions, "edge">) =>
 
 export const bottomFadeBorder = (opts: Omit<EdgeFadeBorderOptions, "edge">) =>
   edgeFadeBorder({ ...opts, edge: "bottom" });
+
+export const bothFadeBorders = (opts: Omit<EdgeFadeBorderOptions, "edge">) => 
+  edgeFadeBorder({ ...opts, edge: "both" });
