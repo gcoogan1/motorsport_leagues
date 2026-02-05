@@ -1,4 +1,5 @@
 import CreateAccount from "@/pages/CreateAccount/CreateAccount";
+import CreateProfile from "@/pages/CreateProfile/CreateProfile";
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 import Homepage from "@/pages/Hompage/Homepage";
 import Login from "@/pages/Login/Login";
@@ -35,6 +36,11 @@ export const ROUTES: Route[] = [
   {
     path: "/reset-password",
     element: <ResetPassword />,
+    navbar: "core",
+  },
+  {
+    path: "/create-profile",
+    element: <CreateProfile />,
     navbar: "core",
   },
   {

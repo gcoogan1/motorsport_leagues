@@ -49,6 +49,7 @@ export const HeaderTitle = styled.h3`
 export const FormBody = styled.div<{ $isMobile: boolean }>`
   display: flex;
   flex-direction: column;
+  align-items: center;
   flex: 1;
   padding: ${({ $isMobile }) =>
     $isMobile
@@ -78,6 +79,7 @@ export const BodyInputContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${layout.space.medium};
+  width: 100%;
 `;
 
 export const FormActions = styled.div`

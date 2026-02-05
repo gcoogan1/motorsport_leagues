@@ -16,6 +16,7 @@ export const SelectBoxContainer = styled.button<{ $isSelected?: boolean }>`
   overflow: hidden;
   cursor: pointer;
 
+  width: 100%;
   display: flex;
   border-radius: ${borders.radius.large};
   border: ${borders.width.thin} solid ${colors.base.translucent10};

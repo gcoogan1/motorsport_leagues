@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
+import { FormProviderMock } from "@/providers/mock/FormProviderMock";
 import ImageUploadInput from "./ImageUploadInput";
 
 // -- Meta Configuration -- //
@@ -9,14 +10,13 @@ const meta: Meta<typeof ImageUploadInput> = {
   component: ImageUploadInput,
   decorators: [withAppTheme],
   argTypes: {
+    name: {
+      control: false,
+      description: "The name of the form field",
+    },
     isAvatar: {
       control: "boolean",
       description: "If true, displays the upload as an avatar component",
-    },
-    avatarType: {
-      control: "select",
-      options: ["none", "black", "blue", "green", "red", "yellow", "email"],
-      description: "Avatar variant to display when isAvatar is true",
     },
     helperMessage: {
       control: "text",
@@ -29,9 +29,6 @@ const meta: Meta<typeof ImageUploadInput> = {
     errorMessage: {
       control: "text",
       description: "Error message to display when hasError is true",
-    },
-    onChange: {
-      description: "Callback function triggered when a file is selected",
     },
   },
   parameters: {
@@ -56,17 +53,16 @@ The **ImageUploadInput** component provides an interface for uploading and previ
 ### Props:
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
+| \`name\` | \`"avatar"\` | \`-\` | The name of the form field. |
 | \`isAvatar\` | \`boolean\` | \`false\` | If true, renders the upload as an avatar component. |
-| \`avatarType\` | \`AvatarVariants\` | \`-\` | Specifies the avatar variant when isAvatar is true. |
 | \`helperMessage\` | \`string\` | \`-\` | Helper text displayed below the upload button. |
 | \`hasError\` | \`boolean\` | \`false\` | If true, displays the error state. |
 | \`errorMessage\` | \`string\` | \`-\` | Error message displayed when hasError is true. |
-| \`onChange\` | \`(file: File) => void\` | \`-\` | Callback function triggered when a file is selected. |
 
 ### Usage Notes:
 - The component only accepts image files (image/*).
-- When using avatar mode, be sure to specify an avatarType.
-- The onChange callback receives the selected File object for further processing.
+- Requires React Hook Form context with avatar form data to function properly.
+- Avatar variant is determined by form data, not a direct prop.
         `,
       },
     },
@@ -82,40 +78,56 @@ type Story = StoryObj<typeof ImageUploadInput>;
 
 export const Default: Story = {
   args: {
+    name: "avatar",
     helperMessage: "Supported formats: JPG, PNG, GIF (Max 5MB)",
   },
+  render: (args) => (
+    <FormProviderMock>
+      <ImageUploadInput {...args} />
+    </FormProviderMock>
+  ),
 };
 
+// Displays default "black" avatar (set in component logic)
 export const WithAvatar: Story = {
   args: {
+    name: "avatar",
     isAvatar: true,
-    avatarType: "blue",
     helperMessage: "Upload your profile picture",
   },
-};
-
-export const AvatarVariants: Story = {
-  args: {
-    isAvatar: true,
-    avatarType: "green",
-    helperMessage: "Try different avatar styles",
-  },
+  render: (args) => (
+    <FormProviderMock>
+      <ImageUploadInput {...args} />
+    </FormProviderMock>
+  ),
 };
 
 export const WithError: Story = {
   args: {
+    name: "avatar",
     helperMessage: "Supported formats: JPG, PNG, GIF (Max 5MB)",
     hasError: true,
     errorMessage: "File size exceeds 5MB limit",
   },
+  render: (args) => (
+    <FormProviderMock>
+      <ImageUploadInput {...args} />
+    </FormProviderMock>
+  ),
 };
 
+// Displays default "black" avatar (set in component logic)
 export const AvatarWithError: Story = {
   args: {
+    name: "avatar",
     isAvatar: true,
-    avatarType: "red",
     helperMessage: "Upload your profile picture",
     hasError: true,
     errorMessage: "Invalid image format",
   },
+  render: (args) => (
+    <FormProviderMock>
+      <ImageUploadInput {...args} />
+    </FormProviderMock>
+  ),
 };

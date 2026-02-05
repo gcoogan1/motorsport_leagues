@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { FormProvider, useForm } from "react-hook-form";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
 import SelectGraphicInput from "./SelectGraphicInput";
 
@@ -9,6 +10,10 @@ const meta: Meta<typeof SelectGraphicInput> = {
   component: SelectGraphicInput,
   decorators: [withAppTheme],
   argTypes: {
+    name: {
+      control: false,
+      description: "The name of the form field",
+    },
     label: {
       control: "text",
       description: "The label displayed above the avatar options",
@@ -16,11 +21,6 @@ const meta: Meta<typeof SelectGraphicInput> = {
     helperText: {
       control: "text",
       description: "Additional helper text displayed below the avatar options",
-    },
-    defaultSelected: {
-      control: "select",
-      options: ["black", "blue", "green", "red", "yellow"],
-      description: "The default selected avatar variant",
     },
   },
   parameters: {
@@ -36,22 +36,21 @@ The **SelectGraphicInput** component allows users to select an avatar from a pre
 
 **Visual feedback:** Selected avatar is highlighted.
 
-**Pre-selection support:** Set a default selected avatar.
-
 **Dynamic options:** Automatically displays all available avatars (excludes 'none' and 'email').
 
 ### Props:
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
+| \`name\` | \`"avatar"\` | \`-\` | The name of the form field. |
 | \`label\` | \`string\` | \`""\` | The label displayed above the avatar options. |
 | \`helperText\` | \`string\` | \`""\` | Additional helper text displayed below the avatar options. |
-| \`defaultSelected\` | \`string\` | \`null\` | The variant key of the avatar to be selected by default. |
 
 ### Usage Notes:
 - The component automatically filters out 'none' and 'email' avatar variants.
 - Users can click on any avatar to select it.
 - Only one avatar can be selected at a time.
-- The selected state is managed internally (for now).
+- The selected state is managed in parent form using React Hook Form.
+- Default selection can be set via form's default values.
         `,
       },
     },
@@ -65,12 +64,49 @@ export default meta;
 
 type Story = StoryObj<typeof SelectGraphicInput>;
 
-export const Default: Story = {
-  args: {},
+const FormWrapper = ({ children }: { children: React.ReactNode }) => {
+  const methods = useForm({
+    defaultValues: {
+      avatar: { type: "preset" as const, variant: "black" as const },
+    },
+  });
+  return <FormProvider {...methods}>{children}</FormProvider>;
 };
 
-export const WithDefaultSelected: Story = {
+export const Default: Story = {
   args: {
-    defaultSelected: "blue",
+    name: "avatar",
+    label: "Select an Avatar",
+    helperText: "Choose one of the avatars above.",
   },
+  render: (args) => (
+    <FormWrapper>
+      <SelectGraphicInput {...args} />
+    </FormWrapper>
+  ),
+};
+
+export const WithDifferentLabel: Story = {
+  args: {
+    name: "avatar",
+    label: "Pick Your Character",
+    helperText: "Select your favorite avatar style.",
+  },
+  render: (args) => (
+    <FormWrapper>
+      <SelectGraphicInput {...args} />
+    </FormWrapper>
+  ),
+};
+
+export const NoHelperText: Story = {
+  args: {
+    name: "avatar",
+    label: "Choose Avatar",
+  },
+  render: (args) => (
+    <FormWrapper>
+      <SelectGraphicInput {...args} />
+    </FormWrapper>
+  ),
 };

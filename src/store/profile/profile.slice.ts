@@ -1,10 +1,11 @@
 import type { ProfilesState } from "@/types/profile.types";
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchProfilesThunk } from "./profile.thunk";
+import { fetchProfilesThunk, createProfileThunk } from "./profile.thunk";
 
 const initialState: ProfilesState = {
   data: null,
   status: "idle",
+  draft: {},
 };
 
 const profileSlice = createSlice({
@@ -15,6 +16,20 @@ const profileSlice = createSlice({
       state.data = null;
       state.status = "idle";
     },
+
+    // update draft for create/edit profile for form data storage
+    updateProfileDraft: (state, action) => {
+      state.draft = {
+        ...state.draft,
+        ...action.payload,
+      };
+    },
+
+    // clear draft when form is canceled or completed
+    clearProfileDraft: (state) => {
+      state.draft = {};
+    },
+
   },
   extraReducers: (builder) => {
     builder
@@ -24,15 +39,39 @@ const profileSlice = createSlice({
       })
       .addCase(fetchProfilesThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
-        state.data = action.payload.data || null;
+        if (action.payload && "data" in action.payload) {
+          state.data = action.payload.data || null;
+        } else {
+          state.data = null;
+        }
       })
       .addCase(fetchProfilesThunk.rejected, (state, action) => {
+        state.status = "rejected";
+        state.error = action.error.message;
+      })
+
+      // Create Profile
+      .addCase(createProfileThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = undefined;
+      })
+      .addCase(createProfileThunk.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        if (action.payload && "data" in action.payload) {
+          if (state.data) {
+            state.data.push(action.payload.data);
+          } else {
+            state.data = [action.payload.data];
+          }
+        }
+      })
+      .addCase(createProfileThunk.rejected, (state, action) => {
         state.status = "rejected";
         state.error = action.error.message;
       });
   },
 });
 
-export const { clearProfiles } = profileSlice.actions;
+export const { clearProfiles, updateProfileDraft, clearProfileDraft } = profileSlice.actions;
 
 export default profileSlice.reducer;

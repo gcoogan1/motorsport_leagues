@@ -5,7 +5,6 @@ const { colors, gradients, typography, borders, layout } = designTokens;
 
 export const InputContainer = styled.div`
   display: flex;
-  width: 400px;
   gap: ${layout.space.xxxSmall};
   flex-direction: column;
 `
@@ -37,6 +36,12 @@ export const ImageUpload = styled.div`
     object-fit: cover;
     border-radius: ${borders.radius.medium};
   }
+`
+export const Placeholder = styled.div`
+  width: 336px;
+  height: 160px;
+  border-radius: ${borders.radius.medium};
+  background: ${colors.base.translucent10};
 `
 
 export const UploadContainer = styled.div`

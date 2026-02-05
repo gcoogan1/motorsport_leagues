@@ -1,5 +1,4 @@
-import { useRef, useState } from "react";
-import type { AvatarVariants } from "@/components/Avatar/Avatar.variants";
+import { useEffect, useMemo, useRef } from "react";
 import Button from "@/components/Button/Button";
 import Avatar from "@/components/Avatar/Avatar";
 import UploadIcon from "@assets/Icon/Upload.svg?react";
@@ -10,82 +9,118 @@ import {
   ImageUpload,
   ImageUploadContainer,
   InputContainer,
+  Placeholder,
   UploadContainer,
 } from "./ImageUploadInput.styles";
+import { useFormContext } from "react-hook-form";
+import type { AvatarFormValues } from "@/features/profiles/forms/Create/Avatar/avatarFormSchema";
 
-//TODO: Add IMG or Avatar to global state (save in backend) (fileName)
-
-type ImageUploadInputProps = {
+type Props = {
+  name: "avatar";
   isAvatar?: boolean;
-  avatarType?: AvatarVariants;
   helperMessage?: string;
   hasError?: boolean;
   errorMessage?: string;
-  onChange?: (file: File) => void;
 };
 
 const ImageUploadInput = ({
-  isAvatar,
-  avatarType,
+  name,
+  isAvatar = false,
   helperMessage,
   hasError,
   errorMessage,
-  onChange,
-}: ImageUploadInputProps) => {
+}: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [, setFileName] = useState<string>("");
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const { watch, setValue } = useFormContext<AvatarFormValues>();
 
-  // Handle file input change and preview
-  const handleOnChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    file: File,
-  ) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setFileName(event.target.files[0].name);
-      setImageUrl(URL.createObjectURL(event.target.files[0]));
-      if (onChange) {
-        onChange(file);
-      }
+  const avatar = watch(name);
+
+  const { avatarType, avatarValue } = useMemo<{
+    avatarType: "preset" | "upload";
+    avatarValue: string;
+  }>(() => {
+    if (!avatar) return { avatarType: "preset" as const, avatarValue: "black" };
+
+    if (avatar.type === "preset") {
+      return {
+        avatarType: "preset" as const,
+        avatarValue: avatar.variant,
+      };
     }
+
+    const previewUrl = URL.createObjectURL(avatar.file);
+
+    return {
+      avatarType: "upload" as const,
+      avatarValue: previewUrl,
+    };
+  }, [avatar]);
+
+  // Cleanup blob URLs
+  useEffect(() => {
+    if (avatarType === "upload" && avatarValue.startsWith("blob:")) {
+      return () => URL.revokeObjectURL(avatarValue);
+    }
+  }, [avatarType, avatarValue]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setValue(
+      name,
+      { type: "upload", file },
+      { shouldDirty: true, shouldValidate: true },
+    );
   };
 
   return (
     <InputContainer>
       <ImageUploadContainer>
         {isAvatar ? (
-          <Avatar type={avatarType!} imageUrl={imageUrl} />
+          <Avatar
+            size="xLarge"
+            avatarType={avatarType}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            avatarValue={avatarValue as any}
+          />
         ) : (
           <ImageUpload>
-            {imageUrl ? (
-              <img src={imageUrl} alt="Uploaded preview" />
-            ) : null}
+            {avatarType === "upload" && avatarValue ? (
+              <img src={avatarValue} alt="Uploaded preview" />
+            ) : (
+              <Placeholder />
+            )}  
           </ImageUpload>
         )}
+
         <UploadContainer>
           <input
             type="file"
             accept="image/*"
+            hidden
             ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={(e) => handleOnChange(e, e.target.files![0])}
+            onChange={handleFileChange}
           />
+
           <Button
             size="small"
             color="base"
-            icon={{
-              left: <UploadIcon />,
-            }}
+            type="button"
+            icon={{ left: <UploadIcon /> }}
             onClick={() => fileInputRef.current?.click()}
           >
             Upload Image
           </Button>
+
           <HelperMessage>{helperMessage}</HelperMessage>
         </UploadContainer>
       </ImageUploadContainer>
+
       {hasError && (
         <ErrorText>
-          <Error_Outlined width={18} height={18} /> {errorMessage}
+          <Error_Outlined width={18} height={18} />
+          {errorMessage}
         </ErrorText>
       )}
     </InputContainer>

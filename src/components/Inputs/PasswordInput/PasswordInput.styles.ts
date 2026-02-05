@@ -83,6 +83,17 @@ export const InputField = styled.input<{
     background: transparent;
     outline: none;
   }
+
+    /* ---- Stop Chrome autofill white background ---- */
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px ${colors.base.translucent10} inset;
+    -webkit-text-fill-color: ${colors.text.text1};
+    transition: background-color 9999s ease-in-out 0s;
+  }
+
 `;
 
 export const HelperText = styled.span`

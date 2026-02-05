@@ -12,7 +12,7 @@ const GraphicOption = ({
   onClick,
 }: GraphicOptionProps) => {
   return (
-    <GraphicContainer isSelected={isSelected} onClick={onClick}>
+    <GraphicContainer type="button" isSelected={isSelected} onClick={onClick}>
       <Graphic src={graphicSrc} alt="Graphic Option" />
     </GraphicContainer>
   );

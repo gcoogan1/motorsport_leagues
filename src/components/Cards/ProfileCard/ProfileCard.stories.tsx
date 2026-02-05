@@ -9,10 +9,7 @@ const meta: Meta<typeof ProfileCard> = {
   component: ProfileCard,
   decorators: [withAppTheme],
   argTypes: {
-    type: {
-      control: "select",
-      options: ["none", "black", "blue", "green", "red", "yellow", "email"],
-    },
+    
     username: {
       control: "text",
     },
@@ -22,6 +19,14 @@ const meta: Meta<typeof ProfileCard> = {
     cardSize: {
       control: "select",
       options: ["small", "medium"],
+    },
+    avatarType: {
+      control: "select",
+      options: ["preset", "upload"],
+    },
+    avatarValue: {
+      control: "text",
+      description: "The variant of the avatar to display (e.g., color or url).",
     },
   },
   parameters: {
@@ -36,10 +41,11 @@ The **ProfileCard** component is used to display a user's profile information, i
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| \`type\` | \`AvatarVariants\` | \`"blue"\` | The variant of the avatar to display (e.g., color or style). |
 | \`username\` | \`string\` | \`-\` | The username of the profile to display. |
 | \`userGame\` | \`string\` | \`-\` | The game associated with the profile. |
 | \`cardSize\` | \`"small" | "medium"\` | \`"medium"\` | The size of the profile card. |
+| \`avatarType\` | \`"preset" | "upload"\` | \`"preset"\` | The type of avatar to display. |
+| \`avatarValue\` | \`string\` | \`-\` | The variant or URL of the avatar to display. |
 
 ## Usage
 
@@ -59,16 +65,18 @@ type Story = StoryObj<typeof ProfileCard>;
 
 export const Default: Story = {
   args: {
-    type: "blue",
     username: "Username",
     userGame: "Game",
+    avatarType: "preset",
+    avatarValue: "blue",
   },
 };
 
 
 export const RedAvatar: Story = {
   args: {
-    type: "red",
+    avatarType: "preset",
+    avatarValue: "red",
     username: "Username",
     userGame: "Game",
   },
@@ -76,7 +84,8 @@ export const RedAvatar: Story = {
 
 export const NoAvatar: Story = {
   args: {
-    type: "none",
+    avatarType: "preset",
+    avatarValue: "none",
     username: "Username",
     userGame: "Game",
   },
@@ -84,7 +93,8 @@ export const NoAvatar: Story = {
 
 export const SmallCard: Story = {
   args: {
-    type: "green",
+    avatarType: "preset",
+    avatarValue: "green",
     username: "Username",
     userGame: "Game",
     cardSize: "small",

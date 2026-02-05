@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import type { RootState } from "@/store";
+import { type RootState } from "@/store";
+import { navigate } from "@/app/navigation/navigation";
+import { usePanel } from "@/providers/panel/usePanel";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import Create from "@assets/Icon/Create.svg?react";
 import Search from "@assets/Icon/Search.svg?react";
@@ -17,12 +19,18 @@ const PROFILE_TABS = [
 
 const ProfilesPanel = () => {
   const [activeTab, setActiveTab] = useState<string>(PROFILE_TABS[0].label);
+  const { closePanel } = usePanel();
 
   const profiles = useSelector((state: RootState) => state.profile.data);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
+
+  const handleCreateProfile = () => {
+    closePanel();
+    navigate("/create-profile");
+  }
 
   return (
     <PanelLayout
@@ -36,7 +44,7 @@ const ProfilesPanel = () => {
               primary: {
                 label: "Create Profile",
                 leftIcon: <Create />,
-                action: () => console.log("Create Profile"),
+                action: handleCreateProfile,
               },
               secondary: {
                 label: "Search",
@@ -56,7 +64,8 @@ const ProfilesPanel = () => {
                 userGame={prof.game_type}
                 username={prof.username}
                 cardSize="medium"
-                type={"black"}
+                avatarType={prof.avatar_type}
+                avatarValue={prof.avatar_value}
               />
             ))
           ) : (
@@ -68,7 +77,7 @@ const ProfilesPanel = () => {
                 primary: {
                   label: "Create New Profile",
                   leftIcon: <Create />,
-                  onClick: () => console.log("Create"),
+                  onClick: handleCreateProfile,
                 },
               }}
             />

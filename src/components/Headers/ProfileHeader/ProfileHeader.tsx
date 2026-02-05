@@ -25,8 +25,8 @@ type ProfileHeaderProps = {
   gameType: string;
   username: string;
   editOnClick: () => void;
-  avatarType?: AvatarVariants;
-  imageUrl?: string;
+  avatarType: "preset" | "upload";
+  avatarValue: AvatarVariants | string;
   followersOnClick?: () => void;
   followersCount?: number;
   championCount?: number;
@@ -36,8 +36,8 @@ const ProfileHeader = ({
   gameType,
   username,
   editOnClick,
-  avatarType = "none",
-  imageUrl,
+  avatarType,
+  avatarValue,
   followersOnClick,
   followersCount,
   championCount,
@@ -51,7 +51,7 @@ const ProfileHeader = ({
         <DetailsContainer>
           <Details>
             <AvatarContainer>
-              <Avatar size="xxLarge" type={avatarType} imageUrl={imageUrl || undefined} />
+              <Avatar size="xxLarge" avatarType={avatarType} avatarValue={avatarValue} />
             </AvatarContainer>
             <TextContainer>
               <TextContent>
