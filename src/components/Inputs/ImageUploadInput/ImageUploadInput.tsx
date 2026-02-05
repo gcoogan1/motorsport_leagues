@@ -9,6 +9,7 @@ import {
   ImageUpload,
   ImageUploadContainer,
   InputContainer,
+  Placeholder,
   UploadContainer,
 } from "./ImageUploadInput.styles";
 import { useFormContext } from "react-hook-form";
@@ -85,9 +86,11 @@ const ImageUploadInput = ({
           />
         ) : (
           <ImageUpload>
-            {avatarValue ? (
+            {avatarType === "upload" && avatarValue ? (
               <img src={avatarValue} alt="Uploaded preview" />
-            ) : null}
+            ) : (
+              <Placeholder />
+            )}  
           </ImageUpload>
         )}
 

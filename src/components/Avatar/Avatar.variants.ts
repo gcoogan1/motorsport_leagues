@@ -11,14 +11,14 @@ export type AvatarSize = "xxLarge" | "xLarge" | "large" | "medium" | "small" | "
 
 type AvatarVariantStyles = {
   [key in AvatarVariants]: {
-    avatar: string | null;
+    avatar: string;
   };
 };
 
 export const getAvatarVariants = (): AvatarVariantStyles => {
   return {
     none: {
-      avatar: null,
+      avatar: "none",
     },
     black: {
       avatar: AvatarBlack,

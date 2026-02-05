@@ -14,7 +14,11 @@ const meta: Meta<typeof Avatar> = {
       control: "select",
       options: ["tiny", "small", "medium", "large", "xLarge", "xxLarge"] satisfies AvatarSize[],
     },
-    type: {
+    avatarType: {
+      control: "select",
+      options: ["preset", "upload"],
+    },
+    avatarValue: {
       control: "select",
       options: Object.keys(getAvatarVariants()) as AvatarVariants[],
     },
@@ -28,13 +32,16 @@ The **Avatar** component is used to display user profile images with various siz
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | \`size\` | \`"xxLarge" | "xLarge" | "large" | "medium" | "small" | "tiny"\` | \`"medium"\` | Defines the size of the avatar. |
-| \`type\` | \`"none" | "black" | "blue" | "green" | "red" | "yellow" | "email"\` | \`"none"\` | Defines the avatar variant to display. |
+| \`avatarType\` | \`"preset" | "upload"\` | \`"preset"\` | Specifies whether to use a preset avatar or an uploaded image. |
+| \`avatarValue\` | \`AvatarVariants | string\` | \`"default"\` | The preset avatar type or the URL of the uploaded image. |
 
 ### Usage Notes:
 
-The Avatar component can be customized using the \`size\` and \`type\` props to fit various design requirements.
+The Avatar component can be customized using the \`size\`, \`avatarType\`, and \`avatarValue\` props to fit different design requirements.
 
-If \`type\` is set to \`"none"\`, no avatar image will be displayed.
+If \`avatarType\` is set to \`"upload"\`, ensure that \`avatarValue\` contains a valid image URL.
+
+If \`avatarType\` is set to \`"preset"\`, choose from the available preset options defined in \`AvatarVariants\`. If "none" is selected, an empty placeholder avatar will be displayed.
 
       `},
     }
@@ -51,41 +58,47 @@ type Story = StoryObj<typeof Avatar>;
 export const Default: Story = {
   args: {
     size: "medium",
-    type: "none",
+    avatarType: "preset",
+    avatarValue: "black",
   },
 };
 
 export const SmallBlueAvatar: Story = {
   args: {
     size: "small",
-    type: "blue",
+    avatarType: "preset",
+    avatarValue: "blue",
   },
 };
 
 export const LargeRedAvatar: Story = {
   args: {
     size: "large",
-    type: "red",
+    avatarType: "preset",
+    avatarValue: "red",
   },
 };
 
 export const ExtraLargeGreenAvatar: Story = {
   args: {
     size: "xLarge",
-    type: "green",
+    avatarType: "preset",
+    avatarValue: "green",
   },
 };
 
 export const ExtraExtraLargeBlackAvatar: Story = {
   args: {
     size: "xxLarge",
-    type: "black",
+    avatarType: "preset",
+    avatarValue: "black",
   },
 };
 
 export const EmailAvatar: Story = {
   args: {
     size: "medium",
-    type: "email",
+    avatarType: "preset",
+    avatarValue: "email",
   },
 };

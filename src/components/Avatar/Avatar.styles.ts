@@ -19,3 +19,10 @@ export const AvatarImage = styled.img`
   height: 100%;
   object-fit: cover;
 `
+
+export const PlaceholderAvatar = styled.div<{ $sizeValue: number }>`
+  width: ${({ $sizeValue }) => $sizeValue}px;
+  height: ${({ $sizeValue }) => $sizeValue}px;
+  border-radius: ${borders.radius.round};
+  background-color: ${colors.base.translucent10};
+`

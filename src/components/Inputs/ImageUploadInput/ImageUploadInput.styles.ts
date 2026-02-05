@@ -37,6 +37,12 @@ export const ImageUpload = styled.div`
     border-radius: ${borders.radius.medium};
   }
 `
+export const Placeholder = styled.div`
+  width: 336px;
+  height: 160px;
+  border-radius: ${borders.radius.medium};
+  background: ${colors.base.translucent10};
+`
 
 export const UploadContainer = styled.div`
   display: flex;
