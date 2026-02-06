@@ -1,5 +1,6 @@
 import {
   createProfileWithAvatar,
+  getProfilebyProfileId,
   getProfilesByUserId,
 } from "@/services/profile.service";
 import type { CreateProfilePayload } from "@/types/profile.types";
@@ -9,6 +10,14 @@ export const fetchProfilesThunk = createAsyncThunk(
   "profile/fetch",
   async (userId: string) => {
     return getProfilesByUserId(userId);
+  },
+);
+
+// Called when guest views a profile
+export const getProfileByProfileIdThunk = createAsyncThunk(
+  "profile/getById",
+  async (profileId: string) => {
+    return await getProfilebyProfileId(profileId);
   },
 );
 

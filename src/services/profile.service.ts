@@ -170,3 +170,50 @@ export const createProfileWithAvatar = async ({
     },
   };
 };
+
+// -- Get Profile by Profile ID -- //
+// Used when guest views a profile
+export const getProfilebyProfileId = async (profileId: string): Promise<GetProfilesResult> => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", profileId)
+    .maybeSingle();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error?.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (data) {
+    let finalAvatarValue = data.avatar_value;
+
+    // If it's an upload, resolve the full public URL from Supabase
+    if (data.avatar_type === "upload") {
+      const { data: urlData } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(data.avatar_value);
+      
+      finalAvatarValue = urlData.publicUrl;
+    }
+
+    return {
+      success: true,
+      data: [{
+        ...data,
+        avatar_value: finalAvatarValue,
+      }],
+    };
+  }
+
+  return {
+    success: false,
+    error: { message: "Profile not found", code: "NOT_FOUND", status: 404 },
+  };
+}
