@@ -13,7 +13,7 @@ import {
   UploadContainer,
 } from "./ImageUploadInput.styles";
 import { useFormContext } from "react-hook-form";
-import type { AvatarFormValues } from "@/features/panels/profileEdit/forms/EditAvatar/editAvatar.schema";
+import type { AvatarFormValues } from "@/features/panels/ProfileEdit/forms/EditAvatar/editAvatar.schema";
 
 type Props = {
   name: "avatar";
