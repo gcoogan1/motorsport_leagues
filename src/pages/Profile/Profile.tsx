@@ -1,17 +1,18 @@
+import { useEffect } from "react";
 import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import ProfileHeader from "@/components/Headers/ProfileHeader/ProfileHeader";
-import { Container, Content, ListContainer, Wrapper } from "./Profile.styles";
 import {
   selectCurrentProfile,
   selectProfileViewType,
 } from "@/store/profile/profile.selectors";
-import { useEffect } from "react";
-import type { AppDispatch } from "@/store";
+import { type AppDispatch } from "@/store";
+import { usePanel } from "@/providers/panel/usePanel";
 import { getProfileByProfileIdThunk } from "@/store/profile/profile.thunk";
+import ProfileHeader from "@/components/Headers/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/ProfileStats/ProfileStats";
 import SquadsListCard from "@/components/Cards/CardList/SquadsListCard/SquadsListCard";
 import LeaguesListCard from "@/components/Cards/CardList/LeaguesListCard/LeaguesListCard";
+import { Container, Content, ListContainer, Wrapper } from "./Profile.styles";
 
 // TEMP HARDCODED STATS
 const stats = [
@@ -35,6 +36,7 @@ const stats = [
 
 const Profile = () => {
   const { profileId } = useParams();
+  const { openPanel } = usePanel();
   const dispatch = useDispatch<AppDispatch>();
 
   const profile = useSelector(selectCurrentProfile);
@@ -47,13 +49,17 @@ useEffect(() => {
   }
 }, [profileId, profile?.id, dispatch]);
 
+const handleEditProfile = () => {
+  openPanel("EDIT_PROFILE");
+}
+
   return (
     <Wrapper>
       <ProfileHeader
         gameType={profile?.game_type ?? ""}
         username={profile?.username ?? ""}
         viewType={viewType}
-        editOnClick={() => console.log("Edit profile")}
+        editOnClick={handleEditProfile}
         avatarType={profile?.avatar_type ?? "preset"}
         avatarValue={profile?.avatar_value ?? "black"}
         followersCount={0}
