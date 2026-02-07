@@ -4,6 +4,7 @@ import type {
   CreateProfilePayload,
   CreateProfileResult,
   GetProfilesResult,
+  UpdateAvatarPayload,
 } from "@/types/profile.types";
 // --- Profile Supabase Services -- //
 
@@ -222,4 +223,86 @@ export const getProfileByProfileId = async (
       },
     ],
   };
-};;
+};
+
+
+// -- Update Profile Avatar -- //
+export const updateProfileAvatar = async ({
+  profileId,
+  accountId,
+  avatar,
+}: UpdateAvatarPayload): Promise<CreateProfileResult> => {
+  let avatarType: "preset" | "upload";
+  let avatarValue: string;
+
+  // ---- PRESET AVATAR ----
+  if (avatar.type === "preset") {
+    avatarType = "preset";
+    avatarValue = avatar.variant;
+  }
+
+  // ---- UPLOADED AVATAR ----
+  else {
+    avatarType = "upload";
+
+    const fileExt = avatar.file.name.split(".").pop();
+    const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, avatar.file, {
+        upsert: true,
+        contentType: avatar.file.type,
+      });
+
+    if (uploadError) {
+      return {
+        success: false,
+        error: {
+          message: uploadError.message,
+          code: "AVATAR_UPLOAD_FAILED",
+          status: 500,
+        },
+      };
+    }
+
+    avatarValue = filePath;
+  }
+
+  // ---- UPDATE PROFILE ----
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({
+      avatar_type: avatarType,
+      avatar_value: avatarValue,
+    })
+    .eq("id", profileId)
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "AVATAR_UPDATE_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  // ---- RESOLVE PUBLIC URL FOR UPLOADS ----
+  const resolvedAvatar = resolveAvatarValue(
+    avatarType,
+    avatarValue,
+  );
+
+  return {
+    success: true,
+    data: {
+      ...data,
+      avatar_type: avatarType,
+      avatar_value: resolvedAvatar,
+    },
+  };
+};
