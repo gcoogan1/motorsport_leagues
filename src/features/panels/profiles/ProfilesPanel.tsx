@@ -27,6 +27,11 @@ const ProfilesPanel = () => {
     setActiveTab(tab);
   };
 
+  const handleGoToProfile = (profileId: string) => {
+    closePanel();
+    navigate(`/profile/${profileId}`);
+  }
+
   const handleCreateProfile = () => {
     closePanel();
     navigate("/create-profile");
@@ -64,6 +69,7 @@ const ProfilesPanel = () => {
                 userGame={prof.game_type}
                 username={prof.username}
                 cardSize="medium"
+                onClick={() => handleGoToProfile(prof.id)}
                 avatarType={prof.avatar_type}
                 avatarValue={prof.avatar_value}
               />

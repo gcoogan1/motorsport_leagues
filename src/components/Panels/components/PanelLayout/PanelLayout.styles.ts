@@ -33,7 +33,7 @@ export const PanelBody = styled.div`
   align-items: flex-start;
   flex: 1;
   min-height: 0;
-  overflow-y: auto; 
+  overflow: scroll;
   border-bottom-left-radius: ${borders.radius.xxLarge};
   border-bottom-right-radius: ${borders.radius.xxLarge};
 `;
