@@ -13,7 +13,7 @@ import {
   UploadContainer,
 } from "./ImageUploadInput.styles";
 import { useFormContext } from "react-hook-form";
-import type { AvatarFormValues } from "@/features/profiles/forms/Create/Avatar/avatarFormSchema";
+import type { AvatarFormValues } from "@/features/panels/profileEdit/forms/EditAvatar/editAvatar.schema";
 
 type Props = {
   name: "avatar";
@@ -35,38 +35,44 @@ const ImageUploadInput = ({
 
   const avatar = watch(name);
 
-  const { avatarType, avatarValue } = useMemo<{
-    avatarType: "preset" | "upload";
-    avatarValue: string;
-  }>(() => {
-    if (!avatar) return { avatarType: "preset" as const, avatarValue: "black" };
-
-    if (avatar.type === "preset") {
-      return {
-        avatarType: "preset" as const,
-        avatarValue: avatar.variant,
-      };
+  // Compute preview URL safely
+  // Note: we allow previewUrl in the form state for existing uploads, but it is not a File and should not be treated as such
+  const previewUrl = useMemo(() => {
+    if (!avatar) return undefined;
+    if (avatar.type === "upload") {
+      if (avatar.file && avatar.file instanceof File) {
+        return URL.createObjectURL(avatar.file);
+      }
+      if (avatar.previewUrl && typeof avatar.previewUrl === "string") {
+        return avatar.previewUrl;
+      }
     }
-
-    const previewUrl = URL.createObjectURL(avatar.file);
-
-    return {
-      avatarType: "upload" as const,
-      avatarValue: previewUrl,
-    };
+    return undefined;
   }, [avatar]);
 
-  // Cleanup blob URLs
+  // Cleanup object URL when component unmounts or when a new file is selected
   useEffect(() => {
-    if (avatarType === "upload" && avatarValue.startsWith("blob:")) {
-      return () => URL.revokeObjectURL(avatarValue);
+    if (previewUrl && previewUrl.startsWith("blob:")) {
+      return () => URL.revokeObjectURL(previewUrl);
     }
-  }, [avatarType, avatarValue]);
+  }, [previewUrl]);
 
+  // Avatar display logic:
+  // - If avatar type is upload and we have a valid preview URL, use it
+  // - Else if avatar type is preset, use the variant to display the correct preset avatar
+  // - Else show placeholder (no avatar)
+  const avatarType = avatar?.type === "upload" ? "upload" : "preset";
+  const avatarValue =
+    avatarType === "upload" && previewUrl
+      ? previewUrl
+      : avatarType === "preset" && avatar?.type === "preset"
+        ? avatar.variant ?? "black"
+        : undefined;
+
+  // Handle file input change and update form state accordingly
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setValue(
       name,
       { type: "upload", file },
@@ -81,8 +87,7 @@ const ImageUploadInput = ({
           <Avatar
             size="xLarge"
             avatarType={avatarType}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            avatarValue={avatarValue as any}
+            avatarValue={avatarValue ?? "black"}
           />
         ) : (
           <ImageUpload>
@@ -90,7 +95,7 @@ const ImageUploadInput = ({
               <img src={avatarValue} alt="Uploaded preview" />
             ) : (
               <Placeholder />
-            )}  
+            )}
           </ImageUpload>
         )}
 

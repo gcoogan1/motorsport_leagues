@@ -23,7 +23,7 @@ export type GameType = typeof GAME_TYPES[number];
 export type AvatarVariant = typeof AVATAR_VARIANTS[number];
 
 export type AvatarValue =
-  | { type: "upload"; file: File }
+  | { type: "upload"; file: File, previewUrl?: string }
   | { type: "preset"; variant: AvatarVariant };
 
 // Supabase Service Types //
@@ -77,6 +77,15 @@ export type CreateProfileResult = CreateProfileSuccess | SupabaseError;
 export type CheckUsernameAvailabilityResult =
   | { success: true }
   | SupabaseError;
+
+// Update Avatar --> Payload type
+export type UpdateAvatarPayload = {
+  profileId: string;
+  accountId: string;
+  avatar:
+    | { type: "preset"; variant: string }
+    | { type: "upload"; file: File };
+};
 
 // Redux Types //
 
