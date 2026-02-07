@@ -7,7 +7,7 @@ import SquadsPanel from "./squads/SquadsPanel";
 import LeaguesPanel from "./leagues/LeaguesPanel";
 import GuestSquadsPanel from "./squads/GuestSquadsPanel";
 import GuestLeaguesPanel from "./leagues/GuestLeaguesPanel";
-import EditProfile from "./editProfile/EditProfile";
+import ProfileEdit from "./ProfileEdit/ProfileEdit";
 
 
 export const panelVariants: Record<PanelTypes, React.FC> = {
@@ -19,5 +19,5 @@ export const panelVariants: Record<PanelTypes, React.FC> = {
   GUEST_SQUADS: GuestSquadsPanel,
   LEAGUES: LeaguesPanel,
   GUEST_LEAGUES: GuestLeaguesPanel,
-  EDIT_PROFILE: EditProfile,
+  PROFILE_EDIT: ProfileEdit,
 };

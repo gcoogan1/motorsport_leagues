@@ -8,7 +8,7 @@ import EditIcon from "@assets/Icon/Edit.svg?react"
 import ImageChange from "@assets/Icon/Image_Change.svg?react"
 import DeleteIcon from "@assets/Icon/Delete.svg?react"
 
-const EditProfile = () => {
+const ProfileEdit = () => {
   // const { openModal } = useModal();
   // const { closePanel } = usePanel();
 
@@ -62,4 +62,4 @@ const EditProfile = () => {
   )
 }
 
-export default EditProfile
+export default ProfileEdit;
