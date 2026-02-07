@@ -1,9 +1,31 @@
 import { supabase } from "@/lib/supabase";
-import type { CheckUsernameAvailabilityResult, CreateProfilePayload, CreateProfileResult, GetProfilesResult } from "@/types/profile.types";
+import type {
+  CheckUsernameAvailabilityResult,
+  CreateProfilePayload,
+  CreateProfileResult,
+  GetProfilesResult,
+} from "@/types/profile.types";
 // --- Profile Supabase Services -- //
 
+// -- Resolve Avatar Value to Public URL -- // Used for profiles with uploaded avatars to get the full public URL from Supabase Storage
+export const resolveAvatarValue = (
+  avatarType: "preset" | "upload",
+  avatarValue: string,
+) => {
+  if (avatarType !== "upload") return avatarValue;
+
+  // Get the public URL for the uploaded avatar from Supabase Storage
+  const { data } = supabase.storage
+    .from("avatars")
+    .getPublicUrl(avatarValue);
+
+  return data.publicUrl;
+};
+
 // -- Get Profiles by User ID -- //
-export const getProfilesByUserId = async (userId: string): Promise<GetProfilesResult> => {
+export const getProfilesByUserId = async (
+  userId: string,
+): Promise<GetProfilesResult> => {
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
@@ -14,38 +36,22 @@ export const getProfilesByUserId = async (userId: string): Promise<GetProfilesRe
       success: false,
       error: {
         message: error.message,
-        code: error?.code || "SERVER_ERROR",
+        code: error.code || "SERVER_ERROR",
         status: 500,
       },
     };
   }
 
-  if (data) {
-    return {
-      success: true,
-      data: data.map((profile) => {
-        let finalAvatarValue = profile.avatar_value;
-
-        // If it's an upload, resolve the full public URL from Supabase
-        if (profile.avatar_type === "upload") {
-          const { data: urlData } = supabase.storage
-            .from("avatars")
-            .getPublicUrl(profile.avatar_value);
-          
-          finalAvatarValue = urlData.publicUrl;
-        }
-
-        return {
-          ...profile,
-          avatar_value: finalAvatarValue,
-        };
-      }),
-    };
-  }
-
+  // Resolve the avatar value to a public URL for each profile before returning the data
   return {
-    success: false,
-    error: { message: "No profiles found", code: "NOT_FOUND", status: 404 },
+    success: true,
+    data: data.map((profile) => ({
+      ...profile,
+      avatar_value: resolveAvatarValue(
+        profile.avatar_type,
+        profile.avatar_value,
+      ),
+    })),
   };
 };
 
@@ -99,49 +105,50 @@ export const createProfileWithAvatar = async ({
   let avatarType: "preset" | "upload";
   let avatarValue: string;
 
-  // Handle avatar upload or preset selection
+  // --- Handle avatar ---
   if (avatar.type === "preset") {
     avatarType = "preset";
     avatarValue = avatar.variant;
   } else {
     avatarType = "upload";
 
+    // Generate a unique file path for the avatar upload
     const fileExt = avatar.file.name.split(".").pop();
     const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
 
-    const { error: uploadError } = await supabase.storage
+    // Upload the avatar file to Supabase Storage
+    const { error } = await supabase.storage
       .from("avatars")
       .upload(filePath, avatar.file, {
         upsert: true,
         contentType: avatar.file.type,
       });
 
-    if (uploadError) {
+    if (error) {
       return {
         success: false,
         error: {
-          message: uploadError.message,
+          message: error.message,
           code: "UPLOAD_FAILED",
           status: 500,
         },
       };
     }
 
+    // If upload is successful, set the avatarValue to the file path in storage
     avatarValue = filePath;
   }
 
-  // Insert new profile record into the database
+  // --- Insert profile ---
   const { data, error } = await supabase
     .from("profiles")
-    .insert([
-      {
-        account_id: accountId,
-        username,
-        game_type: gameType,
-        avatar_type: avatarType,
-        avatar_value: avatarValue,
-      },
-    ])
+    .insert({
+      account_id: accountId,
+      username,
+      game_type: gameType,
+      avatar_type: avatarType,
+      avatar_value: avatarValue,
+    })
     .select()
     .single();
 
@@ -156,24 +163,28 @@ export const createProfileWithAvatar = async ({
     };
   }
 
-  // Return the created profile data
+  // Resolve the avatar value to a public URL before returning the profile data
+  const resolvedAvatar = resolveAvatarValue(
+    avatarType,
+    avatarValue,
+  );
+
+  // Return the created profile data with the resolved avatar URL
   return {
     success: true,
     data: {
-      id: data.id,
-      created_at: data.created_at,
-      account_id: data.account_id,
-      username: data.username,
-      game_type: data.game_type,
+      ...data,
       avatar_type: avatarType,
-      avatar_value: avatarValue,
+      avatar_value: resolvedAvatar,
     },
   };
 };
 
 // -- Get Profile by Profile ID -- //
 // Used when guest views a profile
-export const getProfilebyProfileId = async (profileId: string): Promise<GetProfilesResult> => {
+export const getProfileByProfileId = async (
+  profileId: string,
+): Promise<GetProfilesResult> => {
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
@@ -185,35 +196,30 @@ export const getProfilebyProfileId = async (profileId: string): Promise<GetProfi
       success: false,
       error: {
         message: error.message,
-        code: error?.code || "SERVER_ERROR",
+        code: error.code || "SERVER_ERROR",
         status: 500,
       },
     };
   }
 
-  if (data) {
-    let finalAvatarValue = data.avatar_value;
-
-    // If it's an upload, resolve the full public URL from Supabase
-    if (data.avatar_type === "upload") {
-      const { data: urlData } = supabase.storage
-        .from("avatars")
-        .getPublicUrl(data.avatar_value);
-      
-      finalAvatarValue = urlData.publicUrl;
-    }
-
+  if (!data) {
     return {
-      success: true,
-      data: [{
-        ...data,
-        avatar_value: finalAvatarValue,
-      }],
+      success: false,
+      error: { message: "Profile not found", code: "NOT_FOUND", status: 404 },
     };
   }
 
+  // Resolve the avatar value to a public URL before returning the profile data
   return {
-    success: false,
-    error: { message: "Profile not found", code: "NOT_FOUND", status: 404 },
+    success: true,
+    data: [
+      {
+        ...data,
+        avatar_value: resolveAvatarValue(
+          data.avatar_type,
+          data.avatar_value,
+        ),
+      },
+    ],
   };
-}
+};;

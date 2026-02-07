@@ -89,6 +89,7 @@ export type ProfileDraft = {
 // Profiles --> State Type
 export type ProfilesState = {
   data: ProfileTable[] | null;
+  currentProfile?: ProfileTable | null;
   status: "idle" | "loading" | "fulfilled" | "rejected";
   error?: string;
   draft: ProfileDraft;

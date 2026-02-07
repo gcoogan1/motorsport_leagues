@@ -1,9 +1,14 @@
 import type { ProfilesState } from "@/types/profile.types";
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchProfilesThunk, createProfileThunk, getProfileByProfileIdThunk } from "./profile.thunk";
+import {
+  createProfileThunk,
+  fetchProfilesThunk,
+  getProfileByProfileIdThunk,
+} from "./profile.thunk";
 
 const initialState: ProfilesState = {
   data: null,
+  currentProfile: null,
   status: "idle",
   draft: {},
 };
@@ -29,10 +34,11 @@ const profileSlice = createSlice({
     clearProfileDraft: (state) => {
       state.draft = {};
     },
-
   },
   extraReducers: (builder) => {
     builder
+
+      // Fetch Profiles
       .addCase(fetchProfilesThunk.pending, (state) => {
         state.status = "loading";
         state.error = undefined;
@@ -49,6 +55,7 @@ const profileSlice = createSlice({
         state.status = "rejected";
         state.error = action.error.message;
       })
+
 
       // Create Profile
       .addCase(createProfileThunk.pending, (state) => {
@@ -70,6 +77,7 @@ const profileSlice = createSlice({
         state.error = action.error.message;
       })
 
+
       // Get Profile by ID
       .addCase(getProfileByProfileIdThunk.pending, (state) => {
         state.status = "loading";
@@ -77,20 +85,17 @@ const profileSlice = createSlice({
       })
       .addCase(getProfileByProfileIdThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
-        if (action.payload && "data" in action.payload) {
-          const profile = action.payload.data?.[0];
-          if (!profile) return;
+        // Ensure payload has expected structure
+        if (!("data" in action.payload)) return;
+        // Get the profile from the payload
+        const profile = action.payload.data?.[0];
+        if (!profile) return;
+        // Set the current profile
+        state.currentProfile = profile;
 
-          if (Array.isArray(state.data)) {
-            const index = state.data.findIndex((p) => p.id === profile.id);
-            if (index >= 0) {
-              state.data[index] = profile;
-            } else {
-              state.data.push(profile);
-            }
-          } else {
-            state.data = [profile];
-          }
+        // If this is one of my profiles, keep data in sync
+        if (state.data?.some((p) => p.id === profile.id)) {
+          state.data = state.data.map((p) => p.id === profile.id ? profile : p);
         }
       })
       .addCase(getProfileByProfileIdThunk.rejected, (state, action) => {
@@ -100,6 +105,7 @@ const profileSlice = createSlice({
   },
 });
 
-export const { clearProfiles, updateProfileDraft, clearProfileDraft } = profileSlice.actions;
+export const { clearProfiles, updateProfileDraft, clearProfileDraft } =
+  profileSlice.actions;
 
 export default profileSlice.reducer;
