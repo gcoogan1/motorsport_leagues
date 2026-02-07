@@ -50,7 +50,7 @@ useEffect(() => {
 }, [profileId, profile?.id, dispatch]);
 
 const handleEditProfile = () => {
-  openPanel("EDIT_PROFILE");
+  openPanel("PROFILE_EDIT");
 }
 
   return (
