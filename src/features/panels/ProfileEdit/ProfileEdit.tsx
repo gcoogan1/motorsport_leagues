@@ -1,21 +1,23 @@
 import { useSelector } from "react-redux";
-// import { useModal } from "@/providers/modal/useModal";
-// import { usePanel } from "@/providers/panel/usePanel";
+import { useModal } from "@/providers/modal/useModal";
 import { selectCurrentProfile } from "@/store/profile/profile.selectors";
 import LinkList from "@/components/Lists/LinkList/LinkList"
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout"
 import EditIcon from "@assets/Icon/Edit.svg?react"
 import ImageChange from "@assets/Icon/Image_Change.svg?react"
 import DeleteIcon from "@assets/Icon/Delete.svg?react"
+import EditAvatar from "./forms/EditAvatar/EditAvatar";
 
 const ProfileEdit = () => {
-  // const { openModal } = useModal();
-  // const { closePanel } = usePanel();
-
+  const { openModal } = useModal();
 
   const profile = useSelector(selectCurrentProfile);
 
   if (!profile) return null;
+
+  const handleEditAvatar = () => {
+    openModal(<EditAvatar profileId={profile.id} />);
+  }
 
   return (
     <PanelLayout panelTitle="Edit Profile" panelTitleIcon={<EditIcon />}>
@@ -29,7 +31,7 @@ const ProfileEdit = () => {
             optionIcon: <ImageChange />,
             optionIconLabel: "Edit Avatar Icon",
             onOptionClick: () => {
-              console.log("Edit Avatar Image");
+              handleEditAvatar();
             },
           },
           {
