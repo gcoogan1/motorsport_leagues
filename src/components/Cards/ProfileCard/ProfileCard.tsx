@@ -13,6 +13,7 @@ import {
 type ProfileCardProps = {
   username: string;
   userGame: string;
+  onClick?: () => void;
   cardSize?: "small" | "medium";
   avatarType: "preset" | "upload";
   avatarValue: AvatarVariants | string;
@@ -21,12 +22,13 @@ type ProfileCardProps = {
 const ProfileCard = ({
   username,
   userGame,
+  onClick,
   cardSize = "medium",
   avatarType,
   avatarValue,
 }: ProfileCardProps) => {
   return (
-    <ClickableWrapper $cardSize={cardSize}>
+    <ClickableWrapper type="button" onClick={onClick} $cardSize={cardSize}>
       <Frame />
       <Content>
         <AvatarWrapper>

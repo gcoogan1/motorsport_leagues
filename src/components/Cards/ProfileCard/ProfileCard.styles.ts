@@ -80,6 +80,7 @@ export const ClickableWrapper = styled.button<{ $cardSize: "small" | "medium" }>
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+  flex-shrink: 0;
   
   ${gradientBorder({ gradient: gradients.base.fadeTop10, width: borders.width.thin })}
 

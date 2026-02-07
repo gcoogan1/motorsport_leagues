@@ -45,4 +45,5 @@ export const ListContainer = styled.div`
   gap: ${layout.space.xLarge};
   padding: ${layout.space.xLarge};
   border: ${borders.width.medium} solid transparent;
+  border-radius: ${borders.radius.xxxLarge};
 `;
