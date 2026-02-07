@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from "react-router";
+import { matchPath, Outlet, useLocation } from "react-router";
 import { useAuth } from "@/providers/auth/useAuth";
 import { ROUTES, type Route } from "@/app/routes/routes";
 import { Main, Wrapper } from "./Layout.styles";
@@ -11,18 +11,20 @@ const Layout = () => {
   const location = useLocation();
   const { user, isVerified } = useAuth();
 
-  // Find the current route based on the location
-  const currentRoute = ROUTES.find((route) => route.path === location.pathname);
+  // Find the current route based on the location (matchPath allows for ids and nested routes)
+  const currentRoute = ROUTES.find((route) =>
+    matchPath({ path: route.path, end: true }, location.pathname),
+  );
 
   // Determine navbar usage; if route specifies, use that, else base on auth status
   const userStatus = user && isVerified ? "user" : "guest";
   // Helper to get current usage
-  const getCurrentUsage = (userSt: "user" | "guest", currentRt?: Route,) => {
+  const getCurrentUsage = (userSt: "user" | "guest", currentRt?: Route) => {
     if (!currentRt) {
       return "core";
     }
     return currentRt.navbar ? currentRt.navbar : userSt;
-  }
+  };
 
   const usage = getCurrentUsage(userStatus, currentRoute);
   const userDetails = userStatus === "user" ? user : undefined;

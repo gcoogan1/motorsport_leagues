@@ -3,6 +3,7 @@ import CreateProfile from "@/pages/CreateProfile/CreateProfile";
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 import Homepage from "@/pages/Hompage/Homepage";
 import Login from "@/pages/Login/Login";
+import Profile from "@/pages/Profile/Profile";
 import ResetPassword from "@/pages/ResetPassword/ResetPassword";
 import Unavailable from "@/pages/Unavailable/Unavailable";
 import VerifyAccount from "@/pages/VerifyAccount/VerifyAccount";
@@ -42,6 +43,10 @@ export const ROUTES: Route[] = [
     path: "/create-profile",
     element: <CreateProfile />,
     navbar: "core",
+  },
+  {
+    path: "/profile/:profileId",
+    element: <Profile />,
   },
   {
     path: "/error",

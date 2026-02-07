@@ -33,18 +33,21 @@ const AvatarForm = ({ onBack }: AvatarFormProps) => {
   //  - Form setup -- //
 
   const formMethods = useForm<AvatarFormValues>({
-  resolver: zodResolver(avatarFormSchema),
-  defaultValues: {
-    avatar: {
-      type: "preset",
-      variant: "black",
+    resolver: zodResolver(avatarFormSchema),
+    defaultValues: {
+      avatar: {
+        type: "preset",
+        variant: "black",
+      },
     },
-  },
-});
+  });
 
-const { handleSubmit, formState: { errors } } = formMethods;
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = formMethods;
 
-// - Handlers -- //
+  // - Handlers -- //
 
   const handleGoBack = () => {
     if (onBack) onBack();
@@ -52,31 +55,30 @@ const { handleSubmit, formState: { errors } } = formMethods;
     else navigate("/", { replace: true });
   };
 
-
   const handleOnSubmit = async (data: AvatarFormValues) => {
     setIsLoading(true);
     try {
-      await withMinDelay(
-      (async () => {
-        if (!account) throw new Error("SERVER_ERROR");
+      if (!account) throw new Error("SERVER_ERROR");
 
-        const payload = {
-          accountId: account.id,
-          username: draft.username as string,
-          gameType: draft.gameType as string,
-          avatar: data.avatar,
-        };
+      const payload = {
+        accountId: account.id,
+        username: draft.username as string,
+        gameType: draft.gameType as string,
+        avatar: data.avatar,
+      };
 
-        // Should throw error if unsuccessful bc unwrap() is used
-        await dispatch(createProfileThunk(payload)).unwrap();
-        await dispatch(clearProfileDraft());
+      const result = await withMinDelay(
+        (async () => {
+          const profile = await dispatch(createProfileThunk(payload)).unwrap();
+          await dispatch(clearProfileDraft());
+          return profile;
+        })(),
+        1000,
+      );
 
-      })(),
-      1000,
-    );
-    
-    navigate("/"); // Redirect profile when created
-    openModal(<ProfileCreated />);
+      // Navigate to created profile
+      if (result) navigate(`/profile/${result.data.id}`);
+      openModal(<ProfileCreated />);
     } catch (error: any) {
       // General error handling
       handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);

@@ -1,3 +1,6 @@
+// -- Profile Types -- //
+
+// Constants //
 
 export const GAME_TYPES = [
   "gt7",
@@ -14,15 +17,18 @@ export const AVATAR_VARIANTS = [
   "yellow",
 ] as const;
 
+export type ProfileViewType = "owner" | "member" | "guest";
+
 export type GameType = typeof GAME_TYPES[number];
 export type AvatarVariant = typeof AVATAR_VARIANTS[number];
 
 export type AvatarValue =
   | { type: "upload"; file: File }
   | { type: "preset"; variant: AvatarVariant };
-;
 
+// Supabase Service Types //
 
+// Profile table --> matches Supabase "profiles" table but with camelCase keys
 export type ProfileTable = {
   id: string;
   created_at: string;
@@ -33,6 +39,7 @@ export type ProfileTable = {
   avatar_value: string;
 };
 
+// Profile Follows table --> matches Supabase "profile_follows" table but with camelCase keys
 export type ProfileFollowsTable = {
   follower_id: string;
   following_id: string;
@@ -43,7 +50,7 @@ type SupabaseError = {
   success: false;
   error: {
     message: string;
-    code:  string;
+    code: string;
     status: number;
   };
 };
@@ -71,8 +78,6 @@ export type CheckUsernameAvailabilityResult =
   | { success: true }
   | SupabaseError;
 
-
-
 // Redux Types //
 
 // Create/Edit Profile --> Draft Type (temporary storage for form data that is not yet submitted)
@@ -81,15 +86,14 @@ export type ProfileDraft = {
   username?: string;
 };
 
-
 // Profiles --> State Type
 export type ProfilesState = {
   data: ProfileTable[] | null;
+  currentProfile?: ProfileTable | null;
   status: "idle" | "loading" | "fulfilled" | "rejected";
   error?: string;
   draft: ProfileDraft;
 };
-
 
 // Add Profile --> Payload Type
 export type CreateProfilePayload = {

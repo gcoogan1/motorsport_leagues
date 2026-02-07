@@ -13,6 +13,10 @@ export const ProfileStatsContainer = styled.div`
 
   //-- Faded Top and Bottom Borders -- //
   ${bothFadeBorders({ gradient: gradients.base.fadeOutHorizontal10, width: borders.width.medium })}
+
+  ${layout.mediaQueries.mobile} {
+    flex-direction: column;
+  }
 `;
 
 export const ProfileStat = styled.div`
