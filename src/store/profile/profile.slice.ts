@@ -5,6 +5,7 @@ import {
   fetchProfilesThunk,
   getProfileByProfileIdThunk,
   updateProfileAvatarThunk,
+  updateProfileUsernameThunk,
 } from "./profile.thunk";
 
 const initialState: ProfilesState = {
@@ -130,8 +131,35 @@ const profileSlice = createSlice({
       .addCase(updateProfileAvatarThunk.rejected, (state, action) => {
         state.status = "rejected";
         state.error = action.error.message;
-      });
+      })
 
+      // Update Profile Username 
+      .addCase(updateProfileUsernameThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = undefined;
+      })
+      .addCase(updateProfileUsernameThunk.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        const updatedProfile = action.payload;
+
+        // Update currentProfile
+        if (state.currentProfile?.id === updatedProfile.id) {
+          state.currentProfile = updatedProfile;
+        }
+
+        // Update profile in list
+        if (state.data) {
+          const index = state.data.findIndex(p => p.id === updatedProfile.id);
+          // Only update if the profile exists in the list (should always be true if currentProfile is set correctly)
+          if (index !== -1) {
+            state.data[index] = updatedProfile;
+          }
+        }
+      })
+      .addCase(updateProfileUsernameThunk.rejected, (state, action) => {
+        state.status = "rejected";
+        state.error = action.error.message;
+      });
   },
 });
 
