@@ -87,6 +87,12 @@ export type UpdateAvatarPayload = {
     | { type: "upload"; file: File };
 };
 
+// Update Username --> Payload type
+export type UpdateUsernamePayload = {
+  profileId: string;
+  username: string;
+};
+
 // Redux Types //
 
 // Create/Edit Profile --> Draft Type (temporary storage for form data that is not yet submitted)

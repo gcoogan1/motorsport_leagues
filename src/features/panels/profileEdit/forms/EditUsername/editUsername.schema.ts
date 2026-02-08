@@ -19,7 +19,7 @@ export const usernameSchemaMap = {
   iRacing: iracingUsernameSchema,
 } as const;
 
-export type UsernameFormValues =
+export type EditUsernameFormValues =
   z.infer<(typeof usernameSchemaMap)[keyof typeof usernameSchemaMap]>;
 
 
@@ -27,6 +27,6 @@ export type UsernameFormValues =
 export const getUsernameSchema = (gameType?: string) => {
   return (
     usernameSchemaMap[gameType as keyof typeof usernameSchemaMap] ??
-    gtUsernameSchema // fallback
+    gtUsernameSchema
   );
 };

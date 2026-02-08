@@ -65,7 +65,7 @@ const handleOnSubmit = async (data: UsernameFormValues) => {
     // If username exists
     if (!res.success) {
       if (res.error?.code === "EXISTING_USERNAME") {
-        openModal(<ExistingUsername />);
+        openModal(<ExistingUsername gameType={draft.gameType} />);
         return;
       }
       throw res.error; 

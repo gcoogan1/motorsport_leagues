@@ -5,10 +5,12 @@ import type {
   CreateProfileResult,
   GetProfilesResult,
   UpdateAvatarPayload,
+  UpdateUsernamePayload,
 } from "@/types/profile.types";
 // --- Profile Supabase Services -- //
 
-// -- Resolve Avatar Value to Public URL -- // Used for profiles with uploaded avatars to get the full public URL from Supabase Storage
+// -- Resolve Avatar Value to Public URL -- //
+// NOTE: This should be used for every function that returns profile data, to ensure that the avatar_value is always a public URL regardless of whether it's a preset or uploaded avatar
 export const resolveAvatarValue = (
   avatarType: "preset" | "upload",
   avatarValue: string,
@@ -225,7 +227,6 @@ export const getProfileByProfileId = async (
   };
 };
 
-
 // -- Update Profile Avatar -- //
 export const updateProfileAvatar = async ({
   profileId,
@@ -239,9 +240,7 @@ export const updateProfileAvatar = async ({
   if (avatar.type === "preset") {
     avatarType = "preset";
     avatarValue = avatar.variant;
-  }
-
-  // ---- UPLOADED AVATAR ----
+  } // ---- UPLOADED AVATAR ----
   else {
     avatarType = "upload";
 
@@ -302,6 +301,44 @@ export const updateProfileAvatar = async ({
     data: {
       ...data,
       avatar_type: avatarType,
+      avatar_value: resolvedAvatar,
+    },
+  };
+};
+
+// -- Update Profile Username -- //
+export const updateProfileUsername = async ({
+  profileId,
+  username,
+}: UpdateUsernamePayload): Promise<CreateProfileResult> => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({ username })
+    .eq("id", profileId)
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "USERNAME_UPDATE_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  // Resolve the avatar value to a public URL before returning the profile data
+  const resolvedAvatar = resolveAvatarValue(
+    data.avatar_type,
+    data.avatar_value,
+  );
+
+  return {
+    success: true,
+    data: {
+      ...data,
       avatar_value: resolvedAvatar,
     },
   };

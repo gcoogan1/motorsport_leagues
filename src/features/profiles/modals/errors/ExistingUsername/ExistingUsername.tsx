@@ -1,18 +1,24 @@
 import Dialog from '@/components/Dialog/Dialog'
+import type { GameType } from '@/types/profile.types';
 import { useModal } from '@/providers/modal/useModal';
 
+type ExistingUsernameProps = {
+  gameType?: GameType;
+  buttonLabel?: string;
+}
 
-const ExistingUsername = () => {
+
+const ExistingUsername = ({ gameType = "gt7", buttonLabel = "Okay" }: ExistingUsernameProps) => {
   const { closeModal } = useModal();
   
   return (
     <Dialog 
       type='alert'
       title='Existing Username'
-      subtitle='A GT7 Profile already exists with this username.'
+      subtitle={`A ${gameType.toUpperCase()} Profile already exists with this username.`}
       buttons={{
         onContinue: {
-          label: 'Okay',
+          label: buttonLabel,
           action: () => closeModal(),
         },
       }}

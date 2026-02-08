@@ -3,8 +3,9 @@ import {
   getProfileByProfileId,
   getProfilesByUserId,
   updateProfileAvatar,
+  updateProfileUsername,
 } from "@/services/profile.service";
-import type {  CreateProfilePayload, UpdateAvatarPayload } from "@/types/profile.types";
+import type {  CreateProfilePayload, UpdateAvatarPayload, UpdateUsernamePayload } from "@/types/profile.types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const fetchProfilesThunk = createAsyncThunk(
@@ -50,6 +51,22 @@ export const updateProfileAvatarThunk = createAsyncThunk(
     { rejectWithValue }
   ) => {
     const result = await updateProfileAvatar(payload);
+
+    if (!result.success) {
+      return rejectWithValue(result.error);
+    }
+
+    return result.data;
+  }
+);
+
+export const updateProfileUsernameThunk = createAsyncThunk(
+  "profile/updateUsername",
+  async (
+    payload: UpdateUsernamePayload,
+    { rejectWithValue }
+  ) => {
+    const result = await updateProfileUsername(payload);
 
     if (!result.success) {
       return rejectWithValue(result.error);
