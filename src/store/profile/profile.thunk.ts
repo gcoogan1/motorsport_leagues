@@ -1,5 +1,6 @@
 import {
   createProfileWithAvatar,
+  deleteProfile,
   getProfileByProfileId,
   getProfilesByUserId,
   updateProfileAvatar,
@@ -73,5 +74,21 @@ export const updateProfileUsernameThunk = createAsyncThunk(
     }
 
     return result.data;
+  }
+);
+
+export const deleteProfileThunk = createAsyncThunk(
+  "profile/delete",
+  async (
+    { profileId, avatarValue }: { profileId: string; avatarValue?: string },
+    { rejectWithValue }
+  ) => {
+    const result = await deleteProfile(profileId, avatarValue);
+
+    if (!result.success) {
+      return rejectWithValue(result.error);
+    }
+
+    return result;
   }
 );
