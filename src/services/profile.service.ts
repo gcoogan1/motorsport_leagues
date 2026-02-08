@@ -348,6 +348,7 @@ export const updateProfileUsername = async ({
   };
 };
 
+// -- Delete Avatar from Supabase Storage -- //
 export const deleteAvatarFromStorage = async (avatarValue: string) => {
   const { error } = await supabase.storage
     .from("avatars")
