@@ -60,16 +60,6 @@ const ProfileHeader = ({
     console.log("Prompt login to follow");
   };
 
-  console.log("Rendering ProfileHeader with props:", {
-    gameType,
-    username,
-    viewType,
-    avatarType,
-    avatarValue,
-    followersCount,
-    championCount,
-  });
-
   return (
     <ProfileHeaderContainer>
       <Frame />

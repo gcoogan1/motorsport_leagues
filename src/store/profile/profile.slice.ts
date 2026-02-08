@@ -2,6 +2,7 @@ import type { ProfilesState } from "@/types/profile.types";
 import { createSlice } from "@reduxjs/toolkit";
 import {
   createProfileThunk,
+  deleteProfileThunk,
   fetchProfilesThunk,
   getProfileByProfileIdThunk,
   updateProfileAvatarThunk,
@@ -159,7 +160,26 @@ const profileSlice = createSlice({
       .addCase(updateProfileUsernameThunk.rejected, (state, action) => {
         state.status = "rejected";
         state.error = action.error.message;
-      });
+      })
+
+      // Delete Profile
+      .addCase(deleteProfileThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = undefined;
+      })
+      .addCase(deleteProfileThunk.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        const deletedProfileId = action.meta.arg.profileId;
+
+        // Remove from profile list
+        if (state.data) {
+          state.data = state.data.filter(p => p.id !== deletedProfileId);
+        }
+      })
+      .addCase(deleteProfileThunk.rejected, (state, action) => {
+        state.status = "rejected";
+        state.error = action.error.message;
+      })
   },
 });
 

@@ -7,6 +7,10 @@ import type {
   UpdateAvatarPayload,
   UpdateUsernamePayload,
 } from "@/types/profile.types";
+
+//TODO: Create Supabase Edge Function to handle profile deletion and all associated data (Squads, Leagues, Results, etc.) in a single transaction, to ensure data integrity and avoid orphaned records. 
+// The deleteProfile function below will call this Edge Function, passing the profile ID and avatar value (if applicable) as parameters.
+
 // --- Profile Supabase Services -- //
 
 // -- Resolve Avatar Value to Public URL -- //
@@ -341,5 +345,70 @@ export const updateProfileUsername = async ({
       ...data,
       avatar_value: resolvedAvatar,
     },
+  };
+};
+
+export const deleteAvatarFromStorage = async (avatarValue: string) => {
+  const { error } = await supabase.storage
+    .from("avatars")
+    .remove([avatarValue]);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: "AVATAR_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
+// -- Delete Profile -- //
+export const deleteProfile = async (
+  profileId: string,
+  avatarValue?: string,
+) => {
+  if (avatarValue) {
+    // Delete any uploaded avatar from Supabase Storage
+    const avatarDeletionResult = await deleteAvatarFromStorage(avatarValue);
+
+    if (!avatarDeletionResult.success) {
+      return {
+        success: false,
+        error: {
+          message: avatarDeletionResult.error?.message ||
+            "Failed to delete avatar",
+          code: "AVATAR_DELETION_FAILED",
+          status: 500,
+        },
+      };
+    }
+  }
+
+  // Delete the profile from the database 
+  const { error } = await supabase
+    .from("profiles")
+    .delete()
+    .eq("id", profileId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "PROFILE_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
   };
 };

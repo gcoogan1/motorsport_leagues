@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { useModal } from "@/providers/modal/useModal";
+import { usePanel } from "@/providers/panel/usePanel";
 import { selectCurrentProfile } from "@/store/profile/profile.selectors";
 import LinkList from "@/components/Lists/LinkList/LinkList"
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout"
@@ -8,9 +9,11 @@ import ImageChange from "@assets/Icon/Image_Change.svg?react"
 import DeleteIcon from "@assets/Icon/Delete.svg?react"
 import EditAvatar from "./forms/EditAvatar/EditAvatar";
 import EditUsername from "./forms/EditUsername/EditUsername";
+import DeleteProfile from "./forms/DeleteProfile/DeleteProfile";
 
 const ProfileEdit = () => {
   const { openModal } = useModal();
+  const { closePanel } = usePanel();
 
   const profile = useSelector(selectCurrentProfile);
 
@@ -25,7 +28,7 @@ const ProfileEdit = () => {
   }
 
   const handleDeleteProfile = () => {
-    console.log("Delete profile");
+    openModal(<DeleteProfile closePanel={closePanel} />);
   }
 
   return (
