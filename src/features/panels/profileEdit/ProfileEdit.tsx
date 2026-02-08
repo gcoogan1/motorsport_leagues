@@ -7,6 +7,7 @@ import EditIcon from "@assets/Icon/Edit.svg?react"
 import ImageChange from "@assets/Icon/Image_Change.svg?react"
 import DeleteIcon from "@assets/Icon/Delete.svg?react"
 import EditAvatar from "./forms/EditAvatar/EditAvatar";
+import EditUsername from "./forms/EditUsername/EditUsername";
 
 const ProfileEdit = () => {
   const { openModal } = useModal();
@@ -17,6 +18,14 @@ const ProfileEdit = () => {
 
   const handleEditAvatar = () => {
     openModal(<EditAvatar profileId={profile.id} />);
+  }
+
+  const handleEditUsername = () => {
+    openModal(<EditUsername profileId={profile.id} />);
+  }
+
+  const handleDeleteProfile = () => {
+    console.log("Delete profile");
   }
 
   return (
@@ -41,7 +50,7 @@ const ProfileEdit = () => {
             optionIcon: <EditIcon />,
             optionIconLabel: "Edit Username Icon",
             onOptionClick: () => {
-              console.log("Edit username");
+              handleEditUsername();
             },
           }
         ]}
@@ -55,7 +64,7 @@ const ProfileEdit = () => {
             optionIcon: <DeleteIcon />,
             optionIconLabel: "Delete Profile Icon",
             onOptionClick: () => {
-              console.log("Delete profile");
+              handleDeleteProfile();
             },
           },
         ]}
