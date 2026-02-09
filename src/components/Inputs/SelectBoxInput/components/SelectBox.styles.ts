@@ -15,7 +15,6 @@ export const SelectBoxContainer = styled.button<{ $isSelected?: boolean }>`
   z-index: 0;
   overflow: hidden;
   cursor: pointer;
-
   width: 100%;
   display: flex;
   border-radius: ${borders.radius.large};
@@ -45,21 +44,33 @@ export const SelectBoxContainer = styled.button<{ $isSelected?: boolean }>`
     opacity: 0.5;
   }
 
-  ${({ $isSelected }) => $isSelected && css`
-    ${gradientBorder({ gradient: gradients.base.fadeRight20, width: borders.width.medium })};
-    background: ${colors.base.translucent10};
-
-    &:hover {
-      ${gradientBorder({ gradient: 'transparent', width: borders.width.medium })};
+  ${({ $isSelected }) =>
+    $isSelected && css`
+      ${gradientBorder({
+        gradient: gradients.base.fadeRight20,
+        width: borders.width.medium,
+      })};
       background: ${colors.base.translucent10};
-      border: ${borders.width.medium} solid ${colors.base.translucent20};
-    }
+      border: none;
 
-    &:active {
-      background: ${colors.base.translucent10};
-      border: ${borders.width.medium} solid transparent;
-    }
-  `}
+      &:hover {
+        ${gradientBorder({
+          gradient: colors.base.translucent20,
+          width: borders.width.medium,
+        })};
+        background: ${colors.base.translucent10};
+        border: none;
+      }
+
+      &:active {
+        ${gradientBorder({
+          gradient: "transparent",
+          width: borders.width.medium,
+        })};
+        background: ${colors.base.translucent10};
+        border: none;
+      }
+    `};
 `;
 
 export const SelectBoxContent = styled.div`
@@ -79,13 +90,11 @@ export const TextContent = styled.div`
 `;
 
 export const Label = styled.p`
-${typography.body.mediumBold}
-  color: ${colors.text.text1};
+  ${typography.body.mediumBold} color: ${colors.text.text1};
 `;
 
 export const HelperMessage = styled.span`
-  ${typography.body.smallRegular}
-  color: ${colors.text.text2};
+  ${typography.body.smallRegular} color: ${colors.text.text2};
 `;
 
 export const IconContainer = styled.span`

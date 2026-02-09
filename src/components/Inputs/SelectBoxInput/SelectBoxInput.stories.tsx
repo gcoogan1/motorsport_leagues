@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import SelectBoxInput from "./SelectBoxInput";
 import { withAppTheme } from "@/app/design/storybook/withAppTheme";
+import { FormProviderMock } from "@/providers/mock/FormProviderMock";
 import GameGt7 from "@assets/Graphics/Game_GT7.svg?react";
 import GameIRace from "@assets/Graphics/Game_iRacing.svg?react";
 import GameAce from "@assets/Graphics/Game_ACEvo.svg?react";
@@ -80,6 +81,11 @@ export const Default: Story = {
       },
     ],
   },
+  render: (args) => (
+    <FormProviderMock>
+      <SelectBoxInput {...args} />
+    </FormProviderMock>
+  ),
 };
 
 export const WithDefaultSelected: Story = {
@@ -103,4 +109,9 @@ export const WithDefaultSelected: Story = {
     ],
     defaultSelected: "option2",
   },
+  render: (args) => (
+    <FormProviderMock>
+      <SelectBoxInput {...args} />
+    </FormProviderMock>
+  ),
 };
