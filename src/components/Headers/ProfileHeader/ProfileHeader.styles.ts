@@ -8,6 +8,7 @@ export const ProfileHeaderContainer = styled.div`
   display: flex;
   position: relative;
   align-items: center;
+  justify-content: center;
   width: 100%;
   /* min-width: 920px; */
   min-height: 316px;
@@ -52,6 +53,7 @@ export const Contents = styled.div`
 export const DetailsContainer = styled.div`
   display: flex;
   width: 100%;
+  max-width: 1200px;
   align-items: center;
   gap: ${layout.space.medium};
 
@@ -91,7 +93,6 @@ export const TextContainer = styled.div`
 
   ${layout.mediaQueries.mobile} {
     align-items: center;
-    gap: ${layout.space.medium};
   }
 `;
 
@@ -110,7 +111,6 @@ export const TextContent = styled.div`
 export const Username = styled.h2`
   ${typography.title.large}
   color: ${colors.text.text1};
-  text-transform: capitalize;
 `;
 
 export const UserGame = styled.p`

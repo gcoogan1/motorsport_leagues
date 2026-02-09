@@ -9,14 +9,13 @@ export const ProfileStatsContainer = styled.div`
   align-items: center;
   justify-content: center;
   padding: ${layout.space.xLarge} 0;
-  gap: ${layout.space.xxxLarge};
+  column-gap: ${layout.space.medium};
+  row-gap: 16px;
+  flex-wrap: wrap;
+  
 
   //-- Faded Top and Bottom Borders -- //
   ${bothFadeBorders({ gradient: gradients.base.fadeOutHorizontal10, width: borders.width.medium })}
-
-  ${layout.mediaQueries.mobile} {
-    flex-direction: column;
-  }
 `;
 
 export const ProfileStat = styled.div`

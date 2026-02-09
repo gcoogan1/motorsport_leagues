@@ -30,7 +30,8 @@
 5. **Check Availability**
    - Calls `isProfileUsernameAvailable`   
    - Username check is **case-insensitive** (e.g., "MyUsername" and "myusername" are treated as the same)
-   - Usernames can be saved with capital letters, but any case variation will be flagged as existing   
+   - Usernames can be saved with capital letters, but any case variation will be flagged as existing 
+   - Users can update the capitalization of their own username (e.g., "myname" → "MyName")
    - If existing username:
      - Shows “Existing Username” modal
    - Service in [src/services/profile.service.ts](src/services/profile.service.ts)
