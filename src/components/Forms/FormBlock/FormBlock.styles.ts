@@ -67,7 +67,6 @@ export const BodyHeader = styled.div`
 export const BodyTitle = styled.h2`
   ${typography.title.small};
   color: ${colors.text.text1};
-  text-transform: capitalize;
 `;
 
 export const BodySubtitle = styled.p`
