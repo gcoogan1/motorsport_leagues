@@ -30,7 +30,9 @@
    - Validation in [src/features/profiles/forms/Create/Username/usernameSchema.ts](src/features/profiles/forms/Create/Username/usernameSchema.ts)
 
 5. **Check Availability**
-   - System calls `isProfileUsernameAvailable`
+   - Calls `isProfileUsernameAvailable`   
+   - Username check is **case-insensitive** (e.g., "MyUsername" and "myusername" are treated as the same)
+   - Usernames can be saved with capital letters, but any case variation will be flagged as existing   
    - If existing username:
      - Shows “Existing Username” modal
    - Service in [src/services/profile.service.ts](src/services/profile.service.ts)

@@ -66,15 +66,22 @@ export const getProfilesByUserId = async (
 export const isProfileUsernameAvailable = async (
   username: string,
   game_type?: string,
+  profileId?: string,
 ): Promise<CheckUsernameAvailabilityResult> => {
-  const { data, error } = await supabase
+  let query = supabase
     .from("profiles")
     .select("id")
-    .eq("username", username)
-    .eq("game_type", game_type)
-    .maybeSingle();
+    .ilike("username", username)
+    .eq("game_type", game_type);
 
-  if (data) {
+  // If profileId is provided, exclude it from the check (allows owner to change capitalization)
+  if (profileId) {
+    query = query.neq("id", profileId);
+  }
+
+  const { data, error } = await query
+
+  if (data && data.length > 0) {
     return {
       success: false,
       error: {

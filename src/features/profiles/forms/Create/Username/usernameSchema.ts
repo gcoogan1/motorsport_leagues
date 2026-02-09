@@ -6,7 +6,6 @@ export const gtUsernameSchema = z.object({
     .min(1, "Please enter your GT7 Nickname.")
     .max(16, "GT7 Nickname cannot be longer than 16 characters.")
     .trim()
-    .transform((val) => val.toLowerCase()),
 });
 
 // TEST FOR FUTURE GAME TYPES

@@ -53,7 +53,7 @@ const EditUsername = ({ profileId }: EditUsernameProps) => {
     setIsLoading(true);
     try {
       const res = await withMinDelay(
-        isProfileUsernameAvailable(data.username, profile?.game_type),
+        isProfileUsernameAvailable(data.username, profile?.game_type, profileId),
         1000,
       );
 
