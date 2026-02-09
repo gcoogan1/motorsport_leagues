@@ -106,7 +106,7 @@ const AvatarForm = ({ onBack }: AvatarFormProps) => {
           name="avatar"
           isAvatar
           hasError={!!errors.avatar}
-          errorMessage={errors.avatar?.message}
+          errorMessage={"Image upload failed. Please try again."}
         />
 
         <SelectGraphicInput name="avatar" label="Select Avatar" />

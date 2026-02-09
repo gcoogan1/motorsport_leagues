@@ -35,7 +35,6 @@ const DeleteAccountForm = ({ account, closePanel }: DeleteAccountProps) => {
 
   const {
     handleSubmit,
-    setError,
     formState: { errors },
   } = formMethods;
 
@@ -44,13 +43,9 @@ const DeleteAccountForm = ({ account, closePanel }: DeleteAccountProps) => {
     setIsLoading(true);
     try {
       const res = await withMinDelay(deleteAccount(account.id), 1000);
-
       if (!res.success) {
-        // Set form error on failure
-        setError("confirmation", {
-          type: "manual",
-          message: res.error?.message || "Failed to delete account.",
-        });
+        closeModal();
+        handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
         return;
       }
       // On success, reset auth and navigate to home
