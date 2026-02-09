@@ -61,7 +61,7 @@ const handleEditProfile = () => {
         viewType={viewType}
         editOnClick={handleEditProfile}
         avatarType={profile?.avatar_type ?? "preset"}
-        avatarValue={profile?.avatar_value ?? "black"}
+        avatarValue={profile?.avatar_value ?? "none"}
         followersCount={0}
       />
       <Content>

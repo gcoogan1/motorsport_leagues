@@ -78,12 +78,10 @@ const CoreNavbar = ({
       <RightContainer>
         {user && !loading && (
           <>
-            {!!countNotifications && (
-              <NavNotification
-                count={countNotifications}
-                onClick={() => openPanelOfType("NOTIFICATIONS")}
-              />
-            )}
+            <NavNotification
+              count={countNotifications}
+              onClick={() => openPanelOfType("NOTIFICATIONS")}
+            />
             {!!accountLabel && (
               <NavAccount
                 label={accountLabel}

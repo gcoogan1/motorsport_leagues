@@ -25,6 +25,7 @@ export const ToastContainer = styled.div<{ $bg: string }>`
   align-items: center;
   justify-content: space-between;
   gap: ${layout.space.xSmall};
+  pointer-events: auto;
   padding-top: ${layout.space.xSmall};
   padding-bottom: ${layout.space.xSmall};
   padding-right: ${layout.space.xSmall};
