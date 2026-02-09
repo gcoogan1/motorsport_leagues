@@ -76,7 +76,7 @@ const ProfileHeader = ({
             <TextContainer>
               <TextContent>
                 <Username>{username}</Username>
-                <UserGame>{gameType}</UserGame>
+                <UserGame $isIRacing={gameType === "iRacing"}>{gameType}</UserGame>
               </TextContent>
               <TagContent>
                 <Button

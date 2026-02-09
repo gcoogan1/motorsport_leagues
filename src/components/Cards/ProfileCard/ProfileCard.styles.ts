@@ -50,7 +50,6 @@ export const TextContent = styled.div`
 export const Username = styled.h3`
   ${typography.title.xSmall}
   color: ${colors.text.text1};
-  text-transform: capitalize;
 `;
 
 export const UserGame = styled.p`

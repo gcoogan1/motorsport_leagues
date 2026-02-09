@@ -1,6 +1,5 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { designTokens } from "@app/design/tokens";
-
 
 const { colors, gradients, layout, borders, typography } = designTokens;
 
@@ -20,8 +19,7 @@ export const ProfileHeaderContainer = styled.div`
     justify-content: flex-end;
     flex-direction: column;
   }
-`
-
+`;
 
 export const Frame = styled.div`
   position: absolute;
@@ -109,13 +107,16 @@ export const TextContent = styled.div`
 `;
 
 export const Username = styled.h2`
-  ${typography.title.large}
-  color: ${colors.text.text1};
+  ${typography.title.large} color: ${colors.text.text1};
 `;
 
-export const UserGame = styled.p`
-  ${typography.subtitle.xLargeItalic}
-  color: ${colors.text.text2};
+export const UserGame = styled.p<{ $isIRacing?: boolean }>`
+  ${typography.subtitle.xLargeItalic} color: ${colors.text.text2};
+
+  ${({ $isIRacing }) =>
+    $isIRacing && css`
+      text-transform: none;
+    `};
 `;
 
 export const TagContent = styled.div`
@@ -132,24 +133,23 @@ export const ChampionCountContent = styled.div`
   display: flex;
   border-radius: ${borders.radius.round};
   justify-content: center;
-  align-items: center;;
+  align-items: center;
   padding: ${layout.space.xxSmall} ${layout.space.small};
   background: ${colors.role.champion};
 `;
 
 export const ChampionCount = styled.p`
-  ${typography.body.mediumBold}
-  color: ${colors.text.text1};
+  ${typography.body.mediumBold} color: ${colors.text.text1};
 `;
 
-export const Actions = styled.div` 
+export const Actions = styled.div`
   display: flex;
   align-self: flex-start;
   gap: ${layout.space.xSmall};
   padding-top: 56px;
 
-    ${layout.mediaQueries.mobile} {
+  ${layout.mediaQueries.mobile} {
     position: absolute;
     right: 0;
   }
-`
+`;

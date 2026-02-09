@@ -8,6 +8,7 @@ import {
 import { type AppDispatch } from "@/store";
 import { usePanel } from "@/providers/panel/usePanel";
 import { getProfileByProfileIdThunk } from "@/store/profile/profile.thunk";
+import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import ProfileHeader from "@/components/Headers/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/ProfileStats/ProfileStats";
 import SquadsListCard from "@/components/Cards/CardList/SquadsListCard/SquadsListCard";
@@ -31,8 +32,8 @@ const stats = [
   {
     number: 0,
     label: "Races Won",
-  }
-]
+  },
+];
 
 const Profile = () => {
   const { profileId } = useParams();
@@ -41,22 +42,25 @@ const Profile = () => {
 
   const profile = useSelector(selectCurrentProfile);
   const viewType = useSelector(selectProfileViewType());
+  const fullGameName = profile?.game_type
+    ? convertGameTypeToFullName(profile.game_type)
+    : "";
 
-useEffect(() => {
-  // If profileId exists in URL and it's different from the currently loaded profile, fetch the new profile
-  if (profileId && profile?.id !== profileId) {
-    dispatch(getProfileByProfileIdThunk(profileId));
-  }
-}, [profileId, profile?.id, dispatch]);
+  useEffect(() => {
+    // If profileId exists in URL and it's different from the currently loaded profile, fetch the new profile
+    if (profileId && profile?.id !== profileId) {
+      dispatch(getProfileByProfileIdThunk(profileId));
+    }
+  }, [profileId, profile?.id, dispatch]);
 
-const handleEditProfile = () => {
-  openPanel("PROFILE_EDIT");
-}
+  const handleEditProfile = () => {
+    openPanel("PROFILE_EDIT");
+  };
 
   return (
     <Wrapper>
       <ProfileHeader
-        gameType={profile?.game_type ?? ""}
+        gameType={fullGameName}
         username={profile?.username ?? ""}
         viewType={viewType}
         editOnClick={handleEditProfile}

@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { type RootState } from "@/store";
 import { navigate } from "@/app/navigation/navigation";
 import { usePanel } from "@/providers/panel/usePanel";
+import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import Create from "@assets/Icon/Create.svg?react";
 import Search from "@assets/Icon/Search.svg?react";
@@ -66,7 +67,7 @@ const ProfilesPanel = () => {
             profiles.map((prof) => (
               <ProfileCard
                 key={prof.id}
-                userGame={prof.game_type}
+                userGame={convertGameTypeToFullName(prof.game_type)}
                 username={prof.username}
                 cardSize="medium"
                 onClick={() => handleGoToProfile(prof.id)}

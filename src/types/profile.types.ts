@@ -9,6 +9,13 @@ export const GAME_TYPES = [
   "leMansUltimate",
 ] as const;
 
+export const GAME_FULL_NAMES: Record<typeof GAME_TYPES[number], string> = {
+  gt7: "Gran Turismo 7",
+  iRacing: "iRacing",
+  assetoCorsaEvo: "Assetto Corsa EVO",
+  leMansUltimate: "Le Mans Ultimate",
+};
+
 export const AVATAR_VARIANTS = [
   "black",
   "blue",
@@ -21,6 +28,7 @@ export type ProfileViewType = "owner" | "member" | "guest";
 
 export type GameType = typeof GAME_TYPES[number];
 export type AvatarVariant = typeof AVATAR_VARIANTS[number];
+export type GameFullName = typeof GAME_FULL_NAMES[GameType];
 
 export type AvatarValue =
   | { type: "upload"; file: File, previewUrl?: string }
