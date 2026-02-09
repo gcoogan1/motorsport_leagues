@@ -94,6 +94,12 @@ export const InputField = styled.input<{
     transition: background-color 9999s ease-in-out 0s;
   }
 
+  /* Ensure the same styles apply when the autofilled input is focused */
+  &:-webkit-autofill:focus-visible {
+    -webkit-box-shadow: 0 0 0 1000px ${colors.base.translucent10} inset;
+    -webkit-text-fill-color: ${colors.text.text1};
+  }
+
 `;
 
 export const HelperText = styled.span`

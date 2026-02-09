@@ -111,11 +111,14 @@ const EditUsername = ({ profileId }: EditUsernameProps) => {
       >
         <TextInput
           name={"username"}
+          type="text"
+          autoComplete="off"
           label={content.label}
           helperText={content.inputHelpMsg}
           hasError={!!errors.username}
           errorMessage={errors.username?.message}
           icon={<ProfileIcon />}
+          showCounter
         />
       </FormModal>
     </FormProvider>

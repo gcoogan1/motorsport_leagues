@@ -25,6 +25,7 @@ type TextInputProps = {
   helperText?: string;
   hasError?: boolean;
   errorMessage?: string;
+  autoComplete?: string;
 };
 
 const TextInput = ({
@@ -38,6 +39,7 @@ const TextInput = ({
   hasError,
   errorMessage,
   type = "text",
+  autoComplete = "on",
 }: TextInputProps) => {
   const { register, watch } = useFormContext();
 
@@ -58,6 +60,7 @@ const TextInput = ({
           id={name}
           {...register(name)}
           type={type}
+          autoComplete={autoComplete}
           placeholder={placeholder}
           maxLength={maxLength}
           $hasError={!!hasError}

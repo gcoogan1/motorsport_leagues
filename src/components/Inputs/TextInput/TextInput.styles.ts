@@ -6,11 +6,13 @@ const { colors, layout, typography, borders } = designTokens;
 export const IconWrapper = styled.span<{ $hasValue?: boolean }>`
   position: absolute;
   left: ${layout.space.xSmall};
-  margin-top: -3px;  // Temp fix for vertical alignment
   pointer-events: none;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
   color: ${({ $hasValue }) =>
     $hasValue ? colors.text.text1 : colors.text.text2};
   width: 20px;
@@ -77,15 +79,15 @@ export const InputField = styled.input<{
       ? `inset 0 0 0 2px ${colors.alert.alertA}`
       : `inset 0 0 0 2px transparent`};
 
-    // Text is too long style
-    padding-right: 28px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
+  /* Text is too long style */
+  padding-right: 28px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 
-    // Stop Safari focus state on mobile
-    font-size: 16px;
+  /* Stop Safari focus state on mobile */
+  font-size: 16px;
 
   &::placeholder {
     ${typography.body.mediumRegular}
@@ -109,7 +111,7 @@ export const InputField = styled.input<{
     outline: none;
   }
 
-    /* ---- Stop Chrome autofill white background ---- */
+  /* ---- Stop Chrome autofill white background ---- */
   &:-webkit-autofill,
   &:-webkit-autofill:hover,
   &:-webkit-autofill:focus,
@@ -119,17 +121,23 @@ export const InputField = styled.input<{
     transition: background-color 9999s ease-in-out 0s;
   }
 
+  /* Ensure the same styles apply when the autofilled input is focused */
+  &:-webkit-autofill:focus-visible {
+    -webkit-box-shadow: 0 0 0 1000px ${colors.base.translucent10} inset;
+    -webkit-text-fill-color: ${colors.text.text1};
+  }
+
 `;
 
 export const HelperText = styled.span`
-  ${typography.body.smallRegular}
+  ${typography.body.smallRegular};
   color: ${colors.text.text2};
   display: flex;
   margin-top: 3px;
 `;
 
 export const ErrorText = styled.span`
-  ${typography.body.smallBold}
+  ${typography.body.smallBold};
   color: ${colors.alert.alertA};
   display: flex;
   gap: ${layout.space.xxxSmall};

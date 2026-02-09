@@ -101,11 +101,14 @@ const handleOnSubmit = async (data: UsernameFormValues) => {
       >
         <TextInput
           name={"username"}
+          type="text"
+          autoComplete="off"
           label={content.label}
           helperText={content.inputHelpMsg}
           hasError={!!errors.username}
           errorMessage={errors.username?.message}
           icon={<ProfileIcon />}
+          showCounter
         />
       </FormBlock>
     </FormProvider>
