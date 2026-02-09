@@ -10,6 +10,7 @@ export const LinkListContainer = styled.div`
   flex-direction: column;
   gap: ${layout.space.xSmall};
   width: 100%;
+  padding-bottom: ${layout.space.medium};
 `;
 
 export const SectionTitle = styled.h3`

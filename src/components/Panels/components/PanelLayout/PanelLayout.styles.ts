@@ -28,7 +28,7 @@ export const PanelBody = styled.div`
   display: flex;
   flex-direction: column;
   padding: ${layout.space.xLarge} ${layout.space.large};
-  gap: ${layout.space.xLarge};
+  gap: ${layout.space.medium};
   background: ${colors.base.base3};
   align-items: flex-start;
   flex: 1;
