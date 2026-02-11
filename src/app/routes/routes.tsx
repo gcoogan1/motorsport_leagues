@@ -12,6 +12,7 @@ export type Route = {
   path: string;
   element: React.ReactNode;
   navbar?: "core" | "user" | "guest"; 
+  protected?: boolean; // If true, only accessible to authenticated users
 };
 
 export const ROUTES: Route[] = [
@@ -43,6 +44,7 @@ export const ROUTES: Route[] = [
     path: "/create-profile",
     element: <CreateProfile />,
     navbar: "core",
+    protected: true,
   },
   {
     path: "/profile/:profileId",

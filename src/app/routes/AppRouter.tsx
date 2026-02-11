@@ -6,8 +6,7 @@ import { setNavigate } from "../navigation/navigation";
 import NavigatorBridge from "../navigation/NavigatorBridge";
 import { AppErrorBoundary } from "./AppErrorBoundry";
 import { ScrollToTop } from "@/utils/scrollToTop";
-
-//TODO: Add route protection logic based on authentication status
+import { ProtectedRoute } from "./ProtectedRoute";
 
 const AppRouter = () => {
   return (
@@ -17,8 +16,10 @@ const AppRouter = () => {
         <ScrollToTop />
         <Routes>
           <Route element={<Layout />}>
-            {ROUTES.map(({ path, element }) => (
-              <Route key={path} path={path} element={element} />
+            {ROUTES.map(({ path, element, protected: isProtected }) => (
+              <Route key={path} path={path} element={
+                isProtected ? <ProtectedRoute>{element}</ProtectedRoute> : element
+              } />
             ))}
           </Route>
         </Routes>
