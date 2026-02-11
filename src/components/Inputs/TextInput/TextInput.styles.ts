@@ -5,7 +5,7 @@ const { colors, layout, typography, borders } = designTokens;
 
 export const IconWrapper = styled.span<{ $hasValue?: boolean }>`
   position: absolute;
-  left: ${layout.space.xSmall};
+  left: ${layout.space.medium};
   pointer-events: none;
   top: 50%;
   transform: translateY(-50%);
@@ -65,7 +65,7 @@ export const InputField = styled.input<{
   padding-top: ${layout.space.medium};
   padding-bottom: ${layout.space.medium};
   padding-left: ${({ $hasIcon }) =>
-    $hasIcon ? `36px` : layout.space.medium};
+    $hasIcon ? `44px` : layout.space.medium};
   padding-right: ${layout.space.medium};
   border: none;
   display: flex;
