@@ -9,13 +9,18 @@ export const ProfileStatsContainer = styled.div`
   align-items: center;
   justify-content: center;
   padding: ${layout.space.xLarge} 0;
-  column-gap: ${layout.space.medium};
+  column-gap: ${layout.space.xxxLarge};
   row-gap: 16px;
   flex-wrap: wrap;
   
 
   //-- Faded Top and Bottom Borders -- //
   ${bothFadeBorders({ gradient: gradients.base.fadeOutHorizontal10, width: borders.width.medium })}
+
+  ${layout.mediaQueries.mobile} {
+    flex-direction: column;
+    column-gap: ${layout.space.medium};
+  }
 `;
 
 export const ProfileStat = styled.div`
@@ -28,6 +33,13 @@ export const ProfileStat = styled.div`
 export const StatNumber = styled.h3`
   ${typography.title.large};
   color: ${colors.text.text1};
+`;
+
+export const StatLabelsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 `;
 
 export const StatLabel = styled.p`

@@ -19,19 +19,23 @@ import { Container, Content, ListContainer, Wrapper } from "./Profile.styles";
 const stats = [
   {
     number: 0,
-    label: "Leagues Joined",
+    labelStat: "Leagues",
+    labelFact: "Joined",
   },
   {
     number: 0,
-    label: "Seasons Entered",
+    labelStat: "Seasons",
+    labelFact: "Entered",
   },
   {
     number: 0,
-    label: "Rounds Completed",
+    labelStat: "Rounds",
+    labelFact: "Completed",
   },
   {
     number: 0,
-    label: "Races Won",
+    labelStat: "Races",
+    labelFact: "Won",
   },
 ];
 

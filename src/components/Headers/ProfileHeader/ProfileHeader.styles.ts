@@ -13,11 +13,11 @@ export const ProfileHeaderContainer = styled.div`
   min-height: 316px;
 
   ${layout.mediaQueries.mobile} {
-    min-width: 360px;
+    /* min-width: 360px; */
     max-width: 920px;
     min-height: 440px;
-    justify-content: flex-end;
     flex-direction: column;
+    padding-bottom: 20px;
   }
 `;
 
@@ -56,7 +56,6 @@ export const DetailsContainer = styled.div`
   gap: ${layout.space.medium};
 
   ${layout.mediaQueries.mobile} {
-    gap: 0;
     position: relative;
   }
 `;
@@ -91,6 +90,8 @@ export const TextContainer = styled.div`
 
   ${layout.mediaQueries.mobile} {
     align-items: center;
+    gap: ${layout.space.medium};
+    padding-top: 0;
   }
 `;
 

@@ -1,8 +1,9 @@
-import { ProfileStat, ProfileStatsContainer, StatLabel, StatNumber } from "./ProfileStats.styles";
+import { ProfileStat, ProfileStatsContainer, StatLabel, StatLabelsWrapper, StatNumber } from "./ProfileStats.styles";
 
 type Stat = {
   number: number;
-  label: string;
+  labelStat: string;
+  labelFact: string;
 }
 
 type ProfileStatsProps = {
@@ -15,7 +16,10 @@ const ProfileStats = ({ stats }: ProfileStatsProps) => {
       {stats.map((stat, index) => (
         <ProfileStat key={index}>
           <StatNumber>{stat.number}</StatNumber>
-          <StatLabel>{stat.label}</StatLabel>
+          <StatLabelsWrapper>
+            <StatLabel>{stat.labelStat}</StatLabel>
+            <StatLabel>{stat.labelFact}</StatLabel>
+          </StatLabelsWrapper>
         </ProfileStat>
       ))}
     </ProfileStatsContainer>
