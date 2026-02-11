@@ -98,5 +98,8 @@ export const HelperMessage = styled.span`
 `;
 
 export const IconContainer = styled.span`
-  align-self: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
