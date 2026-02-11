@@ -300,7 +300,7 @@ export const loginUser = async (
 // -- Logout User -- //
 export const logoutUser = async (): Promise<SignOutResult> => {
   // Supabase signOut with global scope to ensure refresh tokens are also revoked
-  const { error } = await supabase.auth.signOut({ scope: "global" });
+  const { error } = await supabase.auth.signOut({ scope: "local" });
 
   if (error) {
     // If session is already missing, consider it a success

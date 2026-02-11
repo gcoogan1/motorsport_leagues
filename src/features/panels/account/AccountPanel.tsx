@@ -6,7 +6,6 @@ import LogoutIcon from "@assets/Icon/Logout.svg?react";
 import LinkList from "@/components/Lists/LinkList/LinkList";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import type { RootState } from "@/store";
-import { logoutUser } from "@/services/auth.service";
 import { navigate } from "@/app/navigation/navigation";
 import { usePanel } from "@/providers/panel/usePanel";
 import { useModal } from "@/providers/modal/useModal";
@@ -36,7 +35,6 @@ const AccountPanel = () => {
   const handleLogout = async () => {
     try {
       closePanel();
-      await logoutUser();
       resetAuth();
       navigate("/");
     } catch (error) {

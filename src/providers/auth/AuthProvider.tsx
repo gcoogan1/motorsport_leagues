@@ -13,10 +13,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Check and refresh authentication state
   const refreshAuth = useCallback(async () => {
     setLoading(true);
-    try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const currentUser = sessionData.session?.user ?? null;
 
+    // Get current session and user information from Supabase
+    try {
+      const {
+        data: { session: currentSession },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      // If there's an error fetching the session or no session exists, reset auth state
+      if (sessionError || !currentSession) {
+        setSession(null);
+        setUser(null);
+        setIsVerified(false);
+        return;
+      }
+
+      const currentUser = currentSession.user;
+      
+      // Check if the user's email is verified by fetching the account details from the database
       let verified = false;
       if (currentUser) {
         const { data: account } = await supabase
@@ -28,7 +43,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         verified = account?.is_verified ?? false;
       }
 
-      setSession(sessionData.session);
+      // Update auth state with the current session, user, and verification status
+      setSession(currentSession);
       setUser(currentUser);
       setIsVerified(verified);
     } finally {
