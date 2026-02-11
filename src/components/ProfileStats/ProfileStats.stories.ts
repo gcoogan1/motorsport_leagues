@@ -25,17 +25,18 @@ The **ProfileStats** component displays a collection of statistics, each with a 
 ### Props:
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| \`stats\` | \`Stat[]\` | \`-\` | Array of stat objects with \`number\` and \`label\` properties. |
+| \`stats\` | \`Stat[]\` | \`-\` | Array of stat objects with \`number\`, \`labelStat\`, and \`labelFact\` properties. |
 
 ### Stat Object:
 | Property | Type | Description |
 |----------|------|-------------|
 | \`number\` | \`number\` | The numeric value to display. |
-| \`label\` | \`string\` | The label describing the statistic. |
+| \`labelStat\` | \`string\` | The primary label describing the stat. |
+| \`labelFact\` | \`string\` | A secondary label for additional context. |
 
 ### Usage Notes:
 - Stats are rendered in the order they're provided in the array.
-- Each stat displays a large number followed by a descriptive label.
+- Each stat displays a large number followed by a descriptive label and secondary label.
 - Works well for displaying profile metrics and achievements.
         `,
       },
@@ -53,27 +54,27 @@ type Story = StoryObj<typeof ProfileStats>;
 export const Default: Story = {
   args: {
     stats: [
-      { number: 24, label: "Wins" },
-      { number: 8, label: "Losses" },
-      { number: 3, label: "Championships" },
+      { number: 24, labelStat: "Wins", labelFact: "Seasons" },
+      { number: 8, labelStat: "Losses", labelFact: "Seasons" },
+      { number: 3, labelStat: "Championships", labelFact: "Titles" },
     ],
   },
 };
 
 export const SingleStat: Story = {
   args: {
-    stats: [{ number: 42, label: "Total Races" }],
+    stats: [{ number: 42, labelStat: "Total Races", labelFact: "Days" }],
   },
 };
 
 export const ManyStat: Story = {
   args: {
     stats: [
-      { number: 156, label: "Points" },
-      { number: 45, label: "Wins" },
-      { number: 12, label: "Podiums" },
-      { number: 5, label: "Championships" },
-      { number: 3, label: "Records" },
+      { number: 156, labelStat: "Points", labelFact: "Earned" },
+      { number: 45, labelStat: "Wins", labelFact: "Seasons" },
+      { number: 12, labelStat: "Podiums", labelFact: "Seasons" },
+      { number: 5, labelStat: "Championships", labelFact: "Titles" },
+      { number: 3, labelStat: "Records", labelFact: "Seasons" },
     ],
   },
 };
@@ -81,9 +82,9 @@ export const ManyStat: Story = {
 export const LargeNumbers: Story = {
   args: {
     stats: [
-      { number: 10500, label: "Total Points" },
-      { number: 250, label: "Races Completed" },
-      { number: 98, label: "Win Rate %" },
+      { number: 10500, labelStat: "Total Points", labelFact: "Earned" },
+      { number: 250, labelStat: "Races Completed", labelFact: "Events" },
+      { number: 98, labelStat: "Win Rate %", labelFact: "Percentage" },
     ],
   },
 };
@@ -91,9 +92,9 @@ export const LargeNumbers: Story = {
 export const AchievementStats: Story = {
   args: {
     stats: [
-      { number: 2, label: "Gold Medals" },
-      { number: 5, label: "Silver Medals" },
-      { number: 8, label: "Bronze Medals" },
+      { number: 2, labelStat: "Gold Medals", labelFact: "Awards" },
+      { number: 5, labelStat: "Silver Medals", labelFact: "Awards" },
+      { number: 8, labelStat: "Bronze Medals", labelFact: "Awards" },
     ],
   },
 };
