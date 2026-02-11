@@ -22,6 +22,7 @@ type PasswordInputProps = {
   helperText?: string;
   hasError?: boolean;
   errorMessage?: string;
+  autoComplete?: string;
 };
 
 const PasswordInput = ({
@@ -31,6 +32,7 @@ const PasswordInput = ({
   helperText,
   hasError,
   errorMessage,
+  autoComplete,
 }: PasswordInputProps) => {
   const { register, watch } = useFormContext();
   const [showPassword, setShowPassword] = useState(false);
@@ -52,6 +54,7 @@ const PasswordInput = ({
           id={name}
           type={showPassword ? "text" : "password"}
           {...register(name)}
+          autoComplete={autoComplete}
           placeholder={placeholder}
           $hasError={!!hasError}
           $hasValue={hasValue}

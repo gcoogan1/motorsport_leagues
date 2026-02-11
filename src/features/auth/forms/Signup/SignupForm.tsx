@@ -106,19 +106,21 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
         <TextInput
           name={"firstName"}
           label={"First Name"}
+          autoComplete="given-name"
           hasError={!!errors.firstName}
           errorMessage={errors.firstName?.message}
         />
         <TextInput
           name={"lastName"}
           label={"Last Name"}
-          hasError={!!errors.lastName}
+          autoComplete="family-name"
           errorMessage={errors.lastName?.message}
         />
         <TextInput
           name={"email"}
           label={"Email Address"}
           type="email"
+          autoComplete="email"
           hasError={!!errors.email}
           errorMessage={errors.email?.message}
         />
@@ -126,6 +128,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
           name={"password"}
           label={"Create Password"}
           helperText="Minimum of 8 characters."
+          autoComplete="new-password"
           hasError={!!errors.password}
           errorMessage={errors.password?.message}
         />
