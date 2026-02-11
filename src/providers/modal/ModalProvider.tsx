@@ -10,9 +10,12 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   const closeModal = () => {
     setModal((prev) => prev.slice(0, -1));
   };
+  const closeAllModals = () => {
+    setModal([]);
+  };
 
   return (
-    <ModalContext.Provider value={{ openModal, closeModal }}>
+    <ModalContext.Provider value={{ openModal, closeModal, closeAllModals }}>
       {children}
       {modal}
     </ModalContext.Provider>

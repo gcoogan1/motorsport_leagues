@@ -26,7 +26,7 @@ type CheckEmailProps = {
 };
 
 const CheckEmail = ({ account, newEmail }: CheckEmailProps) => {
-  const { openModal, closeModal } = useModal();
+  const { openModal, closeModal, closeAllModals } = useModal();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -85,11 +85,11 @@ const CheckEmail = ({ account, newEmail }: CheckEmailProps) => {
       // Refresh account data
       dispatch(fetchAccountThunk(account.id));
       // Show success toast and close modal
+      closeAllModals();
       showToast({
         usage: "success",
         message: "Email Address updated.",
       });
-      closeModal();
     } catch (error: any) {
       handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
       return;
@@ -109,7 +109,8 @@ const CheckEmail = ({ account, newEmail }: CheckEmailProps) => {
       if (!res.success) {
         throw res.error;
       }
-      // Open code resent modal
+      // Close current modal, then open code resent modal
+      closeModal();
       openModal(
         <CodeResent
           onContinue={handleRedirectBackToCheckEmail}
