@@ -99,21 +99,33 @@ export const TextContent = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-  gap: ${layout.space.xSmall};
+  gap: ${layout.space.xSmall};;
 
   ${layout.mediaQueries.mobile} {
     align-items: center;
     gap: ${layout.space.xxxSmall};
+    max-width: 296px;
+    text-align: center;
   }
 `;
 
 export const Username = styled.h2`
-  ${typography.title.large} color: ${colors.text.text1};
+  ${typography.title.large};
+  color: ${colors.text.text1};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 `;
 
 export const UserGame = styled.p<{ $isIRacing?: boolean }>`
-  ${typography.subtitle.xLargeItalic} color: ${colors.text.text2};
-
+  ${typography.subtitle.xLargeItalic};
+  color: ${colors.text.text2};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  
   ${({ $isIRacing }) =>
     $isIRacing && css`
       text-transform: none;
