@@ -15,12 +15,14 @@ import UpdateName from "./forms/UpdateName/UpdateName";
 import ChangeEmail from "./forms/ChangeEmail/ChangeEmail";
 import ChangePassword from "./forms/ChangePassword/ChangePassword";
 import DeleteAccount from "./forms/DeleteAccount/DeleteAccount";
+import { useAuth } from "@/providers/auth/useAuth";
 
 /*TODO: 
   - Add functionality for when !account exists
 */
 
 const AccountPanel = () => {
+  const { resetAuth } = useAuth();
   const { openModal } = useModal();
   const { closePanel } = usePanel();
 
@@ -35,6 +37,7 @@ const AccountPanel = () => {
     try {
       closePanel();
       await logoutUser();
+      resetAuth();
       navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);

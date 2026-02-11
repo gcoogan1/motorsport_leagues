@@ -299,22 +299,25 @@ export const loginUser = async (
 
 // -- Logout User -- //
 export const logoutUser = async (): Promise<SignOutResult> => {
-  const { error } = await supabase.auth.signOut();
+  // Supabase signOut with global scope to ensure refresh tokens are also revoked
+  const { error } = await supabase.auth.signOut({ scope: "global" });
 
   if (error) {
-    return {
-      success: false,
-      error: {
-        message: error.message,
-        code: error?.code || "SERVER_ERROR",
-        status: error?.status || 500,
-      },
-    };
+    // If session is already missing, consider it a success
+    // ResetAuth will handle cleaning up local state, so we can ignore this error
+    if (error.message === "Auth session missing!") {
+      return { success: true };
+    }
+
+    // Handle genuine network or server errors
+    return { success: false, error: {
+      message: error.message,
+      code: error?.code || "SERVER_ERROR",
+      status: error?.status || 500,
+    } };
   }
 
-  return {
-    success: true,
-  };
+  return { success: true };
 };
 
 // -- Reset Password (Sign In) -- //
