@@ -46,8 +46,8 @@ function EmptyMessage({
         <Title>{title}</Title>
         <Subtitle>{subtitle}</Subtitle>
       </TextContainer>
-      <ActionsContainer>
-        {actions?.primary && (
+      {actions?.primary && (
+        <ActionsContainer>
           <Button
             color="base"
             onClick={actions.primary.onClick}
@@ -58,8 +58,10 @@ function EmptyMessage({
           >
             {actions.primary.label}
           </Button>
-        )}
-        {actions?.secondary && (
+        </ActionsContainer>
+      )}
+      {actions?.secondary && (
+        <ActionsContainer>
           <Button
             color="base"
             variant="outlined"
@@ -71,8 +73,8 @@ function EmptyMessage({
           >
             {actions.secondary.label}
           </Button>
-        )}
-      </ActionsContainer>
+        </ActionsContainer>
+      )}
     </MessageContainer>
   );
 }

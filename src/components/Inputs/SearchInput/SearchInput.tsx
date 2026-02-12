@@ -20,12 +20,12 @@ const SearchInput = ({
   placeholder,
 }: SearchInputProps) => {
   const { register, watch, setValue } = useFormContext();
-
+  
   const value = watch(name);
   const hasValue = Boolean(value && value.length > 0);
 
   const handleClear = () => {
-    setValue(name, "", { shouldDirty: true });
+    setValue(name, "");
   };
 
   return (
@@ -38,6 +38,7 @@ const SearchInput = ({
           placeholder={placeholder}
           $hasValue={hasValue}
         />
+
         {hasValue && (
           <ButtonWrapper>
             <Button
@@ -45,9 +46,7 @@ const SearchInput = ({
               size="small"
               color="base"
               variant="ghost"
-              icon={{
-                left: <CloseIcon />
-              }}
+              icon={{ left: <CloseIcon /> }}
               onClick={handleClear}
             />
           </ButtonWrapper>
