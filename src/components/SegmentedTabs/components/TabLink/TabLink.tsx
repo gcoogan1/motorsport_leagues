@@ -10,7 +10,7 @@ export type TabLinkProps = {
 const TabLink = ({ isSelected = false, label, onClick, shouldExpand, }: TabLinkProps) => {
 
   return (
-    <ButtonLinkContainer $isSelected={isSelected} onClick={onClick} $shouldExpand={shouldExpand}>
+    <ButtonLinkContainer type="button" $isSelected={isSelected} onClick={onClick} $shouldExpand={shouldExpand}>
       {label}
     </ButtonLinkContainer>
   )

@@ -3,13 +3,15 @@ import { useSelector } from "react-redux";
 import { type RootState } from "@/store";
 import { navigate } from "@/app/navigation/navigation";
 import { usePanel } from "@/providers/panel/usePanel";
+import { useModal } from "@/providers/modal/useModal";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import Create from "@assets/Icon/Create.svg?react";
-import Search from "@assets/Icon/Search.svg?react";
+import SearchIcon from "@assets/Icon/Search.svg?react";
 import Profile from "@assets/Icon/Profile.svg?react";
 import ProfileCard from "@/components/Cards/ProfileCard/ProfileCard";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import SearchForm from "@/features/search/forms/SearchForm";
 
 //TODO: Add functionality to actions and following tab
 
@@ -21,6 +23,7 @@ const PROFILE_TABS = [
 const ProfilesPanel = () => {
   const [activeTab, setActiveTab] = useState<string>(PROFILE_TABS[0].label);
   const { closePanel } = usePanel();
+  const { openModal } = useModal();
 
   const profiles = useSelector((state: RootState) => state.profile.data);
 
@@ -36,6 +39,10 @@ const ProfilesPanel = () => {
   const handleCreateProfile = () => {
     closePanel();
     navigate("/create-profile");
+  }
+
+  const handleSearchProfiles = () => {
+    openModal(<SearchForm />);
   }
 
   return (
@@ -54,8 +61,8 @@ const ProfilesPanel = () => {
               },
               secondary: {
                 label: "Search",
-                leftIcon: <Search />,
-                action: () => console.log("Search"),
+                leftIcon: <SearchIcon />,
+                action: handleSearchProfiles,
               },
             }
           : undefined
@@ -99,8 +106,8 @@ const ProfilesPanel = () => {
             actions={{
               secondary: {
                 label: "Find a Profile",
-                leftIcon: <Search />,
-                onClick: () => console.log("Find"),
+                leftIcon: <SearchIcon />,
+                onClick: handleSearchProfiles,
               },
             }}
           />
