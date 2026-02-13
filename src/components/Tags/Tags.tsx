@@ -1,5 +1,5 @@
 import { getTagVariants, type Tag, type TagVariant } from "./Tags.variants";
- import { useAppTheme } from "@/providers/theme/useTheme";
+import { useAppTheme } from "@/providers/theme/useTheme";
 import { TagItem, TagsContainer } from "./Tags.styles";
 
 type TagProps = {
