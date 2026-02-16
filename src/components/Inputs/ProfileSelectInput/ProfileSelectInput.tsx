@@ -22,6 +22,7 @@ import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import UserProfile from "@/components/Users/Profile/UserProfile";
 
 // MUST BE WRAPPED IN REACT-HOOK-FORM FORM PROVIDER
+// Type Profile and isLarge should be used together to determine avatar size and layout in the dropdown options. "profile" type will use medium avatars and "driver" type will use tiny avatars.
 
 type Profile = {
   label: string;
@@ -36,7 +37,7 @@ type Profile = {
 type ProfileSelectInputProps = {
   name: string;
   fieldLabel: string;
-  type?: "profile" | "driver";
+  type: "profile" | "driver";
   isLarge?: boolean;
   helperText?: string;
   placeholder?: string;
