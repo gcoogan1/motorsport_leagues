@@ -28,6 +28,7 @@ export const effectsTokens: EffectTokens = {
       100: 1.0,
     },
     boxShadow: {
+      elevationModal: "0px 0px 80px 80px #00000033",
       glowWhite: "0px 0px 20px 0px rgba(255, 255, 255, 0.2)",
       coverBaseTop: `0px -40px 40px 0px  ${colorTokens.colors.base.base3}`,
       coverBaseDown: `0px 40px 40px 0px  ${colorTokens.colors.base.base3}`,
