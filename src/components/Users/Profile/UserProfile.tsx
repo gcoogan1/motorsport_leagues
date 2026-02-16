@@ -20,7 +20,7 @@ const UserProfile = ({ username, information, size = "medium",  avatarType, avat
   return (
     <ProfileContainer size={size}>
       <Avatar size={avatarSize} avatarType={avatarType} avatarValue={avatarValue} />
-      <TextContainer>
+      <TextContainer $size={size}>
         {size === "large" ? (
           <>
             <UsernameContainer isLarge={true}>

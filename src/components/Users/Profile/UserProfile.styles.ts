@@ -22,10 +22,17 @@ export const ProfileContainer = styled.div<{ size: "small" | "medium" | "large" 
   }}
 `;
 
-export const TextContainer = styled.div`
+export const TextContainer = styled.div<{ $size: "small" | "medium" | "large" }>`
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: ${layout.space.xxSmall};
+  
+  ${({ $size }) =>
+    $size === "medium" &&
+    css`
+    gap: 0;
+  `};
 `;
 
 export const UsernameContainer = styled.div<{ isLarge: boolean }>`
