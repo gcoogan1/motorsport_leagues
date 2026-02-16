@@ -7,6 +7,7 @@ export const ProfileContainer = styled.div<{ size: "small" | "medium" | "large" 
   display: flex;
   align-items: self-start;
   gap: ${layout.space.small};
+  width: 100%;
 
   ${({ size }) => {
     if (size === "medium") {
@@ -22,11 +23,16 @@ export const ProfileContainer = styled.div<{ size: "small" | "medium" | "large" 
   }}
 `;
 
+export const AvatarWrapper = styled.div`
+  flex-shrink: 0;
+`;
+
 export const TextContainer = styled.div<{ $size: "small" | "medium" | "large" }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: ${layout.space.xxSmall};
+  min-width: 0;
   
   ${({ $size }) =>
     $size === "medium" &&

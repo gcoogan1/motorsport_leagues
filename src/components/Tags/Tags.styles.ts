@@ -6,7 +6,7 @@ const { layout, borders, typography } = designTokens;
 
 export const TagsContainer = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   gap: ${layout.space.xxxSmall};
 `;
 

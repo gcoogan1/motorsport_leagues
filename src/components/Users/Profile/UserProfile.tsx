@@ -1,6 +1,6 @@
 import type { AvatarVariants } from "@/components/Avatar/Avatar.variants";
 import type { Tag } from "@/components/Tags/Tags.variants";
-import { Information, ProfileContainer, TextContainer, Username, UsernameContainer } from "./UserProfile.styles";
+import { Information, ProfileContainer, TextContainer, Username, UsernameContainer, AvatarWrapper } from "./UserProfile.styles";
 import Avatar from "@/components/Avatar/Avatar";
 import Tags from "@/components/Tags/Tags";
 
@@ -19,7 +19,9 @@ const UserProfile = ({ username, information, size = "medium",  avatarType, avat
 
   return (
     <ProfileContainer size={size}>
-      <Avatar size={avatarSize} avatarType={avatarType} avatarValue={avatarValue} />
+      <AvatarWrapper>
+        <Avatar size={avatarSize} avatarType={avatarType} avatarValue={avatarValue} />
+      </AvatarWrapper>
       <TextContainer $size={size}>
         {size === "large" ? (
           <>
