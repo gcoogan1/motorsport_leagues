@@ -51,9 +51,9 @@ The **UserProfile** component displays a user's profile information including an
 |---------------|-----------------------------|------------|-----------------------------------------------------------|
 | \`username\`    | \`string\`                    | \`-\`       | The username to display.                                  |
 | \`information\` | \`string\`                    | \`-\`       | Optional secondary information text.                      |
-| \`size\`        | \`"small" \| "medium" \ | "large"\` | \`"medium"\` | Controls the overall size and layout of the component. |
-| \`avatarType\`  | \`"preset" \| "upload"\`      | \`-\`       | Whether to use a preset avatar or uploaded image.         |
-| \`avatarValue\` | \`AvatarVariants \| string\`  | \`-\`       | The avatar variant name or image URL.                     |
+| \`size\`        | \`"small" &#124; "medium" &#124; "large"\` | \`"medium"\` | Controls the overall size and layout of the component. |
+| \`avatarType\`  | \`"preset" | "upload"\`      | \`-\`       | Whether to use a preset avatar or uploaded image.         |
+| \`avatarValue\` | \`AvatarVariants \\| string\`  | \`-\`       | The avatar variant name or image URL.                     |
 | \`tags\`        | \`string[]\`                  | \`-\`       | Optional array of tag strings to display.                 |
 
 ### Layout Differences by Size
