@@ -420,3 +420,57 @@ export const deleteProfile = async (
     success: true,
   };
 };
+
+// -- Get All Profiles (with optional search) -- //
+// Used for search functionality, returns all profiles except the current user's profile, with optional search by username
+export const getAllProfiles = async (
+  currentUserId?: string,
+  search?: string,
+  signal?: AbortSignal,
+): Promise<GetProfilesResult> => {
+  
+  let query = supabase
+    .from("profiles")
+    .select("*"); 
+
+  // SEARCH: Partial match on username
+  if (search) {
+    query = query.ilike("username", `%${search}%`);
+  }
+
+  // EXCLUSION: Return everyone EXCEPT the person searching
+  if (currentUserId) {
+    query = query.neq("account_id", currentUserId); 
+  }
+
+  // ABORT: Connect the signal to kill the request if user types more
+  if (signal) {
+    query = query.abortSignal(signal);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    // Standard Supabase abort error code is '20' or 'ABORT' depending on environment
+    if (error.code === 'ABORT' || error.message?.includes('abort')) {
+      return { success: true, data: [] };
+    }
+    
+    return {
+      success: false,
+      error: { 
+        message: error.message, 
+        code: error.code || "SERVER_ERROR", 
+        status: 500 
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: (data || []).map((profile) => ({
+      ...profile,
+      avatar_value: resolveAvatarValue(profile.avatar_type, profile.avatar_value),
+    })),
+  };
+};
