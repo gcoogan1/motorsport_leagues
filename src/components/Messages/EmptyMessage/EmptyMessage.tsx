@@ -37,6 +37,8 @@ function EmptyMessage({
   icon,
   actions,
 }: EmptyMessageProps) {
+  const bothActions = Boolean(actions?.primary && actions?.secondary);
+
   return (
     <MessageContainer>
       <GraphicContainer>
@@ -46,7 +48,7 @@ function EmptyMessage({
         <Title>{title}</Title>
         <Subtitle>{subtitle}</Subtitle>
       </TextContainer>
-      {actions?.primary && (
+      {actions?.primary && !actions?.secondary && (
         <ActionsContainer>
           <Button
             color="base"
@@ -60,7 +62,7 @@ function EmptyMessage({
           </Button>
         </ActionsContainer>
       )}
-      {actions?.secondary && (
+      {actions?.secondary && !actions?.primary && (
         <ActionsContainer>
           <Button
             color="base"
@@ -73,7 +75,32 @@ function EmptyMessage({
           >
             {actions.secondary.label}
           </Button>
-        </ActionsContainer>
+        </ActionsContainer>  
+      )}
+      {bothActions && (
+        <ActionsContainer>
+          <Button
+            color="base"
+            onClick={actions?.primary?.onClick || (() => {})}
+            icon={{
+              right: actions?.primary?.rightIcon,
+              left: actions?.primary?.leftIcon,
+            }}
+          >
+            {actions?.primary?.label}
+          </Button>
+          <Button
+            color="base"
+            variant="outlined"
+            onClick={actions?.secondary?.onClick || (() => {})}
+            icon={{
+              right: actions?.secondary?.rightIcon,
+              left: actions?.secondary?.leftIcon,
+            }}
+          >
+            {actions?.secondary?.label}
+          </Button>
+        </ActionsContainer>  
       )}
     </MessageContainer>
   );
