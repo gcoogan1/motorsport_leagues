@@ -19,6 +19,7 @@ import Button from "@/components/Button/Button";
 import EditIcon from "@assets/Icon//Edit.svg?react";
 import FollowersIcon from "@assets/Icon/Followers.svg?react";
 import FollowIcon from "@assets/Icon/Follow.svg?react";
+import FollowingIcon from "@assets/Icon/Following.svg?react";
 import Avatar from "@/components/Avatar/Avatar";
 import type { AvatarVariants } from "@/components/Avatar/Avatar.variants";
 import type { ProfileViewType } from "@/types/profile.types";
@@ -28,11 +29,14 @@ type ProfileHeaderProps = {
   username: string;
   viewType: ProfileViewType;
   editOnClick?: () => void;
+  isFollowing?: boolean;
   avatarType: "preset" | "upload";
   avatarValue: AvatarVariants | string;
   followersOnClick?: () => void;
   followersCount?: number;
   championCount?: number;
+  onMemberFollow?: () => void;
+  onGuestFollow?: () => void;
 };
 
 const ProfileHeader = ({
@@ -40,11 +44,14 @@ const ProfileHeader = ({
   username,
   viewType,
   editOnClick,
+  isFollowing,
   avatarType,
   avatarValue,
   followersOnClick,
   followersCount,
   championCount,
+  onMemberFollow,
+  onGuestFollow,
 }: ProfileHeaderProps) => {
   const isMobile = useMediaQuery("(max-width: 919px)");
 
@@ -53,11 +60,11 @@ const ProfileHeader = ({
   // const isGuestProfile = viewType === "guest";
 
   const handleMemeberFollow = () => {
-    console.log("Follow member");
+    onMemberFollow?.();
   };
 
   const handleGuestFollow = () => {
-    console.log("Prompt login to follow");
+    onGuestFollow?.();
   };
 
   return (
@@ -111,13 +118,13 @@ const ProfileHeader = ({
             ) : (
               <Button
                 color="base"
-                icon={{ left: <FollowIcon /> }}
+                icon={{ left: isFollowing ? <FollowingIcon /> : <FollowIcon /> }}
                 onClick={
                   isMemberProfile ? handleMemeberFollow : handleGuestFollow
                 }
                 fullWidth
               >
-                {isMobile ? null : "Follow"}
+                {isMobile ? null : isFollowing ? "Following" : "Follow"}
               </Button>
             )}
           </Actions>

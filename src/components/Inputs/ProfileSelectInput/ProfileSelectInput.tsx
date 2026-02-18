@@ -16,22 +16,15 @@ import {
 } from "./ProfileSelectInput.styes";
 import Icon from "@/components/Icon/Icon";
 import Avatar from "@/components/Avatar/Avatar";
-import { useFormContext } from "react-hook-form";
-import { useEffect } from "react";
+import { useController, useFormContext } from "react-hook-form";
 import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import UserProfile from "@/components/Users/Profile/UserProfile";
-
-// MUST BE WRAPPED IN REACT-HOOK-FORM FORM PROVIDER
-// Type Profile and isLarge should be used together to determine avatar size and layout in the dropdown options. "profile" type will use medium avatars and "driver" type will use tiny avatars.
 
 type Profile = {
   label: string;
   value: string;
   secondaryInfo?: string;
-  avatar: {
-    avatarType: "preset" | "upload";
-    avatarValue: string;
-  };
+  avatar: { avatarType: "preset" | "upload"; avatarValue: string; };
 };
 
 type ProfileSelectInputProps = {
@@ -57,20 +50,22 @@ const ProfileSelectInput = ({
   profiles = [],
   placeholder = "Select profile...",
 }: ProfileSelectInputProps) => {
-  const { setValue, watch, register } = useFormContext();
-  const selectedValue = watch(name);
+  const { control } = useFormContext();
+  
+  // Use useController for the most direct link to RHF state
+  const { field } = useController({
+    name,
+    control,
+    defaultValue: "",
+  });
 
-  useEffect(() => {
-    register(name);
-  }, [register, name]);
-
-  const selectedProfile = profiles.find((p) => p.value === selectedValue);
+  const selectedProfile = profiles.find((p) => p.value === field.value);
   const avatarSize = type === "profile" ? "medium" : "tiny";
 
-  // Map profiles to match the Options type expected by MenuDropdown
+  // Prep options for the dropdown
   const dropdownOptions = profiles.map((profile) => ({
     ...profile,
-    isSelected: profile.value === selectedValue,
+    isSelected: profile.value === field.value,
   }));
 
   return (
@@ -78,14 +73,20 @@ const ProfileSelectInput = ({
       <LabelRow>
         <FieldLabel>{fieldLabel}</FieldLabel>
       </LabelRow>
+
+      {/* The 'key' prop is a crucial workaround: it forces Radix to re-sync 
+          whenever the underlying RHF value changes. */}
       <Select.Root
-        value={selectedValue || ""}
-        onValueChange={(value) => setValue(name, value)}
+        key={field.value} 
+        value={field.value}
+        onValueChange={(val) => {
+          field.onChange(val); // Updates RHF
+        }}
       >
         <InputContainer>
           <StyledTrigger $hasError={hasError}>
             <PlaceholderWrapper $isLarge={isLarge}>
-              {selectedProfile?.label ? (
+              {selectedProfile ? (
                 <UserProfile
                   size={"medium"}
                   username={selectedProfile.label}
@@ -95,11 +96,7 @@ const ProfileSelectInput = ({
                 />
               ) : (
                 <>
-                  <Avatar
-                    size={avatarSize}
-                    avatarType={"preset"}
-                    avatarValue={"none"}
-                  />
+                  <Avatar size={avatarSize} avatarType="preset" avatarValue="none" />
                   <PlaceholderText>{placeholder}</PlaceholderText>
                 </>
               )}
@@ -114,6 +111,7 @@ const ProfileSelectInput = ({
 
         <Select.Portal>
           <StyledContent position="popper" sideOffset={8}>
+            {/* IMPORTANT: MenuDropdown MUST use Select.Item internally */}
             <MenuDropdown type={type} options={dropdownOptions} />
           </StyledContent>
         </Select.Portal>
