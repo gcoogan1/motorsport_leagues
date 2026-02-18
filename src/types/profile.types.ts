@@ -49,9 +49,12 @@ export type ProfileTable = {
 
 // Profile Follows table --> matches Supabase "profile_follows" table but with camelCase keys
 export type ProfileFollowsTable = {
+  follower_account_id: string;
   follower_id: string;
   following_id: string;
 };
+
+
 
 // Supabase Error Type --> used in profile service results
 type SupabaseError = {
@@ -71,6 +74,20 @@ export type GetProfilesSuccess = {
 
 // Get Profiles --> Result type
 export type GetProfilesResult = GetProfilesSuccess | SupabaseError;
+
+export type GetFollowersSuccess = {
+  success: true;
+  data: ProfileTable[];
+};
+
+export type GetFollowersResult = GetFollowersSuccess | SupabaseError;
+
+export type GetFollowingSuccess = {
+  success: true;
+  data: ProfileTable[];
+};
+
+export type GetFollowingResult = GetFollowingSuccess | SupabaseError;
 
 // Create Profile --> Success type
 export type CreateProfileSuccess = {
@@ -124,4 +141,17 @@ export type CreateProfilePayload = {
   username: string;
   gameType: string;
   avatar: AvatarValue;
+};
+
+// Follow Profile --> Payload Type
+export type FollowProfileVariables = {
+  userId: string;
+  followingProfileId: string;
+  followerProfileId: string;
+};
+
+// Unfollow Profile --> Payload Type
+export type UnfollowProfileVariables = {
+  userId: string;
+  followingProfileId: string;
 };

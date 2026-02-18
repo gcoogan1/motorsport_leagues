@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Provider, useDispatch } from "react-redux";
 import ReactGA from "react-ga4";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+ 
 
 
 import store, { type AppDispatch } from "@/store";
@@ -33,8 +33,6 @@ const AppContent = () => {
   return <AppRouter />;
 };
 
-const queryClient = new QueryClient();
-
 const App = () => {
   ReactGA.initialize(import.meta.env.VITE_GA_MEASUREMENT_ID);
   ReactGA.send({
@@ -44,19 +42,17 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <AppThemeProvider>
-            <ToastProvider>
-              <ModalProvider>
-                <PanelProvider>
+      <AuthProvider>
+        <AppThemeProvider>
+          <ToastProvider>
+            <ModalProvider>
+              <PanelProvider>
                 <AppContent />
               </PanelProvider>
             </ModalProvider>
           </ToastProvider>
         </AppThemeProvider>
       </AuthProvider>
-      </QueryClientProvider>
     </Provider>
   );
 };
