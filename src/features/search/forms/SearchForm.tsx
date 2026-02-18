@@ -3,7 +3,7 @@ import { useForm, FormProvider, useWatch } from "react-hook-form";
 import { useAuth } from "@/providers/auth/useAuth";
 import { useModal } from "@/providers/modal/useModal";
 import { navigate } from "@/app/navigation/navigation";
-import { useProfiles } from "@/hooks/queries/useProfiles";
+import { useProfiles } from "@/hooks/rtkQuery/queries/useProfiles";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import Search from "@/components/Search/Search";

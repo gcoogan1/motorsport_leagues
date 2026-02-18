@@ -99,6 +99,7 @@ export const StyledTrigger = styled(SelectPrimitive.Trigger)<{
 export const StyledContent = styled(SelectPrimitive.Content)`
   width: var(--radix-select-trigger-width);
   max-width: var(--radix-select-trigger-width);
+  z-index: 3000;
 `;
 
 export const StyledViewport = styled(SelectPrimitive.Viewport)``;

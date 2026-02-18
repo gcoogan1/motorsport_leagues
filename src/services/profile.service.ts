@@ -3,13 +3,17 @@ import type {
   CheckUsernameAvailabilityResult,
   CreateProfilePayload,
   CreateProfileResult,
+  FollowProfileVariables,
+  GetFollowersResult,
+  GetFollowingResult,
   GetProfilesResult,
+  ProfileTable,
+  UnfollowProfileVariables,
   UpdateAvatarPayload,
   UpdateUsernamePayload,
 } from "@/types/profile.types";
 
-//TODO: Create Supabase Edge Function to handle profile deletion and all associated data (Squads, Leagues, Results, etc.) in a single transaction, to ensure data integrity and avoid orphaned records. 
-// The deleteProfile function below will call this Edge Function, passing the profile ID and avatar value (if applicable) as parameters.
+// TODO: Make sure delete cascades are set up correctly in the database
 
 // --- Profile Supabase Services -- //
 
@@ -79,7 +83,7 @@ export const isProfileUsernameAvailable = async (
     query = query.neq("id", profileId);
   }
 
-  const { data, error } = await query
+  const { data, error } = await query;
 
   if (data && data.length > 0) {
     return {
@@ -399,7 +403,7 @@ export const deleteProfile = async (
     }
   }
 
-  // Delete the profile from the database 
+  // Delete the profile from the database
   const { error } = await supabase
     .from("profiles")
     .delete()
@@ -428,10 +432,9 @@ export const getAllProfiles = async (
   search?: string,
   signal?: AbortSignal,
 ): Promise<GetProfilesResult> => {
-  
   let query = supabase
     .from("profiles")
-    .select("*"); 
+    .select("*");
 
   // SEARCH: Partial match on username
   if (search) {
@@ -440,7 +443,7 @@ export const getAllProfiles = async (
 
   // EXCLUSION: Return everyone EXCEPT the person searching
   if (currentUserId) {
-    query = query.neq("account_id", currentUserId); 
+    query = query.neq("account_id", currentUserId);
   }
 
   // ABORT: Connect the signal to kill the request if user types more
@@ -452,16 +455,16 @@ export const getAllProfiles = async (
 
   if (error) {
     // Standard Supabase abort error code is '20' or 'ABORT' depending on environment
-    if (error.code === 'ABORT' || error.message?.includes('abort')) {
+    if (error.code === "ABORT" || error.message?.includes("abort")) {
       return { success: true, data: [] };
     }
-    
+
     return {
       success: false,
-      error: { 
-        message: error.message, 
-        code: error.code || "SERVER_ERROR", 
-        status: 500 
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
       },
     };
   }
@@ -470,7 +473,142 @@ export const getAllProfiles = async (
     success: true,
     data: (data || []).map((profile) => ({
       ...profile,
-      avatar_value: resolveAvatarValue(profile.avatar_type, profile.avatar_value),
+      avatar_value: resolveAvatarValue(
+        profile.avatar_type,
+        profile.avatar_value,
+      ),
     })),
   };
+};
+
+// -- Follow a profile -- //
+export const followProfileService = async (
+  { userId, followerProfileId, followingProfileId }: FollowProfileVariables,
+) => {
+  if (!userId) throw new Error("Not authenticated");
+
+  const { error } = await supabase.from("profile_follows").insert({
+    follower_account_id: userId,
+    follower_id: followerProfileId,
+    following_id: followingProfileId,
+  });
+
+  if (error) throw error;
+
+  return true;
+};
+
+// Unfollow a profile
+export const unfollowProfileService = async (
+  { userId, followingProfileId }: UnfollowProfileVariables,
+) => {
+  if (!userId) throw new Error("Not authenticated");
+
+  const { error } = await supabase
+    .from("profile_follows")
+    .delete()
+    .eq("follower_account_id", userId)
+    .eq("following_id", followingProfileId);
+
+  if (error) throw error;
+
+  return true;
+};
+
+// -- Check if following -- //
+export const isFollowingService = async (userId: string, profileId: string) => {
+  if (!userId) return false;
+
+  const { data } = await supabase
+    .from("profile_follows")
+    .select("*")
+    .eq("follower_account_id", userId)
+    .eq("following_id", profileId)
+    .maybeSingle();
+
+  return !!data;
+};
+
+// -- Get followers of a profile -- //
+export const getFollowersService = async (
+  profileId: string,
+): Promise<GetFollowersResult> => {
+  const { data, error } = await supabase
+    .from("profile_follows")
+    .select(`
+      profiles!profile_follows_follower_id_fkey (*)
+    `)
+    .eq("following_id", profileId);
+
+  console.log("Joined followers data:", data);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  // The join returns the follower profile data nested under the "profiles" key. We need to extract it and resolve the avatar URL for each follower profile.
+  const normalized = (data ?? [])
+    .map((row) => row.profiles as unknown as ProfileTable | null)
+    .filter((profile): profile is ProfileTable => !!profile)
+    .map((profile) => ({
+      ...profile,
+      avatar_value: resolveAvatarValue(
+        profile.avatar_type,
+        profile.avatar_value,
+      ),
+    }));
+
+  return {
+    success: true,
+    data: normalized,
+  };
+};
+
+// -- Get all following for the current account -- //
+export const getFollowingService = async (
+  userId: string,
+): Promise<GetFollowingResult> => {
+  if (!userId) return { success: true, data: [] };
+
+  // Get following by joining the profile_follows table with the profiles table to get the followed profile data, filtering by the follower_account_id (the current user's account ID)
+  const { data, error } = await supabase
+    .from("profile_follows")
+    .select(`
+      profiles!profile_follows_following_id_fkey (
+        *
+      )
+    `)
+    .eq("follower_account_id", userId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  // Normalize the data to return an array of profiles with resolved avatar URLs
+  const normalized: ProfileTable[] = (data ?? [])
+    .map((row) => row.profiles?.[0] as ProfileTable | undefined)
+    .filter((profile): profile is ProfileTable => Boolean(profile))
+    .map((profile) => ({
+      ...profile,
+      avatar_value: resolveAvatarValue(
+        profile.avatar_type,
+        profile.avatar_value,
+      ),
+    }));
+
+  return { success: true, data: normalized };
 };

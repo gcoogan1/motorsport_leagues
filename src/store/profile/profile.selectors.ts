@@ -7,6 +7,9 @@ export const selectProfileById = (profileId: string) => (state: RootState) =>
 export const selectCurrentProfile = (state: RootState) =>
   state.profile.currentProfile;
 
+export const selectHasProfiles = (state: RootState) =>
+  (state.profile.data?.length ?? 0) > 0;
+
 
 export const selectProfileViewType = () =>
   (state: RootState): ProfileViewType => {
