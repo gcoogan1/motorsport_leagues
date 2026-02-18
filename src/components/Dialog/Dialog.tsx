@@ -31,6 +31,7 @@ type DialogProps = {
       rightIcon?: React.ReactNode;
       loading?: boolean;
       loadingText?: string;
+      isDanger?: boolean;
     };
   };
 };
@@ -70,6 +71,7 @@ const Dialog = ({ type = "core", title, subtitle, buttons }: DialogProps) => {
               }}
               isLoading={buttons?.onContinue?.loading}
               loadingText={buttons?.onContinue?.loadingText}
+              color={buttons?.onContinue?.isDanger ? "danger" : "system"}
             >
               {buttons?.onContinue?.label}
             </Button>

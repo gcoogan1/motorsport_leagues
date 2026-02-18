@@ -52,11 +52,13 @@ Callbacks for close and continue actions.
 | \`buttons.onContinue.rightIcon\` | \`React.ReactNode\` | \`undefined\`  | Optional right icon for the continue button.                  |
 | \`buttons.onContinue.loading\` | \`boolean\` | \`undefined\`  | Loading state for the continue button.                        |
 | \`buttons.onContinue.loadingText\` | \`string\` | \`undefined\`  | Loading text for the continue button.                         |
+| \`buttons.onContinue.isDanger\` | \`boolean\` | \`undefined\`  | Indicates if the continue button represents a dangerous action. |
 
 ### Usage Notes
 
 - Ensure to provide meaningful titles and subtitles to convey the purpose of the dialog effectively.
 - Use the \`buttons\` prop to define actions users can take, such as confirming or canceling an operation.
+- Use the \`isDanger\` prop on the continue button to indicate actions that are potentially destructive or irreversible.
 
 
     `,
@@ -152,6 +154,29 @@ export const SuccessDialog: Story = {
   render: (args) => <div style={{ width: '480px' }}><Dialog {...args} /></div>,
 };
 
+export const DangerContinueDialog: Story = {
+  args: {
+    type: "core",
+    title: "Danger Action",
+    subtitle: "This action is potentially destructive. Are you sure you want to continue?",
+    buttons: {
+      onCancel: {
+        label: "Cancel",
+        action: () => {
+          console.log("Cancel clicked");
+        },
+      },
+      onContinue: {
+        label: "Delete",
+        action: () => {
+          console.log("Continue clicked");
+        },
+        isDanger: true,
+      },
+    },
+  },
+  render: (args) => <div style={{ width: '480px' }}><Dialog {...args} /></div>,
+};
 
 
 
