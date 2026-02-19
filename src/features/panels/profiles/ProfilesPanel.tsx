@@ -3,7 +3,9 @@ import { useSelector } from "react-redux";
 import { type RootState } from "@/store";
 import { navigate } from "@/app/navigation/navigation";
 import { usePanel } from "@/providers/panel/usePanel";
+import { useAuth } from "@/providers/auth/useAuth";
 import { useModal } from "@/providers/modal/useModal";
+import { useProfileFollowing } from "@/hooks/rtkQuery/queries/useProfileFollowers";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import Create from "@assets/Icon/Create.svg?react";
@@ -21,11 +23,13 @@ const PROFILE_TABS = [
 ];
 
 const ProfilesPanel = () => {
-  const [activeTab, setActiveTab] = useState<string>(PROFILE_TABS[0].label);
+  const { user } = useAuth();
   const { closePanel } = usePanel();
   const { openModal } = useModal();
+  const [activeTab, setActiveTab] = useState<string>(PROFILE_TABS[0].label);
 
   const profiles = useSelector((state: RootState) => state.profile.data);
+  const { data: following = [] } = useProfileFollowing(user?.id || "");
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -34,16 +38,16 @@ const ProfilesPanel = () => {
   const handleGoToProfile = (profileId: string) => {
     closePanel();
     navigate(`/profile/${profileId}`);
-  }
+  };
 
   const handleCreateProfile = () => {
     closePanel();
     navigate("/create-profile");
-  }
+  };
 
   const handleSearchProfiles = () => {
     openModal(<SearchForm />);
-  }
+  };
 
   return (
     <PanelLayout
@@ -52,7 +56,7 @@ const ProfilesPanel = () => {
       tabs={PROFILE_TABS}
       onTabChange={handleTabChange}
       actions={
-        (activeTab === "My Profiles" && profiles && profiles.length > 0)
+        activeTab === "My Profiles" && profiles && profiles.length > 0
           ? {
               primary: {
                 label: "Create Profile",
@@ -99,18 +103,32 @@ const ProfilesPanel = () => {
         </>
       ) : (
         <>
-          <EmptyMessage
-            title="Not Following Any Profiles"
-            icon={<Profile />}
-            subtitle="Find your friends to follow their Profiles and see their journey."
-            actions={{
-              secondary: {
-                label: "Find a Profile",
-                leftIcon: <SearchIcon />,
-                onClick: handleSearchProfiles,
-              },
-            }}
-          />
+          {following && following.length > 0 ? (
+            following.map((prof) => (
+              <ProfileCard
+                key={prof.id}
+                userGame={convertGameTypeToFullName(prof.game_type)}
+                username={prof.username}
+                cardSize="small"
+                onClick={() => handleGoToProfile(prof.id)}
+                avatarType={prof.avatar_type}
+                avatarValue={prof.avatar_value}
+              />
+            ))
+          ) : (
+            <EmptyMessage
+              title="Not Following Any Profiles"
+              icon={<Profile />}
+              subtitle="Find your friends to follow their Profiles and see their journey."
+              actions={{
+                secondary: {
+                  label: "Find a Profile",
+                  leftIcon: <SearchIcon />,
+                  onClick: handleSearchProfiles,
+                },
+              }}
+            />
+          )}
         </>
       )}
     </PanelLayout>
