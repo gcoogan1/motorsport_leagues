@@ -8,9 +8,11 @@ import LeaguesPanel from "./leagues/LeaguesPanel";
 import GuestSquadsPanel from "./squads/GuestSquadsPanel";
 import GuestLeaguesPanel from "./leagues/GuestLeaguesPanel";
 import ProfileEdit from "./profileEdit/ProfileEdit";
+import ProfileFollowers from "./profileFollowers/ProfileFollowers";
 
 
-export const panelVariants: Record<PanelTypes, React.FC> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const panelVariants: Record<PanelTypes, React.ComponentType<any>> = {
   ACCOUNT: AccountPanel,
   NOTIFICATIONS: NotificationsPanel,
   PROFILES: ProfilesPanel,
@@ -20,4 +22,5 @@ export const panelVariants: Record<PanelTypes, React.FC> = {
   LEAGUES: LeaguesPanel,
   GUEST_LEAGUES: GuestLeaguesPanel,
   PROFILE_EDIT: ProfileEdit,
+  PROFILE_FOLLOWERS: ProfileFollowers
 };

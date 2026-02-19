@@ -22,9 +22,33 @@ type Options = {
 type MenuDropdownProps = {
   type: MenuTypes;
   options: Options[];
+  onSelect?: (value: string) => void;
+  isStandAlone?: boolean;
 }
 
-const MenuDropdown = ({ type, options }: MenuDropdownProps) => {
+const MenuDropdown = ({ type, options, onSelect, isStandAlone }: MenuDropdownProps) => {
+
+  // For text type in standalone mode, render plain buttons
+  if (type === "text" && isStandAlone) {
+    return (
+      <DropdownContainer $isStandAlone={true}>
+        {options.map((option) => (
+          <MenuOption
+            key={option.value}
+            type={type}
+            label={option.label}
+            value={option.value}
+            secondaryInfo={option.secondaryInfo}
+            icon={option.icon}
+            isStandAlone={true}
+            onSelect={onSelect}
+          />
+        ))}
+      </DropdownContainer>
+    );
+  }
+
+  // Otherwise use Radix MenuOption
   return (
     <Select.Viewport asChild>
       <DropdownContainer>

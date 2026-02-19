@@ -65,7 +65,7 @@ const Profile = () => {
 
   // -- RTK Query -- //
   // Fetch followers for this profile (used to display followers count and determine if current user is following this profile)
-  const { data: followers = [] } = useProfileFollowers(profile?.id ?? "");
+  const { data: followers = [] } = useProfileFollowers(profileId ?? "");
   // Check if the logged in user is following the profile being viewed (used to determine follow/unfollow behavior)
   const { data: isFollowing = false } = useIsFollowingProfile(user?.id ?? "", profileId ?? "");
 
@@ -88,6 +88,10 @@ const Profile = () => {
   const handleEditProfile = () => {
     openPanel("PROFILE_EDIT");
   };
+
+  const handleGoToFollowers = () => {
+    openPanel("PROFILE_FOLLOWERS", { profileId });
+  }
 
   const handleMemberFollow = () => {
     if (user?.id && isFollowing) {
@@ -120,6 +124,7 @@ const Profile = () => {
         avatarValue={profile?.avatar_value ?? "none"}
         followersCount={followers.length}
         isFollowing={isFollowing}
+        followersOnClick={handleGoToFollowers}
         onMemberFollow={handleMemberFollow}
         onGuestFollow={handleGuestFollow}
       />

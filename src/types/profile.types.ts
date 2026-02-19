@@ -155,3 +155,9 @@ export type UnfollowProfileVariables = {
   userId: string;
   followingProfileId: string;
 };
+
+// Remove Follower --> Payload Type
+export type RemoveFollowerVariables = {
+  currentProfileId: string;
+  followerProfileId: string;
+};

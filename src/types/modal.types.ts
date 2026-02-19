@@ -17,7 +17,7 @@ import NoProfile from "@/features/profiles/modals/core/NoProfile/NoProfile";
 export type MODAL_TYPES = 'EXISTING_ACCOUNT' | 'SERVER_ERROR' | 'ATTEMPT_MAX' | 'REQUEST_MAX' | 'ACCOUNT_VERIFIED' | 'INCORRECT_CRED' | 'ACCOUNT_SUSPENDED' | 'EXISTING_EMAIL' | 'INCORRECT_PASSWORD' | 'SAME_PASSWORD' | 'NO_PROFILE';
 
 // Additional modals that may require props can be added here
-export type OTHER_MODAL_TYPES = 'UNVERIFIED_ACCOUNT' | 'CODE_RESENT' | 'PROFILE_CREATED' | 'EXISTING_USERNAME';
+export type OTHER_MODAL_TYPES = 'UNVERIFIED_ACCOUNT' | 'CODE_RESENT' | 'PROFILE_CREATED' | 'EXISTING_USERNAME' | 'UNFOLLOW' | 'REMOVE_FOLLOWER';
 
 // Combine all modal types
 export type ALL_MODAL_TYPES = MODAL_TYPES | OTHER_MODAL_TYPES;

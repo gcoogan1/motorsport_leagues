@@ -1,4 +1,4 @@
-import { useFollowProfileMutation, useUnfollowProfileMutation } from "@/store/rtkQueryAPI/profileApi";
+import { useFollowProfileMutation, useRemoveFollowerMutation, useUnfollowProfileMutation } from "@/store/rtkQueryAPI/profileApi";
 
 // --- Mutations --- //
 // Used to modify data //
@@ -15,4 +15,10 @@ export const useFollowProfile = () => {
 // This hook provides a mutation function to unfollow a profile, and automatically invalidates related queries on success to keep the UI in sync.
 export const useUnfollowProfile = () => {
   return useUnfollowProfileMutation();
+};
+
+// Mutation for removering a follower from a profile
+// This hook provides a mutation function to remove a follower from a profile, and automatically invalidates related queries on success to keep the UI in sync.
+export const useRemoveFollower = () => {
+  return useRemoveFollowerMutation();
 };
