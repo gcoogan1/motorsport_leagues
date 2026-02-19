@@ -3,6 +3,7 @@ import type {
   FollowProfileVariables,
   GetProfilesResult,
   ProfileTable,
+  RemoveFollowerVariables,
   UnfollowProfileVariables,
 } from "@/types/profile.types";
 import {
@@ -11,6 +12,7 @@ import {
   getFollowersService,
   getFollowingService,
   isFollowingService,
+  removeFollowerService,
   unfollowProfileService,
 } from "@/services/profile.service";
 
@@ -139,6 +141,21 @@ export const profileApi = createApi({
         { type: "IsFollowing", id: `${variables.userId}-${variables.followingProfileId}` },
       ],
     }),
+    removeFollower: builder.mutation<boolean, RemoveFollowerVariables>({
+      queryFn: async (variables) => {
+        try {
+          const data = await removeFollowerService(variables);
+          return { data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, variables) => [
+        { type: "Followers", id: variables.currentProfileId },
+        { type: "Following", id: variables.followerProfileId },
+        { type: "IsFollowing", id: `${variables.currentProfileId}-${variables.followerProfileId}` },
+      ],
+    }),
   }),
 });
 
@@ -149,4 +166,5 @@ export const {
   useIsFollowingQuery,
   useFollowProfileMutation,
   useUnfollowProfileMutation,
+  useRemoveFollowerMutation,
 } = profileApi;

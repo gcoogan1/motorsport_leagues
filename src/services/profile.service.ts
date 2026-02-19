@@ -8,6 +8,7 @@ import type {
   GetFollowingResult,
   GetProfilesResult,
   ProfileTable,
+  RemoveFollowerVariables,
   UnfollowProfileVariables,
   UpdateAvatarPayload,
   UpdateUsernamePayload,
@@ -587,6 +588,8 @@ export const getFollowingService = async (
     `)
     .eq("follower_account_id", userId);
 
+    console.log("Joined following data:", data);
+
   if (error) {
     return {
       success: false,
@@ -598,10 +601,10 @@ export const getFollowingService = async (
     };
   }
 
-  // Normalize the data to return an array of profiles with resolved avatar URLs
-  const normalized: ProfileTable[] = (data ?? [])
-    .map((row) => row.profiles?.[0] as ProfileTable | undefined)
-    .filter((profile): profile is ProfileTable => Boolean(profile))
+   // The join returns the follower profile data nested under the "profiles" key. We need to extract it and resolve the avatar URL for each follower profile.
+  const normalized = (data ?? [])
+    .map((row) => row.profiles as unknown as ProfileTable | null)
+    .filter((profile): profile is ProfileTable => !!profile)
     .map((profile) => ({
       ...profile,
       avatar_value: resolveAvatarValue(
@@ -610,5 +613,23 @@ export const getFollowingService = async (
       ),
     }));
 
-  return { success: true, data: normalized };
+  return {
+    success: true,
+    data: normalized,
+  };
 };
+
+// -- Remove a follower (used when user removes someone from their followers list) -- //
+export const removeFollowerService = async ({ currentProfileId, followerProfileId }: RemoveFollowerVariables) => {
+  if (!followerProfileId) throw new Error("Not authenticated");
+
+  const { error } = await supabase
+    .from("profile_follows")
+    .delete()
+    .eq("follower_id", followerProfileId)
+    .eq("following_id", currentProfileId);
+
+  if (error) throw error;
+
+  return true;
+}
