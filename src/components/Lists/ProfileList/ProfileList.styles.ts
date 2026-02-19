@@ -5,6 +5,7 @@ const { colors, borders, layout } = designTokens;
 
 export const ListContainer = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: column;
   border-radius: ${borders.radius.xLarge};
   border: ${borders.width.thin} solid ${colors.base.translucent10};
@@ -30,3 +31,7 @@ export const UserProfileWrapper = styled.div`
   overflow: hidden;
   max-width: 248px;
 `
+
+export const DropdownContainer = styled.div`
+  position: relative;
+`;

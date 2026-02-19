@@ -35,19 +35,20 @@ The **ProfileList** component displays a list of user profiles with actions. Eac
 | Prop      | Type                  | Default | Description                                          |
 |-----------|-----------------------|---------|------------------------------------------------------|
 | \`items\`   | \`ProfileListItem[]\`   | \`[]\`   | Array of profile items to display in the list.       |
-| \`onClick\` | \`(username: string) => void\` | \`-\`    | Optional callback when action button is clicked. |
+| \`onClick\` | \`(id: string) => void\` | \`-\`    | Optional callback when action button is clicked. |
 
 ### ProfileListItem Structure
 
 \`\`\`typescript
 type ProfileListItem = {
-  username: string;
+  id: string;
+  label: string;
   avatar: {
     avatarType: "preset" | "upload";
     avatarValue: string;
   };
-  information?: string;
-  tags?: Tag[];
+  secondaryInfo?: string;
+  // tags?: Tag[];
 }
 \`\`\`
 
@@ -55,8 +56,7 @@ type ProfileListItem = {
 
 - Each profile includes a three-dot menu button for actions
 - The UserProfile component is wrapped to handle overflow properly
-- Profile usernames should be unique to serve as keys
-- The onClick handler currently passes "add_new" but should be updated to pass the username
+- Profile ids should be unique to serve as keys
         `,
       },
     },
@@ -70,41 +70,45 @@ export default meta;
 
 const mockProfiles: ProfileListItem[] = [
   {
-    username: "JohnDoe",
+    id: "john_doe",
+    label: "JohnDoe",
     avatar: {
       avatarType: "preset" as const,
       avatarValue: "blue",
     },
-    information: "Gran Turismo 7",
-    tags: ['director', 'host'],
+    secondaryInfo: "Gran Turismo 7",
+    // tags: ['director', 'host'],
   },
   {
-    username: "JaneSmith",
+    id: "jane_smith",
+    label: "JaneSmith",
     avatar: {
       avatarType: "preset" as const,
       avatarValue: "red",
     },
-    information: "F1 24",
-    tags: ['host', 'driver'],
+    secondaryInfo: "F1 24",
+    // tags: ['host', 'driver'],
   },
   {
-    username: "TomJohnson",
+    id: "tom_johnson",
+    label: "TomJohnson",
     avatar: {
       avatarType: "preset" as const,
       avatarValue: "green",
     },
-    information: "iRacing",
+    secondaryInfo: "iRacing",
   },
   {
-    username: "AliceWilliams",
+    id: "alice_williams",
+    label: "AliceWilliams",
     avatar: {
       avatarType: "preset" as const,
       avatarValue: "yellow",
     },
-    information: "Assetto Corsa",
-    tags: [
-      "driver"
-    ],
+    secondaryInfo: "Assetto Corsa",
+    // tags: [
+    //   "driver"
+    // ],
   },
 ];
 
@@ -120,7 +124,7 @@ export const Default: Story = {
   ),
   args: {
     items: mockProfiles,
-    onClick: (username) => alert(`Clicked menu for ${username}`),
+    onClick: (id) => alert(`Clicked menu for ${id}`),
   },
 };
 
@@ -132,7 +136,7 @@ export const SingleProfile: Story = {
   ),
   args: {
     items: [mockProfiles[0]],
-    onClick: (username) => alert(`Clicked menu for ${username}`),
+    onClick: (id) => alert(`Clicked menu for ${id}`),
   },
 };
 
@@ -145,91 +149,93 @@ export const WithoutTags: Story = {
   args: {
     items: [
       {
-        username: "UserOne",
+        id: "user_one",
+        label: "UserOne",
         avatar: {
           avatarType: "preset",
           avatarValue: "black",
         },
-        information: "Gran Turismo 7",
+        secondaryInfo: "Gran Turismo 7",
       },
       {
-        username: "UserTwo",
+        id: "user_two",
+        label: "UserTwo",
         avatar: {
           avatarType: "preset",
           avatarValue: "blue",
         },
-        information: "F1 24",
+        secondaryInfo: "F1 24",
       },
     ],
-    onClick: (username) => alert(`Clicked menu for ${username}`),
+    onClick: (id) => alert(`Clicked menu for ${id}`),
   },
 };
 
-export const WithoutInformation: Story = {
-  render: (args) => (
-    <div style={{ width: "432px" }}>
-      <ProfileList {...args} />
-    </div>
-  ),
-  args: {
-    items: [
-      {
-        username: "MinimalUser1",
-        avatar: {
-          avatarType: "preset",
-          avatarValue: "red",
-        },
-        tags: ["driver"],
-      },
-      {
-        username: "MinimalUser2",
-        avatar: {
-          avatarType: "preset",
-          avatarValue: "green",
-        },
-        tags: ["host"],
-      },
-    ],
-    onClick: (username) => alert(`Clicked menu for ${username}`),
-  },
-};
+// export const WithoutInformation: Story = {
+//   render: (args) => (
+//     <div style={{ width: "432px" }}>
+//       <ProfileList {...args} />
+//     </div>
+//   ),
+//   args: {
+//     items: [
+//       {
+//         username: "MinimalUser1",
+//         avatar: {
+//           avatarType: "preset",
+//           avatarValue: "red",
+//         },
+//         tags: ["driver"],
+//       },
+//       {
+//         username: "MinimalUser2",
+//         avatar: {
+//           avatarType: "preset",
+//           avatarValue: "green",
+//         },
+//         tags: ["host"],
+//       },
+//     ],
+//     onClick: (username) => alert(`Clicked menu for ${username}`),
+//   },
+// };
 
-export const ManyProfiles: Story = {
-  render: (args) => (
-    <div style={{ width: "432px" }}>
-      <ProfileList {...args} />
-    </div>
-  ),
-  args: {
-    items: [
-      ...mockProfiles,
-      {
-        username: "UserFive",
-        avatar: {
-          avatarType: "preset",
-          avatarValue: "black",
-        },
-        information: "Project CARS 3",
-        tags: ["driver"],
-      },
-      {
-        username: "UserSix",
-        avatar: {
-          avatarType: "preset",
-          avatarValue: "blue",
-        },
-        information: "Dirt Rally 2.0",
-      },
-      {
-        username: "UserSeven",
-        avatar: {
-          avatarType: "preset",
-          avatarValue: "red",
-        },
-        information: "ACC",
-        tags: ["director", "host"],
-      },
-    ],
-    onClick: (username) => alert(`Clicked menu for ${username}`),
-  },
-};
+// export const ManyProfiles: Story = {
+//   render: (args) => (
+//     <div style={{ width: "432px" }}>
+//       <ProfileList {...args} />
+//     </div>
+//   ),
+//   args: {
+//     items: [
+//       ...mockProfiles,
+//       {
+//         username: "UserFive",
+//         avatar: {
+//           avatarType: "preset",
+//           avatarValue: "black",
+//         },
+//         information: "Project CARS 3",
+//         tags: ["driver"],
+//       },
+//       {
+//         username: "UserSix",
+//         avatar: {
+//           avatarType: "preset",
+//           avatarValue: "blue",
+//         },
+//         information: "Dirt Rally 2.0",
+//       },
+//       {
+//         username: "UserSeven",
+//         avatar: {
+//           avatarType: "preset",
+//           avatarValue: "red",
+//         },
+//         information: "ACC",
+//         tags: ["director", "host"],
+//       },
+//     ],
+//     onClick: (username) => alert(`Clicked menu for ${username}`),
+//   },
+// };
