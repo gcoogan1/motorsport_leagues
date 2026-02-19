@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { designTokens } from "@/app/design/tokens";
 
 
-const { colors, layout, effects, borders, typography } = designTokens;
+const { colors, layout, effects, borders } = designTokens;
 
 
 export const DropdownContainer = styled.div<{ $isStandAlone?: boolean }>`
