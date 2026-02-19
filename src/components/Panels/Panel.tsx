@@ -8,10 +8,11 @@ import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 type PanelProps = {
   panel: PanelProviderTypes;
+  panelProps?: Record<string, unknown>;
   onClose: () => void;
 };
 
-const Panel: React.FC<PanelProps> = ({ panel, onClose }) => {
+const Panel: React.FC<PanelProps> = ({ panel, panelProps, onClose }) => {
   // Lock body scroll when panel is open and unlock when closed
   useLockBodyScroll(panel !== "none");
   if (panel === "none") return null;
@@ -24,7 +25,7 @@ const Panel: React.FC<PanelProps> = ({ panel, onClose }) => {
 
       {/* Right side panel */}
       <PanelContainer>
-        {React.createElement(panelVariants[panel])}
+        {React.createElement(panelVariants[panel], panelProps)}
       </PanelContainer>
     </>,
     document.body
