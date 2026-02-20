@@ -93,6 +93,7 @@ export const ResultsContainer = styled.div`
   border: ${borders.width.medium} solid transparent;
   border-radius: ${borders.radius.large};
   overflow-y: auto;
+  padding: ${layout.space.small}; // Added to allow space for profile card border
   flex: 1;
   min-height: 0;
 `;

@@ -9,6 +9,8 @@
      - **Profiles Panel:** Click "Search" button in actions
      - **Global Navigation:** Click search icon in navbar
    - Search modal component in [src/features/search/forms/SearchForm.tsx](src/features/search/forms/SearchForm.tsx)
+  - When opened from the Profiles panel, `closePanel` is passed into the form
+  - Panel trigger in [src/features/panels/profiles/ProfilesPanel.tsx](src/features/panels/profiles/ProfilesPanel.tsx)
    - Modal opens with three tabs: Profiles, Squads, Leagues
 
 2. **Lock Body Scroll**
@@ -117,6 +119,7 @@
 16. **Navigate to Profile**
     - App navigates to `/profile/{profileId}`
     - Search modal closes
+  - If search was opened from the Profiles panel, the panel also closes
     - Profile page loads with selected profile
 
 ---

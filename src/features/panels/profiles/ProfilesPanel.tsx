@@ -46,7 +46,7 @@ const ProfilesPanel = () => {
   };
 
   const handleSearchProfiles = () => {
-    openModal(<SearchForm />);
+    openModal(<SearchForm closePanel={closePanel} />);
   };
 
   return (

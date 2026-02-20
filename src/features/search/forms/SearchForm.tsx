@@ -17,7 +17,11 @@ const SEARCH_TABS = [
   { label: "Leagues" },
 ];
 
-const SearchForm = () => {
+type SearchFormProps = {
+  closePanel?: () => void;
+};
+
+const SearchForm = ({ closePanel }: SearchFormProps) => {
   const { user } = useAuth();
   const { closeModal } = useModal();
   const [activeTab, setActiveTab] = useState<string>(SEARCH_TABS[0].label);
@@ -61,7 +65,8 @@ const SearchForm = () => {
   const handleNavigateToProfile = (profileId: string) => { 
     navigate(`/profile/${profileId}`);
     closeModal();
-    return
+    closePanel?.();
+    return;
   }
 
   return (
