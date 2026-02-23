@@ -87,8 +87,9 @@ const ProfileList = ({ items, onClick }: ProfileListProps) => {
           >
             <Button 
               size="small"
-              color="system"
+              color="base"
               variant="ghost"
+              rounded
               onClick={() => handleMenuClick(item.id)} 
               icon={{ left: <More_Vertical /> }}
             />

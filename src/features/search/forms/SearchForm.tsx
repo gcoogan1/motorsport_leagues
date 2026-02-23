@@ -6,6 +6,7 @@ import { navigate } from "@/app/navigation/navigation";
 import { useProfiles } from "@/hooks/rtkQuery/queries/useProfiles";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
+import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import Search from "@/components/Search/Search";
 import ProfileCard from "@/components/Cards/ProfileCard/ProfileCard";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
@@ -104,7 +105,7 @@ const SearchForm = ({ closePanel }: SearchFormProps) => {
               key={profile.id}
               cardSize="small"
               username={profile.username}
-              userGame={profile.game_type}
+              userGame={convertGameTypeToFullName(profile.game_type)}
               avatarType={profile.avatar_type}
               avatarValue={profile.avatar_value}
               onClick={() => handleNavigateToProfile(profile.id)}

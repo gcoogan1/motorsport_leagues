@@ -71,7 +71,8 @@ const FollowProfile = ({ userId, profileIdToFollow }: FollowProfileProps) => {
   return (
     <FormProvider {...formMethods}>
       <FormModal
-        question="Select a Profile of yours to follow this Profile with."
+        question="Follow Profile"
+        helperMessage="Select a Profile of yours to follow this Profile with."
         onSubmit={handleSubmit(handleOnSubmit)}
         buttons={{
           onCancel: { label: "Cancel", action: closeModal },
@@ -85,7 +86,7 @@ const FollowProfile = ({ userId, profileIdToFollow }: FollowProfileProps) => {
         <ProfileSelectInput
           name="follow_profile"
           type="profile"
-          fieldLabel="Select a profile to follow"
+          fieldLabel="Following Profile"
           isLarge
           profiles={formatedProfiles}
           hasError={!!errors.follow_profile}

@@ -59,6 +59,8 @@ const ProfileHeader = ({
   const isMemberProfile = viewType === "member";
   // const isGuestProfile = viewType === "guest";
 
+  const followerText = followersCount === 1 ? "Follower" : "Followers";
+
   const handleMemeberFollow = () => {
     onMemberFollow?.();
   };
@@ -92,7 +94,7 @@ const ProfileHeader = ({
                   onClick={followersOnClick}
                   rounded
                 >
-                  {followersCount} Followers
+                  {followersCount} {followerText}
                 </Button>
 
                 {!!championCount && (

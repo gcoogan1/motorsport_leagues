@@ -6,6 +6,7 @@ const { colors, layout, borders, typography } = designTokens;
 
 export const DropdownMenuOption = styled.div`
   width: 100%;
+  box-sizing: border-box;
   padding-top: ${layout.space.small};
   padding-bottom: ${layout.space.small};
   padding-left: ${layout.space.medium};
@@ -16,10 +17,11 @@ export const DropdownMenuOption = styled.div`
   align-items: center;
   gap: ${layout.space.xxxSmall};
   background: transparent;
+  border: ${borders.width.medium} solid transparent;
 
   &:hover {
     background-color: ${colors.base.translucent20};
-    border: none;
+    border-color: transparent;
     outline: none;
   }
 
