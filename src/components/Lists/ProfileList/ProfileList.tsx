@@ -1,5 +1,5 @@
 // import type { Tag } from "@/components/Tags/Tags.variants";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UserProfile from "@/components/Users/Profile/UserProfile";
 import Button from "@/components/Button/Button";
 import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
@@ -31,6 +31,29 @@ type ProfileListProps = {
 const ProfileList = ({ items, onClick }: ProfileListProps) => {
   const viewType = useSelector(selectProfileViewType());
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const dropdownContainerRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!openDropdown) {
+      return;
+    }
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      const container = dropdownContainerRefs.current[openDropdown];
+      const target = event.target as Node;
+
+      if (container && !container.contains(target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [openDropdown]);
 
   const handleMenuClick = (id: string) => {
     setOpenDropdown(openDropdown === id ? null : id);
@@ -56,7 +79,12 @@ const ProfileList = ({ items, onClick }: ProfileListProps) => {
               // tags={item.tags}
             />
           </UserProfileWrapper>
-          <DropdownContainer>
+          <DropdownContainer
+            ref={(node) => {
+              // Store ref for each dropdown container to handle outside clicks
+              dropdownContainerRefs.current[item.id] = node;
+            }}
+          >
             <Button 
               size="small"
               color="system"
