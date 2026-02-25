@@ -5,6 +5,7 @@ import Homepage from "@/pages/Hompage/Homepage";
 import Login from "@/pages/Login/Login";
 import Profile from "@/pages/Profile/Profile";
 import ResetPassword from "@/pages/ResetPassword/ResetPassword";
+import Squad from "@/pages/Squad/Squad";
 import Unavailable from "@/pages/Unavailable/Unavailable";
 import VerifyAccount from "@/pages/VerifyAccount/VerifyAccount";
 
@@ -49,6 +50,10 @@ export const ROUTES: Route[] = [
   {
     path: "/profile/:profileId",
     element: <Profile />,
+  },
+  {
+    path: "/squad/:squadId",
+    element: <Squad />,
   },
   {
     path: "/error",
