@@ -36,7 +36,7 @@ export type AvatarValue =
 
 // Supabase Service Types //
 
-// Profile table --> matches Supabase "profiles" table but with camelCase keys
+// Profile table --> matches Supabase "profiles" table
 export type ProfileTable = {
   id: string;
   created_at: string;
@@ -47,7 +47,7 @@ export type ProfileTable = {
   avatar_value: string;
 };
 
-// Profile Follows table --> matches Supabase "profile_follows" table but with camelCase keys
+// Profile Follows table --> matches Supabase "profile_follows" table
 export type ProfileFollowsTable = {
   follower_account_id: string;
   follower_id: string;

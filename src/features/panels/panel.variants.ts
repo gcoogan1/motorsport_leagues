@@ -5,7 +5,7 @@ import ProfilesPanel from "./profiles/ProfilesPanel";
 import GuestProfilesPanel from "./profiles/variants/GuestProfilesPanel";
 import SquadsPanel from "./squads/SquadsPanel";
 import LeaguesPanel from "./leagues/LeaguesPanel";
-import GuestSquadsPanel from "./squads/GuestSquadsPanel";
+import GuestSquadsPanel from "./squads/vaiants/GuestSquadsPanel";
 import GuestLeaguesPanel from "./leagues/GuestLeaguesPanel";
 import ProfileEdit from "./profileEdit/ProfileEdit";
 import ProfileFollowers from "./profileFollowers/ProfileFollowers";
