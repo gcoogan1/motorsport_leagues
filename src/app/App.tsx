@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Provider, useDispatch } from "react-redux";
 import ReactGA from "react-ga4";
- 
 
 
 import store, { type AppDispatch } from "@/store";
@@ -14,6 +13,7 @@ import { useAuth } from "@/providers/auth/useAuth";
 import AppRouter from "./routes/AppRouter";
 import { AppThemeProvider } from "../providers/theme/AppThemeProvider";
 import { ModalProvider } from "../providers/modal/ModalProvider";
+import { fetchSquadsByAccountIdThunk } from "@/store/squads/squad.thunk";
 
 // import Toast from "@/components/Messages/Toast/Toast";
 
@@ -27,6 +27,7 @@ const AppContent = () => {
     if (user?.id) {
       dispatch(fetchAccountThunk(user.id));
       dispatch(fetchProfilesThunk(user.id));
+      dispatch(fetchSquadsByAccountIdThunk(user.id));
     }
   }, [user?.id, dispatch]);
 

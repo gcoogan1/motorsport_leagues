@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import accountReducer from "./account/account.slice";
 import profileReducer from "./profile/profile.slice";
+import squadReducer from "./squads/squad.slice";
 import { profileApi } from "./rtkQueryAPI/profileApi";
 
 export const store = configureStore({
   reducer: {
     account: accountReducer,
     profile: profileReducer,
+    squad: squadReducer,
     [profileApi.reducerPath]: profileApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
