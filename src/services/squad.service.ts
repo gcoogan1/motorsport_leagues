@@ -16,7 +16,7 @@ export const resolveBannerValue = (
   return data.publicUrl;
 };
 
-export const getSquadsByAcoountId= async (accountId: string): Promise<GetSquadsResult> => {
+export const getSquadsByAccountId= async (accountId: string): Promise<GetSquadsResult> => {
   const { data, error } = await supabase
     .from("squads")
     .select("*")

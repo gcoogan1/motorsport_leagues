@@ -1,4 +1,4 @@
-import { createSquadWithBanner, getSquadsByAcoountId} from "@/services/squad.service";
+import { createSquadWithBanner, getSquadsByAccountId} from "@/services/squad.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { SquadTable, CreateSquadPayload, } from "@/types/squad.types";
 
@@ -12,7 +12,7 @@ export const fetchSquadsByAccountIdThunk = createAsyncThunk<
     accountId: string,
     { rejectWithValue }
   ) => {
-    const result = await fetchSquadsByAccountId(accountId);
+    const result = await getSquadsByAccountId(accountId);
 
     if (!result.success) {
       return rejectWithValue(result.error.message);
