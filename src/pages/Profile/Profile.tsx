@@ -79,7 +79,7 @@ const Profile = () => {
 
   // If no profile found for the given profileId, navigate to unavailable page
   if (!profileId) {
-    navigate("/unavailable");
+    navigate("/unavailable", { replace: true });
     return;
   }
 

@@ -72,7 +72,7 @@ export const BannerImage = styled.div<{ $imageBg?: string }>`
   aspect-ratio: 2 / 1;
   align-self: stretch;
   border-radius: ${borders.radius.large};
-  background-image: ${({ $imageBg }) => $imageBg ? `url(${$imageBg})` : "none"};
+  background-image: ${({ $imageBg }) => $imageBg ? `url("${$imageBg}")` : "none"};
   background-size: cover;
   background-position: center;
 `;
