@@ -1,6 +1,6 @@
-import type { SquadState } from "@/types/squad.types";
-import { createSlice } from "@reduxjs/toolkit";
-import { fetchSquadsByAccountIdThunk } from "./squad.thunk";
+import type { SquadDraft, SquadState } from "@/types/squad.types";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { createSquadThunk, fetchSquadsByAccountIdThunk } from "./squad.thunk";
 
 const initialState: SquadState = {
   data: null,
@@ -21,7 +21,7 @@ const squadSlice = createSlice({
       state.error = undefined;
     },
 
-    updateSquadDraft: (state, action) => {
+    updateSquadDraft: (state, action: PayloadAction<Partial<SquadDraft>>) => {
       state.draft = {
         ...state.draft,
         ...action.payload,
@@ -34,7 +34,6 @@ const squadSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-
       // Get Squads By Account Id
       .addCase(fetchSquadsByAccountIdThunk.pending, (state) => {
         state.status = "loading";
@@ -49,6 +48,24 @@ const squadSlice = createSlice({
         state.status = "rejected";
         state.error = action.payload ?? action.error.message;
       })
+      // Create Squad
+      .addCase(createSquadThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = undefined;
+      })
+      .addCase(createSquadThunk.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        if (state.data) {
+          state.data.push(action.payload.data);
+        } else {
+          state.data = [action.payload.data];
+        }
+        state.currentSquad = action.payload.data;
+      })
+      .addCase(createSquadThunk.rejected, (state, action) => {
+        state.status = "rejected";
+        state.error = action.error.message;
+      });
   },
 });
 
