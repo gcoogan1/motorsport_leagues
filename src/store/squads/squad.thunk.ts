@@ -1,6 +1,6 @@
-import { fetchSquadsByAccountId } from "@/services/squad.serice";
+import { createSquadWithBanner, getSquadsByAccountId} from "@/services/squad.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import type { SquadTable } from "@/types/squad.types";
+import type { SquadTable, CreateSquadPayload, } from "@/types/squad.types";
 
 export const fetchSquadsByAccountIdThunk = createAsyncThunk<
   SquadTable[],
@@ -12,7 +12,7 @@ export const fetchSquadsByAccountIdThunk = createAsyncThunk<
     accountId: string,
     { rejectWithValue }
   ) => {
-    const result = await fetchSquadsByAccountId(accountId);
+    const result = await getSquadsByAccountId(accountId);
 
     if (!result.success) {
       return rejectWithValue(result.error.message);
@@ -21,3 +21,24 @@ export const fetchSquadsByAccountIdThunk = createAsyncThunk<
     return result.data;
   },
 );
+
+export const createSquadThunk = createAsyncThunk(
+  "squad/create",
+  async (
+    { founderAccountId, founderProfileId, squadName, banner }: CreateSquadPayload,
+    { rejectWithValue },
+  ) => {
+    const result = await createSquadWithBanner({
+      founderAccountId,
+      founderProfileId,
+      squadName,
+      banner,
+    });
+
+    if (!result.success) {
+      return rejectWithValue(result.error);
+    }
+
+    return result;
+  },
+);;

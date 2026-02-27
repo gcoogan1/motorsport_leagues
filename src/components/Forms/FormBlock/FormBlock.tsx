@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Button from "../../Button/Button";
@@ -38,7 +37,7 @@ type FormBlockProps = {
       loadingText?: string;
     };
   };
-  onSubmit?: (data: any) => void;
+  onSubmit?: React.FormEventHandler<HTMLFormElement>;
 };
 
 const FormBlock = ({
@@ -50,6 +49,15 @@ const FormBlock = ({
   onSubmit,
 }: FormBlockProps) => {
   const isMobile = useMediaQuery("(max-width: 919px)");
+
+  const handleFormSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+    if (!onSubmit) {
+      event.preventDefault();
+      return;
+    }
+
+    onSubmit(event);
+  };
 
   const handleOnContinue = () => {
     if (buttons?.onContinue?.action) {
@@ -64,7 +72,7 @@ const FormBlock = ({
   };
 
   return (
-    <FormWrapper onSubmit={onSubmit}>
+    <FormWrapper onSubmit={handleFormSubmit}>
       <FormHeader>
         <HeaderTitle>{title}</HeaderTitle>
       </FormHeader>
@@ -95,7 +103,7 @@ const FormBlock = ({
         </SecondaryButtonContainer>
         {buttons?.onContinue && (
           <Button
-            type="submit"
+            type={onSubmit ? "submit" : "button"}
             color="system"
             onClick={handleOnContinue}
             isLoading={buttons?.onContinue?.loading}

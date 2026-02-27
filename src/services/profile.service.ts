@@ -404,6 +404,26 @@ export const deleteProfile = async (
     }
   }
 
+  // Remove all follow relationships linked to this profile before deleting it.
+  // This covers both:
+  // 1) profiles this profile follows (follower_id)
+  // 2) profiles that follow this profile (following_id)
+  const { error: followDeleteError } = await supabase
+    .from("profile_follows")
+    .delete()
+    .or(`follower_id.eq.${profileId},following_id.eq.${profileId}`);
+
+  if (followDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: followDeleteError.message,
+        code: followDeleteError.code || "PROFILE_FOLLOWS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
   // Delete the profile from the database
   const { error } = await supabase
     .from("profiles")

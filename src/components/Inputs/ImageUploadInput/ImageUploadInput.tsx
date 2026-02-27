@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import Button from "@/components/Button/Button";
 import Avatar from "@/components/Avatar/Avatar";
+import { getBannerVariants } from "@/components/Banner/Banner.variants";
 import UploadIcon from "@assets/Icon/Upload.svg?react";
 import Error_Outlined from "@assets/Icon/Error_Outlined.svg?react";
 import {
@@ -14,9 +15,15 @@ import {
 } from "./ImageUploadInput.styles";
 import { useFormContext } from "react-hook-form";
 import type { AvatarFormValues } from "@/features/panels/profileEdit/forms/EditAvatar/editAvatar.schema";
+import type { BannerImageValue } from "@/types/squad.types";
+
+type ImageInputFormValues = {
+  avatar?: AvatarFormValues["avatar"];
+  banner?: BannerImageValue;
+};
 
 type Props = {
-  name: "avatar";
+  name: "avatar" | "banner";
   isAvatar?: boolean;
   helperMessage?: string;
   hasError?: boolean;
@@ -31,45 +38,44 @@ const ImageUploadInput = ({
   errorMessage,
 }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { watch, setValue } = useFormContext<AvatarFormValues>();
+  const { watch, setValue } = useFormContext<ImageInputFormValues>();
 
-  const avatar = watch(name);
+  const fieldValue = watch(name);
 
-  // Compute preview URL safely
-  // Note: we allow previewUrl in the form state for existing uploads, but it is not a File and should not be treated as such
+  // Compute preview URL for uploads
   const previewUrl = useMemo(() => {
-    if (!avatar) return undefined;
-    if (avatar.type === "upload") {
-      if (avatar.file && avatar.file instanceof File) {
-        return URL.createObjectURL(avatar.file);
-      }
-      if (avatar.previewUrl && typeof avatar.previewUrl === "string") {
-        return avatar.previewUrl;
-      }
-    }
+    if (!fieldValue || fieldValue.type !== "upload") return undefined;
+    if (fieldValue.file instanceof File) return URL.createObjectURL(fieldValue.file);
+    if (fieldValue.previewUrl && typeof fieldValue.previewUrl === "string") return fieldValue.previewUrl;
     return undefined;
-  }, [avatar]);
+  }, [fieldValue]);
 
-  // Cleanup object URL when component unmounts or when a new file is selected
+  // Cleanup object URL on unmount or when a new file is selected
   useEffect(() => {
     if (previewUrl && previewUrl.startsWith("blob:")) {
       return () => URL.revokeObjectURL(previewUrl);
     }
   }, [previewUrl]);
 
-  // Avatar display logic:
-  // - If avatar type is upload and we have a valid preview URL, use it
-  // - Else if avatar type is preset, use the variant to display the correct preset avatar
-  // - Else show placeholder (no avatar)
-  const avatarType = avatar?.type === "upload" ? "upload" : "preset";
-  const avatarValue =
-    avatarType === "upload" && previewUrl
+  // Resolve image src for non-avatar display (upload preview or banner preset)
+  const imageSrc = (() => {
+    if (!fieldValue) return undefined;
+    if (fieldValue.type === "upload") return previewUrl;
+    if (name === "banner" && fieldValue.type === "preset") {
+      return getBannerVariants()[(fieldValue as Extract<BannerImageValue, { type: "preset" }>).variant];
+    }
+    return undefined;
+  })();
+
+  // Avatar display values (only used when isAvatar is true)
+  const avatarDisplayType = fieldValue?.type === "upload" ? "upload" : "preset";
+  const avatarDisplayValue =
+    avatarDisplayType === "upload" && previewUrl
       ? previewUrl
-      : avatarType === "preset" && avatar?.type === "preset"
-        ? avatar.variant ?? "black"
+      : avatarDisplayType === "preset" && fieldValue?.type === "preset" && name === "avatar"
+        ? (fieldValue as Extract<AvatarFormValues["avatar"], { type: "preset" }>).variant ?? "black"
         : undefined;
 
-  // Handle file input change and update form state accordingly
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -83,16 +89,16 @@ const ImageUploadInput = ({
   return (
     <InputContainer>
       <ImageUploadContainer>
-        {isAvatar ? (
+        {isAvatar && name === "avatar" ? (
           <Avatar
             size="xLarge"
-            avatarType={avatarType}
-            avatarValue={avatarValue ?? "black"}
+            avatarType={avatarDisplayType}
+            avatarValue={avatarDisplayValue ?? "black"}
           />
         ) : (
           <ImageUpload>
-            {avatarType === "upload" && avatarValue ? (
-              <img src={avatarValue} alt="Uploaded preview" />
+            {imageSrc ? (
+              <img src={imageSrc} alt="Uploaded preview" />
             ) : (
               <Placeholder />
             )}
