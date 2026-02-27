@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { type RootState } from "@/store";
+import { navigate } from "@/app/navigation/navigation";
 // import { useAuth } from "@/providers/auth/useAuth";
 // import { useModal } from "@/providers/modal/useModal";
-// import { usePanel } from "@/providers/panel/usePanel";
+import { usePanel } from "@/providers/panel/usePanel";
 import SquadIcon from "@assets/Icon/Squad.svg?react";
 import CreateIcon from "@assets/Icon/Create.svg?react";
 import SearchIcon from "@assets/Icon/Search.svg?react";
+import { getBannerVariants } from "@/components/Banner/Banner.variants";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import SquadCard from "@/components/Cards/SquadCard/SquadCard";
@@ -19,7 +21,7 @@ const SQUAD_TABS = [
 
 const SquadsPanel = () => {
   // const { user } = useAuth();
-  // const { closePanel } = usePanel();
+  const { closePanel } = usePanel();
   // const { openModal } = useModal();
   const [activeTab, setActiveTab] = useState<string>(SQUAD_TABS[0].label);
   const squads = useSelector((state: RootState) => state.squad.data);
@@ -29,7 +31,11 @@ const SquadsPanel = () => {
     setActiveTab(tab);
   };
 
-  const handleCreateSquad = () => {};
+  const handleCreateSquad = () => {
+    closePanel();
+    navigate("/create-squad");
+    return
+  };
 
   const handleSearchSquads = () => {};
 
@@ -60,16 +66,20 @@ const SquadsPanel = () => {
       {activeTab === "My Squads" ? (
         <>
           {squads && squads.length > 0 ? (
-            squads.map((squad) => (
-              <SquadCard 
-                key={squad.id}
-                name={squad.squad_name}
-                memberCount={0}
-                bannerImageUrl={squad.banner_image_url || undefined}
-                size="medium"
-              
-              />
-            ))
+            squads.map((squad) => {
+              const bannerImage = squad.banner_type === "preset"
+                ? getBannerVariants()[squad.banner_value as keyof ReturnType<typeof getBannerVariants>]
+                : squad.banner_value;
+              return (
+                <SquadCard
+                  key={squad.id}
+                  name={squad.squad_name}
+                  memberCount={0}
+                  bannerImageUrl={bannerImage}
+                  size="medium"
+                />
+              );
+            })
           ) : (
             <EmptyMessage
             title="No Squads Created or Joined"
