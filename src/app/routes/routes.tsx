@@ -1,5 +1,6 @@
 import CreateAccount from "@/pages/CreateAccount/CreateAccount";
 import CreateProfile from "@/pages/CreateProfile/CreateProfile";
+import CreateSquad from "@/pages/CreateSquad/CreateSquad";
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 import Homepage from "@/pages/Hompage/Homepage";
 import Login from "@/pages/Login/Login";
@@ -54,6 +55,12 @@ export const ROUTES: Route[] = [
   {
     path: "/squad/:squadId",
     element: <Squad />,
+  },
+  {
+    path: "/create-squad",
+    element: <CreateSquad />,
+    navbar: "core",
+    protected: true,
   },
   {
     path: "/error",
