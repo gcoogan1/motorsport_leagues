@@ -1,9 +1,11 @@
-let navigateRef: ((to: string) => void) | null = null;
+import type { NavigateOptions } from "react-router";
 
-export const setNavigate = (navigate: (to: string) => void) => {
+let navigateRef: ((to: string, options?: NavigateOptions) => void) | null = null;
+
+export const setNavigate = (navigate: (to: string, options?: NavigateOptions) => void) => {
   navigateRef = navigate;
 };
 
-export const navigate = (to: string) => {
-  navigateRef?.(to);
+export const navigate = (to: string, options?: NavigateOptions) => {
+  navigateRef?.(to, options);
 };
