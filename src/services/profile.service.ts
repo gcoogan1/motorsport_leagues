@@ -561,8 +561,6 @@ export const getFollowersService = async (
     `)
     .eq("following_id", profileId);
 
-  console.log("Joined followers data:", data);
-
   if (error) {
     return {
       success: false,
@@ -607,8 +605,6 @@ export const getFollowingService = async (
       )
     `)
     .eq("follower_account_id", userId);
-
-    console.log("Joined following data:", data);
 
   if (error) {
     return {
