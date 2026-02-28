@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { type RootState } from "@/store";
 import { navigate } from "@/app/navigation/navigation";
 // import { useAuth } from "@/providers/auth/useAuth";
-// import { useModal } from "@/providers/modal/useModal";
+import { useModal } from "@/providers/modal/useModal";
 import { usePanel } from "@/providers/panel/usePanel";
 import SquadIcon from "@assets/Icon/Squad.svg?react";
 import CreateIcon from "@assets/Icon/Create.svg?react";
@@ -12,6 +12,7 @@ import { getBannerVariants } from "@/components/Banner/Banner.variants";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import SquadCard from "@/components/Cards/SquadCard/SquadCard";
+import SearchForm from "@/features/search/forms/SearchForm";
 
 
 const SQUAD_TABS = [
@@ -22,7 +23,7 @@ const SQUAD_TABS = [
 const SquadsPanel = () => {
   // const { user } = useAuth();
   const { closePanel } = usePanel();
-  // const { openModal } = useModal();
+  const { openModal } = useModal();
   const [activeTab, setActiveTab] = useState<string>(SQUAD_TABS[0].label);
   const squads = useSelector((state: RootState) => state.squad.data);
 
@@ -37,7 +38,9 @@ const SquadsPanel = () => {
     return
   };
 
-  const handleSearchSquads = () => {};
+  const handleSearchSquads = () => {
+    openModal(<SearchForm closePanel={closePanel} startingTab="Squads" />);
+  };
 
   return (
     <PanelLayout
