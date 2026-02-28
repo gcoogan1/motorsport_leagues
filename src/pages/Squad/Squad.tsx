@@ -1,15 +1,23 @@
+import { useEffect } from "react";
 import { useParams } from "react-router";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/store";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState, AppDispatch } from "@/store";
+import { getSquadByIdThunk } from "@/store/squads/squad.thunk";
 import { getBannerVariants } from "@/components/Banner/Banner.variants";
 import SquadHeader from "@/components/Headers/SquadHeader/SquadHeader";
 import { Wrapper } from "./Squad.styles";
 
 const Squad = () => {
   const { squadId } = useParams<{ squadId: string }>();
-  const squad = useSelector((state: RootState) =>
-    state.squad.data?.find((s) => s.id === squadId)
-  );
+  const dispatch = useDispatch<AppDispatch>();
+  const squad = useSelector((state: RootState) => state.squad.currentSquad);
+
+  useEffect(() => {
+    // If the squadId from the URL params doesn't match the currently loaded squad, fetch the new squad data
+    if (squadId && squad?.id !== squadId) {
+      dispatch(getSquadByIdThunk(squadId));
+    }
+  }, [squadId, squad?.id, dispatch]);
 
   if (!squad) return null;
 

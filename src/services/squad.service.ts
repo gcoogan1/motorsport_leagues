@@ -1,5 +1,9 @@
 import { supabase } from "@/lib/supabase";
-import type { CreateSquadPayload, CreateSquadResult, GetSquadsResult } from "@/types/squad.types";
+import type {
+  CreateSquadPayload,
+  CreateSquadResult,
+  GetSquadsResult,
+} from "@/types/squad.types";
 import { normalizeName } from "@/utils/normalizeName";
 
 export const resolveBannerValue = (
@@ -16,13 +20,14 @@ export const resolveBannerValue = (
   return data.publicUrl;
 };
 
-export const getSquadsByAccountId= async (accountId: string): Promise<GetSquadsResult> => {
+export const getSquadsByAccountId = async (
+  accountId: string,
+): Promise<GetSquadsResult> => {
   const { data, error } = await supabase
     .from("squads")
     .select("*")
     .eq("founder_account_id", accountId);
 
-  
   if (error) {
     return {
       success: false,
@@ -34,11 +39,14 @@ export const getSquadsByAccountId= async (accountId: string): Promise<GetSquadsR
     };
   }
 
-  return { success: true, data: data.map(squad => ({
-    ...squad,
-    banner_value: resolveBannerValue(squad.banner_type, squad.banner_value),
-  }))};
-}
+  return {
+    success: true,
+    data: data.map((squad) => ({
+      ...squad,
+      banner_value: resolveBannerValue(squad.banner_type, squad.banner_value),
+    })),
+  };
+};
 
 export const isSquadNameAvailable = async (name: string): Promise<boolean> => {
   const normalizedSquadName = normalizeName(name);
@@ -142,5 +150,83 @@ export const createSquadWithBanner = async ({
       banner_type: bannerType,
       banner_value: resolvedBanner,
     },
+  };
+};
+
+// -- Get Squad By ID -- //
+export const getSquadById = async (squadId: string): Promise<CreateSquadResult> => {
+  const { data, error } = await supabase
+    .from("squads")
+    .select("*")
+    .eq("id", squadId)
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: {
+      ...data,
+      banner_value: resolveBannerValue(data.banner_type, data.banner_value),
+    },
+  };
+};
+
+// -- Get All Squads (with optional search) -- //
+export const getAllSquads = async (
+  founderAcctId?: string,
+  search?: string,
+  signal?: AbortSignal,
+): Promise<GetSquadsResult> => {
+  let query = supabase
+    .from("squads")
+    .select("*");
+
+  if (search) {
+    const normalizedSearch = normalizeName(search);
+    query = query.ilike("squad_name_normalized", `%${normalizedSearch}%`);
+  }
+
+  if (founderAcctId) {
+    query = query.neq("founder_account_id", founderAcctId);
+  }
+
+  if (signal) {
+    query = query.abortSignal(signal);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    // Standard Supabase abort error code is '20' or 'ABORT' depending on environment
+    if (error.code === "ABORT" || error.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data.map((squad) => ({
+      ...squad,
+      banner_value: resolveBannerValue(squad.banner_type, squad.banner_value),
+    })),
   };
 };

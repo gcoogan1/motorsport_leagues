@@ -5,11 +5,12 @@ type SquadCardProps = {
   memberCount: number;
   bannerImageUrl?: string;
   size: "small" | "medium";
+  onClick?: () => void;
 }
 
-const SquadCard = ({ name, memberCount, bannerImageUrl, size }: SquadCardProps) => {
+const SquadCard = ({ name, memberCount, bannerImageUrl, size, onClick }: SquadCardProps) => {
   return (
-    <ClickableWrapper $cardSize={size}>
+    <ClickableWrapper $cardSize={size} onClick={onClick}>
       <ImageContainer $cardSize={size} $imageBg={bannerImageUrl} />
       <TextContainer $cardSize={size}>
         <NameText>{name}</NameText>
