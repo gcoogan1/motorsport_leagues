@@ -153,6 +153,34 @@ export const createSquadWithBanner = async ({
   };
 };
 
+// -- Get Squad By ID -- //
+export const getSquadById = async (squadId: string): Promise<CreateSquadResult> => {
+  const { data, error } = await supabase
+    .from("squads")
+    .select("*")
+    .eq("id", squadId)
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: {
+      ...data,
+      banner_value: resolveBannerValue(data.banner_type, data.banner_value),
+    },
+  };
+};
+
 // -- Get All Squads (with optional search) -- //
 export const getAllSquads = async (
   founderAcctId?: string,

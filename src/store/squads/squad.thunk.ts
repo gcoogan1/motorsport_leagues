@@ -1,4 +1,4 @@
-import { createSquadWithBanner, getSquadsByAccountId} from "@/services/squad.service";
+import { createSquadWithBanner, getSquadsByAccountId, getSquadById } from "@/services/squad.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { SquadTable, CreateSquadPayload, } from "@/types/squad.types";
 
@@ -42,3 +42,20 @@ export const createSquadThunk = createAsyncThunk(
     return result;
   },
 );;
+
+export const getSquadByIdThunk = createAsyncThunk<
+  SquadTable,
+  string,
+  { rejectValue: string }
+>(
+  "squad/getById",
+  async (squadId: string, { rejectWithValue }) => {
+    const result = await getSquadById(squadId);
+
+    if (!result.success) {
+      return rejectWithValue(result.error.message);
+    }
+
+    return result.data;
+  },
+);
