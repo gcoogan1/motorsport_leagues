@@ -6,14 +6,18 @@ import {
   selectHasProfiles,
   selectProfileViewType,
 } from "@/store/profile/profile.selectors";
-import { type AppDispatch } from "@/store";
+import { type AppDispatch, type RootState } from "@/store";
 import { usePanel } from "@/providers/panel/usePanel";
 import { useAuth } from "@/providers/auth/useAuth";
 import { useModal } from "@/providers/modal/useModal";
 import { navigate } from "@/app/navigation/navigation";
 import { getProfileByProfileIdThunk } from "@/store/profile/profile.thunk";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
-import { useIsFollowingProfile, useProfileFollowers } from "@/hooks/rtkQuery/queries/useProfileFollowers";
+import { getBannerVariants } from "@/components/Banner/Banner.variants";
+import {
+  useIsFollowingProfile,
+  useProfileFollowers,
+} from "@/hooks/rtkQuery/queries/useProfileFollowers";
 import ProfileHeader from "@/components/Headers/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/ProfileStats/ProfileStats";
 import SquadsListCard from "@/components/Cards/CardList/SquadsListCard/SquadsListCard";
@@ -57,6 +61,13 @@ const Profile = () => {
 
   // -- Selectors -- //
   const profile = useSelector(selectCurrentProfile);
+  // Update when members are added
+  const mySquads = useSelector(
+    (state: RootState) =>
+      state.squad.data?.filter(
+        (squad) => squad.founder_profile_id === profile?.id,
+      ) ?? [],
+  );
   const viewType = useSelector(selectProfileViewType());
   const userHasActiveProfile = useSelector(selectHasProfiles);
   const fullGameName = profile?.game_type
@@ -67,8 +78,10 @@ const Profile = () => {
   // Fetch followers for this profile (used to display followers count and determine if current user is following this profile)
   const { data: followers = [] } = useProfileFollowers(profileId ?? "");
   // Check if the logged in user is following the profile being viewed (used to determine follow/unfollow behavior)
-  const { data: isFollowing = false } = useIsFollowingProfile(user?.id ?? "", profileId ?? "");
-
+  const { data: isFollowing = false } = useIsFollowingProfile(
+    user?.id ?? "",
+    profileId ?? "",
+  );
 
   useEffect(() => {
     // If profileId exists in URL and it's different from the currently loaded profile, fetch the new profile
@@ -91,7 +104,7 @@ const Profile = () => {
 
   const handleGoToFollowers = () => {
     openPanel("PROFILE_FOLLOWERS", { profileId });
-  }
+  };
 
   const handleMemberFollow = () => {
     if (user?.id && isFollowing) {
@@ -100,18 +113,20 @@ const Profile = () => {
     }
 
     if (user?.id && userHasActiveProfile) {
-      openModal(<FollowProfile userId={user.id} profileIdToFollow={profileId} />);
+      openModal(
+        <FollowProfile userId={user.id} profileIdToFollow={profileId} />,
+      );
       return;
     }
 
     openModal(<NoProfile />);
     return;
-  }
+  };
 
   const handleGuestFollow = () => {
     openModal(<GuestFollow />);
     return;
-  }
+  };
 
   return (
     <Wrapper>
@@ -132,7 +147,22 @@ const Profile = () => {
         <Container>
           <ProfileStats stats={stats} />
           <ListContainer>
-            <SquadsListCard />
+            <SquadsListCard
+              isOwner={viewType === "owner"}
+              squads={mySquads.map((squad) => ({
+                id: squad.id,
+                name: squad.squad_name,
+                bannerUrl:
+                  squad.banner_type === "preset"
+                    ? getBannerVariants()[
+                        squad.banner_value as keyof ReturnType<
+                          typeof getBannerVariants
+                        >
+                      ]
+                    : squad.banner_value,
+                onClick: () => navigate(`/squad/${squad.id}`),
+              }))}
+            />
             <LeaguesListCard />
           </ListContainer>
         </Container>
