@@ -6,7 +6,8 @@ import { getSquadByIdThunk } from "@/store/squads/squad.thunk";
 import { getBannerVariants } from "@/components/Banner/Banner.variants";
 import SquadHeader from "@/components/Headers/SquadHeader/SquadHeader";
 import { useSquadMembers } from "@/hooks/rtkQuery/queries/useSquadMembers";
-import { Wrapper } from "./Squad.styles";
+import { Container, Contents, Wrapper } from "./Squad.styles";
+import LeaguesListCard from "@/components/Cards/CardList/LeaguesListCard/LeaguesListCard";
 
 const Squad = () => {
   const { squadId } = useParams<{ squadId: string }>();
@@ -45,6 +46,11 @@ const Squad = () => {
         onShare={() => console.log("Share Squad")}
         onInvite={() => console.log("Invite to Squad")}
       />
+      <Contents>
+        <Container>
+          <LeaguesListCard />
+        </Container>
+      </Contents>
     </Wrapper>
   );
 };

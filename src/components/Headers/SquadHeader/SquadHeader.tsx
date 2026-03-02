@@ -55,6 +55,8 @@ const SquadHeader = ({
 
   //TODO: Get Members and render in members list. Get number of followers.
 
+  const memberText = members.length === 1 ? "Member" : "Members";
+
 
   // -- Handlers -- //
   const handleEdit = () => {
@@ -112,7 +114,7 @@ const SquadHeader = ({
           <TopLine />
           <ButtonContainer>
             <Button color="base" variant="filled" rounded icon={{ left: <MemebersIcon /> }}>
-              {members.length} Members
+              {members.length} {memberText}
             </Button>
           </ButtonContainer>
         </MememberTop>

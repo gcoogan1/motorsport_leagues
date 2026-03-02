@@ -9,12 +9,13 @@ type SquadCardProps = {
 }
 
 const SquadCard = ({ name, memberCount, bannerImageUrl, size, onClick }: SquadCardProps) => {
+  const squadMemberText = memberCount === 1 ? "Member" : "Members";
   return (
     <ClickableWrapper $cardSize={size} onClick={onClick}>
       <ImageContainer $cardSize={size} $imageBg={bannerImageUrl} />
       <TextContainer $cardSize={size}>
         <NameText>{name}</NameText>
-        <MemberCountText>{memberCount} members</MemberCountText>
+        <MemberCountText>{memberCount} {squadMemberText}</MemberCountText>
       </TextContainer>
     </ClickableWrapper>
   )

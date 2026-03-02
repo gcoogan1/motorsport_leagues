@@ -13,12 +13,44 @@ import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout"
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import SquadCard from "@/components/Cards/SquadCard/SquadCard";
 import SearchForm from "@/features/search/forms/SearchForm";
+import { useSquadMembers } from "@/hooks/rtkQuery/queries/useSquadMembers";
+import type { SquadTable } from "@/types/squad.types";
 
 
 const SQUAD_TABS = [
   { label: "My Squads", shouldExpand: true },
   { label: "Following" },
 ];
+
+type SquadListItemProps = {
+  squad: SquadTable;
+  onClick: () => void;
+};
+
+// TODO: This may slow down if there are a lot of squads since we're making a separate query for each squad to get the member count. 
+// We may want to consider adding the member count to the SquadTable in the database to avoid this.
+
+// This component is used to render each squad in the list of squads on the SquadsPanel. It displays the squad name, member count, and banner image.
+const SquadListItem = ({ squad, onClick }: SquadListItemProps) => {
+  const { data: squadMembers = [] } = useSquadMembers(squad.id);
+
+  const bannerImage =
+    squad.banner_type === "preset"
+      ? getBannerVariants()[
+          squad.banner_value as keyof ReturnType<typeof getBannerVariants>
+        ]
+      : squad.banner_value;
+
+  return (
+    <SquadCard
+      name={squad.squad_name}
+      memberCount={squadMembers.length}
+      bannerImageUrl={bannerImage}
+      size="medium"
+      onClick={onClick}
+    />
+  );
+};
 
 const SquadsPanel = () => {
   // const { user } = useAuth();
@@ -36,6 +68,11 @@ const SquadsPanel = () => {
     closePanel();
     navigate("/create-squad");
     return
+  };
+
+  const handleGoToSquad = (squadId: string) => {
+    closePanel();
+    navigate(`/squad/${squadId}`);
   };
 
   const handleSearchSquads = () => {
@@ -69,20 +106,13 @@ const SquadsPanel = () => {
       {activeTab === "My Squads" ? (
         <>
           {squads && squads.length > 0 ? (
-            squads.map((squad) => {
-              const bannerImage = squad.banner_type === "preset"
-                ? getBannerVariants()[squad.banner_value as keyof ReturnType<typeof getBannerVariants>]
-                : squad.banner_value;
-              return (
-                <SquadCard
-                  key={squad.id}
-                  name={squad.squad_name}
-                  memberCount={0}
-                  bannerImageUrl={bannerImage}
-                  size="medium"
-                />
-              );
-            })
+            squads.map((squad) => (
+              <SquadListItem
+                key={squad.id}
+                squad={squad}
+                onClick={() => handleGoToSquad(squad.id)}
+              />
+            ))
           ) : (
             <EmptyMessage
             title="No Squads Created or Joined"
