@@ -26,12 +26,18 @@ import {
   TopLine,
 } from "./SquadHeader.styles";
 import Avatar from "@/components/Avatar/Avatar";
-import { members } from "./dummyMembers";
+
+type MemberAvatar = {
+  id: string;
+  avatarType: "preset" | "upload";
+  avatarValue: string;
+};
 
 type SquadHeaderProps = {
   squadId: string;
   squadName: string;
   bannerImage?: string;
+  members?: MemberAvatar[];
   onEdit?: () => void;
   onShare?: () => void;
   onInvite?: () => void;
@@ -41,6 +47,7 @@ const SquadHeader = ({
   squadId,
   squadName,
   bannerImage,
+  members = [],
   onEdit,
   onShare,
   onInvite,
@@ -111,7 +118,7 @@ const SquadHeader = ({
         </MememberTop>
         <MembersList>
           <LeftCover />
-          {members?.map((member) => (
+          {members.map((member) => (
             <Avatar key={member.id} avatarType={member.avatarType} avatarValue={member.avatarValue} />
           ))}
           <RightCover />

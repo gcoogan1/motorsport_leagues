@@ -36,6 +36,23 @@ export type SquadTable = {
   banner_value: string;
 };
 
+export type SquadMemberTable = {
+  id: string;
+  created_at: string;
+  squad_id: string;
+  profile_id: string;
+  role: typeof SQUAD_MEMBER_ROLES[number];
+};
+
+export type SquadMemberProfile = {
+  id: string;
+  profile_id: string;
+  username: string;
+  avatar_type: "preset" | "upload";
+  avatar_value: string;
+  role: typeof SQUAD_MEMBER_ROLES[number];
+};
+
 // Supabase Error Type --> used in squad service results
 type SupabaseError = {
   success: false;
@@ -55,6 +72,13 @@ export type GetSquadsSuccess = {
 // Get Squads --> Result type
 export type GetSquadsResult = GetSquadsSuccess | SupabaseError;
 
+export type GetSquadMembersSuccess = {
+  success: true;
+  data: SquadMemberProfile[];
+};
+
+export type GetSquadMembersResult = GetSquadMembersSuccess | SupabaseError;
+
 // Create Squad --> Payload type
 export type CreateSquadPayload = {
   founderAccountId: string;
@@ -71,6 +95,16 @@ export type CreateSquadSuccess = {
 
 // Create Squad --> Result type
 export type CreateSquadResult = CreateSquadSuccess | SupabaseError;
+
+export type AddSquadMemberPayload = {
+  squadId: string;
+  profileId: string;
+  role: typeof SQUAD_MEMBER_ROLES[number];
+};
+
+export type AddSquadMemberResult = 
+  | { success: true; data: SquadMemberTable }
+  | SupabaseError;
 
 
 // Redux Types //
