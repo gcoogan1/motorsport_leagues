@@ -613,3 +613,112 @@ export const checkIfFollowingSquad = async (
 
   return !!data;
 };
+
+// -- Delete Squads By Founder -- //
+// -> used when deleting a profile and the profile is a main founder of one or more squads
+export const deleteSquadsByFounderService = async (
+  founderAccountId: string,
+  founderProfileId: string,
+) => {
+  // Fetch squads founded by this profile
+  const { data: foundedSquads, error: foundedSquadsError } = await supabase
+    .from("squads")
+    .select("id, banner_type, banner_value")
+    .eq("founder_account_id", founderAccountId)
+    .eq("founder_profile_id", founderProfileId);
+
+  if (foundedSquadsError) {
+    return {
+      success: false,
+      error: {
+        message: foundedSquadsError.message,
+        code: foundedSquadsError.code || "FOUNDED_SQUADS_FETCH_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  if (!foundedSquads.length) {
+    return {
+      success: true,
+    };
+  }
+
+  // Extract squad IDs and any uploaded banner paths for cleanup
+  const squadIds = foundedSquads.map((squad) => squad.id);
+  const uploadedBannerPaths = foundedSquads
+    .filter((squad) => squad.banner_type === "upload")
+    .map((squad) => squad.banner_value);
+
+  if (uploadedBannerPaths.length) {
+    // Delete uploaded banners from Supabase Storage to clean up resources and avoid orphaned files
+    const { error: bannerDeleteError } = await supabase.storage
+      .from("banners")
+      .remove(uploadedBannerPaths);
+
+    if (bannerDeleteError) {
+      return {
+        success: false,
+        error: {
+          message: bannerDeleteError.message,
+          code: "SQUAD_BANNER_DELETION_FAILED",
+          status: 500,
+        },
+      };
+    }
+  }
+
+  // Delete squad follows and members associated with these squads before deleting the squads themselves
+  const { error: squadFollowsDeleteError } = await supabase
+    .from("squad_follows")
+    .delete()
+    .in("squad_id", squadIds);
+
+  if (squadFollowsDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: squadFollowsDeleteError.message,
+        code: squadFollowsDeleteError.code || "SQUAD_FOLLOWS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const { error: squadMembersDeleteError } = await supabase
+    .from("squad_members")
+    .delete()
+    .in("squad_id", squadIds);
+
+  if (squadMembersDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: squadMembersDeleteError.message,
+        code: squadMembersDeleteError.code || "SQUAD_MEMBERS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  // Delete the squads
+  const { error: squadsDeleteError } = await supabase
+    .from("squads")
+    .delete()
+    .in("id", squadIds);
+
+  if (squadsDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: squadsDeleteError.message,
+        code: squadsDeleteError.code || "FOUNDED_SQUADS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};

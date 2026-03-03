@@ -13,6 +13,7 @@ import type {
   UpdateAvatarPayload,
   UpdateUsernamePayload,
 } from "@/types/profile.types";
+import { deleteSquadsByFounderService } from "./squad.service";
 
 // TODO: Make sure delete cascades are set up correctly in the database
 
@@ -387,6 +388,24 @@ export const deleteProfile = async (
   profileId: string,
   avatarValue?: string,
 ) => {
+  // Get the profile's account ID for any necessary cleanup of related data (like founded squads) before deleting the profile itself
+  const { data: profileRow, error: profileLookupError } = await supabase
+    .from("profiles")
+    .select("account_id")
+    .eq("id", profileId)
+    .single();
+
+  if (profileLookupError) {
+    return {
+      success: false,
+      error: {
+        message: profileLookupError.message,
+        code: profileLookupError.code || "PROFILE_FETCH_FAILED",
+        status: 500,
+      },
+    };
+  }
+
   if (avatarValue) {
     // Delete any uploaded avatar from Supabase Storage
     const avatarDeletionResult = await deleteAvatarFromStorage(avatarValue);
@@ -420,6 +439,40 @@ export const deleteProfile = async (
         message: followDeleteError.message,
         code: followDeleteError.code || "PROFILE_FOLLOWS_DELETION_FAILED",
         status: 500,
+      },
+    };
+  }
+
+  // Remove squad follow relationships for this profile before deleting it.
+  // This ensures a deleted profile no longer follows any squads.
+  const { error: squadFollowDeleteError } = await supabase
+    .from("squad_follows")
+    .delete()
+    .eq("follower_id", profileId);
+
+  if (squadFollowDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: squadFollowDeleteError.message,
+        code: squadFollowDeleteError.code || "SQUAD_FOLLOWS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+  // Delete any squads founded by this profile before deleting the profile itself, to avoid orphaned squads without founders.
+  const deleteFoundedSquadsResult = await deleteSquadsByFounderService(
+    profileRow.account_id,
+    profileId,
+  );
+
+  if (!deleteFoundedSquadsResult.success) {
+    return {
+      success: false,
+      error: {
+        message: deleteFoundedSquadsResult.error?.message || "Failed to delete founded squads",
+        code: deleteFoundedSquadsResult.error?.code || "FOUNDED_SQUADS_DELETION_FAILED",
+        status: deleteFoundedSquadsResult.error?.status || 500,
       },
     };
   }

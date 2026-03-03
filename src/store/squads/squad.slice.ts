@@ -1,5 +1,6 @@
 import type { SquadDraft, SquadState } from "@/types/squad.types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { deleteProfileThunk } from "@/store/profile/profile.thunk";
 import { createSquadThunk, fetchSquadsByAccountIdThunk, getSquadByIdThunk } from "./squad.thunk";
 
 const initialState: SquadState = {
@@ -83,6 +84,20 @@ const squadSlice = createSlice({
       .addCase(getSquadByIdThunk.rejected, (state, action) => {
         state.status = "rejected";
         state.error = action.payload ?? action.error.message;
+      })
+      // Remove squads founded by deleted profile from local squad state
+      .addCase(deleteProfileThunk.fulfilled, (state, action) => {
+        const deletedProfileId = action.meta.arg.profileId;
+
+        if (state.data) {
+          state.data = state.data.filter(
+            (squad) => squad.founder_profile_id !== deletedProfileId,
+          );
+        }
+
+        if (state.currentSquad?.founder_profile_id === deletedProfileId) {
+          state.currentSquad = null;
+        }
       });
   },
 });
