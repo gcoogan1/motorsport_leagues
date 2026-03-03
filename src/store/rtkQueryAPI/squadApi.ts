@@ -1,5 +1,24 @@
-import { getAllSquads, getSquadMembersBySquadId } from "@/services/squad.service";
-import type { GetSquadMembersResult, GetSquadsResult, SquadMemberProfile, SquadTable } from "@/types/squad.types";
+import {
+  followSquadService,
+  getAllSquads,
+  getSquadFollowersService,
+  getSquadFollowingService,
+  getSquadMembersBySquadId,
+  isFollowingSquadService,
+  unfollowSquadService,
+} from "@/services/squad.service";
+import type {
+  GetSquadMembersResult,
+  GetSquadFollowingResult,
+  GetSquadsResult,
+  SquadMemberProfile,
+  SquadTable,
+  FollowSquadPayload,
+  FollowSquadResult,
+  UnfollowSquadPayload,
+  UnfollowSquadResult,
+} from "@/types/squad.types";
+import type { GetFollowersResult, ProfileTable } from "@/types/profile.types";
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 
 
@@ -12,26 +31,32 @@ export type SquadQueryArgs = {
 export const squadApi = createApi({
   reducerPath: "squadApi",
   baseQuery: fakeBaseQuery(),
-  tagTypes: ["Squads", "SquadMembers"],
+  tagTypes: ["Squads", "SquadMembers", "SquadFollowers", "SquadFollowing"],
   endpoints: (builder) => ({
     getSquads: builder.query<SquadTable[], SquadQueryArgs>({
       queryFn: async ({ founderAccountId, search }, api) => {
-        const result: GetSquadsResult = await getAllSquads(
-          founderAccountId,
-          search,
-          api.signal,
-        );
+        try {
+          const result: GetSquadsResult = await getAllSquads(
+            founderAccountId,
+            search,
+            api.signal,
+          );
 
-        if (!result.success) {
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
           return {
-            error: {
-              status: result.error.status,
-              data: result.error,
-            },
+            error,
           };
         }
-
-        return { data: result.data };
       },
       providesTags: (_result, _error, args) => [
         { type: "Squads", id: `${args.activeTab ?? "all"}-${args.search ?? ""}` },
@@ -39,27 +64,151 @@ export const squadApi = createApi({
     }),
     getSquadMembers: builder.query<SquadMemberProfile[], string>({
       queryFn: async (squadId, api) => {
-        const result: GetSquadMembersResult = await getSquadMembersBySquadId(
-          squadId,
-          api.signal,
-        );
+        try {
+          const result: GetSquadMembersResult = await getSquadMembersBySquadId(
+            squadId,
+            api.signal,
+          );
 
-        if (!result.success) {
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
           return {
-            error: {
-              status: result.error.status,
-              data: result.error,
-            },
+            error,
           };
         }
-
-        return { data: result.data };
       },
       providesTags: (_result, _error, squadId) => [
         { type: "SquadMembers", id: squadId },
       ],
     }),
+    followSquad: builder.mutation<FollowSquadResult, FollowSquadPayload>({
+      queryFn: async (payload) => {
+        try {
+          const result = await followSquadService(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "SquadFollowers", id: payload.squadId },
+        { type: "SquadFollowing", id: payload.profileId },
+      ],
+    }),
+    getSquadFollowers: builder.query<ProfileTable[], string>({
+      queryFn: async (squadId) => {
+        try {
+          const result: GetFollowersResult = await getSquadFollowersService(
+            squadId,
+          );
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      providesTags: (_result, _error, squadId) => [
+        { type: "SquadFollowers", id: squadId },
+      ],
+    }),
+    getSquadFollowing: builder.query<SquadTable[], string>({
+      queryFn: async (profileId) => {
+        try {
+          const result: GetSquadFollowingResult = await getSquadFollowingService(
+            profileId,
+          );
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      providesTags: (_result, _error, profileId) => [
+        { type: "SquadFollowing", id: profileId },
+      ],
+    }),
+    isFollowingSquad: builder.query<boolean, { squadId: string, accountId: string }>({
+      queryFn: async ({ squadId, accountId }) => {
+        try {
+          const data = await isFollowingSquadService(squadId, accountId);
+          return { data };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      providesTags: (_result, _error, { squadId, accountId }) => [
+        { type: "SquadFollowers", id: squadId },
+        { type: "SquadFollowing", id: accountId },
+      ],
+    }),
+    unfollowSquad: builder.mutation<UnfollowSquadResult, UnfollowSquadPayload>({
+      queryFn: async (payload) => {
+        try {
+          const data = await unfollowSquadService(payload);
+          return { data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "SquadFollowers", id: payload.squadId },
+        { type: "SquadFollowing", id: payload.accountId },
+      ],
+    }),
   }),
 });
 
-export const { useGetSquadsQuery, useGetSquadMembersQuery } = squadApi;
+export const {
+  useGetSquadsQuery,
+  useGetSquadMembersQuery,
+  useGetSquadFollowersQuery,
+  useGetSquadFollowingQuery,
+  useFollowSquadMutation,
+  useIsFollowingSquadQuery,
+  useUnfollowSquadMutation,
+} = squadApi;

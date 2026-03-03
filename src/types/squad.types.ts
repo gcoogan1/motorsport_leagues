@@ -1,5 +1,7 @@
 // -- Squad Types -- //
 
+import type { ProfileTable } from "./profile.types";
+
 // Constants //
 
 export const SQUAD_MEMBER_ROLES = ["member", "founder"] as const;
@@ -34,6 +36,7 @@ export type SquadTable = {
   squad_name_normalized: string;
   banner_type: "preset" | "upload";
   banner_value: string;
+  member_count?: number;
 };
 
 export type SquadMemberTable = {
@@ -52,6 +55,14 @@ export type SquadMemberProfile = {
   avatar_value: string;
   role: typeof SQUAD_MEMBER_ROLES[number];
 };
+
+// Squad Follows Table --> represents the "squad_follows" table in Supabase, which tracks which profiles are following which squads
+export type SquadFollowsTable = {
+  follower_id: string;
+  follower_account_id: string;
+  squad_id: string;
+};
+export type SquadViewType = "owner" | "member" | "user" | "guest";
 
 // Supabase Error Type --> used in squad service results
 type SupabaseError = {
@@ -96,19 +107,61 @@ export type CreateSquadSuccess = {
 // Create Squad --> Result type
 export type CreateSquadResult = CreateSquadSuccess | SupabaseError;
 
+// Add Squad Member --> Payload type
 export type AddSquadMemberPayload = {
   squadId: string;
   profileId: string;
   role: typeof SQUAD_MEMBER_ROLES[number];
 };
 
+// Add Squad Member --> Result type
 export type AddSquadMemberResult = 
   | { success: true; data: SquadMemberTable }
   | SupabaseError;
 
+// Follow Squad --> Payload type
+export type FollowSquadPayload = {
+  squadId: string;
+  profileId: string;
+  accountId: string;
+};
+
+// Follow Squad --> Result type
+export type FollowSquadResult = 
+  | { success: true }
+  | SupabaseError;
+
+// Unfollow Squad --> Payload type
+export type UnfollowSquadPayload = {
+  squadId: string;
+  accountId: string;
+};
+
+// Unfollow Squad --> Result type
+export type UnfollowSquadResult = 
+  | { success: true }
+  | SupabaseError;
+
+// Get Squad Followers --> Success type
+export type GetSquadFollowersSuccess = {
+  success: true;
+  data: ProfileTable[];
+};
+
+// Get Squad Followers --> Result type
+export type GetSquadFollowersResult = GetSquadFollowersSuccess | SupabaseError;
+
+// Get Squad Following --> Success type
+export type GetSquadFollowingSuccess = {
+  success: true;
+  data: SquadTable[];
+};
+
+// Get Squad Following --> Result type
+export type GetSquadFollowingResult = GetSquadFollowingSuccess | SupabaseError;
 
 // Redux Types //
-
+// Squad State --> used in Redux slice for squads
 export type SquadState = {
   data: SquadTable[] | null;
   currentSquad: SquadTable | null;

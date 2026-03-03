@@ -55,12 +55,17 @@ const squadSlice = createSlice({
       })
       .addCase(createSquadThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
+        const createdSquad = {
+          ...action.payload.data,
+          member_count: action.payload.data.member_count ?? 1,
+        };
+
         if (state.data) {
-          state.data.push(action.payload.data);
+          state.data.push(createdSquad);
         } else {
-          state.data = [action.payload.data];
+          state.data = [createdSquad];
         }
-        state.currentSquad = action.payload.data;
+        state.currentSquad = createdSquad;
       })
       .addCase(createSquadThunk.rejected, (state, action) => {
         state.status = "rejected";
