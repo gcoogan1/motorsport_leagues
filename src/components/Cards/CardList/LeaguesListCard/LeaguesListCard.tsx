@@ -1,6 +1,6 @@
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
-import CreateIcon from "@assets/Icon/Create.svg?react";
-import SearchIcon from "@assets/Icon/Search.svg?react";
+// import CreateIcon from "@assets/Icon/Create.svg?react";
+// import SearchIcon from "@assets/Icon/Search.svg?react";
 import LeagueIcon from "@assets/Icon/League.svg?react";
 import {
   CardListWrapper,
@@ -17,21 +17,21 @@ const LeaguesListCard = () => {
       </HeaderContainer>
       <ListContainer>
         <EmptyMessage
-          title="No Leagues Created or Joined"
+          title="No Leagues Hosted"
           icon={<LeagueIcon />}
-          subtitle="Use your driver Profile to join a League or use a Squad to create your perfect racing series."
-          actions={{
-            primary: {
-              label: "Create New League",
-              onClick: () => {},
-              leftIcon: <CreateIcon />,
-            },
-            secondary: {
-              label: "Find a League",
-              onClick: () => {},
-              leftIcon: <SearchIcon />,
-            },
-          }}
+          subtitle="This Squad is currently not hosting any Leagues."
+          // actions={{
+          //   primary: {
+          //     label: "Create New League",
+          //     onClick: () => {},
+          //     leftIcon: <CreateIcon />,
+          //   },
+          //   secondary: {
+          //     label: "Find a League",
+          //     onClick: () => {},
+          //     leftIcon: <SearchIcon />,
+          //   },
+          // }}
         />
       </ListContainer>
     </CardListWrapper>

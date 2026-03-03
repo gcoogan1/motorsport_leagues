@@ -1,4 +1,7 @@
 import styled from "styled-components";
+import { designTokens } from "@app/design/tokens";
+
+const { colors } = designTokens;
 
 export const Wrapper = styled.div`
   display: flex;
@@ -9,4 +12,5 @@ export const Wrapper = styled.div`
 export const Main = styled.main`
   flex: 1;
   display: flex;
+  background: ${colors.base.base1};
 `;

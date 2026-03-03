@@ -65,6 +65,10 @@ export const RightActions = styled.div`
   gap: ${layout.space.xSmall};
 `;
 
+export const MoreActionsContainer = styled.div`
+  position: relative;
+`;
+
 export const BannerImage = styled.div<{ $imageBg?: string }>`
   width: 100%;
   max-width: 640px;
@@ -90,7 +94,7 @@ export const Name = styled.h1`
   color: ${colors.text.text1};
 `;
 
-export const MememberTop = styled.div`
+export const MemberTop = styled.div`
   display: flex;
   width: 100%;
   position: relative;
@@ -122,7 +126,7 @@ export const ButtonContainer = styled.div`
   background: ${colors.base.base2};
 `;
 
-export const MememberBottom = styled.div`
+export const MemberBottom = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -145,7 +149,7 @@ export const BottomLine = styled.div`
 `;
 
 
-export const MemebersContainer = styled.div`
+export const MembersContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;

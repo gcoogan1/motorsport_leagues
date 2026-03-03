@@ -4,7 +4,7 @@ import { type AppDispatch } from '@/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectHasProfiles } from '@/store/profile/profile.selectors';
 import { clearSquadDraft } from '@/store/squads/squad.slice';
-import NoProfile from '@/features/squads/forms/Create/NoProfile/NoProfile';
+import NoProfileForm from '@/features/squads/forms/Create/NoProfile/NoProfileForm';
 import Founder from '@/features/squads/forms/Create/Founder/Founder';
 import Name from '@/features/squads/forms/Create/Name/Name';
 import Banner from '@/features/squads/forms/Create/Banner/Banner';
@@ -40,7 +40,7 @@ const CreateSquad = () => {
   return (
     <PageWrapper>
       {!hasProfiles ? (
-        <NoProfile />
+        <NoProfileForm />
       ) : (
         <>
           {step === "founder" && <Founder onSuccess={handleNextStep} />}

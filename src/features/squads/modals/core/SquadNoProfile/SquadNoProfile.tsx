@@ -2,7 +2,7 @@ import { useModal } from '@/providers/modal/useModal';
 import Dialog from '@/components/Dialog/Dialog'
 import { navigate } from '@/app/navigation/navigation';
 
-const NoProfile = () => {
+const SquadNoProfile = () => {
   const { closeModal } = useModal();
 
   const handleContinue = () => {
@@ -13,8 +13,8 @@ const NoProfile = () => {
   return (
     <Dialog 
       type='core'
-      title='Profile Required to Follow Profiles'
-      subtitle={`Please create a Profile to be able to follow this, and other, Profiles.`}
+      title='Profile Required to Follow Squads'
+      subtitle={`Please create a Profile to be able to follow this, and other, Squads.`}
       buttons={{
         onCancel: {
           label: 'Cancel',
@@ -29,4 +29,4 @@ const NoProfile = () => {
   )
 }
 
-export default NoProfile;
+export default SquadNoProfile;

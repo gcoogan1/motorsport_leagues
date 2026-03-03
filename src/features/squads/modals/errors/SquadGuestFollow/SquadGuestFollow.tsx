@@ -2,26 +2,26 @@ import { useModal } from '@/providers/modal/useModal';
 import Dialog from '@/components/Dialog/Dialog'
 import { navigate } from '@/app/navigation/navigation';
 
-const NoProfile = () => {
+const SquadGuestFollow = () => {
   const { closeModal } = useModal();
 
   const handleContinue = () => {
-    navigate('/create-profile');
+    navigate('/create-account');
     closeModal();
   }
   
   return (
     <Dialog 
-      type='core'
-      title='Profile Required to Follow Profiles'
-      subtitle={`Please create a Profile to be able to follow this, and other, Profiles.`}
+      type='alert'
+      title='Account Required to Follow Squads'
+      subtitle={`Please create an log in or sign up to follow this Squad.`}
       buttons={{
         onCancel: {
           label: 'Cancel',
           action: () => closeModal(),
         },
         onContinue: {
-          label: 'Create Profile',
+          label: 'Create Account',
           action: () => handleContinue(),
         }
       }}
@@ -29,4 +29,4 @@ const NoProfile = () => {
   )
 }
 
-export default NoProfile;
+export default SquadGuestFollow;

@@ -1,10 +1,20 @@
 import { supabase } from "@/lib/supabase";
 import type {
+  AddSquadMemberPayload,
+  AddSquadMemberResult,
   CreateSquadPayload,
   CreateSquadResult,
+  FollowSquadPayload,
+  FollowSquadResult,
+  GetSquadFollowingResult,
+  GetSquadMembersResult,
   GetSquadsResult,
+  UnfollowSquadPayload,
+  UnfollowSquadResult,
 } from "@/types/squad.types";
+import { resolveAvatarValue } from "@/services/profile.service";
 import { normalizeName } from "@/utils/normalizeName";
+import type { GetFollowersResult } from "@/types/profile.types";
 
 export const resolveBannerValue = (
   bannerType: "preset" | "upload",
@@ -25,7 +35,7 @@ export const getSquadsByAccountId = async (
 ): Promise<GetSquadsResult> => {
   const { data, error } = await supabase
     .from("squads")
-    .select("*")
+    .select("*, squad_members(count)")
     .eq("founder_account_id", accountId);
 
   if (error) {
@@ -43,6 +53,7 @@ export const getSquadsByAccountId = async (
     success: true,
     data: data.map((squad) => ({
       ...squad,
+      member_count: squad.squad_members?.[0]?.count ?? 0,
       banner_value: resolveBannerValue(squad.banner_type, squad.banner_value),
     })),
   };
@@ -136,6 +147,32 @@ export const createSquadWithBanner = async ({
     };
   }
 
+  // --- Add founder as squad member ---
+  const founderMemberResult = await addMemberToSquad({
+    squadId: data.id,
+    profileId: founderProfileId,
+    role: "founder",
+  });
+
+  if (!founderMemberResult.success) {
+    // If adding the founder as a member fails, attempt to clean up by deleting the created squad and uploaded banner (if applicable)
+    await supabase.from("squads").delete().eq("id", data.id);
+
+    // If the banner was an uploaded file, attempt to clean it up from storage since squad creation failed
+    if (bannerType === "upload") {
+      await supabase.storage.from("banners").remove([bannerValue]);
+    }
+
+    return {
+      success: false,
+      error: {
+        message: founderMemberResult.error.message,
+        code: "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
   // Resolve the banner value to a public URL before returning the squad data
   const resolvedBanner = resolveBannerValue(
     bannerType,
@@ -149,12 +186,15 @@ export const createSquadWithBanner = async ({
       ...data,
       banner_type: bannerType,
       banner_value: resolvedBanner,
+      member_count: 1,
     },
   };
 };
 
 // -- Get Squad By ID -- //
-export const getSquadById = async (squadId: string): Promise<CreateSquadResult> => {
+export const getSquadById = async (
+  squadId: string,
+): Promise<CreateSquadResult> => {
   const { data, error } = await supabase
     .from("squads")
     .select("*")
@@ -189,7 +229,7 @@ export const getAllSquads = async (
 ): Promise<GetSquadsResult> => {
   let query = supabase
     .from("squads")
-    .select("*");
+    .select("*, squad_members(count)");
 
   if (search) {
     const normalizedSearch = normalizeName(search);
@@ -226,7 +266,350 @@ export const getAllSquads = async (
     success: true,
     data: data.map((squad) => ({
       ...squad,
+      member_count: squad.squad_members?.[0]?.count ?? 0,
       banner_value: resolveBannerValue(squad.banner_type, squad.banner_value),
     })),
   };
+};
+
+// -- Add Member to Squad -- //
+export const addMemberToSquad = async (
+  { squadId, profileId, role }: AddSquadMemberPayload,
+): Promise<AddSquadMemberResult> => {
+  const { data, error } = await supabase
+    .from("squad_members")
+    .insert({
+      squad_id: squadId,
+      profile_id: profileId,
+      role: role,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data,
+  };
+};
+
+// -- Get Squad Members by Squad ID -- //
+export const getSquadMembersBySquadId = async (
+  squadId: string,
+  signal?: AbortSignal,
+): Promise<GetSquadMembersResult> => {
+  let membersQuery = supabase
+    .from("squad_members")
+    .select("id, profile_id, role")
+    .eq("squad_id", squadId);
+
+  // Attach the abort signal to the query if provided, allowing the request to be cancelled if needed (e.g., when the component unmounts or the squadId changes)
+  if (signal) {
+    membersQuery = membersQuery.abortSignal(signal);
+  }
+
+  const { data: memberRows, error: membersError } = await membersQuery;
+
+  if (membersError) {
+    if (membersError.code === "ABORT" || membersError.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: membersError.message,
+        code: membersError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (!memberRows.length) {
+    return {
+      success: true,
+      data: [],
+    };
+  }
+
+  // Get profile IDs from the member rows to fetch their profile details in a single query
+  const profileIds = [...new Set(memberRows.map((member) => member.profile_id))];
+
+  let profilesQuery = supabase
+    .from("profiles")
+    .select("id, username, avatar_type, avatar_value")
+    .in("id", profileIds);
+
+  // Attach the abort signal to the profiles query as well, so that if the original request is cancelled, this one will be too
+  if (signal) {
+    profilesQuery = profilesQuery.abortSignal(signal);
+  }
+
+  // Get the profile details for all members in a single query to optimize performance and reduce latency, especially for squads with many members
+  const { data: profiles, error: profilesError } = await profilesQuery;
+
+  if (profilesError) {
+    if (profilesError.code === "ABORT" || profilesError.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: profilesError.message,
+        code: profilesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  // Map the profile details to the corresponding squad members, resolving their avatar values to public URLs if needed
+  const profilesMap = new Map(
+    profiles.map((profile) => [
+      profile.id,
+      {
+        ...profile,
+        avatar_value: resolveAvatarValue(profile.avatar_type, profile.avatar_value),
+      },
+    ]),
+  );
+
+  // Return the squad members with their profile details
+  return {
+    success: true,
+    data: memberRows
+      .map((member) => {
+        const profile = profilesMap.get(member.profile_id);
+
+        if (!profile) return null;
+
+        return {
+          id: member.id,
+          profile_id: member.profile_id,
+          username: profile.username,
+          avatar_type: profile.avatar_type,
+          avatar_value: profile.avatar_value,
+          role: member.role,
+        };
+      })
+      .filter((member): member is NonNullable<typeof member> => member !== null), // Type guard to filter out any null members in case of missing profile data
+  };
+};
+
+// Follow a Squad -- //
+export const followSquadService = async (
+  { squadId, profileId, accountId }: FollowSquadPayload,
+): Promise<FollowSquadResult> => {
+  const { error } = await supabase
+    .from("squad_follows")
+    .insert({
+      follower_id: profileId,
+      follower_account_id: accountId,
+      squad_id: squadId,
+    });
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
+}
+
+// Unfollow a Squad -- //
+export const unfollowSquadService = async (
+  { squadId, accountId }: UnfollowSquadPayload,
+): Promise<UnfollowSquadResult> => {
+  const { error } = await supabase
+    .from("squad_follows")
+    .delete()
+    .eq("follower_account_id", accountId)
+    .eq("squad_id", squadId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
+}
+
+// -- Check if Profile is Following Squad -- //
+export const isFollowingSquadService = async (
+  squadId: string,
+  accountId: string,
+): Promise<boolean> => {
+  const { data, error } = await supabase
+    .from("squad_follows")
+    .select("squad_id")
+    .eq("follower_account_id", accountId)
+    .eq("squad_id", squadId)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      // No rows found means the profile is not following the squad
+      return false;
+    }
+
+    // For any other error, log it and assume the profile is not following the squad to avoid blocking the user due to a transient error
+    console.error("Error checking if profile is following squad:", error);
+    return false;
+  }
+
+  return !!data; // If data is returned, the profile is following the squad; if no data, it's not
+};
+
+// Get Followers of a Squad -- //
+export const getSquadFollowersService = async (
+  squadId: string,
+): Promise<GetFollowersResult> => {
+  const { data: followRows, error: followsError } = await supabase
+    .from("squad_follows")
+    .select("follower_id")
+    .eq("squad_id", squadId);
+
+  if (followsError) {
+    return {
+      success: false,
+      error: {
+        message: followsError.message,
+        code: followsError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (!followRows.length) {
+    return {
+      success: true,
+      data: [],
+    };
+  }
+
+  const profileIds = followRows.map((row) => row.follower_id);
+
+  const { data: profiles, error: profilesError } = await supabase
+    .from("profiles")
+    .select("*")
+    .in("id", profileIds);
+
+  if (profilesError) {
+    return {
+      success: false,
+      error: {
+        message: profilesError.message,
+        code: profilesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: profiles.map((profile) => ({
+      ...profile,
+      avatar_value: resolveAvatarValue(profile.avatar_type, profile.avatar_value),
+    })),
+  };
+};
+
+// Get Squads Followed by a Profile -- //
+export const getSquadFollowingService = async (
+  profileId: string,
+): Promise<GetSquadFollowingResult> => {
+  const { data: followRows, error: followsError } = await supabase
+    .from("squad_follows")
+    .select("squad_id")
+    .eq("follower_id", profileId);
+
+  if (followsError) {
+    return {
+      success: false,
+      error: {
+        message: followsError.message,
+        code: followsError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (!followRows.length) {
+    return {
+      success: true,
+      data: [],
+    };
+  }
+
+  const squadIds = followRows.map((row) => row.squad_id);
+
+  const { data: squads, error: squadsError } = await supabase
+    .from("squads")
+    .select("*, squad_members(count)")
+    .in("id", squadIds);
+
+  if (squadsError)  {
+    return {
+      success: false,
+      error: {
+        message: squadsError.message,
+        code: squadsError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: squads.map((squad) => ({
+      ...squad,
+      member_count: squad.squad_members?.[0]?.count ?? 0,
+      banner_value: resolveBannerValue(squad.banner_type, squad.banner_value),
+    })),
+  };
+}
+
+// Check if following -- //
+export const checkIfFollowingSquad = async (
+  squadId: string,
+  accountId: string,
+): Promise<boolean> => {
+  const { data, error } = await supabase
+    .from("squad_follows")
+    .select("squad_id")
+    .eq("follower_account_id", accountId)
+    .eq("squad_id", squadId)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      return false;
+    }
+
+    return false;
+  }
+
+  return !!data;
 };

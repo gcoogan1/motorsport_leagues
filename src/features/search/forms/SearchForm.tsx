@@ -123,7 +123,7 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
               <SquadCard 
                 key={squad.id}
                 name={squad.squad_name}
-                memberCount={0}
+                memberCount={squad.member_count ?? 0}
                 bannerImageUrl={
                   squad.banner_type === "preset"
                     ? getBannerVariants()[squad.banner_value as keyof ReturnType<typeof getBannerVariants>]

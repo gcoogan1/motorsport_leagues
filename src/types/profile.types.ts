@@ -55,7 +55,6 @@ export type ProfileFollowsTable = {
 };
 
 
-
 // Supabase Error Type --> used in profile service results
 type SupabaseError = {
   success: false;
@@ -75,6 +74,7 @@ export type GetProfilesSuccess = {
 // Get Profiles --> Result type
 export type GetProfilesResult = GetProfilesSuccess | SupabaseError;
 
+// Get Followers --> Success type
 export type GetFollowersSuccess = {
   success: true;
   data: ProfileTable[];
