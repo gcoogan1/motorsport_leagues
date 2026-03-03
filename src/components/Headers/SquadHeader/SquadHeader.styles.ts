@@ -65,6 +65,10 @@ export const RightActions = styled.div`
   gap: ${layout.space.xSmall};
 `;
 
+export const MoreActionsContainer = styled.div`
+  position: relative;
+`;
+
 export const BannerImage = styled.div<{ $imageBg?: string }>`
   width: 100%;
   max-width: 640px;
