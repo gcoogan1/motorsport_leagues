@@ -13,7 +13,6 @@ import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout"
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import SquadCard from "@/components/Cards/SquadCard/SquadCard";
 import SearchForm from "@/features/search/forms/SearchForm";
-import { useSquadMembers } from "@/hooks/rtkQuery/queries/useSquadMembers";
 import type { SquadTable } from "@/types/squad.types";
 
 
@@ -27,13 +26,8 @@ type SquadListItemProps = {
   onClick: () => void;
 };
 
-// TODO: This may slow down if there are a lot of squads since we're making a separate query for each squad to get the member count. 
-// We may want to consider adding the member count to the SquadTable in the database to avoid this.
-
 // This component is used to render each squad in the list of squads on the SquadsPanel. It displays the squad name, member count, and banner image.
 const SquadListItem = ({ squad, onClick }: SquadListItemProps) => {
-  const { data: squadMembers = [] } = useSquadMembers(squad.id);
-
   const bannerImage =
     squad.banner_type === "preset"
       ? getBannerVariants()[
@@ -44,7 +38,7 @@ const SquadListItem = ({ squad, onClick }: SquadListItemProps) => {
   return (
     <SquadCard
       name={squad.squad_name}
-      memberCount={squadMembers.length}
+      memberCount={squad.member_count ?? 0}
       bannerImageUrl={bannerImage}
       size="medium"
       onClick={onClick}
