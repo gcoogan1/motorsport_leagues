@@ -1,10 +1,15 @@
+import type { SquadViewType } from "@/types/squad.types";
+import { useModal } from "@/providers/modal/useModal";
 import Button from "@/components/Button/Button";
 import ShareIcon from "@assets/Icon/Share.svg?react";
 import EditIcon from "@assets/Icon/Edit.svg?react";
 import InviteIcon from "@assets/Icon/Invite.svg?react";
 import ChatIcon from "@assets/Icon/Chat.svg?react";
-import MemebersIcon from "@assets/Icon/Members.svg?react";
+import MembersIcon from "@assets/Icon/Members.svg?react";
 import FollowersIcon from "@assets/Icon/Followers.svg?react";
+import FollowingIcon from "@assets/Icon/Following.svg?react";
+import FollowIcon from "@assets/Icon/Follow.svg?react";
+import Avatar from "@/components/Avatar/Avatar";
 import {
   Actions,
   BannerContainer,
@@ -14,10 +19,10 @@ import {
   Container,
   LeftActions,
   LeftCover,
+  MemberBottom,
+  MemberTop,
   MembersList,
-  MemebersContainer,
-  MememberBottom,
-  MememberTop,
+  MembersContainer,
   Name,
   RightActions,
   RightCover,
@@ -25,7 +30,10 @@ import {
   TopContainer,
   TopLine,
 } from "./SquadHeader.styles";
-import Avatar from "@/components/Avatar/Avatar";
+import SquadGuestFollow from "@/features/squads/modals/errors/SquadGuestFollow/SquadGuestFollow";
+import SquadNoProfile from "@/features/squads/modals/core/SquadNoProfile/SquadNoProfile";
+import FollowSquad from "@/features/squads/forms/Follow/FollowSquad";
+import UnfollowSquad from "@/features/squads/modals/errors/UnfollowSqaud/UnfollowSquad";
 
 type MemberAvatar = {
   id: string;
@@ -36,8 +44,13 @@ type MemberAvatar = {
 type SquadHeaderProps = {
   squadId: string;
   squadName: string;
-  bannerImage?: string;
+  viewType: SquadViewType;
+  hasProfile: boolean;
+  isFollowing?: boolean;
+  viewerAccountId?: string;
   members?: MemberAvatar[];
+  followersCount?: number;
+  bannerImage?: string;
   onEdit?: () => void;
   onShare?: () => void;
   onInvite?: () => void;
@@ -47,16 +60,21 @@ const SquadHeader = ({
   squadId,
   squadName,
   bannerImage,
+  hasProfile,
+  isFollowing,
+  viewerAccountId,
   members = [],
+  followersCount = 0,
   onEdit,
   onShare,
   onInvite,
+  viewType = "guest",
 }: SquadHeaderProps) => {
-
   //TODO: Get Members and render in members list. Get number of followers.
 
+  const { openModal } = useModal();
   const memberText = members.length === 1 ? "Member" : "Members";
-
+  const followerText = followersCount === 1 ? "Follower" : "Followers";
 
   // -- Handlers -- //
   const handleEdit = () => {
@@ -81,27 +99,103 @@ const SquadHeader = ({
     console.log("Chat clicked for squad:", squadId);
   };
 
+  const handleFollowSquad = () => {
+    if (viewType === "guest" || !viewerAccountId) {
+      return openModal(<SquadGuestFollow />);
+    }
+    if (viewType === "user" && !hasProfile) {
+      return openModal(<SquadNoProfile />);
+    }
+
+    if (isFollowing) { 
+      openModal(<UnfollowSquad squadId={squadId} accountId={viewerAccountId} />);
+      return;
+    }
+
+    openModal(<FollowSquad squadIdToFollow={squadId} accountId={viewerAccountId} />);
+    return;
+  }
+
+  // -- Render Right Actions based on view type -- //
+  const renderRightActions = () => {
+    if (viewType === "owner") {
+      return (
+        <>
+          <Button
+            color="base"
+            variant="filled"
+            icon={{ left: <ChatIcon /> }}
+            onClick={handleChat}
+          >
+            Chat
+          </Button>
+          <Button
+            color="base"
+            variant="outlined"
+            icon={{ left: <EditIcon /> }}
+            onClick={handleEdit}
+          >
+            Edit
+          </Button>
+        </>
+      );
+    }
+
+    if (viewType === "member") {
+      return (
+        <Button
+          color="base"
+          variant="outlined"
+          icon={{ left: <ChatIcon /> }}
+          onClick={handleChat}
+        >
+          Chat
+        </Button>
+      );
+    }
+
+    if (viewType === "guest" || viewType === "user") {
+      return (
+        <Button
+          color={isFollowing ? "system" : "base"}
+          variant="filled"
+          icon={{ left: isFollowing ? <FollowingIcon /> : <FollowIcon /> }}
+          onClick={handleFollowSquad}
+        >
+          {isFollowing ? "Following Squad" : "Follow Squad"}
+        </Button>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <Container>
       <TopContainer>
         <BannerContainer>
           <Actions>
             <LeftActions>
-              <Button color="base" variant="outlined" icon={{ left: <ShareIcon /> }} onClick={handleShare}>
+              <Button
+                color="base"
+                variant="outlined"
+                icon={{ left: <ShareIcon /> }}
+                onClick={handleShare}
+              >
                 Share
               </Button>
-              <Button color="base" variant="outlined" icon={{ left: <InviteIcon /> }} onClick={handleInvite}>
-                Invite
-              </Button>
+              {viewType === "owner" && (
+                <Button
+                  color="base"
+                  variant="outlined"
+                  icon={{ left: <InviteIcon /> }}
+                  onClick={handleInvite}
+                >
+                  Invite
+                </Button>
+              )}
             </LeftActions>
-            <RightActions>
-              <Button color="base" variant="filled" icon={{ left: <ChatIcon /> }} onClick={handleChat}>
-                Chat
-              </Button>
-              <Button color="base" variant="filled" icon={{ left: <EditIcon /> }} onClick={handleEdit}>
-                Edit Squad
-              </Button>
-            </RightActions>
+            <RightActions>{renderRightActions()}</RightActions>
           </Actions>
           <BannerImage $imageBg={bannerImage} />
           <TextContainer>
@@ -109,31 +203,45 @@ const SquadHeader = ({
           </TextContainer>
         </BannerContainer>
       </TopContainer>
-      <MemebersContainer>
-        <MememberTop>
+      <MembersContainer>
+        <MemberTop>
           <TopLine />
           <ButtonContainer>
-            <Button color="base" variant="filled" rounded icon={{ left: <MemebersIcon /> }}>
+            <Button
+              color="base"
+              variant="filled"
+              rounded
+              icon={{ left: <MembersIcon /> }}
+            >
               {members.length} {memberText}
             </Button>
           </ButtonContainer>
-        </MememberTop>
+        </MemberTop>
         <MembersList>
           <LeftCover />
           {members.map((member) => (
-            <Avatar key={member.id} avatarType={member.avatarType} avatarValue={member.avatarValue} />
+            <Avatar
+              key={member.id}
+              avatarType={member.avatarType}
+              avatarValue={member.avatarValue}
+            />
           ))}
           <RightCover />
         </MembersList>
-        <MememberBottom>
+        <MemberBottom>
           <BottomLine />
           <ButtonContainer>
-            <Button color="base" variant="outlined" rounded icon={{ left: <FollowersIcon /> }}>
-              9,999 Followers
+            <Button
+              color="base"
+              variant="outlined"
+              rounded
+              icon={{ left: <FollowersIcon /> }}
+            >
+              {followersCount} {followerText}
             </Button>
           </ButtonContainer>
-        </MememberBottom>
-      </MemebersContainer>
+        </MemberBottom>
+      </MembersContainer>
     </Container>
   );
 };
