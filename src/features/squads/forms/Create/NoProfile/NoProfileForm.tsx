@@ -1,7 +1,7 @@
 import { navigate } from '@/app/navigation/navigation';
 import FormBlock from '@/components/Forms/FormBlock/FormBlock'
 
-const NoProfile = () => {
+const NoProfileForm = () => {
   const handleOnCancel = () => {
     if (window.history.length > 1) {
       window.history.back();
@@ -31,4 +31,4 @@ const NoProfile = () => {
   )
 }
 
-export default NoProfile
+export default NoProfileForm

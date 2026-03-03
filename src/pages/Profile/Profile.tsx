@@ -61,6 +61,7 @@ const Profile = () => {
 
   // -- Selectors -- //
   const profile = useSelector(selectCurrentProfile);
+  const profileStatus = useSelector((state: RootState) => state.profile.status);
   // Update when members are added
   const mySquads = useSelector(
     (state: RootState) =>
@@ -90,10 +91,19 @@ const Profile = () => {
     }
   }, [profileId, profile?.id, dispatch]);
 
-  // If no profile found for the given profileId, navigate to unavailable page
-  if (!profileId) {
-    navigate("/unavailable", { replace: true });
-    return;
+  useEffect(() => {
+    if (!profileId) {
+      navigate("/unavailable", { replace: true });
+      return;
+    }
+   // If no profile found for the given profileId, navigate to unavailable page
+    if (profileStatus === "rejected") {
+      navigate("/unavailable", { replace: true });
+    }
+  }, [profileId, profileStatus]);
+
+  if (!profileId || !profile || profile.id !== profileId) {
+    return null;
   }
 
   // -- Handlers -- //
@@ -152,6 +162,7 @@ const Profile = () => {
               squads={mySquads.map((squad) => ({
                 id: squad.id,
                 name: squad.squad_name,
+                membersCount: squad.member_count ?? 0,
                 bannerUrl:
                   squad.banner_type === "preset"
                     ? getBannerVariants()[
