@@ -1,4 +1,8 @@
 import { useSelector } from "react-redux";
+import type { AppDispatch } from "@/store";
+import { useAuth } from "@/providers/auth/useAuth";
+import { useDispatch } from "react-redux";
+import { resetAppState } from "@/store/appReset";
 import AccountIcon from "@assets/Icon/Account_Filled.svg?react";
 import EditIcon from "@assets/Icon/Edit.svg?react";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
@@ -14,7 +18,6 @@ import UpdateName from "./forms/UpdateName/UpdateName";
 import ChangeEmail from "./forms/ChangeEmail/ChangeEmail";
 import ChangePassword from "./forms/ChangePassword/ChangePassword";
 import DeleteAccount from "./forms/DeleteAccount/DeleteAccount";
-import { useAuth } from "@/providers/auth/useAuth";
 
 /*TODO: 
   - Add functionality for when !account exists
@@ -22,6 +25,7 @@ import { useAuth } from "@/providers/auth/useAuth";
 
 const AccountPanel = () => {
   const { resetAuth } = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
   const { openModal } = useModal();
   const { closePanel } = usePanel();
 
@@ -35,7 +39,8 @@ const AccountPanel = () => {
   const handleLogout = async () => {
     try {
       closePanel();
-      resetAuth();
+      await resetAuth();
+      dispatch(resetAppState());
       navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);

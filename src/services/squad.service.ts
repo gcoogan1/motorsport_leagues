@@ -536,14 +536,37 @@ export const getSquadFollowersService = async (
   };
 };
 
-// Get Squads Followed by a Profile -- //
-export const getSquadFollowingService = async (
-  profileId: string,
-): Promise<GetSquadFollowingResult> => {
+// Check if following -- //
+export const checkIfFollowingSquad = async (
+  squadId: string,
+  accountId: string,
+): Promise<boolean> => {
+  const { data, error } = await supabase
+    .from("squad_follows")
+    .select("squad_id")
+    .eq("follower_account_id", accountId)
+    .eq("squad_id", squadId)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      return false;
+    }
+
+    return false;
+  }
+
+  return !!data;
+};
+
+// -- Get Squads Followed by an Account -- //
+export const getFollowingSquads = async (
+  accountId: string,
+): Promise<GetSquadFollowingResult> => { 
   const { data: followRows, error: followsError } = await supabase
     .from("squad_follows")
     .select("squad_id")
-    .eq("follower_id", profileId);
+    .eq("follower_account_id", accountId);
 
   if (followsError) {
     return {
@@ -589,29 +612,6 @@ export const getSquadFollowingService = async (
       banner_value: resolveBannerValue(squad.banner_type, squad.banner_value),
     })),
   };
-}
-
-// Check if following -- //
-export const checkIfFollowingSquad = async (
-  squadId: string,
-  accountId: string,
-): Promise<boolean> => {
-  const { data, error } = await supabase
-    .from("squad_follows")
-    .select("squad_id")
-    .eq("follower_account_id", accountId)
-    .eq("squad_id", squadId)
-    .single();
-
-  if (error) {
-    if (error.code === "PGRST116") {
-      return false;
-    }
-
-    return false;
-  }
-
-  return !!data;
 };
 
 // -- Delete Squads By Founder -- //

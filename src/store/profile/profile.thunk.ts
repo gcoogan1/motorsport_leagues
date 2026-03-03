@@ -6,6 +6,7 @@ import {
   updateProfileAvatar,
   updateProfileUsername,
 } from "@/services/profile.service";
+import { squadApi } from "@/store/rtkQueryAPI/squadApi";
 import type {  CreateProfilePayload, UpdateAvatarPayload, UpdateUsernamePayload } from "@/types/profile.types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
@@ -80,13 +81,25 @@ export const updateProfileUsernameThunk = createAsyncThunk(
 export const deleteProfileThunk = createAsyncThunk(
   "profile/delete",
   async (
-    { profileId, avatarValue }: { profileId: string; avatarValue?: string },
-    { rejectWithValue }
+    {
+      profileId,
+      avatarValue,
+      accountId,
+    }: { profileId: string; avatarValue?: string; accountId?: string },
+    { rejectWithValue, dispatch }
   ) => {
     const result = await deleteProfile(profileId, avatarValue);
 
     if (!result.success) {
       return rejectWithValue(result.error);
+    }
+
+    if (accountId) {
+      dispatch(
+        squadApi.util.invalidateTags([
+          { type: "SquadFollowing", id: accountId },
+        ]),
+      );
     }
 
     return result;

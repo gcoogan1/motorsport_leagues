@@ -14,6 +14,9 @@ import { useAuth } from "@/providers/auth/useAuth";
 import { navigate } from "@/app/navigation/navigation";
 import { useState } from "react";
 import { withMinDelay } from "@/utils/withMinDelay";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/store";
+import { resetAppState } from "@/store/appReset";
 
 type DeleteAccountProps = {
   account: AccountTable;
@@ -23,6 +26,7 @@ type DeleteAccountProps = {
 const DeleteAccountForm = ({ account, closePanel }: DeleteAccountProps) => {
   const { openModal, closeModal } = useModal();
   const { resetAuth } = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState(false);
 
   // -- Form setup -- //
@@ -49,7 +53,8 @@ const DeleteAccountForm = ({ account, closePanel }: DeleteAccountProps) => {
         return;
       }
       // On success, reset auth and navigate to home
-      resetAuth();
+      await resetAuth();
+      dispatch(resetAppState());
       closeModal();
       closePanel();
       navigate("/");

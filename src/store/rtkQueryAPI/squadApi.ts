@@ -1,8 +1,8 @@
 import {
   followSquadService,
   getAllSquads,
+  getFollowingSquads,
   getSquadFollowersService,
-  getSquadFollowingService,
   getSquadMembersBySquadId,
   isFollowingSquadService,
   unfollowSquadService,
@@ -113,7 +113,7 @@ export const squadApi = createApi({
       },
       invalidatesTags: (_result, _error, payload) => [
         { type: "SquadFollowers", id: payload.squadId },
-        { type: "SquadFollowing", id: payload.profileId },
+        { type: "SquadFollowing", id: payload.accountId },
       ],
     }),
     getSquadFollowers: builder.query<ProfileTable[], string>({
@@ -144,10 +144,10 @@ export const squadApi = createApi({
       ],
     }),
     getSquadFollowing: builder.query<SquadTable[], string>({
-      queryFn: async (profileId) => {
+      queryFn: async (accountId) => {
         try {
-          const result: GetSquadFollowingResult = await getSquadFollowingService(
-            profileId,
+          const result: GetSquadFollowingResult = await getFollowingSquads(
+            accountId,
           );
 
           if (!result.success) {
@@ -166,8 +166,8 @@ export const squadApi = createApi({
           };
         }
       },
-      providesTags: (_result, _error, profileId) => [
-        { type: "SquadFollowing", id: profileId },
+      providesTags: (_result, _error, accountId) => [
+        { type: "SquadFollowing", id: accountId },
       ],
     }),
     isFollowingSquad: builder.query<boolean, { squadId: string, accountId: string }>({

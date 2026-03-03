@@ -55,6 +55,7 @@ const DeleteProfile = ({ closePanel }: DeleteProfileProps) => {
             deleteProfileThunk({
               profileId: profile.id,
               avatarValue: profile.avatar_value,
+              accountId: profile.account_id,
             }),
           ),
           1000,
@@ -62,7 +63,12 @@ const DeleteProfile = ({ closePanel }: DeleteProfileProps) => {
       } else {
         // If the profile has a preset avatar (which doesn't require deletion from storage)
         await withMinDelay(
-          dispatch(deleteProfileThunk({ profileId: profile.id })),
+          dispatch(
+            deleteProfileThunk({
+              profileId: profile.id,
+              accountId: profile.account_id,
+            }),
+          ),
           1000,
         );
       }

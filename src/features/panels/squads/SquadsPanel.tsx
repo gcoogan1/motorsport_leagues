@@ -14,6 +14,7 @@ import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import SquadCard from "@/components/Cards/SquadCard/SquadCard";
 import SearchForm from "@/features/search/forms/SearchForm";
 import type { SquadTable } from "@/types/squad.types";
+import { useSquadFollowing } from "@/hooks/rtkQuery/queries/useSquadFollowers";
 
 
 const SQUAD_TABS = [
@@ -24,10 +25,11 @@ const SQUAD_TABS = [
 type SquadListItemProps = {
   squad: SquadTable;
   onClick: () => void;
+  isSmall?: boolean;
 };
 
 // This component is used to render each squad in the list of squads on the SquadsPanel. It displays the squad name, member count, and banner image.
-const SquadListItem = ({ squad, onClick }: SquadListItemProps) => {
+const SquadListItem = ({ squad, onClick, isSmall }: SquadListItemProps) => {
   const bannerImage =
     squad.banner_type === "preset"
       ? getBannerVariants()[
@@ -40,7 +42,7 @@ const SquadListItem = ({ squad, onClick }: SquadListItemProps) => {
       name={squad.squad_name}
       memberCount={squad.member_count ?? 0}
       bannerImageUrl={bannerImage}
-      size="medium"
+      size={isSmall ? "small" : "medium"}
       onClick={onClick}
     />
   );
@@ -52,6 +54,8 @@ const SquadsPanel = () => {
   const { openModal } = useModal();
   const [activeTab, setActiveTab] = useState<string>(SQUAD_TABS[0].label);
   const squads = useSelector((state: RootState) => state.squad.data);
+  const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const { data: following = [] } = useSquadFollowing(accountId ?? "");
 
 
   const handleTabChange = (tab: string) => {
@@ -129,7 +133,17 @@ const SquadsPanel = () => {
         </>
       ) : (
         <>
-          <EmptyMessage
+          {following && following.length > 0 ? (
+            following.map((squad) => (
+              <SquadListItem
+                key={squad.id}
+                squad={squad}
+                isSmall={true}
+                onClick={() => handleGoToSquad(squad.id)}
+              />
+            ))
+          ) : (
+            <EmptyMessage
             title="Not Following Any Squads"
             icon={<SearchIcon />}
             subtitle="Keep up with your favorite teams and communities by following Squads."
@@ -146,6 +160,7 @@ const SquadsPanel = () => {
               },
             }}
           />
+          )}
         </>
       )}
     </PanelLayout>
