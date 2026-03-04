@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-// import { useModal } from "@/providers/modal/useModal";
+import { useModal } from "@/providers/modal/useModal";
 // import { usePanel } from "@/providers/panel/usePanel";
 import { selectCurrentSquad } from "@/store/squads/squad.selectors";
 import LinkList from "@/components/Lists/LinkList/LinkList";
@@ -8,9 +8,10 @@ import ImageChange from "@assets/Icon/Image_Change.svg?react";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import LeaveIcon from "@assets/Icon/Leave.svg?react";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
+import EditBanner from "./forms/EditBanner/EditBanner";
 
 const SquadEdit = () => {
-  // const { openModal } = useModal();
+  const { openModal } = useModal();
   // const { closePanel } = usePanel();
 
   const squad = useSelector(selectCurrentSquad);
@@ -18,7 +19,9 @@ const SquadEdit = () => {
   if (!squad) return null;
 
   // -- Handlers -- //
-  const handleEditBanner = () => {};
+  const handleEditBanner = () => {
+    openModal(<EditBanner />);
+  };
 
   const handleEditSquadName = () => {};
 

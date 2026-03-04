@@ -221,6 +221,99 @@ export const getSquadById = async (
   };
 };
 
+// -- Edit Banner -- //
+export const editSquadBanner = async (
+  squadId: string,
+  banner: { type: "preset"; variant: string } | { type: "upload"; file: File },
+): Promise<CreateSquadResult> => {
+  let bannerType: "preset" | "upload";
+  let bannerValue: string;
+
+  // --- Handle banner ---
+  if (banner.type === "preset") {
+    bannerType = "preset";
+    bannerValue = banner.variant;
+  } else {
+    bannerType = "upload";
+
+    // Load founder account id so uploads follow the same storage path convention as create
+    // (required by storage RLS policies that scope uploads by account folder).
+    const { data: squadData, error: squadFetchError } = await supabase
+      .from("squads")
+      .select("founder_account_id")
+      .eq("id", squadId)
+      .single();
+
+    if (squadFetchError || !squadData?.founder_account_id) {
+      return {
+        success: false,
+        error: {
+          message: squadFetchError?.message || "Squad not found",
+          code: squadFetchError?.code || "SQUAD_NOT_FOUND",
+          status: 404,
+        },
+      };
+    }
+
+    // Generate a unique file path for the banner upload
+    const fileExt = banner.file.name.split(".").pop();
+    const filePath = `${squadData.founder_account_id}/${crypto.randomUUID()}.${fileExt}`;
+
+    // Upload the banner file to Supabase Storage
+    const { error } = await supabase.storage
+      .from("banners")
+      .upload(filePath, banner.file, {
+        upsert: true,
+        contentType: banner.file.type,
+      });
+
+    if (error) {
+      return {
+        success: false,
+        error: {
+          message: error.message,
+          code: "UPLOAD_FAILED",
+          status: 500,
+        },
+      };
+    }
+
+    // If upload is successful, set the bannerValue to the file path in storage
+    bannerValue = filePath;
+  }
+
+  // --- Update squad with new banner ---
+  const { data, error } = await supabase
+    .from("squads")
+    .update({
+      banner_type: bannerType,
+      banner_value: bannerValue,
+    })
+    .eq("id", squadId)
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: {
+      ...data,
+      banner_type: bannerType,
+      banner_value: resolveBannerValue(bannerType, bannerValue),
+    },
+  };
+};
+
 // -- Get All Squads (with optional search) -- //
 export const getAllSquads = async (
   founderAcctId?: string,
