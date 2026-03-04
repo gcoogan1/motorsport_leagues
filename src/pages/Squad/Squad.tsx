@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "@/store";
 import { getSquadByIdThunk } from "@/store/squads/squad.thunk";
+import { usePanel } from "@/providers/panel/usePanel";
 import { navigate } from "@/app/navigation/navigation";
 import { getBannerVariants } from "@/components/Banner/Banner.variants";
 import { useSquadMembers } from "@/hooks/rtkQuery/queries/useSquadMembers";
@@ -14,6 +15,7 @@ import { Container, Contents, Wrapper } from "./Squad.styles";
 import { useSquadFollowers, useIsFollowingSquad } from "@/hooks/rtkQuery/queries/useSquadFollowers";
 
 const Squad = () => {
+  const { openPanel } = usePanel();
   const { squadId } = useParams<{ squadId: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
@@ -59,7 +61,9 @@ const Squad = () => {
     avatarValue: member.avatar_value,
   }));
 
-
+  const handleEditSquad = () => {
+    openPanel("SQUAD_EDIT");
+  };
 
   return (
     <Wrapper>
@@ -73,7 +77,7 @@ const Squad = () => {
         viewType={viewType}
         followersCount={followers.length}
         hasProfile={userHasActiveProfile}
-        onEdit={() => console.log("Edit Squad")}
+        onEdit={handleEditSquad}
         onShare={() => console.log("Share Squad")}
         onInvite={() => console.log("Invite to Squad")}
       />

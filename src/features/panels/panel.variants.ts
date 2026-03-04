@@ -9,6 +9,7 @@ import GuestSquadsPanel from "./squads/vaiants/GuestSquadsPanel";
 import GuestLeaguesPanel from "./leagues/GuestLeaguesPanel";
 import ProfileEdit from "./profileEdit/ProfileEdit";
 import ProfileFollowers from "./profileFollowers/ProfileFollowers";
+import SquadEdit from "./squadEdit/SquadEdit";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,5 +23,6 @@ export const panelVariants: Record<PanelTypes, React.ComponentType<any>> = {
   LEAGUES: LeaguesPanel,
   GUEST_LEAGUES: GuestLeaguesPanel,
   PROFILE_EDIT: ProfileEdit,
-  PROFILE_FOLLOWERS: ProfileFollowers
+  PROFILE_FOLLOWERS: ProfileFollowers,
+  SQUAD_EDIT: SquadEdit
 };
