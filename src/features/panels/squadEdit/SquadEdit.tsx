@@ -9,6 +9,7 @@ import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import LeaveIcon from "@assets/Icon/Leave.svg?react";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import EditBanner from "./forms/EditBanner/EditBanner";
+import EditSquadName from "./forms/EditSquadName/EditSquadName";
 
 const SquadEdit = () => {
   const { openModal } = useModal();
@@ -23,7 +24,9 @@ const SquadEdit = () => {
     openModal(<EditBanner />);
   };
 
-  const handleEditSquadName = () => {};
+  const handleEditSquadName = () => {
+    openModal(<EditSquadName />);
+  };
 
   const handleLeaveSquad = () => {};
 

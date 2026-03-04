@@ -107,6 +107,36 @@ export type CreateSquadSuccess = {
 // Create Squad --> Result type
 export type CreateSquadResult = CreateSquadSuccess | SupabaseError;
 
+// Edit Banner --> Payload type
+export type EditBannerPayload = {
+  squadId: string;
+  banner: BannerImageValue;
+};
+
+// Edit Banner --> Success type
+export type EditBannerSuccess = {
+  success: true;
+  data: SquadTable;
+};
+
+// Edit Banner --> Result type
+export type EditBannerResult = EditBannerSuccess | SupabaseError;
+
+// Edit Squad Name --> Payload type
+export type EditSquadNamePayload = {
+  squadId: string;
+  newSquadName: string;
+};
+
+// Edit Squad Name --> Success type
+export type EditSquadNameSuccess = {
+  success: true;
+  data: SquadTable;
+};
+
+// Edit Squad Name --> Result type
+export type EditSquadNameResult = EditSquadNameSuccess | SupabaseError;
+
 // Add Squad Member --> Payload type
 export type AddSquadMemberPayload = {
   squadId: string;
