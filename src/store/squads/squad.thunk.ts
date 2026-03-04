@@ -1,6 +1,6 @@
-import { createSquadWithBanner, getSquadsByAccountId, getSquadById, editSquadBanner } from "@/services/squad.service";
+import { createSquadWithBanner, getSquadsByAccountId, getSquadById, editSquadBanner, editSquadName } from "@/services/squad.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import type { SquadTable, CreateSquadPayload, BannerImageValue, } from "@/types/squad.types";
+import type { SquadTable, CreateSquadPayload, EditBannerPayload, EditSquadNamePayload } from "@/types/squad.types";
 
 export const fetchSquadsByAccountIdThunk = createAsyncThunk<
   SquadTable[],
@@ -63,10 +63,26 @@ export const getSquadByIdThunk = createAsyncThunk<
 export const editBannerThunk = createAsyncThunk(
   "squad/editBanner",
   async (
-    payload: { squadId: string; banner: BannerImageValue },
+    payload: EditBannerPayload,
     { rejectWithValue },
   ) => {
-    const result = await editSquadBanner(payload.squadId, payload.banner);
+    const result = await editSquadBanner(payload);
+
+    if (!result.success) {
+      return rejectWithValue(result.error.message);
+    }
+
+    return result.data;
+  },
+);
+
+export const editSquadNameThunk = createAsyncThunk(
+  "squad/editName",
+  async (
+    payload: EditSquadNamePayload,
+    { rejectWithValue },
+  ) => {
+    const result = await editSquadName(payload);
 
     if (!result.success) {
       return rejectWithValue(result.error.message);

@@ -4,6 +4,10 @@ import type {
   AddSquadMemberResult,
   CreateSquadPayload,
   CreateSquadResult,
+  EditBannerPayload,
+  EditBannerResult,
+  EditSquadNamePayload,
+  EditSquadNameResult,
   FollowSquadPayload,
   FollowSquadResult,
   GetSquadFollowingResult,
@@ -59,23 +63,31 @@ export const getSquadsByAccountId = async (
   };
 };
 
-export const isSquadNameAvailable = async (name: string): Promise<boolean> => {
+export const isSquadNameAvailable = async (
+  name: string,
+  squadId?: string,
+): Promise<boolean> => {
   const normalizedSquadName = normalizeName(name);
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("squads")
     .select("id")
-    .eq("squad_name_normalized", normalizedSquadName)
-    .single();
+    .eq("squad_name_normalized", normalizedSquadName);
 
-  if (error && error.code !== "PGRST116") {
-    // If the error is not "No rows found", log it and assume the name is not available
+  // If squadId is provided, exclude it from the check (allows owner to keep same name / capitalization changes)
+  if (squadId) {
+    query = query.neq("id", squadId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
     console.error("Error checking squad name availability:", error);
     return false;
   }
 
-  // If data is returned, the name is taken; if no data, it's available
-  return !data;
+  // If rows exist, the name is taken; if none, it's available
+  return !data?.length;
 };
 
 // -- Create Squad with Banner -- //
@@ -223,9 +235,8 @@ export const getSquadById = async (
 
 // -- Edit Banner -- //
 export const editSquadBanner = async (
-  squadId: string,
-  banner: { type: "preset"; variant: string } | { type: "upload"; file: File },
-): Promise<CreateSquadResult> => {
+  { squadId, banner }: EditBannerPayload,
+): Promise<EditBannerResult> => {
   let bannerType: "preset" | "upload";
   let bannerValue: string;
 
@@ -311,6 +322,34 @@ export const editSquadBanner = async (
       banner_type: bannerType,
       banner_value: resolveBannerValue(bannerType, bannerValue),
     },
+  };
+};
+
+// -- Edit Squad Name -- //
+export const editSquadName = async (
+  { squadId, newSquadName }: EditSquadNamePayload
+): Promise<EditSquadNameResult> => {
+  const { data, error } = await supabase
+    .from("squads")
+    .update({ squad_name: newSquadName })
+    .eq("id", squadId)
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data,
   };
 };
 

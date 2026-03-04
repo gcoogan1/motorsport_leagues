@@ -1,7 +1,7 @@
 import type { SquadDraft, SquadState } from "@/types/squad.types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { deleteProfileThunk } from "@/store/profile/profile.thunk";
-import { createSquadThunk, editBannerThunk, fetchSquadsByAccountIdThunk, getSquadByIdThunk } from "./squad.thunk";
+import { createSquadThunk, editBannerThunk, editSquadNameThunk, fetchSquadsByAccountIdThunk, getSquadByIdThunk } from "./squad.thunk";
 
 const initialState: SquadState = {
   data: null,
@@ -108,6 +108,32 @@ const squadSlice = createSlice({
         }
       })
       .addCase(editBannerThunk.rejected, (state, action) => {
+        state.status = "rejected";
+        state.error = (action.payload as string | undefined) ?? action.error.message;
+      })
+      // Edit Squad Name 
+      .addCase(editSquadNameThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = undefined;
+      })
+      .addCase(editSquadNameThunk.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        const updatedSquad = action.payload;
+
+        // Update squad in data array
+        if (state.data) {
+          const index = state.data.findIndex((squad) => squad.id === updatedSquad.id);
+          if (index !== -1) {
+            state.data[index] = updatedSquad;
+          }
+        }
+
+        // Update currentSquad if it's the one that was updated
+        if (state.currentSquad?.id === updatedSquad.id) {
+          state.currentSquad = updatedSquad;
+        }
+      })
+      .addCase(editSquadNameThunk.rejected, (state, action) => {
         state.status = "rejected";
         state.error = (action.payload as string | undefined) ?? action.error.message;
       })
