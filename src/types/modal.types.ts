@@ -9,12 +9,13 @@ import ExistingEmail from "@/features/panels/account/modals/errors/ExistingEmail
 import IncorrectPassword from "@/features/panels/account/modals/errors/IncorrectPassword/IncorrectPassword";
 import SamePassword from "@/features/auth/modals/errors/SamePassword/SamePassword";
 import NoProfile from "@/features/profiles/modals/core/NoProfile/NoProfile";
+import NameTaken from "@/features/squads/modals/errors/NameTaken/NameTaken";
 
 // -- Modal Types & Variants -- //
 
 // Modals that do not require props
 
-export type MODAL_TYPES = 'EXISTING_ACCOUNT' | 'SERVER_ERROR' | 'ATTEMPT_MAX' | 'REQUEST_MAX' | 'ACCOUNT_VERIFIED' | 'INCORRECT_CRED' | 'ACCOUNT_SUSPENDED' | 'EXISTING_EMAIL' | 'INCORRECT_PASSWORD' | 'SAME_PASSWORD' | 'NO_PROFILE';
+export type MODAL_TYPES = 'EXISTING_ACCOUNT' | 'SERVER_ERROR' | 'ATTEMPT_MAX' | 'REQUEST_MAX' | 'ACCOUNT_VERIFIED' | 'INCORRECT_CRED' | 'ACCOUNT_SUSPENDED' | 'EXISTING_EMAIL' | 'INCORRECT_PASSWORD' | 'SAME_PASSWORD' | 'NO_PROFILE' | 'NAME_TAKEN';
 
 // Additional modals that may require props can be added here
 export type OTHER_MODAL_TYPES = 'UNVERIFIED_ACCOUNT' | 'CODE_RESENT' | 'PROFILE_CREATED' | 'EXISTING_USERNAME' | 'UNFOLLOW' | 'REMOVE_FOLLOWER';
@@ -35,4 +36,5 @@ export const modalVariants: Record<MODAL_TYPES, React.FC> = {
   INCORRECT_PASSWORD: IncorrectPassword,
   SAME_PASSWORD: SamePassword,
   NO_PROFILE: NoProfile,
+  NAME_TAKEN: NameTaken,
 };

@@ -12,7 +12,6 @@ import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import { createNameSchema, type CreateNameSchema } from "./nameSchema";
 import { isSquadNameAvailable } from "@/services/squad.service";
-import NameTaken from "@/features/squads/modals/errors/NameTaken/NameTaken";
 
 type NameProps = {
   onSuccess: () => void;
@@ -45,7 +44,7 @@ const Name = ({ onSuccess, onBack }: NameProps) => {
       );
 
       if (!res) {
-        openModal(<NameTaken />);
+        handleSupabaseError({ code: "NAME_TAKEN" }, openModal);
         return;
       }
 
@@ -73,6 +72,7 @@ const Name = ({ onSuccess, onBack }: NameProps) => {
   const handleOnBack = () => {
     onBack();
   };
+  
   return (
     <FormProvider {...formMethods}>
       <FormBlock
