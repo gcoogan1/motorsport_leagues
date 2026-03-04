@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
-import { useModal } from "@/providers/modal/useModal";
-import { usePanel } from "@/providers/panel/usePanel";
+// import { useModal } from "@/providers/modal/useModal";
+// import { usePanel } from "@/providers/panel/usePanel";
 import { selectCurrentSquad } from "@/store/squads/squad.selectors";
 import LinkList from "@/components/Lists/LinkList/LinkList";
 import EditIcon from "@assets/Icon/Edit.svg?react";
@@ -10,8 +10,8 @@ import LeaveIcon from "@assets/Icon/Leave.svg?react";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 
 const SquadEdit = () => {
-  const { openModal } = useModal();
-  const { closePanel } = usePanel();
+  // const { openModal } = useModal();
+  // const { closePanel } = usePanel();
 
   const squad = useSelector(selectCurrentSquad);
 

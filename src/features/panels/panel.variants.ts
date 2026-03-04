@@ -9,7 +9,7 @@ import GuestSquadsPanel from "./squads/vaiants/GuestSquadsPanel";
 import GuestLeaguesPanel from "./leagues/GuestLeaguesPanel";
 import ProfileEdit from "./profileEdit/ProfileEdit";
 import ProfileFollowers from "./profileFollowers/ProfileFollowers";
-import SquadEdit from "./squadEdit/squadEdit";
+import SquadEdit from "./squadEdit/SquadEdit";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
