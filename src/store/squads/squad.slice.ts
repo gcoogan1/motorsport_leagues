@@ -83,7 +83,8 @@ const squadSlice = createSlice({
       })
       .addCase(getSquadByIdThunk.rejected, (state, action) => {
         state.status = "rejected";
-        state.error = action.payload ?? action.error.message;
+        state.currentSquad = null;
+        state.error = (action.payload as string | undefined) ?? action.error.message;
       })
       // Edit Squad Banner
       .addCase(editBannerThunk.pending, (state) => {
