@@ -85,7 +85,7 @@ const SquadsPanel = () => {
       
       onTabChange={handleTabChange}
       actions={
-        activeTab === "My Squads" && squads && squads.length > 0
+        activeTab === "My Squads" && squads && squads.length > 0 || activeTab === "Following" && following && following.length > 0
           ? {
               primary: {
                 label: "Create New Squad",

@@ -56,7 +56,7 @@ const ProfilesPanel = () => {
       tabs={PROFILE_TABS}
       onTabChange={handleTabChange}
       actions={
-        activeTab === "My Profiles" && profiles && profiles.length > 0
+        activeTab === "My Profiles" && profiles && profiles.length > 0 || activeTab === "Following" && following && following.length > 0
           ? {
               primary: {
                 label: "Create Profile",
