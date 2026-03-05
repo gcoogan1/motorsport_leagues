@@ -56,6 +56,7 @@ type SquadHeaderProps = {
   members?: MemberAvatar[];
   followersCount?: number;
   bannerImage?: string;
+  onFollowersClick?: () => void;
   onEdit?: () => void;
   onShare?: () => void;
   onInvite?: () => void;
@@ -70,6 +71,7 @@ const SquadHeader = ({
   viewerAccountId,
   members = [],
   followersCount = 0,
+  onFollowersClick,
   onEdit,
   onShare,
   onInvite,
@@ -156,6 +158,12 @@ const SquadHeader = ({
     openModal(<FollowSquad squadIdToFollow={squadId} accountId={viewerAccountId} />);
     return;
   }
+
+  const handleFollowersClick = () => {
+    if (onFollowersClick) {
+      onFollowersClick();
+    }
+  };
 
   // -- Render Right Actions based on view type -- //
   const renderRightActions = () => {
@@ -299,6 +307,7 @@ const SquadHeader = ({
             <Button
               color="base"
               variant="outlined"
+              onClick={handleFollowersClick}
               rounded
               icon={{ left: <FollowersIcon /> }}
             >

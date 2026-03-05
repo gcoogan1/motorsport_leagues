@@ -26,10 +26,12 @@ export type ProfileListItem = {
 type ProfileListProps = {
   items: ProfileListItem[];
   onClick?: (id: string, action: "view" | "remove") => void;
+  allowRemoveAction?: boolean;
 };
 
-const ProfileList = ({ items, onClick }: ProfileListProps) => {
+const ProfileList = ({ items, onClick, allowRemoveAction = false }: ProfileListProps) => {
   const viewType = useSelector(selectProfileViewType());
+  const canRemove = allowRemoveAction || viewType === "owner";
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const dropdownContainerRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -103,7 +105,7 @@ const ProfileList = ({ items, onClick }: ProfileListProps) => {
                     value: "view",
                     icon: <ProfileIcon />,
                   },
-                  ...(viewType === "owner"
+                  ...(canRemove
                     ? [
                         {
                           label: "Remove User",
