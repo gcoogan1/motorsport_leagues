@@ -114,7 +114,7 @@ const SquadsPanel = () => {
           ) : (
             <EmptyMessage
             title="No Squads Created or Joined"
-            icon={<SearchIcon />}
+            icon={<SquadIcon />}
             subtitle="Start building your racing community by creating or joining your first Squad with a Profile."
             actions={{
               primary: {
@@ -145,7 +145,7 @@ const SquadsPanel = () => {
           ) : (
             <EmptyMessage
             title="Not Following Any Squads"
-            icon={<SearchIcon />}
+            icon={<SquadIcon />}
             subtitle="Keep up with your favorite teams and communities by following Squads."
             actions={{
               primary: {

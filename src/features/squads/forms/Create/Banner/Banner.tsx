@@ -13,6 +13,7 @@ import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import ImageUploadInput from "@/components/Inputs/ImageUploadInput/ImageUploadInput";
 import SelectGraphicInput from "@/components/Inputs/SelectGraphicInput/SelectGraphicInput";
 import { bannerFormSchema, type BannerFormValues } from "./bannerSchema";
+import SquadCreated from "@/features/squads/modals/success/SquadCreated/SquadCreated";
 
 type BannerProps = {
   onBack: () => void;
@@ -72,6 +73,7 @@ const Banner = ({ onBack }: BannerProps) => {
         1000,
       );
       if (result) navigate(`/squad/${result.data.id}`);
+      openModal(<SquadCreated />);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);
