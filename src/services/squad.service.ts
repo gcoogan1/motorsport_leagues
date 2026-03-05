@@ -4,6 +4,7 @@ import type {
   AddSquadMemberResult,
   CreateSquadPayload,
   CreateSquadResult,
+  DeleteSquadResult,
   EditBannerPayload,
   EditBannerResult,
   EditSquadNamePayload,
@@ -34,6 +35,8 @@ export const resolveBannerValue = (
   return data.publicUrl;
 };
 
+
+// -- Get Squads by Account ID -- //
 export const getSquadsByAccountId = async (
   accountId: string,
 ): Promise<GetSquadsResult> => {
@@ -63,6 +66,7 @@ export const getSquadsByAccountId = async (
   };
 };
 
+// -- Check Squad Name Availability -- //
 export const isSquadNameAvailable = async (
   name: string,
   squadId?: string,
@@ -845,6 +849,101 @@ export const deleteSquadsByFounderService = async (
       error: {
         message: squadsDeleteError.message,
         code: squadsDeleteError.code || "FOUNDED_SQUADS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
+// -- Delete Squad By ID -- //
+export const deleteSquadById = async (
+  squadId: string,
+): Promise<DeleteSquadResult> => {
+  // Fetch the squad to get banner info for cleanup
+  const { data: squadData, error: squadFetchError } = await supabase
+    .from("squads")
+    .select("banner_type, banner_value")
+    .eq("id", squadId)
+    .single();
+
+  if (squadFetchError) {
+    return {
+      success: false,
+      error: {
+        message: squadFetchError.message,
+        code: squadFetchError.code || "SQUAD_FETCH_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  // If the squad has an uploaded banner, delete it from storage
+  if (squadData.banner_type === "upload") {
+    const { error: bannerDeleteError } = await supabase.storage
+      .from("banners")
+      .remove([squadData.banner_value]);
+
+    if (bannerDeleteError) {
+      return {
+        success: false,
+        error: {
+          message: bannerDeleteError.message,
+          code: "SQUAD_BANNER_DELETION_FAILED",
+          status: 500,
+        },
+      };
+    }
+  }
+
+  // Delete squad follows and members associated with this squad before deleting the squad itself
+  const { error: squadFollowsDeleteError } = await supabase
+    .from("squad_follows")
+    .delete()
+    .eq("squad_id", squadId);
+
+  if (squadFollowsDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: squadFollowsDeleteError.message,
+        code: squadFollowsDeleteError.code || "SQUAD_FOLLOWS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const { error: squadMembersDeleteError } = await supabase
+    .from("squad_members")
+    .delete()
+    .eq("squad_id", squadId);
+
+  if (squadMembersDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: squadMembersDeleteError.message,
+        code: squadMembersDeleteError.code || "SQUAD_MEMBERS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  // Delete the squad
+  const { error: squadDeleteError } = await supabase
+    .from("squads")
+    .delete()
+    .eq("id", squadId);
+
+  if (squadDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: squadDeleteError.message,
+        code: squadDeleteError.code || "SQUAD_DELETION_FAILED",
         status: 500,
       },
     };

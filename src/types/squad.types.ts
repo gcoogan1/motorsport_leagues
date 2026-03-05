@@ -137,6 +137,14 @@ export type EditSquadNameSuccess = {
 // Edit Squad Name --> Result type
 export type EditSquadNameResult = EditSquadNameSuccess | SupabaseError;
 
+// Delete Squad --> Success type
+export type DeleteSquadSuccess = {
+  success: true;
+};
+
+// Delete Squad --> Result type
+export type DeleteSquadResult = DeleteSquadSuccess | SupabaseError;
+
 // Add Squad Member --> Payload type
 export type AddSquadMemberPayload = {
   squadId: string;

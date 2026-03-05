@@ -1,7 +1,7 @@
 import type { SquadDraft, SquadState } from "@/types/squad.types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { deleteProfileThunk } from "@/store/profile/profile.thunk";
-import { createSquadThunk, editBannerThunk, editSquadNameThunk, fetchSquadsByAccountIdThunk, getSquadByIdThunk } from "./squad.thunk";
+import { createSquadThunk, deleteSquadThunk, editBannerThunk, editSquadNameThunk, fetchSquadsByAccountIdThunk, getSquadByIdThunk } from "./squad.thunk";
 
 const initialState: SquadState = {
   data: null,
@@ -134,6 +134,23 @@ const squadSlice = createSlice({
         }
       })
       .addCase(editSquadNameThunk.rejected, (state, action) => {
+        state.status = "rejected";
+        state.error = (action.payload as string | undefined) ?? action.error.message;
+      })
+      // Delete Squad
+      .addCase(deleteSquadThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = undefined;
+      })
+      .addCase(deleteSquadThunk.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        const deletedSquadId = action.meta.arg;
+
+        if (state.data) {
+          state.data = state.data.filter((squad) => squad.id !== deletedSquadId);
+        }
+      })
+      .addCase(deleteSquadThunk.rejected, (state, action) => {
         state.status = "rejected";
         state.error = (action.payload as string | undefined) ?? action.error.message;
       })
