@@ -103,7 +103,8 @@ const profileSlice = createSlice({
       })
       .addCase(getProfileByProfileIdThunk.rejected, (state, action) => {
         state.status = "rejected";
-        state.error = action.error.message;
+        state.currentProfile = null;
+        state.error = (action.payload as string | undefined) ?? action.error.message;
       })
 
       
