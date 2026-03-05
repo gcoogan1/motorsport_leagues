@@ -85,11 +85,12 @@ const Profile = () => {
   );
 
   useEffect(() => {
-    // If profileId exists in URL and it's different from the currently loaded profile, fetch the new profile
-    if (profileId && profile?.id !== profileId) {
+    // Always fetch by route param so stale cached currentProfile (e.g. recently deleted)
+    // does not block revalidation.
+    if (profileId) {
       dispatch(getProfileByProfileIdThunk(profileId));
     }
-  }, [profileId, profile?.id, dispatch]);
+  }, [profileId, dispatch]);
 
   useEffect(() => {
     if (!profileId) {
@@ -101,6 +102,10 @@ const Profile = () => {
       navigate("/unavailable", { replace: true });
     }
   }, [profileId, profileStatus]);
+
+  if (profileStatus === "loading") {
+    return null;
+  }
 
   if (!profileId || !profile || profile.id !== profileId) {
     return null;

@@ -36,17 +36,27 @@ const Squad = () => {
   
 
   useEffect(() => {
-    // If the squadId from the URL params doesn't match the currently loaded squad, fetch the new squad data
-    if (squadId && squad?.id !== squadId) {
+    if (squadId) {
       dispatch(getSquadByIdThunk(squadId));
     }
+  }, [squadId, dispatch]);
+
+  useEffect(() => {
+    if (!squadId) {
+      navigate("/unavailable", { replace: true });
+      return;
+    }
+
     if (squadStatus === "rejected") {
       navigate("/unavailable", { replace: true });
     }
-  }, [squadId, squad?.id, dispatch, squadStatus]);
+  }, [squadId, squadStatus]);
 
+  if (squadStatus === "loading") {
+    return null;
+  }
 
-  if (!squad) {
+  if (!squadId || !squad || squad.id !== squadId) {
     return null;
   }
 
@@ -65,6 +75,10 @@ const Squad = () => {
     openPanel("SQUAD_EDIT");
   };
 
+  const handleOnFollowersClick = () => {
+    openPanel("SQUAD_FOLLOWERS", { squadId: squad.id });
+  }
+
   return (
     <Wrapper>
       <SquadHeader
@@ -77,6 +91,7 @@ const Squad = () => {
         viewType={viewType}
         followersCount={followers.length}
         hasProfile={userHasActiveProfile}
+        onFollowersClick={handleOnFollowersClick}
         onEdit={handleEditSquad}
         onShare={() => console.log("Share Squad")}
         onInvite={() => console.log("Invite to Squad")}
