@@ -66,11 +66,13 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
     activeTab, // Pass the tab here
   );
 
+  const hasSearchTerm = debouncedSearch.trim().length > 0;
+
   const showResults =
-    activeTab === "Profiles" && debouncedSearch && !isLoading && !isError;
+    activeTab === "Profiles" && hasSearchTerm && !isLoading && !isError;
   
   const showSquadResults =
-    activeTab === "Squads" && debouncedSearch;
+    activeTab === "Squads" && hasSearchTerm;
 
   // -- Handlers -- //
   const handleTabChange = (tab: string) => {
@@ -101,7 +103,13 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
         activeTab={activeTab}
         onTabChange={handleTabChange}
       >
-        {activeTab === "Profiles" ? (
+        {!hasSearchTerm ? (
+          <EmptyMessage
+            icon={<SearchIcon />}
+            title="Start Searching"
+            subtitle="Search for a Profile, Squad, or a League."
+          />
+        ) : activeTab === "Profiles" ? (
           profiles.length > 0 && showResults ? (
             profiles.map((profile) => (
               <ProfileCard
@@ -137,11 +145,7 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
             <EmptyMessage title="No Results" subtitle="Try a different search." />
           )
         ) : (
-          <EmptyMessage
-            icon={<SearchIcon />}
-            title="Start Searching"
-            subtitle="Search for a Profile, Squad, or a League."
-          />
+          <EmptyMessage title="No Results" subtitle="Try a different search." />
         )}
       </Search>
     </FormProvider>
