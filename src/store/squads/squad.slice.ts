@@ -43,7 +43,12 @@ const squadSlice = createSlice({
       .addCase(fetchSquadsByAccountIdThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
         state.data = action.payload;
-        state.currentSquad = action.payload[0] ?? null;
+
+        // Keep the currently viewed squad intact (e.g. route `/squad/:id`) and
+        // only fallback to first owned squad when no current squad is selected.
+        if (!state.currentSquad) {
+          state.currentSquad = action.payload[0] ?? null;
+        }
       })
       .addCase(fetchSquadsByAccountIdThunk.rejected, (state, action) => {
         state.status = "rejected";
