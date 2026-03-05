@@ -61,7 +61,8 @@ const SquadFollowers = ({ squadId }: SquadFollowersProps) => {
             key={resolvedSquadId}
             items={formatedProfiles}
             onClick={handleProfileAction}
-            allowRemoveAction={squadViewType === "owner"}
+            allowRemoveAction={squadViewType === "founder"}
+            listType="squad"
           />
         ) : (
           <EmptyMessage

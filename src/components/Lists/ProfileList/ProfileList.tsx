@@ -12,6 +12,8 @@ import { useSelector } from "react-redux";
 
 // TODO: Add Tags back
 
+type ListType = "profile" | "squad" | "league";
+
 export type ProfileListItem = {
   id: string;
   label: string;
@@ -27,11 +29,14 @@ type ProfileListProps = {
   items: ProfileListItem[];
   onClick?: (id: string, action: "view" | "remove") => void;
   allowRemoveAction?: boolean;
+  listType?: ListType;
 };
 
-const ProfileList = ({ items, onClick, allowRemoveAction = false }: ProfileListProps) => {
+const ProfileList = ({ items, onClick, allowRemoveAction = false, listType = "profile" }: ProfileListProps) => {
   const viewType = useSelector(selectProfileViewType());
-  const canRemove = allowRemoveAction || viewType === "owner";
+  // Allow remove action if user is owner of the profile (for profile lists) 
+  // or allowRemoveAction is explicitly set to true and the list type not profile (e.g. squad followers list where squad founder can remove followers)
+  const canRemove = allowRemoveAction || (viewType === "owner" && listType === "profile");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const dropdownContainerRefs = useRef<Record<string, HTMLDivElement | null>>({});
 

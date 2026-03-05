@@ -184,7 +184,7 @@ const SquadHeader = ({
             icon={{ left: <EditIcon /> }}
             onClick={handleEdit}
           >
-            Edit
+            Edit Squad
           </Button>
         </>
       );

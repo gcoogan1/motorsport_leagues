@@ -14,9 +14,9 @@ export const selectSquadViewType = () => (state: RootState): SquadViewType => {
   // Logged in, squad not loaded yet
   if (!currentSquad) return "user";
 
-  // Owner
+  // Founder
   if (currentSquad.founder_account_id === account?.id) {
-    return "owner";
+    return "founder";
   }
 
   // Logged in, viewing a squad they don't own
