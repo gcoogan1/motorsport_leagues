@@ -1,4 +1,5 @@
-import { createSquadWithBanner, getSquadsByAccountId, getSquadById, editSquadBanner, editSquadName } from "@/services/squad.service";
+import { createSquadWithBanner, getSquadsByAccountId, getSquadById, editSquadBanner, editSquadName, deleteSquadById } from "@/services/squad.service";
+import { squadApi } from "@/store/rtkQueryAPI/squadApi";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { SquadTable, CreateSquadPayload, EditBannerPayload, EditSquadNamePayload } from "@/types/squad.types";
 
@@ -89,5 +90,30 @@ export const editSquadNameThunk = createAsyncThunk(
     }
 
     return result.data;
+  },
+);
+
+export const deleteSquadThunk = createAsyncThunk(
+  "squad/delete",
+  async (
+    squadId: string,
+    { rejectWithValue, dispatch },
+  ) => { 
+    const result = await deleteSquadById(squadId);
+
+      if (!result.success) {
+        return rejectWithValue(result.error.message);
+      }
+
+      dispatch(
+        squadApi.util.invalidateTags([
+          "Squads",
+          "SquadMembers",
+          "SquadFollowers",
+          "SquadFollowing",
+        ]),
+      );
+
+      return result;
   },
 );

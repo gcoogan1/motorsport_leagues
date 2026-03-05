@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { useModal } from "@/providers/modal/useModal";
-// import { usePanel } from "@/providers/panel/usePanel";
+import { usePanel } from "@/providers/panel/usePanel";
 import { selectCurrentSquad } from "@/store/squads/squad.selectors";
 import LinkList from "@/components/Lists/LinkList/LinkList";
 import EditIcon from "@assets/Icon/Edit.svg?react";
@@ -10,10 +10,12 @@ import LeaveIcon from "@assets/Icon/Leave.svg?react";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import EditBanner from "./forms/EditBanner/EditBanner";
 import EditSquadName from "./forms/EditSquadName/EditSquadName";
+import CannotLeave from "./modals/error/CannotLeave/CannotLeave";
+import DeleteSquad from "./forms/DeleteSquad/DeleteSquad";
 
 const SquadEdit = () => {
   const { openModal } = useModal();
-  // const { closePanel } = usePanel();
+  const { closePanel } = usePanel();
 
   const squad = useSelector(selectCurrentSquad);
 
@@ -28,9 +30,14 @@ const SquadEdit = () => {
     openModal(<EditSquadName />);
   };
 
-  const handleLeaveSquad = () => {};
+  const handleLeaveSquad = () => {
+    // Add error handling for if the user is the owner of the squad and tries to leave without deleting or transferring ownership first
+    openModal(<CannotLeave />);
+  };
 
-  const handleDeleteSquad = () => {};
+  const handleDeleteSquad = () => {
+    openModal(<DeleteSquad closePanel={closePanel} />);
+  };
 
   return (
     <PanelLayout panelTitle="Edit Squad" panelTitleIcon={<EditIcon />}>
