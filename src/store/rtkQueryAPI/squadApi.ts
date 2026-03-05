@@ -5,6 +5,7 @@ import {
   getSquadFollowersService,
   getSquadMembersBySquadId,
   isFollowingSquadService,
+  removeSquadFollowerService,
   unfollowSquadService,
 } from "@/services/squad.service";
 import type {
@@ -17,6 +18,8 @@ import type {
   FollowSquadResult,
   UnfollowSquadPayload,
   UnfollowSquadResult,
+  RemoveSquadFollowerResult,
+  RemoveSquadFollowerPayload,
 } from "@/types/squad.types";
 import type { GetFollowersResult, ProfileTable } from "@/types/profile.types";
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
@@ -200,6 +203,20 @@ export const squadApi = createApi({
         { type: "SquadFollowing", id: payload.accountId },
       ],
     }),
+    removeSquadFollower: builder.mutation<RemoveSquadFollowerResult, RemoveSquadFollowerPayload>({
+      queryFn: async (payload) => {
+        try {
+          const data = await removeSquadFollowerService(payload);
+          return { data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "SquadFollowers", id: payload.squadId },
+        "SquadFollowing",
+      ],
+    }),
   }),
 });
 
@@ -211,4 +228,5 @@ export const {
   useFollowSquadMutation,
   useIsFollowingSquadQuery,
   useUnfollowSquadMutation,
+  useRemoveSquadFollowerMutation,
 } = squadApi;

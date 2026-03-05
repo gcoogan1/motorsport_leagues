@@ -180,6 +180,17 @@ export type UnfollowSquadResult =
   | { success: true }
   | SupabaseError;
 
+// Remove Squad Follower --> Payload type
+export type RemoveSquadFollowerPayload = {
+  squadId: string;
+  followerProfileId: string;
+};
+
+// Remove Squad Follower --> Result type
+export type RemoveSquadFollowerResult = 
+  | { success: true }
+  | SupabaseError;
+
 // Get Squad Followers --> Success type
 export type GetSquadFollowersSuccess = {
   success: true;

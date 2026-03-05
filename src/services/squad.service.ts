@@ -14,6 +14,8 @@ import type {
   GetSquadFollowingResult,
   GetSquadMembersResult,
   GetSquadsResult,
+  RemoveSquadFollowerPayload,
+  RemoveSquadFollowerResult,
   UnfollowSquadPayload,
   UnfollowSquadResult,
 } from "@/types/squad.types";
@@ -671,6 +673,30 @@ export const getSquadFollowersService = async (
     })),
   };
 };
+
+// -- Remove Follower From Squad -- //
+export const removeSquadFollowerService = async (
+  { squadId, followerProfileId }: RemoveSquadFollowerPayload
+): Promise<RemoveSquadFollowerResult> => {
+  const { error } = await supabase
+    .from("squad_follows")
+    .delete()
+    .eq("squad_id", squadId)
+    .eq("follower_id", followerProfileId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
+} 
 
 // Check if following -- //
 export const checkIfFollowingSquad = async (

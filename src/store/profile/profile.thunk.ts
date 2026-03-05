@@ -20,8 +20,14 @@ export const fetchProfilesThunk = createAsyncThunk(
 // Called when guest views a profile
 export const getProfileByProfileIdThunk = createAsyncThunk(
   "profile/getById",
-  async (profileId: string) => {
-    return await getProfileByProfileId(profileId);
+  async (profileId: string, { rejectWithValue }) => {
+    const result = await getProfileByProfileId(profileId);
+
+    if (!result.success) {
+      return rejectWithValue(result.error.message);
+    }
+
+    return result;
   },
 );
 

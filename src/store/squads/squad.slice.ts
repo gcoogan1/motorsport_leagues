@@ -43,7 +43,12 @@ const squadSlice = createSlice({
       .addCase(fetchSquadsByAccountIdThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
         state.data = action.payload;
-        state.currentSquad = action.payload[0] ?? null;
+
+        // Keep the currently viewed squad intact (e.g. route `/squad/:id`) and
+        // only fallback to first owned squad when no current squad is selected.
+        if (!state.currentSquad) {
+          state.currentSquad = action.payload[0] ?? null;
+        }
       })
       .addCase(fetchSquadsByAccountIdThunk.rejected, (state, action) => {
         state.status = "rejected";
@@ -83,7 +88,8 @@ const squadSlice = createSlice({
       })
       .addCase(getSquadByIdThunk.rejected, (state, action) => {
         state.status = "rejected";
-        state.error = action.payload ?? action.error.message;
+        state.currentSquad = null;
+        state.error = (action.payload as string | undefined) ?? action.error.message;
       })
       // Edit Squad Banner
       .addCase(editBannerThunk.pending, (state) => {
