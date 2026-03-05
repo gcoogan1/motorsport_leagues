@@ -10,10 +10,11 @@ export const ModalOverlay = styled.div`
   inset: 0;
   background: rgba(0, 0, 0, 0.8);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 2000;
   padding: ${layout.space.xxxLarge} ${layout.space.medium};
+  overflow-y: auto;
 `;
 
 export const FormWrapper = styled.form`
@@ -21,6 +22,7 @@ export const FormWrapper = styled.form`
   flex-direction: column;
   width: 100%;
   max-width: 480px;
+  margin: auto 0;
   border-radius: ${borders.radius.xxxLarge};
   background: ${colors.base.base3};
   overflow: hidden;

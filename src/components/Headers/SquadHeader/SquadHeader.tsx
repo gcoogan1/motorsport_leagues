@@ -167,7 +167,7 @@ const SquadHeader = ({
 
   // -- Render Right Actions based on view type -- //
   const renderRightActions = () => {
-    if (viewType === "owner") {
+    if (viewType === "founder") {
       return (
         <>
           <Button
@@ -180,7 +180,7 @@ const SquadHeader = ({
           </Button>
           <Button
             color="base"
-            variant="outlined"
+            variant="filled"
             icon={{ left: <EditIcon /> }}
             onClick={handleEdit}
           >
@@ -257,7 +257,7 @@ const SquadHeader = ({
               >
                 Share
               </Button>
-              {viewType === "owner" && (
+              {viewType === "founder" && (
                 <Button
                   color="base"
                   variant="outlined"
