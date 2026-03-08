@@ -24,7 +24,8 @@ export const ImageUploadContainer = styled.div`
 
 export const ImageUpload = styled.div`
   width: 336px;
-  height: 160px;
+  max-width: 100%;
+  aspect-ratio: 2 / 1;
   object-fit: cover;
   border-radius: ${borders.radius.medium};
   background: ${colors.base.translucent10};
@@ -39,7 +40,8 @@ export const ImageUpload = styled.div`
 `
 export const Placeholder = styled.div`
   width: 336px;
-  height: 160px;
+  max-width: 100%;
+  aspect-ratio: 2 / 1;
   border-radius: ${borders.radius.medium};
   background: ${colors.base.translucent10};
 `
@@ -57,7 +59,6 @@ export const HelperMessage = styled.p`
   ${typography.body.smallRegular};
   color: ${colors.text.text2};
   text-align: center;
-  text-transform: capitalize;
 `
 
 export const ErrorText = styled.span`
