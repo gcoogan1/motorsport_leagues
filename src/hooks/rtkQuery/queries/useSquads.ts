@@ -1,4 +1,7 @@
-import { useGetSquadsQuery } from "@/store/rtkQueryAPI/squadApi";
+import {
+  useGetSquadsByFounderProfileIdQuery,
+  useGetSquadsQuery,
+} from "@/store/rtkQueryAPI/squadApi";
 
 // --- Queries --- //
 // Used to fetch data //
@@ -16,3 +19,9 @@ export const useSquads = (
     { skip },
   );
 };
+
+// Query to fetch squads founded by the viewed profile
+export const useProfileSquads = (profileId?: string) =>
+  useGetSquadsByFounderProfileIdQuery(profileId ?? "", {
+    skip: !profileId,
+  });

@@ -18,6 +18,7 @@ import {
   useIsFollowingProfile,
   useProfileFollowers,
 } from "@/hooks/rtkQuery/queries/useProfileFollowers";
+import { useProfileSquads } from "@/hooks/rtkQuery/queries/useSquads";
 import ProfileHeader from "@/components/Headers/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/ProfileStats/ProfileStats";
 import SquadsListCard from "@/components/Cards/CardList/SquadsListCard/SquadsListCard";
@@ -62,13 +63,6 @@ const Profile = () => {
   // -- Selectors -- //
   const profile = useSelector(selectCurrentProfile);
   const profileStatus = useSelector((state: RootState) => state.profile.status);
-  // Update when members are added
-  const mySquads = useSelector(
-    (state: RootState) =>
-      state.squad.data?.filter(
-        (squad) => squad.founder_profile_id === profile?.id,
-      ) ?? [],
-  );
   const viewType = useSelector(selectProfileViewType());
   const userHasActiveProfile = useSelector(selectHasProfiles);
   const fullGameName = profile?.game_type
@@ -78,6 +72,7 @@ const Profile = () => {
   // -- RTK Query -- //
   // Fetch followers for this profile (used to display followers count and determine if current user is following this profile)
   const { data: followers = [] } = useProfileFollowers(profileId ?? "");
+  const { data: mySquads = [] } = useProfileSquads(profileId);
   // Check if the logged in user is following the profile being viewed (used to determine follow/unfollow behavior)
   const { data: isFollowing = false } = useIsFollowingProfile(
     user?.id ?? "",

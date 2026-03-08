@@ -1,6 +1,7 @@
 import {
   followSquadService,
   getAllSquads,
+  getSquadsByFounderProfileId,
   getFollowingSquads,
   getSquadFollowersService,
   getSquadMembersBySquadId,
@@ -63,6 +64,34 @@ export const squadApi = createApi({
       },
       providesTags: (_result, _error, args) => [
         { type: "Squads", id: `${args.activeTab ?? "all"}-${args.search ?? ""}` },
+      ],
+    }),
+    getSquadsByFounderProfileId: builder.query<SquadTable[], string>({
+      queryFn: async (profileId, api) => {
+        try {
+          const result: GetSquadsResult = await getSquadsByFounderProfileId(
+            profileId,
+            api.signal,
+          );
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      providesTags: (_result, _error, profileId) => [
+        { type: "Squads", id: `profile-${profileId}` },
       ],
     }),
     getSquadMembers: builder.query<SquadMemberProfile[], string>({
@@ -222,6 +251,7 @@ export const squadApi = createApi({
 
 export const {
   useGetSquadsQuery,
+  useGetSquadsByFounderProfileIdQuery,
   useGetSquadMembersQuery,
   useGetSquadFollowersQuery,
   useGetSquadFollowingQuery,

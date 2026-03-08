@@ -68,6 +68,47 @@ export const getSquadsByAccountId = async (
   };
 };
 
+// -- Get Squads by Founder Profile ID -- //
+export const getSquadsByFounderProfileId = async (
+  founderProfileId: string,
+  signal?: AbortSignal,
+): Promise<GetSquadsResult> => {
+  let query = supabase
+    .from("squads")
+    .select("*, squad_members(count)")
+    .eq("founder_profile_id", founderProfileId);
+
+  if (signal) {
+    query = query.abortSignal(signal);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    if (error.code === "ABORT" || error.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data.map((squad) => ({
+      ...squad,
+      member_count: squad.squad_members?.[0]?.count ?? 0,
+      banner_value: resolveBannerValue(squad.banner_type, squad.banner_value),
+    })),
+  };
+};
+
 // -- Check Squad Name Availability -- //
 export const isSquadNameAvailable = async (
   name: string,
