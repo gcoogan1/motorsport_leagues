@@ -1,3 +1,4 @@
+import * as Select from "@radix-ui/react-select";
 import styled from "styled-components";
 import { designTokens } from "@/app/design/tokens";
 
@@ -57,10 +58,22 @@ export const OptionTypeContainer = styled.div`
 export const OptionLabel = styled.p`
   ${typography.body.mediumBold};
   color: ${colors.text.text1};
+  margin: 0;
 `
 
 export const OptionInfo = styled.p`
   ${typography.body.smallRegular};
   color: ${colors.text.text2};
+  margin: 0;
 `
+
+export const OptionIndicator = styled(Select.ItemIndicator)`
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  line-height: 0;
+  flex-shrink: 0;
+`;
 

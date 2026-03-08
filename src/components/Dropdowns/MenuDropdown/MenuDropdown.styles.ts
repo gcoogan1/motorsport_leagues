@@ -20,7 +20,8 @@ export const DropdownContainer = styled.div<{ $isStandAlone?: boolean }>`
   padding: ${layout.space.small};
   gap: ${layout.space.xxSmall};
   border: ${borders.width.thin} solid ${colors.base.translucent10};
-  margin-top: ${layout.space.xxSmall};
+  /* margin-top: ${layout.space.xxSmall}; */
+  margin-top: -4px;
   z-index: 1000;
 
   ${effects.boxShadow.elevationModal};

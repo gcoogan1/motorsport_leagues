@@ -3,6 +3,7 @@ import Icon from "@/components/Icon/Icon";
 import CheckIcon from "@assets/Icon/Check.svg?react";
 import {
   DropdownMenuOption,
+  OptionIndicator,
   OptionContent,
   OptionInfo,
   OptionLabel,
@@ -96,11 +97,11 @@ const MenuOption = ({
                 )}
               </OptionTypeContainer>
 
-              <Select.ItemIndicator>
+              <OptionIndicator>
                 <Icon size="small">
                   <CheckIcon />
                 </Icon>
-              </Select.ItemIndicator>
+              </OptionIndicator>
             </OptionContent>
           </DropdownMenuOption>
         </Select.Item>
