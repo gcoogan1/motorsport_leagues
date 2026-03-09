@@ -21,7 +21,7 @@ export const FormWrapper = styled.form`
   flex-direction: column;
   width: 100%;
   max-width: 480px;
-  max-height: 640px;
+  height: 640px;
   border-radius: ${borders.radius.xxxLarge};
   background: ${colors.base.base3};
   padding: ${layout.space.xLarge};
@@ -93,7 +93,7 @@ export const ResultsContainer = styled.div`
   border: ${borders.width.medium} solid transparent;
   border-radius: ${borders.radius.large};
   overflow-y: auto;
-  padding: ${layout.space.small}; // Added to allow space for profile card border
+  padding: ${layout.space.xxSmall}; // Added to allow space for profile card border
   flex: 1;
   min-height: 0;
 `;

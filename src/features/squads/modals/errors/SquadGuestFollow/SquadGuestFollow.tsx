@@ -14,7 +14,7 @@ const SquadGuestFollow = () => {
     <Dialog 
       type='alert'
       title='Account Required to Follow Squads'
-      subtitle={`Please create an log in or sign up to follow this Squad.`}
+      subtitle={`Please log in or sign up to follow this Squad.`}
       buttons={{
         onCancel: {
           label: 'Cancel',

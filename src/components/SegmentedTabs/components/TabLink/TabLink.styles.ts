@@ -22,6 +22,7 @@ export const ButtonLinkContainer = styled.button<
     flex: ${$shouldExpand ? "3 1 0%" : "1 1 0%"};
     `;
   }} min-width: max-content;
+  white-space: nowrap;
 
   background: ${({ $isSelected }) =>
     $isSelected ? colors.text.text1 : "transparent"};
@@ -46,5 +47,11 @@ export const ButtonLinkContainer = styled.button<
   &:active {
     background: ${({ $isSelected }) =>
       $isSelected ? colors.text.text3 : colors.base.translucent20};
+  }
+
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.xSmall} ${layout.space.small};
+    flex: 1 1 0%;
+    min-width: 0;
   }
 `;

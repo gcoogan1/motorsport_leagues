@@ -18,10 +18,25 @@ type SquadsListCardProps = {
     membersCount?: number;
     onClick: () => void;
   }>;
+  onCreateSquad?: () => void;
+  onFindSquad?: () => void;
   isOwner: boolean;
 };  
 
-const SquadsListCard = ({ squads, isOwner }: SquadsListCardProps) => {
+const SquadsListCard = ({ squads, isOwner, onCreateSquad, onFindSquad }: SquadsListCardProps) => {
+
+  const handleCreateSquad = () => {
+    if (onCreateSquad) {
+      onCreateSquad();
+    }
+  };
+
+  const handleFindSquad = () => {
+    if (onFindSquad) {
+      onFindSquad();
+    }
+  };
+
   return (
     <CardListWrapper>
       <HeaderContainer>
@@ -53,12 +68,12 @@ const SquadsListCard = ({ squads, isOwner }: SquadsListCardProps) => {
             actions={{
               primary: {
                 label: "Create New Squad",
-                onClick: () => {},
+                onClick: handleCreateSquad,
                 leftIcon: <CreateIcon />,
               },
               secondary: {
                 label: "Find a Squad",
-                onClick: () => {},
+                onClick: handleFindSquad,
                 leftIcon: <SearchIcon />,
               },
             }}

@@ -54,7 +54,7 @@ const SquadsPanel = () => {
   const { openModal } = useModal();
   const [activeTab, setActiveTab] = useState<string>(SQUAD_TABS[0].label);
   const squads = useSelector((state: RootState) => state.squad.data);
-  const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const accountId = useSelector((state: RootState) => state?.account.data?.id);
   const { data: following = [] } = useSquadFollowing(accountId ?? "");
 
 

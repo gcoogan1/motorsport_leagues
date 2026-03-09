@@ -27,6 +27,7 @@ import FollowProfile from "@/features/profiles/forms/Follow/FollowProfile";
 import NoProfile from "@/features/profiles/modals/core/NoProfile/NoProfile";
 import GuestFollow from "@/features/profiles/modals/errors/GuestFollow/GuestFollow";
 import Unfollow from "@/features/profiles/modals/errors/Unfollow/Unfollow";
+import SearchForm from "@/features/search/forms/SearchForm";
 import { Container, Content, ListContainer, Wrapper } from "./Profile.styles";
 
 // TEMP HARDCODED STATS
@@ -138,6 +139,16 @@ const Profile = () => {
     return;
   };
 
+  const handleCreateSquad = () => {
+    navigate("/create-squad");
+    return
+  };
+
+  const handleSearchSquads = () => {
+    openModal(<SearchForm startingTab="Squads" />);
+    return
+  }
+
   return (
     <Wrapper>
       <ProfileHeader
@@ -159,6 +170,8 @@ const Profile = () => {
           <ListContainer>
             <SquadsListCard
               isOwner={viewType === "owner"}
+              onCreateSquad={handleCreateSquad}
+              onFindSquad={handleSearchSquads}
               squads={mySquads.map((squad) => ({
                 id: squad.id,
                 name: squad.squad_name,
