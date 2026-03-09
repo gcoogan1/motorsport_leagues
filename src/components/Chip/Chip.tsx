@@ -1,13 +1,14 @@
 import Avatar from "../Avatar/Avatar";
 import CloseIcon from "@assets/Icon/Close.svg?react";
 import { ChipWrapper, ProfileTextContainer, Username, Game, ChipButton, TagText, ProfileInfoContainer } from "./Chip.styles";
+import type { AvatarVariants } from "../Avatar/Avatar.variants";
 
 type ChipProps = {
   type: "profile" | "tag"
   onClick?: () => void;
   profile?: {
     avatarType: "preset" | "upload";
-    avatarValue: string;
+    avatarValue: AvatarVariants | string;
     username: string;
     game: string;
   }

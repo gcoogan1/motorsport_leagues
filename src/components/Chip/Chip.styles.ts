@@ -5,8 +5,9 @@ const { colors, layout, typography, borders } = designTokens;
 
 export const ChipWrapper = styled.div<{ type: "profile" | "tag" }>`
   display: flex;
-  width: 145px;
-  min-width: 145px;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
   flex-shrink: 0;
   border-radius: ${borders.radius.round};
   background: ${colors.base.translucent10};
