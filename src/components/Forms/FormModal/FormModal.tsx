@@ -45,6 +45,15 @@ const FormModal = ({
   buttons,
   onSubmit,
 }: FormModalProps) => {
+  const handleFormSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+    if (!onSubmit) {
+      event.preventDefault();
+      return;
+    }
+
+    onSubmit(event);
+  };
+
   const handleOnContinue = () => {
     if (buttons?.onContinue?.action) {
       buttons.onContinue.action();
@@ -59,7 +68,7 @@ const FormModal = ({
 
   return (
     <ModalOverlay>
-      <FormWrapper onSubmit={onSubmit}>
+      <FormWrapper onSubmit={handleFormSubmit}>
         <FormBody>
           <BodyHeader>
             <BodyTitle>{question}</BodyTitle>
@@ -87,7 +96,7 @@ const FormModal = ({
           </SecondaryButtonContainer>
           {buttons?.onContinue && (
             <Button
-              type="submit"
+              type={onSubmit ? "submit" : "button"}
               color={buttons?.onContinue?.isDanger ? "danger" : "system"}
               onClick={handleOnContinue}
               isLoading={buttons?.onContinue?.loading}
