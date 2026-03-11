@@ -13,9 +13,12 @@ import SquadHeader from "@/components/Headers/SquadHeader/SquadHeader";
 import LeaguesListCard from "@/components/Cards/CardList/LeaguesListCard/LeaguesListCard";
 import { Container, Contents, Wrapper } from "./Squad.styles";
 import { useSquadFollowers, useIsFollowingSquad } from "@/hooks/rtkQuery/queries/useSquadFollowers";
+import ShareSquad from "@/features/squads/forms/Share/ShareSquad/ShareSquad";
+import { useModal } from "@/providers/modal/useModal";
 
 const Squad = () => {
   const { openPanel } = usePanel();
+  const { openModal, closeModal } = useModal();
   const { squadId } = useParams<{ squadId: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
@@ -79,6 +82,10 @@ const Squad = () => {
     openPanel("SQUAD_FOLLOWERS", { squadId: squad.id });
   }
 
+  const handleOnShareSquad = () => {
+    openModal(<ShareSquad squadUrl={window.location.href} onClose={closeModal} />);
+  }
+
   return (
     <Wrapper>
       <SquadHeader
@@ -93,7 +100,7 @@ const Squad = () => {
         hasProfile={userHasActiveProfile}
         onFollowersClick={handleOnFollowersClick}
         onEdit={handleEditSquad}
-        onShare={() => console.log("Share Squad")}
+        onShare={handleOnShareSquad}
         onInvite={() => console.log("Invite to Squad")}
       />
       <Contents>

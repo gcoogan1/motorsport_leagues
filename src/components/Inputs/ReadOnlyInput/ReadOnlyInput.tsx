@@ -4,6 +4,7 @@ import {
   InputField,
   InputWrapper,
   Label,
+  TextValue,
 } from "./ReadOnlyInput.styles";
 import UserProfile from "@/components/Users/Profile/UserProfile";
 import type { Tag } from "@/components/Tags/Tags.variants";
@@ -20,22 +21,27 @@ type User = {
 type ReadOnlyInputProps = {
   label: string;
   helperText?: string;
-  profile: User;
+  profile?: User;
+  textValue?: string;
 };
 
-const ReadOnlyInput = ({ label, helperText, profile }: ReadOnlyInputProps) => {
+const ReadOnlyInput = ({ label, helperText, profile, textValue }: ReadOnlyInputProps) => {
   return (
     <InputWrapper>
       <Label>{label}</Label>
       <InputField>
-        <UserProfile
-          username={profile.username}
-          avatarType={profile.avatarType}
-          avatarValue={profile.avatarValue}
-          information={profile.information}
-          size="medium"
-          tags={profile.tags}
-        />
+        {profile ? (
+          <UserProfile
+            username={profile.username}
+            avatarType={profile.avatarType}
+            avatarValue={profile.avatarValue}
+            information={profile.information}
+            size="medium"
+            tags={profile.tags}
+          />
+        ) : (
+          <TextValue>{textValue || "No profile available"}</TextValue>
+        )}
       </InputField>
       {helperText && <HelperText>{helperText}</HelperText>}
     </InputWrapper>

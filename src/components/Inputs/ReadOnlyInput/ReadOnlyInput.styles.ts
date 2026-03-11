@@ -27,6 +27,11 @@ export const InputField = styled.div`
   border: ${borders.width.thin} solid ${colors.base.translucent10};
 `;
 
+export const TextValue = styled.p`
+  ${typography.body.mediumBold}
+  color: ${colors.text.text1};
+`
+
 export const HelperText = styled.span`
   ${typography.body.smallRegular};
   color: ${colors.text.text2};
