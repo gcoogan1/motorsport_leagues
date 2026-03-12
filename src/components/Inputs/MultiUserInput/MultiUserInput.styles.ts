@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { createGlobalStyle, css } from "styled-components";
 import { designTokens } from "@/app/design/tokens";
 
 const { colors, layout, typography, borders } = designTokens;
@@ -56,7 +56,9 @@ export const FieldWrapper = styled.div`
     order: 0;
     margin: 0;
     padding: 0;
-    
+    width: auto;
+    min-width: 0;
+    flex: 1 1 auto;
   }
 
   .select__placeholder {
@@ -73,10 +75,24 @@ export const FieldWrapper = styled.div`
     pointer-events: none;
   }
 
+  .select__multi-value {
+    margin: 0;
+  }
+
+  .select__error {
+    ${typography.body.smallBold};
+    color: ${colors.alert.alertA};
+  }
+`;
+
+// Global styles for the portaled menu — must be global because menuPortalTarget={document.body}
+// renders the dropdown outside FieldWrapper, so scoped styles won't reach it
+export const MultiSelectMenuGlobalStyles = createGlobalStyle`
   .select__menu {
     background: ${colors.base.base3};
     border-radius: 12px;
     overflow: hidden;
+    z-index: 9999;
   }
 
   .select__menu-list {
@@ -89,15 +105,6 @@ export const FieldWrapper = styled.div`
   .select__option {
     padding: 0;
     background: transparent;
-  }
-
-  .select__multi-value {
-    margin: 0;
-  }
-
-  .select__error {
-    ${typography.body.smallBold};
-    color: ${colors.alert.alertA};
   }
 `;
 
