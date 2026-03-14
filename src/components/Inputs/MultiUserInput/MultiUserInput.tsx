@@ -44,6 +44,7 @@ const MultiUserInput = ({
       value: profile.username,
       label: profile.username,
       profileId: profile.id,
+      accountId: profile.accountId,
       avatar: {
         avatarType: profile.avatarType,
         avatarValue: profile.avatarValue,
