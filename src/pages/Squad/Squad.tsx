@@ -15,6 +15,7 @@ import { Container, Contents, Wrapper } from "./Squad.styles";
 import { useSquadFollowers, useIsFollowingSquad } from "@/hooks/rtkQuery/queries/useSquadFollowers";
 import ShareSquad from "@/features/squads/forms/Share/ShareSquad/ShareSquad";
 import { useModal } from "@/providers/modal/useModal";
+import InviteSquad from "@/features/squads/forms/Invite/InviteSquad/InviteSquad";
 
 const Squad = () => {
   const { openPanel } = usePanel();
@@ -22,6 +23,7 @@ const Squad = () => {
   const { squadId } = useParams<{ squadId: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const currentUserProfiles = useSelector((state: RootState) => state.profile.data ?? []);
   const squad = useSelector((state: RootState) => state.squad.currentSquad);
   const squadStatus = useSelector((state: RootState) => state.squad.status);
   const viewType = useSelector(selectSquadViewType());
@@ -74,6 +76,12 @@ const Squad = () => {
     avatarValue: member.avatar_value,
   }));
 
+  const founderUsername =
+    currentUserProfiles.find(
+      (profile) =>
+        profile.id === squad.founder_profile_id && profile.account_id === accountId,
+    )?.username ?? "";
+
   const handleEditSquad = () => {
     openPanel("SQUAD_EDIT");
   };
@@ -84,6 +92,16 @@ const Squad = () => {
 
   const handleOnShareSquad = () => {
     openModal(<ShareSquad squadUrl={window.location.href} onClose={closeModal} />);
+  }
+
+  const handleInviteToSquad = () => {
+    openModal(
+      <InviteSquad
+        squadId={squad.id}
+        squadName={squad.squad_name}
+        founderName={founderUsername}
+      />,
+    );
   }
 
   return (
@@ -101,7 +119,7 @@ const Squad = () => {
         onFollowersClick={handleOnFollowersClick}
         onEdit={handleEditSquad}
         onShare={handleOnShareSquad}
-        onInvite={() => console.log("Invite to Squad")}
+        onInvite={handleInviteToSquad}
       />
       <Contents>
         <Container>
