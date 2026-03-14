@@ -14,6 +14,8 @@ import type {
   GetSquadFollowingResult,
   GetSquadMembersResult,
   GetSquadsResult,
+  InviteSquadPayload,
+  InviteSquadResult,
   RemoveSquadFollowerPayload,
   RemoveSquadFollowerResult,
   UnfollowSquadPayload,
@@ -1020,3 +1022,25 @@ export const deleteSquadById = async (
     success: true,
   };
 };
+
+// -- Invite To Squad -- //
+export const inviteToSquad = async (
+  { emails, squadId, squadName, inviteeUsername }: InviteSquadPayload
+): Promise<InviteSquadResult> => {  
+    const { error } = await supabase.functions.invoke("invite_user", {
+      body: { emails, squadId, squadName, inviteeUsername },
+    });
+
+    if (error) {
+      return {
+        success: false,
+        error: {
+          message: error.message,
+          code: error.code || "INVITE_FAILED",
+          status: 500,
+        },
+      };
+    }
+
+    return { success: true }; 
+}

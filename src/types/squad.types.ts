@@ -209,6 +209,37 @@ export type GetSquadFollowingSuccess = {
 // Get Squad Following --> Result type
 export type GetSquadFollowingResult = GetSquadFollowingSuccess | SupabaseError;
 
+// Squad Invites 
+export type SquadInviteTable = {
+  id: string;
+  created_at: string;
+  clicked_at?: string;
+  squad_id: string;
+  email: string;
+  squad_name: string;
+  invitee_username: string;
+  status: "pending" | "accepted" | "clicked";
+  profile_id?: string;
+};
+
+export type EmailInvite = {
+  email: string;
+  profileId?: string;
+};
+
+// Invite Squad --> Payload type
+export type InviteSquadPayload = {
+  emails: EmailInvite[];
+  squadId: string;
+  squadName: string;
+  inviteeUsername: string;
+};
+
+// Invite Squad --> Result type
+export type InviteSquadResult = 
+  | { success: true }
+  | SupabaseError;
+
 // Redux Types //
 // Squad State --> used in Redux slice for squads
 export type SquadState = {
