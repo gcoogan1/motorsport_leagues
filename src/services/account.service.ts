@@ -122,3 +122,26 @@ export const updateAccountName = async (
     error: { message: "Account not found", code: "NOT_FOUND", status: 404 },
   };
 };
+
+// -- Get Account Email by Account ID -- //
+export const getAccountEmailById = async (
+  accountId: string,
+): Promise<{email: string} | null> => {
+  const { data, error } = await supabase
+    .from("accounts")
+    .select("email")
+    .eq("id", accountId)
+    .single();
+
+  if (error) {
+    return null;
+  }
+
+  if (data) {
+    return {
+      email: data.email,
+    };
+  }
+
+  return null;
+};

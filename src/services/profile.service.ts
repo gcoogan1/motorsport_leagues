@@ -499,7 +499,7 @@ export const deleteProfile = async (
   };
 };
 
-// -- Get All Profiles (with optional search) -- //
+// -- Get All Profiles (with optional search and minus current user) -- //
 // Used for search functionality, returns all profiles except the current user's profile, with optional search by username
 export const getAllProfiles = async (
   currentUserId?: string,
