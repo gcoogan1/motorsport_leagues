@@ -22,6 +22,10 @@ export const ROUTES: Route[] = [
     path: "/", 
     element: <Homepage />,
   },
+  { 
+    path: "/invite/:token", 
+    element: <Homepage />,
+  },
   {
     path: "/verify-account",
     element: <VerifyAccount />,
