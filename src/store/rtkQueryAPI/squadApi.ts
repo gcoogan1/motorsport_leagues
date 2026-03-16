@@ -1,4 +1,5 @@
 import {
+  addMemberToSquad,
   followSquadService,
   getAllSquads,
   getSquadsByFounderProfileId,
@@ -10,6 +11,8 @@ import {
   unfollowSquadService,
 } from "@/services/squad.service";
 import type {
+  AddSquadMemberPayload,
+  AddSquadMemberResult,
   GetSquadMembersResult,
   GetSquadFollowingResult,
   GetSquadsResult,
@@ -120,6 +123,32 @@ export const squadApi = createApi({
       },
       providesTags: (_result, _error, squadId) => [
         { type: "SquadMembers", id: squadId },
+      ],
+    }),
+    addSquadMember: builder.mutation<AddSquadMemberResult, AddSquadMemberPayload>({
+      queryFn: async (payload) => {
+        try {
+          const result = await addMemberToSquad(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "SquadMembers", id: payload.squadId },
+        "Squads",
       ],
     }),
     followSquad: builder.mutation<FollowSquadResult, FollowSquadPayload>({
@@ -253,6 +282,7 @@ export const {
   useGetSquadsQuery,
   useGetSquadsByFounderProfileIdQuery,
   useGetSquadMembersQuery,
+  useAddSquadMemberMutation,
   useGetSquadFollowersQuery,
   useGetSquadFollowingQuery,
   useFollowSquadMutation,

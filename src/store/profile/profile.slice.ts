@@ -12,7 +12,7 @@ import {
 const initialState: ProfilesState = {
   data: null,
   currentProfile: null,
-  status: "idle",
+  status: "loading",
   draft: {},
 };
 
