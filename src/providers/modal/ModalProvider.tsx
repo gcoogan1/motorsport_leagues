@@ -1,21 +1,28 @@
-import { useState, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { ModalContext } from "./ModalContext";
 
 export const ModalProvider = ({ children }: { children: ReactNode }) => {
   const [modal, setModal] = useState<ReactNode[]>([]);
 
-  const openModal = (modalComponent: ReactNode) => {
+  const openModal = useCallback((modalComponent: ReactNode) => {
     setModal((prev) => [...prev, modalComponent]);
-  };
-  const closeModal = () => {
+  }, []);
+
+  const closeModal = useCallback(() => {
     setModal((prev) => prev.slice(0, -1));
-  };
-  const closeAllModals = () => {
+  }, []);
+
+  const closeAllModals = useCallback(() => {
     setModal([]);
-  };
+  }, []);
+
+  const value = useMemo(
+    () => ({ openModal, closeModal, closeAllModals }),
+    [openModal, closeModal, closeAllModals],
+  );
 
   return (
-    <ModalContext.Provider value={{ openModal, closeModal, closeAllModals }}>
+    <ModalContext.Provider value={value}>
       {children}
       {modal}
     </ModalContext.Provider>
