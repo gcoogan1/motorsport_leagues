@@ -6,17 +6,19 @@ import JoinSquad from "@/features/squads/modals/core/JoinSquad/JoinSquad";
 import GuestJoinSquad from "@/features/squads/modals/errors/GuestJoinSquad/GuestJoinSquad";
 
 type UseSquadInviteTokenFlowProps = {
-  token?: string;
   viewType: SquadViewType | "loading";
   userHasActiveProfile: boolean;
   squadStatus: "idle" | "loading" | "fulfilled" | "rejected";
+  squadId?: string;
+  token?: string;
 };
 
 export const useSquadInviteTokenFlow = ({
-  token,
   viewType,
   userHasActiveProfile,
   squadStatus,
+  squadId,
+  token,
 }: UseSquadInviteTokenFlowProps) => {
   const { openModal } = useModal();
 
@@ -27,14 +29,22 @@ useEffect(() => {
       return;
     }
 
+    if (!squadId) return;
+
     const inviteTableResult = await getInviteTablesByToken(token);
     if (!inviteTableResult.success) return;
 
     if (viewType === "founder") return;
 
+    //     if (
+    //   inviteTableResult.data.status === "pending" &&
+    //   !inviteTableResult.data.clicked_at
+    // ) {
+    //   await markSquadInviteClickedByToken(token);
+    // }
     
     if (viewType === "user" && !userHasActiveProfile) {
-      openModal(<JoinSquad hasProfile={false} />);
+      openModal(<JoinSquad squadId={squadId} hasProfile={false} token={token}  />);
       return;
     }
     
@@ -43,8 +53,8 @@ useEffect(() => {
       return;
     }
 
-    openModal(<JoinSquad hasProfile={true} />);
+    openModal(<JoinSquad squadId={squadId} hasProfile={true} token={token} profileId={inviteTableResult.data.profile_id} />);
   };
 
   void loadInviteData();
-}, [token, userHasActiveProfile, viewType, squadStatus, openModal])}
+}, [squadId, token, userHasActiveProfile, viewType, squadStatus, openModal])}

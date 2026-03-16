@@ -52,7 +52,7 @@ const Squad = () => {
   );
 
   // -- Effects -- //
-  useSquadInviteTokenFlow({ token, viewType, userHasActiveProfile, squadStatus });
+  useSquadInviteTokenFlow({ squadId, token, viewType, userHasActiveProfile, squadStatus });
 
   // Load the CURRENT SQUAD whenever the route changes.
   useEffect(() => {
@@ -74,8 +74,6 @@ const Squad = () => {
   }, [squadId, squadStatus]);
 
   // -- Conditional rendering -- //
-
-  console.log("Squad page render", { squad, viewType, squadStatus });
 
   // SHOW loading state while determining the viewType (which depends on both account and squad state) to avoid flashing incorrect UI.
   if (squadStatus === "loading" || viewType === "loading") {
