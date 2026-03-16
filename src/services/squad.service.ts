@@ -11,6 +11,7 @@ import type {
   EditSquadNameResult,
   FollowSquadPayload,
   FollowSquadResult,
+  GetInviteTablesResult,
   GetSquadFollowingResult,
   GetSquadMembersResult,
   GetSquadsResult,
@@ -1043,4 +1044,30 @@ export const inviteToSquad = async (
     }
 
     return { success: true }; 
+}
+
+export const getInviteTablesByToken = async (
+  inviteToken: string,
+): Promise<GetInviteTablesResult> => {
+  const { data, error } = await supabase
+    .from("squad_invites")
+    .select("*")
+    .eq("token", inviteToken)
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data,
+  };
 }

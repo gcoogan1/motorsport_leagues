@@ -240,6 +240,10 @@ export type InviteSquadResult =
   | { success: true }
   | SupabaseError;
 
+export type GetInviteTablesResult =
+  | { success: true; data: SquadInviteTable }
+  | SupabaseError;
+
 // Redux Types //
 // Squad State --> used in Redux slice for squads
 export type SquadState = {
