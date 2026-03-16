@@ -22,10 +22,6 @@ export const ROUTES: Route[] = [
     path: "/", 
     element: <Homepage />,
   },
-  { 
-    path: "/invite/:token", 
-    element: <Homepage />,
-  },
   {
     path: "/verify-account",
     element: <VerifyAccount />,
@@ -58,6 +54,10 @@ export const ROUTES: Route[] = [
   },
   {
     path: "/squad/:squadId",
+    element: <Squad />,
+  },
+    { 
+    path: "/squad/:squadId/invite/:token", 
     element: <Squad />,
   },
   {
