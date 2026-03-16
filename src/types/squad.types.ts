@@ -240,6 +240,10 @@ export type InviteSquadResult =
   | { success: true }
   | SupabaseError;
 
+export type RemoveSquadInviteByTokenResult =
+  | { success: true }
+  | SupabaseError;
+
 export type GetInviteTablesResult =
   | { success: true; data: SquadInviteTable }
   | SupabaseError;

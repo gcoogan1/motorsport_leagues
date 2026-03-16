@@ -17,6 +17,7 @@ import type {
   GetSquadsResult,
   InviteSquadPayload,
   InviteSquadResult,
+  RemoveSquadInviteByTokenResult,
   RemoveSquadFollowerPayload,
   RemoveSquadFollowerResult,
   UnfollowSquadPayload,
@@ -1046,6 +1047,7 @@ export const inviteToSquad = async (
     return { success: true }; 
 }
 
+// -- Get Invite Tables by Token -- //
 export const getInviteTablesByToken = async (
   inviteToken: string,
 ): Promise<GetInviteTablesResult> => {
@@ -1070,4 +1072,27 @@ export const getInviteTablesByToken = async (
     success: true,
     data,
   };
+}
+
+// -- Remove Squad Invite by Token -- //
+export const removeSquadInviteByToken = async (
+  inviteToken: string,
+): Promise<RemoveSquadInviteByTokenResult> => {
+  const { error } = await supabase
+    .from("squad_invites")
+    .delete()
+    .eq("token", inviteToken);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
 }
