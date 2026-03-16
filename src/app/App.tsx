@@ -6,6 +6,7 @@ import ReactGA from "react-ga4";
 import store, { type AppDispatch } from "@/store";
 import { fetchProfilesThunk } from "@/store/profile/profile.thunk";
 import { fetchAccountThunk } from "@/store/account/account.thunks";
+import { resetAppState } from "@/store/appReset";
 import { AuthProvider } from "@/providers/auth/AuthProvider";
 import { PanelProvider } from "@/providers/panel/PanelProvider";
 import { ToastProvider } from "@/providers/toast/ToastProvider";
@@ -20,16 +21,23 @@ import { fetchSquadsByAccountIdThunk } from "@/store/squads/squad.thunk";
 //TODO: Re-enable Toast component once global state management is implemented
 
 const AppContent = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
+    if (loading) return;
+
     if (user?.id) {
       dispatch(fetchAccountThunk(user.id));
       dispatch(fetchProfilesThunk(user.id));
       dispatch(fetchSquadsByAccountIdThunk(user.id));
+      return;
     }
-  }, [user?.id, dispatch]);
+
+    // Auth resolved and no session: move app slices out of loading state
+    // so selectors can resolve guest views.
+    dispatch(resetAppState());
+  }, [loading, user?.id, dispatch]);
 
   return <AppRouter />;
 };
