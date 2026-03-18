@@ -17,6 +17,8 @@ import type {
   GetSquadsResult,
   InviteSquadPayload,
   InviteSquadResult,
+  MarkSquadInviteClickedPayload,
+  MarkSquadInviteClickedResult,
   RemoveSquadInviteByTokenResult,
   RemoveSquadFollowerPayload,
   RemoveSquadFollowerResult,
@@ -1027,10 +1029,24 @@ export const deleteSquadById = async (
 
 // -- Invite To Squad -- //
 export const inviteToSquad = async (
-  { emails, squadId, squadName, inviteeUsername }: InviteSquadPayload
+  {
+    emails,
+    squadId,
+    squadName,
+    senderUsername,
+    senderAccountId,
+    senderProfileId,
+  }: InviteSquadPayload
 ): Promise<InviteSquadResult> => {  
     const { error } = await supabase.functions.invoke("invite_user", {
-      body: { emails, squadId, squadName, inviteeUsername },
+      body: {
+        emails,
+        squadId,
+        squadName,
+        senderUsername,
+        senderAccountId,
+        senderProfileId,
+      },
     });
 
     if (error) {
@@ -1082,6 +1098,35 @@ export const removeSquadInviteByToken = async (
     .from("squad_invites")
     .delete()
     .eq("token", inviteToken);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
+}
+
+// -- Mark Squad Invite as Clicked -- //
+export const markSquadInviteClicked = async (
+  { inviteId, profileId }: MarkSquadInviteClickedPayload,
+): Promise<MarkSquadInviteClickedResult> => {
+  const { error } = await supabase
+    .from("squad_invites")
+    .update({
+      profile_id: profileId,
+      status: "clicked",
+      clicked_at: new Date().toISOString(),
+    })
+    .eq("id", inviteId)
+    .eq("status", "pending")
+    .is("clicked_at", null);
 
   if (error) {
     return {

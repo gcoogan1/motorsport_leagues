@@ -1,5 +1,8 @@
 import type { RootState } from "@/store";
 import type { ProfileViewType } from "@/types/profile.types";
+import { createSelector } from "@reduxjs/toolkit";
+
+export const selectAllProfiles = (state: RootState) => state.profile.data;
 
 export const selectProfileById = (profileId: string) => (state: RootState) =>
   state.profile.data?.find((p) => p.id === profileId);
@@ -7,8 +10,14 @@ export const selectProfileById = (profileId: string) => (state: RootState) =>
 export const selectCurrentProfile = (state: RootState) =>
   state.profile.currentProfile;
 
-export const selectHasProfiles = (state: RootState) =>
-  (state.profile.data?.length ?? 0) > 0;
+export const selectHasProfiles = createSelector(
+  (state: RootState) => state.profile.data,
+  (state: RootState) => state.profile.status,
+  (profiles, status) => {
+    if (status === "loading") return null;
+    return profiles != null && profiles.length > 0;
+  }
+);
 
 
 export const selectProfileViewType = () =>

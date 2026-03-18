@@ -61,7 +61,7 @@ The **ProfileSelectInput** component is a specialized dropdown input for selecti
 |---------------|-----------------------------|----------------------|-----------------------------------------------------------|
 | \`name\`        | \`string\`                    | \`-\`                 | The name of the input field, used for form handling.      |
 | \`fieldLabel\`  | \`string\`                    | \`-\`                 | The label displayed above the input field.                |
-| \`type\`        | \`"profile" \| "driver"\`     | \`"profile"\`         | Determines avatar size and display style.                 |
+| \`type\`        | \`"profile" | "driver"\`      | \`"profile"\`         | Determines avatar size and display style.                 |
 | \`isLarge\`     | \`boolean\`                   | \`false\`             | Controls the size variant of the input.                   |
 | \`placeholder\` | \`string\`                    | \`"Select profile..."\` | Placeholder text when no profile is selected.           |
 | \`hasError\`    | \`boolean\`                   | \`false\`             | Indicates whether the input field is in an error state.   |
