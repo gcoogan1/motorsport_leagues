@@ -7,7 +7,7 @@ import GuestJoinSquad from "@/features/squads/modals/errors/GuestJoinSquad/Guest
 
 type UseSquadInviteTokenFlowProps = {
   viewType: SquadViewType | "loading";
-  userHasActiveProfile: boolean;
+  userHasActiveProfile: boolean | null;
   squadStatus: "idle" | "loading" | "fulfilled" | "rejected";
   squadId?: string;
   token?: string;
@@ -43,7 +43,7 @@ useEffect(() => {
     //   await markSquadInviteClickedByToken(token);
     // }
     
-    if (viewType === "user" && !userHasActiveProfile) {
+    if (viewType === "user" && userHasActiveProfile === false) {
       openModal(<JoinSquad squadId={squadId} hasProfile={false} token={token}  />);
       return;
     }
