@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "@/store";
@@ -7,7 +7,6 @@ import { usePanel } from "@/providers/panel/usePanel";
 import { navigate } from "@/app/navigation/navigation";
 import { getBannerVariants } from "@/components/Banner/Banner.variants";
 import { useSquadMembers } from "@/hooks/rtkQuery/queries/useSquadMembers";
-import { selectSquadViewType } from "@/store/squads/squad.selectors";
 import { selectHasProfiles } from "@/store/profile/profile.selectors";
 import SquadHeader from "@/components/Headers/SquadHeader/SquadHeader";
 import LeaguesListCard from "@/components/Cards/CardList/LeaguesListCard/LeaguesListCard";
@@ -21,47 +20,56 @@ import { useModal } from "@/providers/modal/useModal";
 import { useSquadInviteTokenFlow } from "../../hooks/useSquadInviteTokenFlow";
 import InviteSquad from "@/features/squads/forms/Invite/InviteSquad/InviteSquad";
 import LoadingScreen from "@/components/Messages/LoadingScreen/LoadingScreen";
+import { useSquadPageReadyState } from "@/hooks/useSquadPageReadyState";
 
 const Squad = () => {
-  // -- Providers / navigation -- //
   const { openPanel } = usePanel();
   const { openModal, closeModal } = useModal();
-  const { squadId } = useParams<{ squadId: string }>();
-  const { token } = useParams<{ token: string }>();
+  const { squadId, token } = useParams<{ squadId: string; token: string }>();
   const dispatch = useDispatch<AppDispatch>();
 
-  // -- Redux state -- //
+  // Redux
   const accountId = useSelector((state: RootState) => state.account.data?.id);
   const currentUserProfiles = useSelector(
-    (state: RootState) => state.profile.data ?? [],
+    (state: RootState) => state.profile.data ?? []
   );
   const squad = useSelector((state: RootState) => state.squad.currentSquad);
-  const squadStatus = useSelector((state: RootState) => state.squad.status);
-  const viewType = useSelector(selectSquadViewType());
   const userHasActiveProfile = useSelector(selectHasProfiles);
 
-  // -- RTK Query data -- //
-  // Members power the squad header avatars and help derive founder metadata.
-  const { data: squadMembers = [] } = useSquadMembers(squadId);
+  // 🧠 NEW READY STATE
+  const { isReady, squadStatus, viewType } = useSquadPageReadyState();
 
-  // Followers count and follow-state are used by the header actions.
+  // RTK Query
+  const { data: squadMembers = [] } = useSquadMembers(squadId);
   const { data: followers = [] } = useSquadFollowers(squadId ?? "");
   const { data: isFollowing = false } = useIsFollowingSquad(
     squadId ?? "",
-    accountId ?? "",
+    accountId ?? ""
   );
 
-  // -- Effects -- //
-  useSquadInviteTokenFlow({ squadId, token, viewType, userHasActiveProfile, squadStatus });
+  // User already belongs to this squad if any of their profiles is present in squad members.
+  const currentUserProfileIds = new Set(currentUserProfiles.map((profile) => profile.id));
+  const userAlreadyInSquad = squadMembers.some((member) =>
+    currentUserProfileIds.has(member.profile_id),
+  );
 
-  // Load the CURRENT SQUAD whenever the route changes.
+  // Invite flow
+  useSquadInviteTokenFlow({
+    squadId,
+    token,
+    viewType,
+    userHasActiveProfile,
+    squadStatus,
+  });
+
+  // Load squad
   useEffect(() => {
     if (squadId) {
       dispatch(getSquadByIdThunk(squadId));
     }
   }, [squadId, dispatch]);
 
-  // REDIRECT invalid or failed squad routes.
+  // Redirect invalid
   useEffect(() => {
     if (!squadId) {
       navigate("/unavailable", { replace: true });
@@ -73,19 +81,37 @@ const Squad = () => {
     }
   }, [squadId, squadStatus]);
 
-  // -- Conditional rendering -- //
+  // ✅ SAFE localStorage handling
+  const hasStoredInvite = useRef(false);
 
-  // SHOW loading state while determining the viewType (which depends on both account and squad state) to avoid flashing incorrect UI.
-  if (squadStatus === "loading" || viewType === "loading") {
+  useEffect(() => {
+    if (!isReady || !token || hasStoredInvite.current) return;
+
+    const shouldStore =
+      viewType === "guest" ||
+      (viewType === "user" && userHasActiveProfile === false) ||
+      (viewType === "user" && !userAlreadyInSquad);
+
+    if (shouldStore) {
+      localStorage.setItem(
+        "squad_invite",
+        JSON.stringify({
+          token,
+          timestamp: Date.now(),
+          squadId,
+        })
+      );
+    }
+
+    hasStoredInvite.current = true;
+  }, [isReady, token, viewType, userAlreadyInSquad, squadId, userHasActiveProfile]);
+
+  // 🚫 block UI until ready
+  if (!isReady || !squad || squad.id !== squadId) {
     return <LoadingScreen />;
   }
 
-  if (!squad || squad.id !== squadId) {
-    return <LoadingScreen />;
-  }
-
-
-  // -- Derived data -- //
+  // Derived
   const bannerImage =
     squad.banner_type === "preset"
       ? getBannerVariants()[
@@ -99,41 +125,35 @@ const Squad = () => {
     avatarValue: member.avatar_value,
   }));
 
-  // FOUNDER username must come from the current user's own profile set,
-  // matched directly against the squad's founder_profile_id.
   const founderUsername =
     currentUserProfiles.find(
-      (profile) =>
-        profile.id === squad.founder_profile_id &&
-        profile.account_id === accountId,
+      (p) =>
+        p.id === squad.founder_profile_id &&
+        p.account_id === accountId
     )?.username ?? "";
 
+  // Handlers
+  const handleEditSquad = () => openPanel("SQUAD_EDIT");
 
-  // -- Handlers -- //
-  const handleEditSquad = () => {
-    openPanel("SQUAD_EDIT");
-  };
-
-  // Open the followers side panel for the current squad.
   const handleOnFollowersClick = () => {
     openPanel("SQUAD_FOLLOWERS", { squadId: squad.id });
   };
 
-  // Open the share modal with the current page URL.
   const handleOnShareSquad = () => {
     openModal(
-      <ShareSquad squadUrl={window.location.href} onClose={closeModal} />,
+      <ShareSquad squadUrl={window.location.href} onClose={closeModal} />
     );
   };
 
-  // Open the invite modal with squad metadata and the resolved founder username.
   const handleInviteToSquad = () => {
     openModal(
       <InviteSquad
         squadId={squad.id}
         squadName={squad.squad_name}
         founderName={founderUsername}
-      />,
+        founderProfileId={squad.founder_profile_id}
+        founderAccountId={squad.founder_account_id}
+      />
     );
   };
 
@@ -146,9 +166,9 @@ const Squad = () => {
         isFollowing={isFollowing}
         bannerImage={bannerImage}
         members={members}
-        viewType={viewType}
+        viewType={viewType === "loading" ? "guest" : viewType}
         followersCount={followers.length}
-        hasProfile={userHasActiveProfile}
+        hasProfile={userHasActiveProfile ?? false}
         onFollowersClick={handleOnFollowersClick}
         onEdit={handleEditSquad}
         onShare={handleOnShareSquad}
