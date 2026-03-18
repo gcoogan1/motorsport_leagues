@@ -7,11 +7,11 @@ type SquadNoProfileProps = {
 };
 
 const SquadNoProfile = ({ type = "follow" }: SquadNoProfileProps) => {
-  const { closeModal } = useModal();
+  const { closeModal, closeAllModals } = useModal();
 
   const handleContinue = () => {
+    closeAllModals();
     navigate("/create-profile");
-    closeModal();
   };
 
   return (

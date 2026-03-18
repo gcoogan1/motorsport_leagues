@@ -18,14 +18,16 @@ type JoinSquadProps = {
 }
 
 const JoinSquad = ({ squadId, hasProfile, token, profileId }: JoinSquadProps) => {
-  const { openModal, closeAllModals } = useModal();
+  const { openModal, closeModal, closeAllModals } = useModal();
   const { showToast } = useToast();
   const [joinSquadAsMember] = useJoinSquadAsMember();
   const [isLoading, setIsLoading] = useState(false);
 
+
   const handleContinue = async () => {
     try {
       setIsLoading(true);
+      
       // accept the invite and join the squad as a member if the user has a profile
       if (profileId) {
         await withMinDelay(
@@ -55,14 +57,16 @@ const JoinSquad = ({ squadId, hasProfile, token, profileId }: JoinSquadProps) =>
       }
 
       if (!hasProfile) {
+        closeAllModals();
         openModal(<SquadNoProfile type="join" />);
         return;
       }
 
       // If the user has a profile but no profileId is provided, open the AcceptJoinSquad modal to let them select a profile to join with
-  openModal(<AcceptJoinSquad token={token} squadId={squadId} />);
-    } catch {
       closeAllModals();
+      openModal(<AcceptJoinSquad token={token} squadId={squadId} />);
+      return;
+    } catch {
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     } finally {
       setIsLoading(false);
@@ -77,7 +81,7 @@ const JoinSquad = ({ squadId, hasProfile, token, profileId }: JoinSquadProps) =>
       buttons={{
         onCancel: {
           label: 'Cancel',
-          action: () => closeAllModals(),
+          action: () => closeModal(),
         },
         onContinue: {
           label: 'Join Squad',

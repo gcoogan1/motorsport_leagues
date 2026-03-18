@@ -15,6 +15,7 @@ import AppRouter from "./routes/AppRouter";
 import { AppThemeProvider } from "../providers/theme/AppThemeProvider";
 import { ModalProvider } from "../providers/modal/ModalProvider";
 import { fetchSquadsByAccountIdThunk } from "@/store/squads/squad.thunk";
+import { usePendingInviteNotification } from "@/hooks/usePendingInviteNotification";
 
 // import Toast from "@/components/Messages/Toast/Toast";
 
@@ -23,6 +24,9 @@ import { fetchSquadsByAccountIdThunk } from "@/store/squads/squad.thunk";
 const AppContent = () => {
   const { user, loading } = useAuth();
   const dispatch = useDispatch<AppDispatch>();
+
+  // Resolve any stored squad invite notification only after auth/bootstrap state settles.
+  usePendingInviteNotification();
 
   useEffect(() => {
     if (loading) return;

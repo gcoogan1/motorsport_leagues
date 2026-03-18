@@ -54,8 +54,6 @@ const Homepage = () => {
   // Theme
   const { themeName } = useAppTheme();
   const LogoIcon = LogoThemes[themeName];
-  
-  
   // const formMethods = useForm({
   //   defaultValues: {
   //     profile: "",

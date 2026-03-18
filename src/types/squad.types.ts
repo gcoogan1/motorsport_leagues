@@ -242,7 +242,7 @@ export type InviteSquadPayload = {
 
 // Invite Squad --> Result type
 export type InviteSquadResult = 
-  | { success: true }
+  | { success: true, data: SquadInviteTable }
   | SupabaseError;
 
 export type RemoveSquadInviteByTokenResult =

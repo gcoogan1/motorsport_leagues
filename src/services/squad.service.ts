@@ -1038,7 +1038,7 @@ export const inviteToSquad = async (
     senderProfileId,
   }: InviteSquadPayload
 ): Promise<InviteSquadResult> => {  
-    const { error } = await supabase.functions.invoke("invite_user", {
+    const { data, error } = await supabase.functions.invoke("invite_user", {
       body: {
         emails,
         squadId,
@@ -1060,7 +1060,7 @@ export const inviteToSquad = async (
       };
     }
 
-    return { success: true }; 
+    return { success: true, data }; 
 }
 
 // -- Get Invite Tables by Token -- //
