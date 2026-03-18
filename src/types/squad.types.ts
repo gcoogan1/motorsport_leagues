@@ -214,17 +214,20 @@ export type SquadInviteTable = {
   id: string;
   created_at: string;
   clicked_at?: string;
+  token?: string;
   squad_id: string;
   email: string;
   squad_name: string;
-  invitee_username: string;
+  sender_username: string;
+  sender_account_id?: string;
+  sender_profile_id?: string;
   status: "pending" | "accepted" | "clicked";
-  profile_id?: string;
+  profile_id?: string; // invitee's profile ID if they have an account, used to link the invite to a profile for notifications and tracking purposes
 };
 
 export type EmailInvite = {
   email: string;
-  profileId?: string;
+  profileId?: string; // invitee's profile ID if they have an account, used to link the invite to a profile for notifications and tracking purposes
 };
 
 // Invite Squad --> Payload type
@@ -232,7 +235,9 @@ export type InviteSquadPayload = {
   emails: EmailInvite[];
   squadId: string;
   squadName: string;
-  inviteeUsername: string;
+  senderUsername: string;
+  senderAccountId: string;
+  senderProfileId: string;
 };
 
 // Invite Squad --> Result type
@@ -241,6 +246,15 @@ export type InviteSquadResult =
   | SupabaseError;
 
 export type RemoveSquadInviteByTokenResult =
+  | { success: true }
+  | SupabaseError;
+
+export type MarkSquadInviteClickedPayload = {
+  inviteId: string;
+  profileId: string;
+};
+
+export type MarkSquadInviteClickedResult =
   | { success: true }
   | SupabaseError;
 
