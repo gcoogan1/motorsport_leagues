@@ -12,6 +12,7 @@ import type {
   FollowSquadPayload,
   FollowSquadResult,
   GetInviteTablesResult,
+  GetSquadInvitesResult,
   GetSquadFollowingResult,
   GetSquadMembersResult,
   GetSquadsResult,
@@ -1060,7 +1061,7 @@ export const inviteToSquad = async (
       };
     }
 
-    return { success: true, data }; 
+    return { success: true, data: data.data }; 
 }
 
 // -- Get Invite Tables by Token -- //
@@ -1140,4 +1141,38 @@ export const markSquadInviteClicked = async (
   }
 
   return { success: true };
+}
+
+// -- Get Pending Squad Invites by Squad ID -- //
+export const getPendingSquadInvitesBySquadId = async (
+  squadId: string,
+  signal?: AbortSignal,
+): Promise<GetSquadInvitesResult> => {
+  let query = supabase
+    .from("squad_invites")
+    .select("*")
+    .eq("squad_id", squadId)
+    .eq("status", "pending");
+
+  if (signal) {
+    query = query.abortSignal(signal);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data,
+  };
 }

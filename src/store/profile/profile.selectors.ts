@@ -2,6 +2,7 @@ import type { RootState } from "@/store";
 import type { ProfileViewType } from "@/types/profile.types";
 import { createSelector } from "@reduxjs/toolkit";
 
+// All user profiles
 export const selectAllProfiles = (state: RootState) => state.profile.data;
 
 export const selectProfileById = (profileId: string) => (state: RootState) =>

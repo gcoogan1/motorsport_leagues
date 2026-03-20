@@ -90,6 +90,13 @@ export type GetSquadMembersSuccess = {
 
 export type GetSquadMembersResult = GetSquadMembersSuccess | SupabaseError;
 
+export type GetSquadInvitesSuccess = {
+  success: true;
+  data: SquadInviteTable[];
+};
+
+export type GetSquadInvitesResult = GetSquadInvitesSuccess | SupabaseError;
+
 // Create Squad --> Payload type
 export type CreateSquadPayload = {
   founderAccountId: string;
@@ -242,7 +249,7 @@ export type InviteSquadPayload = {
 
 // Invite Squad --> Result type
 export type InviteSquadResult = 
-  | { success: true, data: SquadInviteTable }
+  | { success: true, data: SquadInviteTable[] }
   | SupabaseError;
 
 export type RemoveSquadInviteByTokenResult =

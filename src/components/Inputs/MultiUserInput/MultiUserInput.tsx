@@ -119,7 +119,20 @@ const MultiUserInput = ({
               onChange={(selected) => {
                 // When the selection changes (either by selecting an existing option or creating a new one), we need to update the form state.
                 const nextValue = (selected as MultiValue<SelectOption>) ?? [];
-                onChange(nextValue.slice(0, MAX_SELECTIONS));
+                
+                // Filter out duplicates based on value (for emails/usernames) and profileId (for profiles)
+                const uniqueValues = new Set<string>();
+                const filteredValues = nextValue.filter((item) => {
+                  // Use profileId as key if available, otherwise use value
+                  const key = item.profileId ? `profile:${item.profileId}` : `value:${item.value.toLowerCase()}`;
+                  if (uniqueValues.has(key)) {
+                    return false; // Skip duplicate
+                  }
+                  uniqueValues.add(key);
+                  return true;
+                });
+                
+                onChange(filteredValues.slice(0, MAX_SELECTIONS));
                 setInputValue("");
               }}
               options={options}
