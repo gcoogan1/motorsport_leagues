@@ -1,7 +1,8 @@
 import {
   useCreateNotificationMutation,
-  useMarkAllNotificationsReadMutation,
-  useMarkNotificationReadMutation,
+  useDeleteNotificationMutation,
+  // useMarkAllNotificationsReadMutation,
+  // useMarkNotificationReadMutation,
 } from "@/store/rtkQueryAPI/notificationApi";
 
 // --- Mutations --- //
@@ -12,12 +13,17 @@ export const useCreateNotification = () => {
   return useCreateNotificationMutation();
 };
 
-// Mutation for marking a single notification as read.
-export const useMarkNotificationRead = () => {
-  return useMarkNotificationReadMutation();
+// Mutation for deleting a notification.
+export const useDeleteNotification = () => {
+  return useDeleteNotificationMutation();
 };
 
-// Mutation for marking all notifications as read for a recipient.
-export const useMarkAllNotificationsRead = () => {
-  return useMarkAllNotificationsReadMutation();
-};
+// // Mutation for marking a single notification as read.
+// export const useMarkNotificationRead = () => {
+//   return useMarkNotificationReadMutation();
+// };
+
+// // Mutation for marking all notifications as read for a recipient.
+// export const useMarkAllNotificationsRead = () => {
+//   return useMarkAllNotificationsReadMutation();
+// };

@@ -1,21 +1,23 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
   createNotification,
+  deleteNotification,
+  getNotificationById,
   getNotificationsByRecipientId,
   getNotificationsByRecipientIds,
   getUnreadNotificationsCount,
-  markAllNotificationsRead,
-  markNotificationRead,
+  // markAllNotificationsRead,
+  // markNotificationRead,
 } from "@/services/notification.service";
 import type {
   CreateNotificationPayload,
   CreateNotificationResult,
   GetNotificationsResult,
   GetUnreadNotificationsCountResult,
-  MarkAllNotificationsReadPayload,
-  MarkAllNotificationsReadResult,
-  MarkNotificationReadPayload,
-  MarkNotificationReadResult,
+  // MarkAllNotificationsReadPayload,
+  // MarkAllNotificationsReadResult,
+  // MarkNotificationReadPayload,
+  // MarkNotificationReadResult,
   Notification,
 } from "@/types/notification.types";
 
@@ -128,60 +130,100 @@ export const notificationApi = createApi({
         { type: "UnreadNotifications", id: payload.recipient_profile_id },
       ],
     }),
-    markNotificationRead: builder.mutation<
-      MarkNotificationReadResult,
-      MarkNotificationReadPayload & { recipientProfileId: string }
+    deleteNotification: builder.mutation<
+      { recipientProfileId?: string },
+      { notificationId: string; recipientProfileId?: string }
     >({
-      queryFn: async ({ notificationId }) => {
+      queryFn: async ({ notificationId, recipientProfileId }) => {
         try {
-          const result = await markNotificationRead({ notificationId });
+          let resolvedRecipientProfileId = recipientProfileId;
 
-          if (!result.success) {
-            return {
-              error: {
-                status: result.error.status,
-                data: result.error,
-              },
-            };
+          if (!resolvedRecipientProfileId) {
+            const notificationResult = await getNotificationById(notificationId);
+            if (notificationResult.success && notificationResult.data) {
+              resolvedRecipientProfileId =
+                notificationResult.data.recipient_profile_id;
+            }
           }
 
-          return { data: result };
+          await deleteNotification(notificationId);
+          return { data: { recipientProfileId: resolvedRecipientProfileId } };
         } catch (error) {
           return { error };
         }
       },
-      invalidatesTags: (_result, _error, payload) => [
-        { type: "Notifications", id: payload.recipientProfileId },
-        { type: "UnreadNotifications", id: payload.recipientProfileId },
-      ],
-    }),
-    markAllNotificationsRead: builder.mutation<
-      MarkAllNotificationsReadResult,
-      MarkAllNotificationsReadPayload
-    >({
-      queryFn: async (payload) => {
-        try {
-          const result = await markAllNotificationsRead(payload);
+      invalidatesTags: (result, _error, payload) => {
+        const resolvedRecipientProfileId =
+          result?.recipientProfileId ?? payload.recipientProfileId;
 
-          if (!result.success) {
-            return {
-              error: {
-                status: result.error.status,
-                data: result.error,
-              },
-            };
-          }
-
-          return { data: result };
-        } catch (error) {
-          return { error };
+        if (!resolvedRecipientProfileId) {
+          return ["Notifications", "UnreadNotifications"];
         }
+
+        return [
+          { type: "Notifications", id: resolvedRecipientProfileId },
+          { type: "UnreadNotifications", id: resolvedRecipientProfileId },
+        ];
       },
-      invalidatesTags: (_result, _error, payload) => [
-        { type: "Notifications", id: payload.recipientProfileId },
-        { type: "UnreadNotifications", id: payload.recipientProfileId },
-      ],
     }),
+    // markNotificationRead: builder.mutation<MarkNotificationReadResult, MarkNotificationReadPayload & { recipientProfileId: string }>({
+    //   queryFn: async ({ notificationId }) => {
+    //     try {
+    //       const result = await markNotificationRead({ notificationId });
+    // markNotificationRead: builder.mutation<
+    //   MarkNotificationReadResult,
+    //   MarkNotificationReadPayload & { recipientProfileId: string }
+    // >({
+    //   queryFn: async ({ notificationId }) => {
+    //     try {
+    //       const result = await markNotificationRead({ notificationId });
+
+    //       if (!result.success) {
+    //         return {
+    //           error: {
+    //             status: result.error.status,
+    //             data: result.error,
+    //           },
+    //         };
+    //       }
+
+    //       return { data: result };
+    //     } catch (error) {
+    //       return { error };
+    //     }
+    //   },
+    //   invalidatesTags: (_result, _error, payload) => [
+    //     { type: "Notifications", id: payload.recipientProfileId },
+    //     { type: "UnreadNotifications", id: payload.recipientProfileId },
+    //   ],
+    // }),
+    // markAllNotificationsRead: builder.mutation<
+    //   MarkAllNotificationsReadResult,
+    //   MarkAllNotificationsReadPayload
+    // >({
+    //   queryFn: async (payload) => {
+    //     try {
+    //       const result = await markAllNotificationsRead(payload);
+
+    //       if (!result.success) {
+    //         return {
+    //           error: {
+    //             status: result.error.status,
+    //             data: result.error,
+    //           },
+    //         };
+    //       }
+
+    //       return { data: result };
+    //     } catch (error) {
+    //       return { error };
+    //     }
+    //   },
+    //   invalidatesTags: (_result, _error, payload) => [
+    //     { type: "Notifications", id: payload.recipientProfileId },
+    //     { type: "UnreadNotifications", id: payload.recipientProfileId },
+    //   ],
+    // }),
   }),
 });
 
@@ -190,6 +232,7 @@ export const {
   useGetNotificationsByRecipientIdsQuery,
   useGetUnreadNotificationsCountQuery,
   useCreateNotificationMutation,
-  useMarkNotificationReadMutation,
-  useMarkAllNotificationsReadMutation,
+  useDeleteNotificationMutation,
+  // useMarkNotificationReadMutation,
+  // useMarkAllNotificationsReadMutation,
 } = notificationApi;

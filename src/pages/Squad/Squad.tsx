@@ -36,7 +36,7 @@ const Squad = () => {
   const squad = useSelector((state: RootState) => state.squad.currentSquad);
   const userHasActiveProfile = useSelector(selectHasProfiles);
 
-  // 🧠 NEW READY STATE
+  // NEW READY STATE
   const { isReady, squadStatus, viewType } = useSquadPageReadyState();
 
   // RTK Query
