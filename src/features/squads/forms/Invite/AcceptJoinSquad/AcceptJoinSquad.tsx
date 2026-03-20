@@ -6,6 +6,7 @@ import type { RootState } from "@/store";
 import { useToast } from "@/providers/toast/useToast";
 import { useModal } from "@/providers/modal/useModal";
 import { useJoinSquadAsMember } from "@/hooks/rtkQuery/mutations/useSquadMutation";
+import { useCreateNotification, useDeleteNotification } from "@/hooks/rtkQuery/mutations/useNotificationMutation";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { withMinDelay } from "@/utils/withMinDelay";
@@ -15,17 +16,37 @@ import ProfileSelectInput from "@/components/Inputs/ProfileSelectInput/ProfileSe
 import { joinSquadSchema, type JoinSquadFormValues } from "./acceptJoinSquad.schema";
 import { removeSquadInviteByToken } from "@/services/squad.service";
 
+/*
+  This component is rendered when a user clicks "Join Squad" from a squad invite notification but doesn't have a profile selected yet (edge case of the main JoinSquad flow). 
+  It prompts the user to select a profile to join the squad with, then proceeds with the joining flow similarly to JoinSquad.
+*/
+
 type AcceptJoinSquadProps = {
   token: string;
   squadId: string;
+  onSuccess?: () => void;
+  senderAccountId?: string;
+  senderProfileId?: string;
+  squadName?: string;
+  notificationId?: string;
 };
 
-const AcceptJoinSquad = ({ token, squadId }: AcceptJoinSquadProps) => {
+const AcceptJoinSquad = ({
+  token,
+  squadId,
+  onSuccess,
+  senderProfileId,
+  squadName,
+  notificationId,
+}: AcceptJoinSquadProps) => {
   const { openModal, closeAllModals } = useModal();
   const { showToast } = useToast();
   const [joinSquadAsMember] = useJoinSquadAsMember();
+  const [createNotification] = useCreateNotification();
   const [isLoading, setIsLoading] = useState(false);
+  const [deleteNotification] = useDeleteNotification();
   const profiles = useSelector((state: RootState) => state.profile.data);
+  const account = useSelector((state: RootState) => state.account.data);
   const formatedProfiles = convertProfilesToSelectOptions(profiles || []);
 
     // -- Form setup -- //
@@ -49,16 +70,50 @@ const AcceptJoinSquad = ({ token, squadId }: AcceptJoinSquadProps) => {
 
         await withMinDelay(
           (async () => {
+            // ACCEPT THE INVITE AND JOIN THE SQUAD AS A MEMBER WITH THE SELECTED PROFILE
             await joinSquadAsMember({
               squadId,
               profileId: data.profile_joining,
               role: "member",
             }).unwrap();
 
+            // REMOVE INVITE TOKEN
             const inviteRemovalResult = await removeSquadInviteByToken(token);
 
             if (!inviteRemovalResult.success) {
               throw inviteRemovalResult.error;
+            }
+
+            // DELETE NOTIFICATION -> IF APPLICABLE
+            if (notificationId)  {
+                await deleteNotification({
+                  notificationId,
+                }).unwrap();
+              }
+
+            const acceptedProfile = profiles?.find(
+              (profile) => profile.id === data.profile_joining,
+            );
+
+            // SEND ACCEPT NOTIFICATION TO INVITER (SENDER) IF APPLICABLE
+            if (
+              senderProfileId &&
+              squadName &&
+              acceptedProfile?.username
+            ) {
+              await createNotification({
+                recipient_profile_id: senderProfileId,  // Founder profile ID (inviter)
+                sender_profile_id: acceptedProfile.id, // Profile ID of the user who accepted the invite (invitee)
+                sender_account_id: acceptedProfile.account_id, // Account ID of the user who accepted the invite (invitee)
+                entity_id: squadId,
+                type: "INVITE_ACCEPTED",
+                entity_type: "squad_invite",
+                metadata: {
+                  squad_name: squadName,
+                  recipient_username: acceptedProfile.username,
+                  recipient_email: account?.email,
+                },
+              }).unwrap();
             }
           })(),
           1000,
@@ -70,6 +125,7 @@ const AcceptJoinSquad = ({ token, squadId }: AcceptJoinSquadProps) => {
         });
         closeAllModals();
         navigate(`/squad/${squadId}`);
+        onSuccess?.();
       } catch {
         closeAllModals();
         handleSupabaseError({ code: "SERVER_ERROR" }, openModal);

@@ -30,6 +30,7 @@ export const usePendingInviteNotification = () => {
   const hasRunRef = useRef(false);
   const recipientProfile = currentProfile ?? firstProfile;
 
+
   useEffect(() => {
     // Only run once per mount, and only after login + profile creation + recipientProfile resolved
     // Also wait for profile loading to complete (status !== "loading")
@@ -39,7 +40,6 @@ export const usePendingInviteNotification = () => {
     const inviteDataStr = localStorage.getItem("squad_invite");
     if (!inviteDataStr) return;
 
-    console.log("1: Pending invite found in localStorage, processing notification...");
 
     hasRunRef.current = true;
 
@@ -54,7 +54,6 @@ export const usePendingInviteNotification = () => {
         // Fetch full invite details from database
         const inviteTableResult = await getInviteTablesByToken(inviteData.token);
 
-        console.log("2: Invite details fetched from database:", inviteTableResult);
 
         // Invite no longer exists or expired, clean up localStorage
         if (!inviteTableResult.success || !inviteTableResult.data) {
@@ -66,7 +65,6 @@ export const usePendingInviteNotification = () => {
 
         // Skip notification if sender info is missing (required for valid UUID fields)
         if (!invite.sender_account_id || !invite.sender_profile_id) {
-          console.warn("[usePendingInviteNotification] Missing sender info, skipping notification");
           localStorage.removeItem("squad_invite");
           return;
         }
@@ -81,13 +79,12 @@ export const usePendingInviteNotification = () => {
             (notification) =>
               notification.type === "INVITE_RECEIVED" &&
               notification.entity_type === "squad_invite" &&
-              notification.entity_id === invite.id,
+              "invite_token" in notification.metadata &&
+              notification.metadata.invite_token ===
+                (invite.token || inviteData.token),
           );
 
           if (alreadyExists) {
-            console.log(
-              "[usePendingInviteNotification] Invite notification already exists, skipping create",
-            );
             localStorage.removeItem("squad_invite");
             return;
           }
@@ -98,7 +95,7 @@ export const usePendingInviteNotification = () => {
           recipient_profile_id: recipientProfile.id,
           sender_account_id: invite.sender_account_id,
           sender_profile_id: invite.sender_profile_id,
-          entity_id: invite.id,
+          entity_id: invite.squad_id,
           type: "INVITE_RECEIVED",
           entity_type: "squad_invite",
           metadata: {
@@ -108,12 +105,9 @@ export const usePendingInviteNotification = () => {
           },
         }).unwrap();
 
-      console.log("3: Notification created successfully");
-
         // Clear localStorage after successfully sending notification
         localStorage.removeItem("squad_invite");
 
-        console.log("[usePendingInviteNotification] Notification sent for pending invite");
       } catch (error) {
         // Log error but don't throw—failure to notify shouldn't break the app
         console.error("[usePendingInviteNotification] Failed to process pending invite:", error);

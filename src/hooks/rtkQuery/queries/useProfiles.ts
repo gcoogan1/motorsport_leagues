@@ -16,3 +16,10 @@ export const useProfiles = (
     { skip },
   );
 };
+
+// Query to fetch all profiles excluding the current user's account
+export const useOtherProfiles = (userId?: string) =>
+  useGetProfilesQuery(
+    { userId, activeTab: "Profiles" },
+    { skip: !userId },
+  );

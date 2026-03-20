@@ -44,7 +44,16 @@ useEffect(() => {
     // }
     
     if (viewType === "user" && userHasActiveProfile === false) {
-      openModal(<JoinSquad squadId={squadId} hasProfile={false} token={token}  />);
+      openModal(
+        <JoinSquad
+          squadId={squadId}
+          hasProfile={false}
+          token={token}
+          senderAccountId={inviteTableResult.data.sender_account_id}
+          senderProfileId={inviteTableResult.data.sender_profile_id}
+          squadName={inviteTableResult.data.squad_name}
+        />,
+      );
       return;
     }
     
@@ -53,7 +62,17 @@ useEffect(() => {
       return;
     }
 
-    openModal(<JoinSquad squadId={squadId} hasProfile={true} token={token} profileId={inviteTableResult.data.profile_id} />);
+    openModal(
+      <JoinSquad
+        squadId={squadId}
+        hasProfile={true}
+        token={token}
+        profileId={inviteTableResult.data.profile_id}
+        senderAccountId={inviteTableResult.data.sender_account_id}
+        senderProfileId={inviteTableResult.data.sender_profile_id}
+        squadName={inviteTableResult.data.squad_name}
+      />,
+    );
   };
 
   void loadInviteData();

@@ -8,8 +8,10 @@ import { useToast } from "@/providers/toast/useToast";
 import { getAccountEmailById } from "@/services/account.service";
 import { inviteToSquad } from "@/services/squad.service";
 import { useGetProfilesQuery } from "@/store/rtkQueryAPI/profileApi";
+import { useSquadMembers } from "@/hooks/rtkQuery/queries/useSquadMembers";
+import { useSquadInvites } from "@/hooks/rtkQuery/queries/useSquadInvites";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
-import { type EmailInvite } from "@/types/squad.types";
+import { type EmailInvite, type SquadInviteTable } from "@/types/squad.types";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import MultiUserInput from "@/components/Inputs/MultiUserInput/MultiUserInput";
 import { inviteSchema } from "./inviteSquadSchema";
@@ -31,7 +33,8 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
 
   const userId = useSelector((state: RootState) => state.account.data?.id);
   const { data: profilesData } = useGetProfilesQuery({ userId });
-
+  const { data: squadMembers } = useSquadMembers(squadId);
+  const { data: pendingInvites } = useSquadInvites(squadId);
 
 
   const profiles =
@@ -43,6 +46,13 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
       id: profile.id,
       accountId: profile.account_id,
     })) ?? [];
+
+  // Filter out profiles that are already squad members or already invited
+  const availableProfiles = profiles.filter(
+    (profile) =>
+      !squadMembers?.some((member) => member.profile_id === profile.id) &&
+      !pendingInvites?.some((invite) => invite.profile_id === profile.id)
+  );
 
   // -- Form setup -- //
 
@@ -84,12 +94,22 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
         throw new Error(res.error?.message || "Failed to send invites.");
       }
 
+      const inviteRows: SquadInviteTable[] = Array.isArray(res.data)
+        ? res.data
+        : [];
+
       if (founderAccountId && founderProfileId) {
         await Promise.all(
           data.invitees.map(async (invitee) => {
+            const matchingInvite = inviteRows.find(
+              (inv) => inv.profile_id === invitee.profileId,
+            );
 
             // If no profile, NO NOTIFICATION
             if (!invitee.profileId) return;
+
+            // If invite token is missing, skip notification to avoid invalid payload
+            if (!matchingInvite?.token) return;
 
             // SEND NOTIFICATION
             await createNotification({
@@ -102,9 +122,9 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
               metadata: {
                 squad_name: squadName,
                 sender_username: founderName,
-                invite_token: res.data?.token || "", // Should always be present for profile invites, but just in case
+                invite_token: matchingInvite.token,
               },
-            });
+            }).unwrap();
           }),
         );
       }
@@ -114,6 +134,7 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
         message: "Invite(s) sent.",
       });
       closeModal();
+      return
     } catch {
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     } finally {
@@ -140,7 +161,7 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
           name="invitees"
           label="Profiles or Emails"
           placeholder="e.g., FranzH, max@email.com"
-          profiles={profiles}
+          profiles={availableProfiles}
         />
       </FormModal>
     </FormProvider>
