@@ -3,6 +3,8 @@ import type { AvatarVariants } from "@/components/Avatar/Avatar.variants";
 // Types for the MultiUserInput component, including the structure of user profiles and select options.
 
 export type Profile = {
+  id?: string;
+  accountId?: string;
   avatarType: "preset" | "upload";
   avatarValue: AvatarVariants | string;
   username: string;
@@ -12,6 +14,8 @@ export type Profile = {
 export type SelectOption = {
   value: string;
   label: string;
+  profileId?: string;
+  accountId?: string;
   isEmail?: boolean;
   __isNew__?: boolean;
   avatar?: {

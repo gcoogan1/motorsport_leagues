@@ -5,6 +5,8 @@ import GuestNavbar from "./variants/guest/GuestNavbar";
 import UserNavbar from "./variants/user/UserNavbar";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
+import { selectAllProfiles } from "@/store/profile/profile.selectors";
+import { useAllNotifications } from "@/hooks/rtkQuery/queries/useNotifications";
 
 //TODO:
 // Get user data from context or global state
@@ -19,9 +21,11 @@ type NavbarProps = {
 const Navbar = ({ usage, user, manualGoBack }: NavbarProps) => {
 
   const account = useSelector((state: RootState) => state.account.data);
+  const profiles = useSelector(selectAllProfiles);
+  const profileIds = profiles?.map((profile) => profile.id) ?? [];
+  const { data: notifications = [] } = useAllNotifications(profileIds);
 
-  // Temporary hardcoded values for demonstration
-  const count = user ? 0 : undefined;
+  const count = notifications.filter((notification) => !notification.is_read).length;
   const label = account ? `${account.firstName}` : "Account";
 
   switch (usage) {

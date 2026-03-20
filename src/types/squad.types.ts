@@ -90,6 +90,13 @@ export type GetSquadMembersSuccess = {
 
 export type GetSquadMembersResult = GetSquadMembersSuccess | SupabaseError;
 
+export type GetSquadInvitesSuccess = {
+  success: true;
+  data: SquadInviteTable[];
+};
+
+export type GetSquadInvitesResult = GetSquadInvitesSuccess | SupabaseError;
+
 // Create Squad --> Payload type
 export type CreateSquadPayload = {
   founderAccountId: string;
@@ -208,6 +215,59 @@ export type GetSquadFollowingSuccess = {
 
 // Get Squad Following --> Result type
 export type GetSquadFollowingResult = GetSquadFollowingSuccess | SupabaseError;
+
+// Squad Invites 
+export type SquadInviteTable = {
+  id: string;
+  created_at: string;
+  clicked_at?: string;
+  token?: string;
+  squad_id: string;
+  email: string;
+  squad_name: string;
+  sender_username: string;
+  sender_account_id?: string;
+  sender_profile_id?: string;
+  status: "pending" | "accepted" | "clicked";
+  profile_id?: string; // invitee's profile ID if they have an account, used to link the invite to a profile for notifications and tracking purposes
+};
+
+export type EmailInvite = {
+  email: string;
+  profileId?: string; // invitee's profile ID if they have an account, used to link the invite to a profile for notifications and tracking purposes
+};
+
+// Invite Squad --> Payload type
+export type InviteSquadPayload = {
+  emails: EmailInvite[];
+  squadId: string;
+  squadName: string;
+  senderUsername: string;
+  senderAccountId: string;
+  senderProfileId: string;
+};
+
+// Invite Squad --> Result type
+export type InviteSquadResult = 
+  | { success: true, data: SquadInviteTable[] }
+  | SupabaseError;
+
+export type RemoveSquadInviteByTokenResult =
+  | { success: true }
+  | SupabaseError;
+
+export type MarkSquadInviteClickedPayload = {
+  inviteId: string;
+  profileId: string;
+};
+
+export type MarkSquadInviteClickedResult =
+  | { success: true }
+  | SupabaseError;
+
+export type GetInviteTablesResult =
+  | { success: true; data: SquadInviteTable }
+  | SupabaseError;
 
 // Redux Types //
 // Squad State --> used in Redux slice for squads

@@ -2,6 +2,7 @@ import { useAppTheme } from "@/providers/theme/useTheme";
 import { LogoThemes } from "@/app/design/logoThemes";
 import { Container, SubTitle, Wrapper } from "./Homepage.styles";
 
+
 //TODO: Remove this when the homepage is ready. This is just for testing the profile select input component.
 
 // const HomepageContent = () => {
@@ -53,7 +54,6 @@ const Homepage = () => {
   // Theme
   const { themeName } = useAppTheme();
   const LogoIcon = LogoThemes[themeName];
-
   // const formMethods = useForm({
   //   defaultValues: {
   //     profile: "",

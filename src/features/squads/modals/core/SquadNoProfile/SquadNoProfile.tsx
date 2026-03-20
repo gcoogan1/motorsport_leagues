@@ -1,32 +1,44 @@
-import { useModal } from '@/providers/modal/useModal';
-import Dialog from '@/components/Dialog/Dialog'
-import { navigate } from '@/app/navigation/navigation';
+import { useModal } from "@/providers/modal/useModal";
+import Dialog from "@/components/Dialog/Dialog";
+import { navigate } from "@/app/navigation/navigation";
 
-const SquadNoProfile = () => {
-  const { closeModal } = useModal();
+type SquadNoProfileProps = {
+  type?: "join" | "follow";
+};
+
+const SquadNoProfile = ({ type = "follow" }: SquadNoProfileProps) => {
+  const { closeModal, closeAllModals } = useModal();
 
   const handleContinue = () => {
-    navigate('/create-profile');
-    closeModal();
-  }
-  
+    closeAllModals();
+    navigate("/create-profile");
+  };
+
   return (
-    <Dialog 
-      type='core'
-      title='Profile Required to Follow Squads'
-      subtitle={`Please create a Profile to be able to follow this, and other, Squads.`}
+    <Dialog
+      type="core"
+      title={
+        type === "follow"
+          ? "Profile Required to Follow Squads"
+          : "Profile Required to Join Squads"
+      }
+      subtitle={
+        type === "follow"
+          ? `Please create a Profile to be able to follow this, and other, Squads.`
+          : `Please create a Profile to be able to join this, and other, Squads.`
+      }
       buttons={{
         onCancel: {
-          label: 'Cancel',
+          label: "Cancel",
           action: () => closeModal(),
         },
         onContinue: {
-          label: 'Create Profile',
+          label: "Create Profile",
           action: () => handleContinue(),
-        }
+        },
       }}
     />
-  )
-}
+  );
+};
 
 export default SquadNoProfile;

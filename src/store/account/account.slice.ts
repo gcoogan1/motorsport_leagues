@@ -8,7 +8,7 @@ import { fetchAccountThunk, updateAccountNameThunk, changeEmailThunk } from "./a
 
 const initialState: AccountState = {
   data: null,
-  status: "idle",
+  status: "loading",
 };
 
 const accountSlice = createSlice({

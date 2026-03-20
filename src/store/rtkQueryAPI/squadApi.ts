@@ -1,6 +1,8 @@
 import {
+  addMemberToSquad,
   followSquadService,
   getAllSquads,
+  getPendingSquadInvitesBySquadId,
   getSquadsByFounderProfileId,
   getFollowingSquads,
   getSquadFollowersService,
@@ -10,9 +12,13 @@ import {
   unfollowSquadService,
 } from "@/services/squad.service";
 import type {
+  AddSquadMemberPayload,
+  AddSquadMemberResult,
+  GetSquadInvitesResult,
   GetSquadMembersResult,
   GetSquadFollowingResult,
   GetSquadsResult,
+  SquadInviteTable,
   SquadMemberProfile,
   SquadTable,
   FollowSquadPayload,
@@ -35,7 +41,7 @@ export type SquadQueryArgs = {
 export const squadApi = createApi({
   reducerPath: "squadApi",
   baseQuery: fakeBaseQuery(),
-  tagTypes: ["Squads", "SquadMembers", "SquadFollowers", "SquadFollowing"],
+  tagTypes: ["Squads", "SquadMembers", "SquadFollowers", "SquadFollowing", "SquadInvites"],
   endpoints: (builder) => ({
     getSquads: builder.query<SquadTable[], SquadQueryArgs>({
       queryFn: async ({ founderAccountId, search }, api) => {
@@ -120,6 +126,60 @@ export const squadApi = createApi({
       },
       providesTags: (_result, _error, squadId) => [
         { type: "SquadMembers", id: squadId },
+      ],
+    }),
+    getPendingSquadInvites: builder.query<SquadInviteTable[], string>({
+      queryFn: async (squadId, api) => {
+        try {
+          const result: GetSquadInvitesResult = await getPendingSquadInvitesBySquadId(
+            squadId,
+            api.signal,
+          );
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      providesTags: (_result, _error, squadId) => [
+        { type: "SquadInvites", id: squadId },
+      ],
+    }),
+    addSquadMember: builder.mutation<AddSquadMemberResult, AddSquadMemberPayload>({
+      queryFn: async (payload) => {
+        try {
+          const result = await addMemberToSquad(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "SquadMembers", id: payload.squadId },
+        "Squads",
       ],
     }),
     followSquad: builder.mutation<FollowSquadResult, FollowSquadPayload>({
@@ -253,6 +313,8 @@ export const {
   useGetSquadsQuery,
   useGetSquadsByFounderProfileIdQuery,
   useGetSquadMembersQuery,
+  useGetPendingSquadInvitesQuery,
+  useAddSquadMemberMutation,
   useGetSquadFollowersQuery,
   useGetSquadFollowingQuery,
   useFollowSquadMutation,

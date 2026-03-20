@@ -8,6 +8,7 @@ import {
   Label,
   HelperText,
   ErrorText,
+  MultiSelectMenuGlobalStyles,
 } from "./MultiUserInput.styles";
 import {
   CustomMenuList,
@@ -24,7 +25,6 @@ type MultiUserInputProps = {
   label?: string;
   helperText?: string;
   placeholder?: string;
-  errorMessage?: string;
 };
 
 const MultiUserInput = ({
@@ -33,7 +33,6 @@ const MultiUserInput = ({
   label,
   helperText,
   placeholder,
-  errorMessage,
 }: MultiUserInputProps) => {
   const inputId = useId(); // Generate a unique ID for the input field
   const { control } = useFormContext();
@@ -44,6 +43,8 @@ const MultiUserInput = ({
     profiles?.map((profile) => ({
       value: profile.username,
       label: profile.username,
+      profileId: profile.id,
+      accountId: profile.accountId,
       avatar: {
         avatarType: profile.avatarType,
         avatarValue: profile.avatarValue,
@@ -56,9 +57,6 @@ const MultiUserInput = ({
       name={name}
       control={control}
       defaultValue={[]}
-      rules={{
-        validate: (val: SelectOption[]) => val.length > 0 || errorMessage,
-      }}
       render={({ field: { onChange, value, ref }, fieldState: { error } }) => {
         // Determine if the current input value is a valid email and not already selected
         const selectedValues = (value as MultiValue<SelectOption>) ?? [];
@@ -88,6 +86,7 @@ const MultiUserInput = ({
 
         return (
           <FieldWrapper>
+            <MultiSelectMenuGlobalStyles />
             {label && <Label htmlFor={inputId}>{label}</Label>}
             <CreatableSelect<SelectOption, true>
               isMulti
@@ -106,8 +105,13 @@ const MultiUserInput = ({
                 return newValue;
               }}
               onKeyDown={(event) => {
-                if (event.key !== "Enter") return;
+                const isEnter = event.key === "Enter";
+                const isTab = event.key === "Tab";
+                if (!isEnter && !isTab) return;
                 if (!inputValue.trim()) return;
+                // Only intercept if input is a valid email — otherwise let
+                // react-select handle Enter/Tab to select the focused dropdown option
+                if (!isValidEmail(inputValue.trim())) return;
 
                 event.preventDefault();
                 addEmailOption(inputValue);
@@ -115,7 +119,20 @@ const MultiUserInput = ({
               onChange={(selected) => {
                 // When the selection changes (either by selecting an existing option or creating a new one), we need to update the form state.
                 const nextValue = (selected as MultiValue<SelectOption>) ?? [];
-                onChange(nextValue.slice(0, MAX_SELECTIONS));
+                
+                // Filter out duplicates based on value (for emails/usernames) and profileId (for profiles)
+                const uniqueValues = new Set<string>();
+                const filteredValues = nextValue.filter((item) => {
+                  // Use profileId as key if available, otherwise use value
+                  const key = item.profileId ? `profile:${item.profileId}` : `value:${item.value.toLowerCase()}`;
+                  if (uniqueValues.has(key)) {
+                    return false; // Skip duplicate
+                  }
+                  uniqueValues.add(key);
+                  return true;
+                });
+                
+                onChange(filteredValues.slice(0, MAX_SELECTIONS));
                 setInputValue("");
               }}
               options={options}
@@ -148,15 +165,17 @@ const MultiUserInput = ({
                 control: () => (error ? "select__control--has-error" : ""), // Add error class to control when there's an error
               }}
               styles={{
-                input: (base, state) => ({ // Override the default input styles to control the caret color based on whether there's input
+                input: (base) => ({ // Hide caret while keeping input behavior
                   ...base,
-                  caretColor: state.selectProps.inputValue
-                    ? "inherit"
-                    : "transparent",
+                  caretColor: "transparent",
                 }),
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
               }}
               placeholder={resolvedPlaceholder}
-              hideSelectedOptions 
+              hideSelectedOptions
+              menuIsOpen={inputValue.length > 0}
+              menuPortalTarget={document.body}
+              menuPosition="fixed"
             />
             {helperText && !error && <HelperText>{helperText}</HelperText>}
             {error && (

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "@/store";
@@ -7,43 +7,69 @@ import { usePanel } from "@/providers/panel/usePanel";
 import { navigate } from "@/app/navigation/navigation";
 import { getBannerVariants } from "@/components/Banner/Banner.variants";
 import { useSquadMembers } from "@/hooks/rtkQuery/queries/useSquadMembers";
-import { selectSquadViewType } from "@/store/squads/squad.selectors";
 import { selectHasProfiles } from "@/store/profile/profile.selectors";
 import SquadHeader from "@/components/Headers/SquadHeader/SquadHeader";
 import LeaguesListCard from "@/components/Cards/CardList/LeaguesListCard/LeaguesListCard";
 import { Container, Contents, Wrapper } from "./Squad.styles";
-import { useSquadFollowers, useIsFollowingSquad } from "@/hooks/rtkQuery/queries/useSquadFollowers";
+import {
+  useSquadFollowers,
+  useIsFollowingSquad,
+} from "@/hooks/rtkQuery/queries/useSquadFollowers";
 import ShareSquad from "@/features/squads/forms/Share/ShareSquad/ShareSquad";
 import { useModal } from "@/providers/modal/useModal";
+import { useSquadInviteTokenFlow } from "../../hooks/useSquadInviteTokenFlow";
+import InviteSquad from "@/features/squads/forms/Invite/InviteSquad/InviteSquad";
+import LoadingScreen from "@/components/Messages/LoadingScreen/LoadingScreen";
+import { useSquadPageReadyState } from "@/hooks/useSquadPageReadyState";
 
 const Squad = () => {
   const { openPanel } = usePanel();
   const { openModal, closeModal } = useModal();
-  const { squadId } = useParams<{ squadId: string }>();
+  const { squadId, token } = useParams<{ squadId: string; token: string }>();
   const dispatch = useDispatch<AppDispatch>();
+
+  // Redux
   const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const currentUserProfiles = useSelector(
+    (state: RootState) => state.profile.data ?? []
+  );
   const squad = useSelector((state: RootState) => state.squad.currentSquad);
-  const squadStatus = useSelector((state: RootState) => state.squad.status);
-  const viewType = useSelector(selectSquadViewType());
   const userHasActiveProfile = useSelector(selectHasProfiles);
+
+  // NEW READY STATE
+  const { isReady, squadStatus, viewType } = useSquadPageReadyState();
+
+  // RTK Query
   const { data: squadMembers = [] } = useSquadMembers(squadId);
+  const { data: followers = [] } = useSquadFollowers(squadId ?? "");
+  const { data: isFollowing = false } = useIsFollowingSquad(
+    squadId ?? "",
+    accountId ?? ""
+  );
 
-    // -- RTK Query -- //
-    // Fetch followers for this squad (used to display followers count and determine if current user is following this squad)
-    const { data: followers = [] } = useSquadFollowers(squadId ?? "");
-    // Check if the logged in user is following the squad being viewed (used to determine follow/unfollow behavior)
-    const { data: isFollowing = false } = useIsFollowingSquad(
-      squadId ?? "",
-      accountId ?? "",
-    );
-  
+  // User already belongs to this squad if any of their profiles is present in squad members.
+  const currentUserProfileIds = new Set(currentUserProfiles.map((profile) => profile.id));
+  const userAlreadyInSquad = squadMembers.some((member) =>
+    currentUserProfileIds.has(member.profile_id),
+  );
 
+  // Invite flow
+  useSquadInviteTokenFlow({
+    squadId,
+    token,
+    viewType,
+    userHasActiveProfile,
+    squadStatus,
+  });
+
+  // Load squad
   useEffect(() => {
     if (squadId) {
       dispatch(getSquadByIdThunk(squadId));
     }
   }, [squadId, dispatch]);
 
+  // Redirect invalid
   useEffect(() => {
     if (!squadId) {
       navigate("/unavailable", { replace: true });
@@ -55,17 +81,42 @@ const Squad = () => {
     }
   }, [squadId, squadStatus]);
 
-  if (squadStatus === "loading") {
-    return null;
+  // ✅ SAFE localStorage handling
+  const hasStoredInvite = useRef(false);
+
+  useEffect(() => {
+    if (!isReady || !token || hasStoredInvite.current) return;
+
+    const shouldStore =
+      viewType === "guest" ||
+      (viewType === "user" && userHasActiveProfile === false) ||
+      (viewType === "user" && !userAlreadyInSquad);
+
+    if (shouldStore) {
+      localStorage.setItem(
+        "squad_invite",
+        JSON.stringify({
+          token,
+          timestamp: Date.now(),
+          squadId,
+        })
+      );
+    }
+
+    hasStoredInvite.current = true;
+  }, [isReady, token, viewType, userAlreadyInSquad, squadId, userHasActiveProfile]);
+
+  // 🚫 block UI until ready
+  if (!isReady || !squad || squad.id !== squadId) {
+    return <LoadingScreen />;
   }
 
-  if (!squadId || !squad || squad.id !== squadId) {
-    return null;
-  }
-
+  // Derived
   const bannerImage =
     squad.banner_type === "preset"
-      ? getBannerVariants()[squad.banner_value as keyof ReturnType<typeof getBannerVariants>]
+      ? getBannerVariants()[
+          squad.banner_value as keyof ReturnType<typeof getBannerVariants>
+        ]
       : squad.banner_value;
 
   const members = squadMembers.map((member) => ({
@@ -74,17 +125,37 @@ const Squad = () => {
     avatarValue: member.avatar_value,
   }));
 
-  const handleEditSquad = () => {
-    openPanel("SQUAD_EDIT");
-  };
+  const founderUsername =
+    currentUserProfiles.find(
+      (p) =>
+        p.id === squad.founder_profile_id &&
+        p.account_id === accountId
+    )?.username ?? "";
+
+  // Handlers
+  const handleEditSquad = () => openPanel("SQUAD_EDIT");
 
   const handleOnFollowersClick = () => {
     openPanel("SQUAD_FOLLOWERS", { squadId: squad.id });
-  }
+  };
 
   const handleOnShareSquad = () => {
-    openModal(<ShareSquad squadUrl={window.location.href} onClose={closeModal} />);
-  }
+    openModal(
+      <ShareSquad squadUrl={window.location.href} onClose={closeModal} />
+    );
+  };
+
+  const handleInviteToSquad = () => {
+    openModal(
+      <InviteSquad
+        squadId={squad.id}
+        squadName={squad.squad_name}
+        founderName={founderUsername}
+        founderProfileId={squad.founder_profile_id}
+        founderAccountId={squad.founder_account_id}
+      />
+    );
+  };
 
   return (
     <Wrapper>
@@ -95,13 +166,13 @@ const Squad = () => {
         isFollowing={isFollowing}
         bannerImage={bannerImage}
         members={members}
-        viewType={viewType}
+        viewType={viewType === "loading" ? "guest" : viewType}
         followersCount={followers.length}
-        hasProfile={userHasActiveProfile}
+        hasProfile={userHasActiveProfile ?? false}
         onFollowersClick={handleOnFollowersClick}
         onEdit={handleEditSquad}
         onShare={handleOnShareSquad}
-        onInvite={() => console.log("Invite to Squad")}
+        onInvite={handleInviteToSquad}
       />
       <Contents>
         <Container>

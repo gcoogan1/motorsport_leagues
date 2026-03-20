@@ -56,6 +56,10 @@ export const ROUTES: Route[] = [
     path: "/squad/:squadId",
     element: <Squad />,
   },
+    { 
+    path: "/squad/:squadId/invite/:token", 
+    element: <Squad />,
+  },
   {
     path: "/create-squad",
     element: <CreateSquad />,

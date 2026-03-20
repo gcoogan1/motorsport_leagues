@@ -10,15 +10,37 @@ import IncorrectPassword from "@/features/panels/account/modals/errors/Incorrect
 import SamePassword from "@/features/auth/modals/errors/SamePassword/SamePassword";
 import NoProfile from "@/features/profiles/modals/core/NoProfile/NoProfile";
 import NameTaken from "@/features/squads/modals/errors/NameTaken/NameTaken";
+import GuestJoinSquad from "@/features/squads/modals/errors/GuestJoinSquad/GuestJoinSquad";
 
 // -- Modal Types & Variants -- //
 
 // Modals that do not require props
 
-export type MODAL_TYPES = 'EXISTING_ACCOUNT' | 'SERVER_ERROR' | 'ATTEMPT_MAX' | 'REQUEST_MAX' | 'ACCOUNT_VERIFIED' | 'INCORRECT_CRED' | 'ACCOUNT_SUSPENDED' | 'EXISTING_EMAIL' | 'INCORRECT_PASSWORD' | 'SAME_PASSWORD' | 'NO_PROFILE' | 'NAME_TAKEN';
+export type MODAL_TYPES =
+  | "EXISTING_ACCOUNT"
+  | "SERVER_ERROR"
+  | "ATTEMPT_MAX"
+  | "REQUEST_MAX"
+  | "ACCOUNT_VERIFIED"
+  | "INCORRECT_CRED"
+  | "ACCOUNT_SUSPENDED"
+  | "EXISTING_EMAIL"
+  | "INCORRECT_PASSWORD"
+  | "SAME_PASSWORD"
+  | "NO_PROFILE"
+  | "NAME_TAKEN"
+  | "GUEST_JOIN_SQUAD";
 
 // Additional modals that may require props can be added here
-export type OTHER_MODAL_TYPES = 'UNVERIFIED_ACCOUNT' | 'CODE_RESENT' | 'PROFILE_CREATED' | 'EXISTING_USERNAME' | 'UNFOLLOW' | 'REMOVE_FOLLOWER' | 'SQUAD_CREATED';
+export type OTHER_MODAL_TYPES =
+  | "UNVERIFIED_ACCOUNT"
+  | "CODE_RESENT"
+  | "PROFILE_CREATED"
+  | "EXISTING_USERNAME"
+  | "UNFOLLOW"
+  | "REMOVE_FOLLOWER"
+  | "SQUAD_CREATED"
+  | "SQUAD_NO_PROFILE";
 
 // Combine all modal types
 export type ALL_MODAL_TYPES = MODAL_TYPES | OTHER_MODAL_TYPES;
@@ -37,4 +59,5 @@ export const modalVariants: Record<MODAL_TYPES, React.FC> = {
   SAME_PASSWORD: SamePassword,
   NO_PROFILE: NoProfile,
   NAME_TAKEN: NameTaken,
+  GUEST_JOIN_SQUAD: GuestJoinSquad
 };
