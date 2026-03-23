@@ -9,6 +9,8 @@ import LeaveSquad from "./LeaveSqaud";
 type LeaveSquadProfilePickerProps = {
   squadId: string;
   profiles: ProfileTable[];
+  /** Pre-selects the active profile if it is one of the member profiles. */
+  activeProfileId?: string;
 };
 
 type LeaveSquadProfilePickerForm = {
@@ -18,11 +20,17 @@ type LeaveSquadProfilePickerForm = {
 const LeaveSquadProfilePicker = ({
   squadId,
   profiles,
+  activeProfileId,
 }: LeaveSquadProfilePickerProps) => {
   const { openModal, closeModal } = useModal();
 
+  const defaultProfileId =
+    activeProfileId && profiles.some((p) => p.id === activeProfileId)
+      ? activeProfileId
+      : (profiles[0]?.id ?? "");
+
   const formMethods = useForm<LeaveSquadProfilePickerForm>({
-    defaultValues: { profileId: profiles[0]?.id ?? "" },
+    defaultValues: { profileId: defaultProfileId },
   });
 
   const profileOptions = convertProfilesToSelectOptions(profiles);

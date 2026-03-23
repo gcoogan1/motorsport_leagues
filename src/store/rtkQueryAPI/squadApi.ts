@@ -11,6 +11,7 @@ import {
   removeSquadFollowerService,
   unfollowSquadService,
   removeMemberFromSquad,
+  updateSquadMemberRole,
 } from "@/services/squad.service";
 import type {
   AddSquadMemberPayload,
@@ -30,6 +31,8 @@ import type {
   RemoveSquadFollowerPayload,
   RemoveSquadMemberPayload,
   RemoveSquadMemberResult,
+  UpdateSquadMemberRoleResult,
+  UpdateSquadMemberRolePayload,
 } from "@/types/squad.types";
 import type { GetFollowersResult, ProfileTable } from "@/types/profile.types";
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
@@ -163,6 +166,32 @@ export const squadApi = createApi({
       queryFn: async (payload) => {
         try {
           const result = await addMemberToSquad(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "SquadMembers", id: payload.squadId },
+        "Squads",
+      ],
+    }),
+    updateSquadMemberRole: builder.mutation<UpdateSquadMemberRoleResult, UpdateSquadMemberRolePayload>({
+      queryFn: async (payload) => {
+        try {
+          const result = await updateSquadMemberRole(payload);
 
           if (!result.success) {
             return {
@@ -344,6 +373,7 @@ export const {
   useGetSquadMembersQuery,
   useGetPendingSquadInvitesQuery,
   useAddSquadMemberMutation,
+  useUpdateSquadMemberRoleMutation,
   useRemoveSquadMemberMutation,
   useGetSquadFollowersQuery,
   useGetSquadFollowingQuery,

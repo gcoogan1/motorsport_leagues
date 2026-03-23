@@ -1,24 +1,23 @@
 import { useState } from "react";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
-import { navigate } from "@/app/navigation/navigation";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { useRemoveMemberFromSquad } from "@/hooks/rtkQuery/mutations/useSquadMutation";
 import Dialog from "@/components/Dialog/Dialog";
 
-type LeaveSquadProps = {
+type RemoveSquadMemberProps = {
   squadId: string;
   profileId: string;
 };
 
-const LeaveSquad = ({ squadId, profileId }: LeaveSquadProps) => {
+const RemoveSquadMember = ({ squadId, profileId }: RemoveSquadMemberProps) => {
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [removeSquadMember] = useRemoveMemberFromSquad();
 
-  const handleLeaveSquad = async () => {
+  const handleRemoveSquadMember = async () => {
     try {
       setIsLoading(true);
       const res = await withMinDelay(
@@ -32,11 +31,9 @@ const LeaveSquad = ({ squadId, profileId }: LeaveSquadProps) => {
       if (!res.success) {
         throw new Error("Failed to leave squad");
       }
-
-      navigate(`/profile/${profileId}`);
       showToast({
         usage: "success",
-        message: "You’ve left the Squad.",
+        message: "Member removed from Squad.",
       });
     } catch {
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
@@ -49,16 +46,16 @@ const LeaveSquad = ({ squadId, profileId }: LeaveSquadProps) => {
   return (
     <Dialog
       type="core"
-      title={"Leave Squad"}
-      subtitle={"Are you sure you want to leave this Squad?"}
+      title={"Remove Member"}
+      subtitle={"This Member will be removed from this Squad."}
       buttons={{
         onCancel: {
           label: "Cancel",
           action: () => closeModal(),
         },
         onContinue: {
-          label: "Leave Squad",
-          action: () => handleLeaveSquad(),
+          label: "Remove Member",
+          action: () => handleRemoveSquadMember(),
           isDanger: true,
           loading: isLoading,
           loadingText: "Loading...",
@@ -68,4 +65,4 @@ const LeaveSquad = ({ squadId, profileId }: LeaveSquadProps) => {
   );
 };
 
-export default LeaveSquad;
+export default RemoveSquadMember;

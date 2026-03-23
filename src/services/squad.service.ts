@@ -27,6 +27,8 @@ import type {
   RemoveSquadMemberResult,
   UnfollowSquadPayload,
   UnfollowSquadResult,
+  UpdateSquadMemberRoleResult,
+  UpdateSquadMemberRolePayload,
 } from "@/types/squad.types";
 import { resolveAvatarValue } from "@/services/profile.service";
 import { normalizeName } from "@/utils/normalizeName";
@@ -535,7 +537,7 @@ export const getSquadMembersBySquadId = async (
 
   let profilesQuery = supabase
     .from("profiles")
-    .select("id, username, avatar_type, avatar_value")
+    .select("id, username, game_type, avatar_type, avatar_value")
     .in("id", profileIds);
 
   // Attach the abort signal to the profiles query as well, so that if the original request is cancelled, this one will be too
@@ -585,6 +587,7 @@ export const getSquadMembersBySquadId = async (
           id: member.id,
           profile_id: member.profile_id,
           username: profile.username,
+          game_type: profile.game_type,
           avatar_type: profile.avatar_type,
           avatar_value: profile.avatar_value,
           role: member.role,
@@ -594,6 +597,35 @@ export const getSquadMembersBySquadId = async (
   };
 };
 
+// -- Update Member Role in Squad -- // (e.g., promote to founder, demote to member)
+export const updateSquadMemberRole = async (
+  { squadId, profileId, newRole }: UpdateSquadMemberRolePayload,
+): Promise<UpdateSquadMemberRoleResult> => {
+  const { error } = await supabase
+    .from("squad_members")
+    .update({ role: newRole })
+    .eq("squad_id", squadId)
+    .eq("profile_id", profileId)
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
+// -- Remove Member from Squad -- //
 export const removeMemberFromSquad = async (
   { squadId, profileId }: RemoveSquadMemberPayload,
   signal?: AbortSignal,

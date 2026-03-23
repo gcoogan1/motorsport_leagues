@@ -10,7 +10,7 @@ import { selectCurrentSquad, selectSquadViewType } from "@/store/squads/squad.se
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import FollowersIcon from "@assets/Icon/Followers.svg?react";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
-import ProfileList from "@/components/Lists/ProfileList/ProfileList";
+import ProfileList, { type ProfileAction } from "@/components/Lists/ProfileList/ProfileList";
 import RemoveSquadFollower from "./modals/core/RemoveSquadFollower/RemoveSquadFollower";
 
 
@@ -40,7 +40,7 @@ const SquadFollowers = ({ squadId }: SquadFollowersProps) => {
   const followersPanelTitle = `${followersCount} Follower${followersCount !== 1 ? "s" : ""}`;
   const emptyPanelTitle = "Followers";
 
-  const handleProfileAction = (selectedProfileId: string, action: "view" | "remove") => {
+  const handleProfileAction = (selectedProfileId: string, action: ProfileAction) => {
     if (action === "view") {
       closePanel();
       navigate(`/profile/${selectedProfileId}`);

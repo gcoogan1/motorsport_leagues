@@ -163,6 +163,10 @@ const Squad = () => {
     openPanel("SQUAD_FOLLOWERS", { squadId: squad.id });
   };
 
+  const onMembersClick = () => {
+    openPanel("SQUAD_MEMBERS", { squadId: squad.id });
+  };
+
   const handleOnShareSquad = () => {
     openModal(
       <ShareSquad squadUrl={window.location.href} onClose={closeModal} />
@@ -196,6 +200,7 @@ const Squad = () => {
         followersCount={followers.length}
         hasProfile={userHasActiveProfile ?? false}
         onFollowersClick={handleOnFollowersClick}
+        onMembersClick={onMembersClick}
         onEdit={handleEditSquad}
         onShare={handleOnShareSquad}
         onInvite={handleInviteToSquad}

@@ -1,6 +1,6 @@
 // -- Squad Types -- //
 
-import type { ProfileTable } from "./profile.types";
+import type { GameType, ProfileTable } from "./profile.types";
 
 // Constants //
 
@@ -51,6 +51,7 @@ export type SquadMemberProfile = {
   id: string;
   profile_id: string;
   username: string;
+  game_type: GameType;
   avatar_type: "preset" | "upload";
   avatar_value: string;
   role: typeof SQUAD_MEMBER_ROLES[number];
@@ -159,6 +160,11 @@ export type AddSquadMemberPayload = {
   role: typeof SQUAD_MEMBER_ROLES[number];
 };
 
+// Add Squad Member --> Result type
+export type AddSquadMemberResult = 
+  | { success: true; data: SquadMemberTable }
+  | SupabaseError;
+
 // Remove Squad Member --> Payload type
 export type RemoveSquadMemberPayload = {
   squadId: string;
@@ -170,10 +176,18 @@ export type RemoveSquadMemberResult =
   | { success: true }
   | SupabaseError;
 
-// Add Squad Member --> Result type
-export type AddSquadMemberResult = 
-  | { success: true; data: SquadMemberTable }
+// Update Squad Member Role --> Payload type
+export type UpdateSquadMemberRolePayload = {
+  squadId: string;
+  profileId: string;
+  newRole: typeof SQUAD_MEMBER_ROLES[number];
+};
+
+// Update Squad Member Role --> Result type
+export type UpdateSquadMemberRoleResult = 
+  | { success: true }
   | SupabaseError;
+
 
 // Follow Squad --> Payload type
 export type FollowSquadPayload = {
