@@ -23,6 +23,8 @@ import type {
   RemoveSquadInviteByTokenResult,
   RemoveSquadFollowerPayload,
   RemoveSquadFollowerResult,
+  RemoveSquadMemberPayload,
+  RemoveSquadMemberResult,
   UnfollowSquadPayload,
   UnfollowSquadResult,
 } from "@/types/squad.types";
@@ -590,6 +592,36 @@ export const getSquadMembersBySquadId = async (
       })
       .filter((member): member is NonNullable<typeof member> => member !== null), // Type guard to filter out any null members in case of missing profile data
   };
+};
+
+export const removeMemberFromSquad = async (
+  { squadId, profileId }: RemoveSquadMemberPayload,
+  signal?: AbortSignal,
+): Promise<RemoveSquadMemberResult> => {
+  let query = supabase
+    .from("squad_members")
+    .delete()
+    .eq("squad_id", squadId)
+    .eq("profile_id", profileId);
+
+  if (signal) {
+    query = query.abortSignal(signal);
+  }
+
+  const { error } = await query;
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
 };
 
 // Follow a Squad -- //
