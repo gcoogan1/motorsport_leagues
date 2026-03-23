@@ -11,6 +11,8 @@ export type PanelTypes =
   | "PROFILE_FOLLOWERS"
   | "PROFILE_FOLLOWERS"
   | "SQUAD_EDIT"
-  | "SQUAD_FOLLOWERS";
+  | "SQUAD_FOLLOWERS"
+  | "SQUAD_MEMBERS";
+  
 
 export type PanelProviderTypes = "none" | PanelTypes;

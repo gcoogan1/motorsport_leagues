@@ -62,6 +62,7 @@ type SquadHeaderProps = {
   followersCount?: number;
   bannerImage?: string;
   onFollowersClick?: () => void;
+  onMembersClick?: () => void;
   onEdit?: () => void;
   onShare?: () => void;
   onInvite?: () => void;
@@ -79,6 +80,7 @@ const SquadHeader = ({
   members = [],
   followersCount = 0,
   onFollowersClick,
+  onMembersClick,
   onEdit,
   onShare,
   onInvite,
@@ -149,6 +151,7 @@ const SquadHeader = ({
         <LeaveSquadProfilePicker
           squadId={squadId}
           profiles={viewerMemberProfiles}
+          activeProfileId={viewerProfileId}
         />,
       );
       setIsMoreOpen(false);
@@ -186,6 +189,13 @@ const SquadHeader = ({
       onFollowersClick();
     }
   };
+
+  const handleMembersClick = () => {
+    // For now, just open the followers panel since we don't have a separate members panel
+    if (onMembersClick) {
+      onMembersClick();
+    }
+  }
 
   // -- Render Right Actions based on view type -- //
   const renderRightActions = () => {
@@ -306,6 +316,7 @@ const SquadHeader = ({
               color="base"
               variant="filled"
               rounded
+              onClick={handleMembersClick}
               icon={{ left: <MembersIcon /> }}
             >
               {members.length} {memberText}
