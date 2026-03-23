@@ -1,7 +1,7 @@
 // --- Mutations --- //
 // Used to modify data //
 
-import { useAddSquadMemberMutation, useFollowSquadMutation, useRemoveSquadFollowerMutation, useRemoveSquadMemberMutation, useUnfollowSquadMutation } from "@/store/rtkQueryAPI/squadApi";
+import { useAddSquadMemberMutation, useFollowSquadMutation, useRemoveSquadFollowerMutation, useRemoveSquadMemberMutation, useUnfollowSquadMutation, useUpdateSquadMemberRoleMutation } from "@/store/rtkQueryAPI/squadApi";
 
 
 // Mutation for following a squad.
@@ -26,6 +26,10 @@ export const useRemoveSquadFollower = () => {
 // This hook provides a mutation function that can be called to add a member to a squad, along with the loading and error state of the mutation.
 export const useJoinSquadAsMember = () => {
   return useAddSquadMemberMutation();
+}
+
+export const useUpdateSquadMemberRole = () => {
+  return useUpdateSquadMemberRoleMutation();
 }
 
 // Mutation for removing a member from a squad.
