@@ -50,18 +50,26 @@ const Squad = () => {
     accountId ?? ""
   );
 
-  // User already belongs to this squad if any of their profiles is present in squad members.
+  // Build a quick lookup of the logged-in account's profile ids.
   const currentUserProfileIds = new Set(currentUserProfiles.map((profile) => profile.id));
+
+  // Profile ids (owned by this account) that are members of the current squad.
   const memberProfileIdsInSquad = squadMembers
     .filter((member) => currentUserProfileIds.has(member.profile_id))
     .map((member) => member.profile_id);
+
+  // Set used to map those member ids back to full profile objects.
   const memberProfileIdSet = new Set(memberProfileIdsInSquad);
+
+  // Full profile rows for account-owned profiles that are squad members (used by leave picker).
   const viewerMemberProfiles = currentUserProfiles.filter((profile) =>
     memberProfileIdSet.has(profile.id),
   );
-  const userAlreadyInSquad = squadMembers.some((member) =>
-    currentUserProfileIds.has(member.profile_id),
-  );
+
+  // True when at least one of the account's profiles is already in the squad.
+  const userAlreadyInSquad = memberProfileIdsInSquad.length > 0;
+
+  // Default profile id for single-member flow: prefer active profile, otherwise first match.
   const viewerMemberProfileId =
     memberProfileIdsInSquad.length === 1
       ? memberProfileIdsInSquad[0]
