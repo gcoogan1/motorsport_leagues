@@ -18,6 +18,8 @@ import {
 
 // TODO: Add Tags back
 
+export type ProfileAction = "view" | "remove" | "changeRole";
+
 type ListType = "profile" | "squad" | "league";
 
 export type ProfileListItem = {
@@ -33,7 +35,7 @@ export type ProfileListItem = {
 
 type ProfileListProps = {
   items: ProfileListItem[];
-  onClick?: (id: string, action: "view" | "remove" | "changeRole") => void;
+  onClick?: (id: string, action: ProfileAction) => void;
   allowRemoveAction?: boolean;
   allowChangeRoleAction?: boolean;
   listType?: ListType;
