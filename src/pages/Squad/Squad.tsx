@@ -33,6 +33,9 @@ const Squad = () => {
   const currentUserProfiles = useSelector(
     (state: RootState) => state.profile.data ?? []
   );
+  const currentProfileId = useSelector(
+    (state: RootState) => state.profile.currentProfile?.id
+  );
   const squad = useSelector((state: RootState) => state.squad.currentSquad);
   const userHasActiveProfile = useSelector(selectHasProfiles);
 
@@ -49,9 +52,22 @@ const Squad = () => {
 
   // User already belongs to this squad if any of their profiles is present in squad members.
   const currentUserProfileIds = new Set(currentUserProfiles.map((profile) => profile.id));
+  const memberProfileIdsInSquad = squadMembers
+    .filter((member) => currentUserProfileIds.has(member.profile_id))
+    .map((member) => member.profile_id);
+  const memberProfileIdSet = new Set(memberProfileIdsInSquad);
+  const viewerMemberProfiles = currentUserProfiles.filter((profile) =>
+    memberProfileIdSet.has(profile.id),
+  );
   const userAlreadyInSquad = squadMembers.some((member) =>
     currentUserProfileIds.has(member.profile_id),
   );
+  const viewerMemberProfileId =
+    memberProfileIdsInSquad.length === 1
+      ? memberProfileIdsInSquad[0]
+      : currentProfileId && memberProfileIdsInSquad.includes(currentProfileId)
+        ? currentProfileId
+        : memberProfileIdsInSquad[0];
 
   // Invite flow
   useSquadInviteTokenFlow({
@@ -167,6 +183,8 @@ const Squad = () => {
         bannerImage={bannerImage}
         members={members}
         viewType={viewType === "loading" ? "guest" : viewType}
+        viewerProfileId={viewerMemberProfileId}
+        viewerMemberProfiles={viewerMemberProfiles}
         followersCount={followers.length}
         hasProfile={userHasActiveProfile ?? false}
         onFollowersClick={handleOnFollowersClick}

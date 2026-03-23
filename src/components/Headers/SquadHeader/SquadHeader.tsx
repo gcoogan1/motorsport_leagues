@@ -1,4 +1,5 @@
 import type { SquadViewType } from "@/types/squad.types";
+import type { ProfileTable } from "@/types/profile.types";
 import { useEffect, useRef, useState } from "react";
 import { useModal } from "@/providers/modal/useModal";
 import Button from "@/components/Button/Button";
@@ -39,6 +40,8 @@ import SquadGuestFollow from "@/features/squads/modals/errors/SquadGuestFollow/S
 import SquadNoProfile from "@/features/squads/modals/core/SquadNoProfile/SquadNoProfile";
 import FollowSquad from "@/features/squads/forms/Follow/FollowSquad";
 import UnfollowSquad from "@/features/squads/modals/errors/UnfollowSqaud/UnfollowSquad";
+import LeaveSquad from "@/features/squads/modals/core/LeaveSquad/LeaveSqaud";
+import LeaveSquadProfilePicker from "@/features/squads/modals/core/LeaveSquad/LeaveSquadPicker";
 
 type MemberAvatar = {
   id: string;
@@ -53,6 +56,8 @@ type SquadHeaderProps = {
   hasProfile: boolean;
   isFollowing?: boolean;
   viewerAccountId?: string;
+  viewerProfileId?: string;
+  viewerMemberProfiles?: ProfileTable[];
   members?: MemberAvatar[];
   followersCount?: number;
   bannerImage?: string;
@@ -69,6 +74,8 @@ const SquadHeader = ({
   hasProfile,
   isFollowing,
   viewerAccountId,
+  viewerProfileId,
+  viewerMemberProfiles = [],
   members = [],
   followersCount = 0,
   onFollowersClick,
@@ -137,7 +144,22 @@ const SquadHeader = ({
       return;
     }
 
-    console.log(`Leave squad with ID ${squadId} for account ${viewerAccountId}`);
+    if (viewerMemberProfiles.length > 1) {
+      openModal(
+        <LeaveSquadProfilePicker
+          squadId={squadId}
+          profiles={viewerMemberProfiles}
+        />,
+      );
+      setIsMoreOpen(false);
+      return;
+    }
+
+    if (!viewerProfileId) {
+      return;
+    }
+
+    openModal(<LeaveSquad squadId={squadId} profileId={viewerProfileId} />);
     setIsMoreOpen(false);
     return;
   };
