@@ -159,6 +159,17 @@ export type AddSquadMemberPayload = {
   role: typeof SQUAD_MEMBER_ROLES[number];
 };
 
+// Remove Squad Member --> Payload type
+export type RemoveSquadMemberPayload = {
+  squadId: string;
+  profileId: string;
+};
+
+// Remove Squad Member --> Result type
+export type RemoveSquadMemberResult =
+  | { success: true }
+  | SupabaseError;
+
 // Add Squad Member --> Result type
 export type AddSquadMemberResult = 
   | { success: true; data: SquadMemberTable }

@@ -1,12 +1,11 @@
 import type { SquadViewType } from "@/types/squad.types";
+import { squadApi } from "@/store/rtkQueryAPI/squadApi";
 import type { RootState } from "..";
-
-// TODO: Add viewType "member" for logged in users who are not the squad founder but are viewing a squad they belong to. 
-// Will need to update selectSquadViewType selector and SquadHeader component to handle this new view type and show appropriate actions (e.g. leave squad, view members, etc.)
 
 export const selectSquadViewType = () => (state: RootState): SquadViewType | "loading" => {
   const account = state.account.data;
   const accountStatus = state.account.status;
+  const currentUserProfiles = state.profile.data ?? [];
   const currentSquad = state.squad.currentSquad;
   const squadStatus = state.squad.status;
 
@@ -24,6 +23,17 @@ export const selectSquadViewType = () => (state: RootState): SquadViewType | "lo
   // Founder
   if (currentSquad.founder_account_id === account?.id) {
     return "founder";
+  }
+
+  const squadMembersResult = squadApi.endpoints.getSquadMembers.select(currentSquad.id)(state);
+  const squadMembers = squadMembersResult?.data ?? [];
+  const currentUserProfileIds = new Set(currentUserProfiles.map((profile) => profile.id));
+  const isSquadMember = squadMembers.some((member) =>
+    currentUserProfileIds.has(member.profile_id),
+  );
+
+  if (isSquadMember) {
+    return "member";
   }
 
   // Logged in, viewing a squad they don't own
