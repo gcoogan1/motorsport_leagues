@@ -535,7 +535,7 @@ export const getSquadMembersBySquadId = async (
 
   let profilesQuery = supabase
     .from("profiles")
-    .select("id, username, avatar_type, avatar_value")
+    .select("id, username, game_type, avatar_type, avatar_value")
     .in("id", profileIds);
 
   // Attach the abort signal to the profiles query as well, so that if the original request is cancelled, this one will be too
@@ -585,6 +585,7 @@ export const getSquadMembersBySquadId = async (
           id: member.id,
           profile_id: member.profile_id,
           username: profile.username,
+          game_type: profile.game_type,
           avatar_type: profile.avatar_type,
           avatar_value: profile.avatar_value,
           role: member.role,

@@ -1,6 +1,6 @@
 // -- Squad Types -- //
 
-import type { ProfileTable } from "./profile.types";
+import type { GameType, ProfileTable } from "./profile.types";
 
 // Constants //
 
@@ -51,6 +51,7 @@ export type SquadMemberProfile = {
   id: string;
   profile_id: string;
   username: string;
+  game_type: GameType;
   avatar_type: "preset" | "upload";
   avatar_value: string;
   role: typeof SQUAD_MEMBER_ROLES[number];
