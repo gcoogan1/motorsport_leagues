@@ -1,14 +1,20 @@
-// import type { Tag } from "@/components/Tags/Tags.variants";
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { selectProfileViewType } from "@/store/profile/profile.selectors";
+import type { Tag } from "@/components/Tags/Tags.variants";
 import UserProfile from "@/components/Users/Profile/UserProfile";
 import Button from "@/components/Button/Button";
 import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import More_Vertical from "@assets/Icon/More_Vertical.svg?react";
 import ProfileIcon from "@assets/Icon/Profile.svg?react";
 import KickIcon from "@assets/Icon/Kick.svg?react";
-import { ListContainer, ProfileContainer, UserProfileWrapper, DropdownContainer } from "./ProfileList.styles";
-import { selectProfileViewType } from "@/store/profile/profile.selectors";
-import { useSelector } from "react-redux";
+import RoleIcon from "@assets/Icon/Role.svg?react";
+import {
+  ListContainer,
+  ProfileContainer,
+  UserProfileWrapper,
+  DropdownContainer,
+} from "./ProfileList.styles";
 
 // TODO: Add Tags back
 
@@ -22,23 +28,33 @@ export type ProfileListItem = {
     avatarValue: string;
   };
   secondaryInfo?: string;
-  // tags?: Tag[];
-}
+  tags?: Tag[];
+};
 
 type ProfileListProps = {
   items: ProfileListItem[];
-  onClick?: (id: string, action: "view" | "remove") => void;
+  onClick?: (id: string, action: "view" | "remove" | "changeRole") => void;
   allowRemoveAction?: boolean;
+  allowChangeRoleAction?: boolean;
   listType?: ListType;
 };
 
-const ProfileList = ({ items, onClick, allowRemoveAction = false, listType = "profile" }: ProfileListProps) => {
+const ProfileList = ({
+  items,
+  onClick,
+  allowRemoveAction = false,
+  allowChangeRoleAction = false,
+  listType = "profile",
+}: ProfileListProps) => {
   const viewType = useSelector(selectProfileViewType());
-  // Allow remove action if user is owner of the profile (for profile lists) 
+  // Allow remove action if user is owner of the profile (for profile lists)
   // or allowRemoveAction is explicitly set to true and the list type not profile (e.g. squad followers list where squad founder can remove followers)
-  const canRemove = allowRemoveAction || (viewType === "owner" && listType === "profile");
+  const canRemove =
+    allowRemoveAction || (viewType === "owner" && listType === "profile");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const dropdownContainerRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const dropdownContainerRefs = useRef<Record<string, HTMLDivElement | null>>(
+    {},
+  );
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -66,7 +82,10 @@ const ProfileList = ({ items, onClick, allowRemoveAction = false, listType = "pr
     setOpenDropdown(openDropdown === id ? null : id);
   };
 
-  const handleAction = (id: string, action: "view" | "remove") => {
+  const handleAction = (
+    id: string,
+    action: "view" | "remove" | "changeRole",
+  ) => {
     if (onClick) {
       onClick(id, action);
     }
@@ -78,12 +97,12 @@ const ProfileList = ({ items, onClick, allowRemoveAction = false, listType = "pr
       {items.map((item) => (
         <ProfileContainer key={item.id}>
           <UserProfileWrapper>
-            <UserProfile 
+            <UserProfile
               username={item.label}
               avatarType={item.avatar.avatarType}
               avatarValue={item.avatar.avatarValue}
               information={item.secondaryInfo}
-              // tags={item.tags}
+              tags={item.tags}
             />
           </UserProfileWrapper>
           <DropdownContainer
@@ -92,12 +111,12 @@ const ProfileList = ({ items, onClick, allowRemoveAction = false, listType = "pr
               dropdownContainerRefs.current[item.id] = node;
             }}
           >
-            <Button 
+            <Button
               size="small"
               color="base"
               variant="ghost"
               rounded
-              onClick={() => handleMenuClick(item.id)} 
+              onClick={() => handleMenuClick(item.id)}
               icon={{ left: <More_Vertical /> }}
             />
             {openDropdown === item.id && (
@@ -110,6 +129,15 @@ const ProfileList = ({ items, onClick, allowRemoveAction = false, listType = "pr
                     value: "view",
                     icon: <ProfileIcon />,
                   },
+                  ...(allowChangeRoleAction
+                    ? [
+                        {
+                          label: "Change Role",
+                          value: "changeRole",
+                          icon: <RoleIcon />,
+                        },
+                      ]
+                    : []),
                   ...(canRemove
                     ? [
                         {
@@ -120,7 +148,12 @@ const ProfileList = ({ items, onClick, allowRemoveAction = false, listType = "pr
                       ]
                     : []),
                 ]}
-                onSelect={(value) => handleAction(item.id, value as "view" | "remove")}
+                onSelect={(value) =>
+                  handleAction(
+                    item.id,
+                    value as "view" | "remove" | "changeRole",
+                  )
+                }
               />
             )}
           </DropdownContainer>
