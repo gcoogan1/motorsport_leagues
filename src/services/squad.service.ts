@@ -120,6 +120,124 @@ export const getSquadsByFounderProfileId = async (
   };
 };
 
+// -- Get Squads where Account is a Member -- //
+export const getMemberSquadsByAccountId = async (
+  accountId: string,
+  signal?: AbortSignal,
+): Promise<GetSquadsResult> => {
+  let profilesQuery = supabase
+    .from("profiles")
+    .select("id")
+    .eq("account_id", accountId);
+
+  if (signal) {
+    profilesQuery = profilesQuery.abortSignal(signal);
+  }
+
+  const { data: profiles, error: profilesError } = await profilesQuery;
+  // If there's an error fetching profiles, return it. If the error is an abort, return an empty squad list since the request was cancelled.
+  if (profilesError) {
+    if (profilesError.code === "ABORT" || profilesError.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: profilesError.message,
+        code: profilesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (!profiles.length) {
+    return {
+      success: true,
+      data: [],
+    };
+  }
+
+  const profileIds = profiles.map((profile) => profile.id);
+  // Get the squad memberships for all profiles associated with the account, then fetch the corresponding squads. 
+  let membersQuery = supabase
+    .from("squad_members")
+    .select("squad_id")
+    .in("profile_id", profileIds);
+
+  // Attach the abort signal to the members query, so that if the original request is cancelled (e.g., when the component unmounts or the accountId changes), this one will be too. 
+  // This prevents unnecessary database load and potential memory leaks from unresolved promises.
+  if (signal) {
+    membersQuery = membersQuery.abortSignal(signal);
+  }
+
+  const { data: memberRows, error: membersError } = await membersQuery;
+
+  if (membersError) {
+    if (membersError.code === "ABORT" || membersError.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: membersError.message,
+        code: membersError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  // Extract unique squad IDs from the member rows to fetch the squad details
+  const squadIds = [...new Set(memberRows.map((member) => member.squad_id))];
+
+  if (!squadIds.length) {
+    return {
+      success: true,
+      data: [],
+    };
+  }
+
+  // Fetch the squad details for all squads that the account's profiles are members of, including the member count for each squad. 
+  // This is done in a single query to optimize performance and reduce latency, especially for accounts that are members of many squads.
+  let squadsQuery = supabase
+    .from("squads")
+    .select("*, squad_members(count)")
+    .in("id", squadIds)
+    .neq("founder_account_id", accountId); // Exclude squads where the account is the founder
+
+
+  if (signal) {
+    squadsQuery = squadsQuery.abortSignal(signal);
+  }
+
+  const { data: squads, error: squadsError } = await squadsQuery;
+
+  if (squadsError) {
+    if (squadsError.code === "ABORT" || squadsError.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: squadsError.message,
+        code: squadsError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: squads.map((squad) => ({
+      ...squad,
+      member_count: squad.squad_members?.[0]?.count ?? 0,
+      banner_value: resolveBannerValue(squad.banner_type, squad.banner_value),
+    })),
+  };
+};
+
 // -- Check Squad Name Availability -- //
 export const isSquadNameAvailable = async (
   name: string,

@@ -1,4 +1,5 @@
 import {
+  useGetMemberSquadsQuery,
   useGetSquadsByFounderProfileIdQuery,
   useGetSquadsQuery,
 } from "@/store/rtkQueryAPI/squadApi";
@@ -24,4 +25,10 @@ export const useSquads = (
 export const useProfileSquads = (profileId?: string) =>
   useGetSquadsByFounderProfileIdQuery(profileId ?? "", {
     skip: !profileId,
+  });
+
+// Query to fetch squads where any profile of this account is a squad member
+export const useMemberSquads = (accountId?: string) =>
+  useGetMemberSquadsQuery(accountId ?? "", {
+    skip: !accountId,
   });

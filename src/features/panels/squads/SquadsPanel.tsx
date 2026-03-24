@@ -15,6 +15,7 @@ import SquadCard from "@/components/Cards/SquadCard/SquadCard";
 import SearchForm from "@/features/search/forms/SearchForm";
 import type { SquadTable } from "@/types/squad.types";
 import { useSquadFollowing } from "@/hooks/rtkQuery/queries/useSquadFollowers";
+import { useMemberSquads } from "@/hooks/rtkQuery/queries/useSquads";
 
 
 const SQUAD_TABS = [
@@ -55,7 +56,12 @@ const SquadsPanel = () => {
   const [activeTab, setActiveTab] = useState<string>(SQUAD_TABS[0].label);
   const squads = useSelector((state: RootState) => state.squad.data);
   const accountId = useSelector((state: RootState) => state?.account.data?.id);
+  const { data: memberSquads = [] } = useMemberSquads(accountId);
   const { data: following = [] } = useSquadFollowing(accountId ?? "");
+  const mySquads = [...(squads ?? []), ...memberSquads].filter(
+    (squad, index, allSquads) =>
+      allSquads.findIndex((otherSquad) => otherSquad.id === squad.id) === index,
+  );
 
 
   const handleTabChange = (tab: string) => {
@@ -85,7 +91,7 @@ const SquadsPanel = () => {
       
       onTabChange={handleTabChange}
       actions={
-        activeTab === "My Squads" && squads && squads.length > 0 || activeTab === "Following" && following && following.length > 0
+        activeTab === "My Squads" && mySquads.length > 0 || activeTab === "Following" && following && following.length > 0
           ? {
               primary: {
                 label: "Create New Squad",
@@ -103,8 +109,8 @@ const SquadsPanel = () => {
     >
       {activeTab === "My Squads" ? (
         <>
-          {squads && squads.length > 0 ? (
-            squads.map((squad) => (
+          {mySquads.length > 0 ? (
+            mySquads.map((squad) => (
               <SquadListItem
                 key={squad.id}
                 squad={squad}

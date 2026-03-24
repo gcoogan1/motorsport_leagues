@@ -2,6 +2,7 @@ import {
   addMemberToSquad,
   followSquadService,
   getAllSquads,
+  getMemberSquadsByAccountId,
   getPendingSquadInvitesBySquadId,
   getSquadsByFounderProfileId,
   getFollowingSquads,
@@ -104,6 +105,34 @@ export const squadApi = createApi({
       },
       providesTags: (_result, _error, profileId) => [
         { type: "Squads", id: `profile-${profileId}` },
+      ],
+    }),
+    getMemberSquads: builder.query<SquadTable[], string>({
+      queryFn: async (accountId, api) => {
+        try {
+          const result: GetSquadsResult = await getMemberSquadsByAccountId(
+            accountId,
+            api.signal,
+          );
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      providesTags: (_result, _error, accountId) => [
+        { type: "Squads", id: `member-${accountId}` },
       ],
     }),
     getSquadMembers: builder.query<SquadMemberProfile[], string>({
@@ -370,6 +399,7 @@ export const squadApi = createApi({
 export const {
   useGetSquadsQuery,
   useGetSquadsByFounderProfileIdQuery,
+  useGetMemberSquadsQuery,
   useGetSquadMembersQuery,
   useGetPendingSquadInvitesQuery,
   useAddSquadMemberMutation,
