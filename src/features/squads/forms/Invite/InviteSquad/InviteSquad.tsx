@@ -111,6 +111,9 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
             // If invite token is missing, skip notification to avoid invalid payload
             if (!matchingInvite?.token) return;
 
+            // Set receiver's profile username for notification metadata (for display purposes in the notification)
+            const inviteeUsername = profiles.find((p) => p.id === invitee.profileId)?.username;
+
             // SEND NOTIFICATION
             await createNotification({
               recipient_profile_id: invitee.profileId,
@@ -123,6 +126,7 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
                 squad_name: squadName,
                 sender_username: founderName,
                 invite_token: matchingInvite.token,
+                receiver_profile_username: inviteeUsername,
               },
             }).unwrap();
           }),
@@ -134,7 +138,7 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
         message: "Invite(s) sent.",
       });
       closeModal();
-      return
+      return;
     } catch {
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     } finally {

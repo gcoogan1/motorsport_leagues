@@ -16,6 +16,7 @@ export type InviteReceivedMetadata = {
   squad_name: string;
   sender_username: string;
   invite_token: string;
+  receiver_profile_username?: string;
 };
 
 // INVITE_ACCEPTED Metadata

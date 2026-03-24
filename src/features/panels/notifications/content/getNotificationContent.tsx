@@ -8,10 +8,11 @@ export type NotificationHandlers = {
 
 export const getNotificationContent = (notification: Notification, handlers: NotificationHandlers) => {
   if (notification.type === "INVITE_RECEIVED") {
-    if (notification.entity_type === "squad_invite") {      
+    if (notification.entity_type === "squad_invite") {  
+      const invitedUser = notification.metadata.receiver_profile_username ? `${notification.metadata.receiver_profile_username} has` : "You have";    
       return {
         title: "Squad Invitation",
-        message: `You have been invited by ${notification.metadata.sender_username} to join the ${notification.metadata.squad_name} Squad.`,
+        message: `${invitedUser} been invited by ${notification.metadata.sender_username} to join the ${notification.metadata.squad_name} Squad.`,
         actionRight : {
           label: "Join Squad",
           color: "system",
