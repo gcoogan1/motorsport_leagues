@@ -2,7 +2,7 @@ import { useId, useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import Error_Outlined from "@assets/Icon/Error_Outlined.svg?react";
-import { type MultiValue } from "react-select";
+import { type MenuListProps, type MultiValue } from "react-select";
 import {
   FieldWrapper,
   Label,
@@ -25,6 +25,8 @@ type MultiUserInputProps = {
   label?: string;
   helperText?: string;
   placeholder?: string;
+  blockedEmails?: string[];
+  onBlockedEmailAttempt?: (email: string) => void;
 };
 
 const MultiUserInput = ({
@@ -33,6 +35,8 @@ const MultiUserInput = ({
   label,
   helperText,
   placeholder,
+  blockedEmails = [],
+  onBlockedEmailAttempt,
 }: MultiUserInputProps) => {
   const inputId = useId(); // Generate a unique ID for the input field
   const { control } = useFormContext();
@@ -63,14 +67,28 @@ const MultiUserInput = ({
         const isAtLimit = selectedValues.length >= MAX_SELECTIONS;
         const resolvedPlaceholder = placeholder ?? "";
 
+        const MenuList = (props: MenuListProps<SelectOption, true>) => (
+          <CustomMenuList
+            {...props}
+            blockedEmails={blockedEmails}
+            onBlockedEmailAttempt={onBlockedEmailAttempt}
+          />
+        );
+
         // Function to handle adding a new email option when the user presses Enter
         const addEmailOption = (rawEmail: string) => {
           const email = rawEmail.trim();
+          const normalizedEmail = email.toLowerCase();
+
           if (!isValidEmail(email)) return;
           if (selectedValues.length >= MAX_SELECTIONS) return;
 
+          const isBlocked = blockedEmails.some(
+            (blockedEmail) => blockedEmail.toLowerCase() === normalizedEmail,
+          );
+
           const isDuplicate = selectedValues.some(
-            (item) => item.value.toLowerCase() === email.toLowerCase(),
+            (item) => item.value.toLowerCase() === normalizedEmail,
           );
           if (isDuplicate) return;
 
@@ -81,6 +99,9 @@ const MultiUserInput = ({
           };
 
           onChange([...selectedValues, newOption]);
+          if (isBlocked) {
+            onBlockedEmailAttempt?.(email);
+          }
           setInputValue("");
         };
 
@@ -155,7 +176,7 @@ const MultiUserInput = ({
               components={{
                 Option: CustomOption,
                 MultiValue: CustomMultiValue,
-                MenuList: CustomMenuList,
+                MenuList,
                 ValueContainer: CustomValueContainer,
                 MultiValueRemove: () => null,
                 ClearIndicator: () => null,

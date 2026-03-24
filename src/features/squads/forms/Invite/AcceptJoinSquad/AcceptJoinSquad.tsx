@@ -7,6 +7,7 @@ import { useToast } from "@/providers/toast/useToast";
 import { useModal } from "@/providers/modal/useModal";
 import { useJoinSquadAsMember } from "@/hooks/rtkQuery/mutations/useSquadMutation";
 import { useCreateNotification, useDeleteNotification } from "@/hooks/rtkQuery/mutations/useNotificationMutation";
+import { useAllNotifications } from "@/hooks/rtkQuery/queries/useNotifications";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { withMinDelay } from "@/utils/withMinDelay";
@@ -47,6 +48,8 @@ const AcceptJoinSquad = ({
   const [deleteNotification] = useDeleteNotification();
   const profiles = useSelector((state: RootState) => state.profile.data);
   const account = useSelector((state: RootState) => state.account.data);
+  const myProfileIds = profiles?.map((profile) => profile.id) ?? [];
+  const { refetch: refetchNotifications } = useAllNotifications(myProfileIds);
   const formatedProfiles = convertProfilesToSelectOptions(profiles || []);
 
     // -- Form setup -- //
@@ -90,6 +93,9 @@ const AcceptJoinSquad = ({
                   notificationId,
                 }).unwrap();
               }
+
+            // REFETCH NOTIFICATIONS TO UPDATE UI
+            await refetchNotifications();
 
             const acceptedProfile = profiles?.find(
               (profile) => profile.id === data.profile_joining,

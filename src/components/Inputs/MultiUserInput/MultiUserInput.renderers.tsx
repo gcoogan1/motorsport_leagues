@@ -10,6 +10,11 @@ import {
 import type { SelectOption } from "./MultiUserInput.types";
 import { isValidEmail, MAX_SELECTIONS } from "./MultiUserInput.utils";
 
+type CustomMenuListProps = MenuListProps<SelectOption, true> & {
+  blockedEmails?: string[];
+  onBlockedEmailAttempt?: (email: string) => void;
+};
+
 // This file contains custom renderers for the react-select components used in MultiUserInput.
 // Includes:
 
@@ -80,14 +85,21 @@ export const CustomMultiValue = (props: MultiValueProps<SelectOption, true>) => 
   );
 };
 
-export const CustomMenuList = (props: MenuListProps<SelectOption, true>) => {
+export const CustomMenuList = (props: CustomMenuListProps) => {
   const { selectProps, children } = props;
   const input = selectProps.inputValue;
   const currentValue = (selectProps.value as MultiValue<SelectOption>) ?? [];
   const isAtLimit = currentValue.length >= MAX_SELECTIONS;
+  const blockedEmails = props.blockedEmails ?? [];
+  const onBlockedEmailAttempt = props.onBlockedEmailAttempt;
+  const normalizedInput = input.trim().toLowerCase();
 
   const alreadySelected = currentValue.some(
     (item) => item.value.toLowerCase() === input.toLowerCase(),
+  );
+
+  const isBlockedEmail = blockedEmails.some(
+    (email) => email.toLowerCase() === normalizedInput,
   );
 
   const showEmailRow = input.length > 0 && !alreadySelected && !isAtLimit;
@@ -115,6 +127,9 @@ export const CustomMenuList = (props: MenuListProps<SelectOption, true>) => {
                 action: "create-option",
               },
             );
+            if (isBlockedEmail) {
+              onBlockedEmailAttempt?.(input);
+            }
           }}
         >
           <Avatar

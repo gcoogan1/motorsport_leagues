@@ -12,6 +12,7 @@ import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { navigate } from "@/app/navigation/navigation";
 import { removeSquadInviteByToken } from "@/services/squad.service";
 import type { RootState } from "@/store";
+import { useAllNotifications } from "@/hooks/rtkQuery/queries/useNotifications";
 
 /* FIRST component rendered when user clicks "Join Squad" from a squad invite notification or a direct squad invite link. 
     Paths:
@@ -51,6 +52,8 @@ const JoinSquad = ({
   const [deleteNotification] = useDeleteNotification();
   const [isLoading, setIsLoading] = useState(false);
   const profiles = useSelector((state: RootState) => state.profile.data ?? []);
+  const myProfileIds = profiles?.map((profile) => profile.id) ?? [];
+  const { refetch: refetchNotifications } = useAllNotifications(myProfileIds);
 
 
   const handleContinue = async () => {
@@ -81,6 +84,8 @@ const JoinSquad = ({
                 notificationId,
               }).unwrap();
             }
+            // REFETCH NOTIFICATIONS TO UPDATE UI
+            await refetchNotifications();
 
             const acceptedProfile = profiles.find((profile) => profile.id === profileId);
 
