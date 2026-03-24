@@ -37,6 +37,15 @@ const getNotificationTime = (notification: Notification) => {
   const date = new Date(createdAt);
   if (Number.isNaN(date.getTime())) return "";
 
+  const secondsAgo = Math.floor((Date.now() - date.getTime()) / 1000);
+
+  const mins = Math.floor(secondsAgo / 60);
+  const hours = Math.floor(secondsAgo / 3600);
+
+  if (secondsAgo < 60) return `A few seconds ago`;
+  if (secondsAgo < 3600) return `${mins} ${mins === 1 ? "min" : "mins"} ago`;
+  if (secondsAgo < 43200) return `${hours} ${hours === 1 ? "hr" : "hrs"} ago`;
+
   return date.toLocaleDateString();
 };
 
