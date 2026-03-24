@@ -40,6 +40,10 @@ export const usePendingInviteNotification = () => {
     const inviteDataStr = localStorage.getItem("squad_invite");
     if (!inviteDataStr) return;
 
+    // Remove immediately (before any async work) to prevent duplicate processing
+    // caused by React StrictMode's double-mount in development, where the second
+    // mount's effect runs before the first async completes.
+    localStorage.removeItem("squad_invite");
 
     hasRunRef.current = true;
 
@@ -55,9 +59,8 @@ export const usePendingInviteNotification = () => {
         const inviteTableResult = await getInviteTablesByToken(inviteData.token);
 
 
-        // Invite no longer exists or expired, clean up localStorage
+        // Invite no longer exists or expired
         if (!inviteTableResult.success || !inviteTableResult.data) {
-          localStorage.removeItem("squad_invite");
           return;
         }
 
@@ -65,7 +68,6 @@ export const usePendingInviteNotification = () => {
 
         // Skip notification if sender info is missing (required for valid UUID fields)
         if (!invite.sender_account_id || !invite.sender_profile_id) {
-          localStorage.removeItem("squad_invite");
           return;
         }
 
@@ -85,7 +87,6 @@ export const usePendingInviteNotification = () => {
           );
 
           if (alreadyExists) {
-            localStorage.removeItem("squad_invite");
             return;
           }
         }
@@ -104,9 +105,6 @@ export const usePendingInviteNotification = () => {
             invite_token: invite.token || inviteData.token, // Fallback to token from localStorage if not in DB (shouldn't happen but just in case)
           },
         }).unwrap();
-
-        // Clear localStorage after successfully sending notification
-        localStorage.removeItem("squad_invite");
 
       } catch (error) {
         // Log error but don't throw—failure to notify shouldn't break the app
