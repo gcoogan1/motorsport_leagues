@@ -186,9 +186,8 @@ const MultiUserInput = ({
                 control: () => (error ? "select__control--has-error" : ""), // Add error class to control when there's an error
               }}
               styles={{
-                input: (base) => ({ // Hide caret while keeping input behavior
+                input: (base) => ({
                   ...base,
-                  caretColor: "transparent",
                 }),
                 menuPortal: (base) => ({ ...base, zIndex: 9999 }),
               }}
