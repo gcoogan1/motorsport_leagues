@@ -2,13 +2,22 @@ import { useModal } from '@/providers/modal/useModal';
 import Dialog from '@/components/Dialog/Dialog'
 import { navigate } from '@/app/navigation/navigation';
 
-const GuestJoinSquad = () => {
+type GuestJoinSquadProps = {
+  onCancel?: () => void;
+};
+
+const GuestJoinSquad = ({ onCancel }: GuestJoinSquadProps) => {
   const { closeAllModals } = useModal();
 
   const handleContinue = () => {
     navigate('/create-account');
     closeAllModals();
   }
+
+  const handleCancel = () => {
+    onCancel?.();
+    closeAllModals();
+  };
   
   return (
     <Dialog 
@@ -18,7 +27,7 @@ const GuestJoinSquad = () => {
       buttons={{
         onCancel: {
           label: 'Cancel',
-          action: () => closeAllModals(),
+          action: handleCancel,
         },
         onContinue: {
           label: 'Create Account',

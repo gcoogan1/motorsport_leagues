@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,7 +34,7 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
   const userId = useSelector((state: RootState) => state.account.data?.id);
   const { data: profilesData } = useGetProfilesQuery({ userId });
   const { data: squadMembers } = useSquadMembers(squadId);
-  const { data: pendingInvites, refetch: refetchPendingInvites } = useSquadInvites(squadId);
+  const { refetch: refetchPendingInvites } = useSquadInvites(squadId);
 
 
   const profiles =
@@ -50,12 +50,12 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
   // Filter out profiles that are already squad members or already invited
   const availableProfiles = profiles.filter(
     (profile) =>
-      !squadMembers?.some((member) => member.profile_id === profile.id) &&
-      !pendingInvites?.some((invite) => invite.profile_id === profile.id)
+      !squadMembers?.some((member) => member.profile_id === profile.id) 
+      // !pendingInvites?.some((invite) => invite.profile_id === profile.id)
   );
-  const blockedInviteEmails = (pendingInvites ?? [])
-    .map((invite) => invite.email.trim().toLowerCase())
-    .filter(Boolean);
+  // const blockedInviteEmails = (pendingInvites ?? [])
+  //   .map((invite) => invite.email.trim().toLowerCase())
+  //   .filter(Boolean);
 
   // -- Form setup -- //
 
@@ -64,27 +64,27 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
     defaultValues: { invitees: [] },
   });
 
-  const { handleSubmit, setError, clearErrors } = formMethods;
-  const invitees = formMethods.watch("invitees");
+  const { handleSubmit } = formMethods;
+  // const invitees = formMethods.watch("invitees");
 
-  useEffect(() => {
-    const hasBlockedInviteEmail = (invitees ?? []).some(
-      (invitee: { isEmail?: boolean; value?: string }) =>
-        invitee.isEmail &&
-        invitee.value &&
-        blockedInviteEmails.includes(invitee.value.trim().toLowerCase()),
-    );
+  // useEffect(() => {
+  //   const hasBlockedInviteEmail = (invitees ?? []).some(
+  //     (invitee: { isEmail?: boolean; value?: string }) =>
+  //       invitee.isEmail &&
+  //       invitee.value &&
+  //       blockedInviteEmails.includes(invitee.value.trim().toLowerCase()),
+  //   );
 
-    if (hasBlockedInviteEmail) {
-      setError("invitees", {
-        type: "manual",
-        message: "This email already has a pending squad invite.",
-      });
-      return;
-    }
+  //   if (hasBlockedInviteEmail) {
+  //     setError("invitees", {
+  //       type: "manual",
+  //       message: "This email already has a pending squad invite.",
+  //     });
+  //     return;
+  //   }
 
-    clearErrors("invitees");
-  }, [blockedInviteEmails, clearErrors, invitees, setError]);
+  //   clearErrors("invitees");
+  // }, [blockedInviteEmails, clearErrors, invitees, setError]);
 
   // -- Handlers -- //
   const handleOnCancel = () => {
@@ -94,20 +94,20 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
   const handleSendInvite = handleSubmit(async (data) => {
     setLoading(true);
     try {
-      const hasBlockedInviteEmail = data.invitees.some(
-        (invitee: { isEmail?: boolean; value?: string }) =>
-          invitee.isEmail &&
-          invitee.value &&
-          blockedInviteEmails.includes(invitee.value.trim().toLowerCase()),
-      );
+      // const hasBlockedInviteEmail = data.invitees.some(
+      //   (invitee: { isEmail?: boolean; value?: string }) =>
+      //     invitee.isEmail &&
+      //     invitee.value &&
+      //     blockedInviteEmails.includes(invitee.value.trim().toLowerCase()),
+      // );
 
-      if (hasBlockedInviteEmail) {
-        setError("invitees", {
-          type: "manual",
-          message: "This email already has a pending squad invite.",
-        });
-        return;
-      }
+      // if (hasBlockedInviteEmail) {
+      //   setError("invitees", {
+      //     type: "manual",
+      //     message: "This email already has a pending squad invite.",
+      //   });
+      //   return;
+      // }
 
       const emails: EmailInvite[] = await Promise.all(
         data.invitees.map(async (invitee) => {
@@ -206,7 +206,7 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
           label="Profiles or Emails"
           placeholder="e.g., FranzH, max@email.com"
           profiles={availableProfiles}
-          blockedEmails={blockedInviteEmails}
+          // blockedEmails={blockedInviteEmails}
         />
       </FormModal>
     </FormProvider>

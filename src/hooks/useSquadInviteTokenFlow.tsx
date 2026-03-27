@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { getInviteTablesByToken } from "@/services/squad.service";
 import { getNotificationsByRecipientIds } from "@/services/notification.service";
 import type { SquadViewType } from "@/types/squad.types";
@@ -24,6 +24,7 @@ export const useSquadInviteTokenFlow = ({
   token,
 }: UseSquadInviteTokenFlowProps) => {
   const { openModal } = useModal();
+  const dismissedInviteTokensRef = useRef<Set<string>>(new Set());
   const myProfileIds = useSelector(
     (state: RootState) => state.profile.data?.map((profile) => profile.id) ?? [],
   );
@@ -32,6 +33,10 @@ useEffect(() => {
   const loadInviteData = async () => {
     // ABORT if we don't have a token or if state is still resolving
     if (!token || !viewType || viewType === "loading" || squadStatus !== "fulfilled") {
+      return;
+    }
+
+    if (dismissedInviteTokensRef.current.has(token)) {
       return;
     }
 
@@ -75,6 +80,7 @@ useEffect(() => {
           squadId={squadId}
           hasProfile={false}
           token={token}
+          onCancel={() => dismissedInviteTokensRef.current.add(token)}
           notificationId={existingNotificationId}
           senderAccountId={inviteTableResult.data.sender_account_id}
           senderProfileId={inviteTableResult.data.sender_profile_id}
@@ -85,7 +91,9 @@ useEffect(() => {
     }
     
     if (viewType === "guest") {
-      openModal(<GuestJoinSquad />);
+      openModal(
+        <GuestJoinSquad onCancel={() => dismissedInviteTokensRef.current.add(token)} />,
+      );
       return;
     }
 
@@ -94,6 +102,7 @@ useEffect(() => {
         squadId={squadId}
         hasProfile={true}
         token={token}
+        onCancel={() => dismissedInviteTokensRef.current.add(token)}
         notificationId={existingNotificationId}
         profileId={inviteTableResult.data.profile_id}
         senderAccountId={inviteTableResult.data.sender_account_id}

@@ -28,6 +28,7 @@ type JoinSquadProps = {
   token: string;
   profileId?: string;
   onSuccess?: () => void;
+  onCancel?: () => void;
   senderAccountId?: string;
   senderProfileId?: string;
   squadName?: string;
@@ -40,6 +41,7 @@ const JoinSquad = ({
   token,
   profileId,
   onSuccess,
+  onCancel,
   senderAccountId,
   senderProfileId,
   squadName,
@@ -57,96 +59,101 @@ const JoinSquad = ({
 
 
   const handleContinue = async () => {
-    try {
-      setIsLoading(true);
-      console.log("Attempting to join squad with profileId:", profileId);
-      
-      // Accept the invite and join the squad as a member IF the user has a profile and that profile is in the invite table 
-      if (profileId) {
-        await withMinDelay(
-          (async () => {
-            await joinSquadAsMember({
-              squadId,
-              profileId,
-              role: "member",
-            }).unwrap();
+    if (isLoading) return;
 
-            // REMOVE INVITE TOKEN
-            const inviteRemovalResult = await removeSquadInviteByToken(token);
+    if (!hasProfile) {
+      closeModal();
+      openModal(<SquadNoProfile type="join" />);
+      return;
+    }
 
-            if (!inviteRemovalResult.success) {
-              throw inviteRemovalResult.error;
-            }
-
-            // DELETE NOTIFICATION -> IF APPLICABLE
-            if (notificationId) {
-              await deleteNotification({
-                notificationId,
-              }).unwrap();
-            }
-            // REFETCH NOTIFICATIONS TO UPDATE UI
-            await refetchNotifications();
-
-            const acceptedProfile = profiles.find((profile) => profile.id === profileId);
-
-            // SEND ACCEPT NOTIFICATION TO INVITER (SENDER) -> IF APPLICABLE
-            if (
-              senderAccountId &&
-              senderProfileId &&
-              squadName &&
-              acceptedProfile?.username
-            ) {
-              await createNotification({
-                recipient_profile_id: senderProfileId,
-                sender_account_id: acceptedProfile.account_id,
-                sender_profile_id: acceptedProfile.id,
-                entity_id: squadId,
-                type: "INVITE_ACCEPTED",
-                entity_type: "squad_invite",
-                metadata: {
-                  squad_name: squadName,
-                  recipient_username: acceptedProfile.username,
-                },
-              }).unwrap();
-            }
-          })(),
-          1000,
-        );
-
-        closeAllModals();
-        navigate(`/squad/${squadId}`);
-        onSuccess?.();
-        showToast({
-          usage: "success",
-          message: "Joined Squad.",
-        });
-        return;
-      }
-
-      if (!hasProfile) {
-        closeAllModals();
-        openModal(<SquadNoProfile type="join" />);
-        return;
-      }
-
+    if (!profileId) {
       // If the user has a profile but no profileId is provided, open the AcceptJoinSquad modal to let them select a profile to join with
-      closeAllModals();
+      closeModal();
       openModal(
         <AcceptJoinSquad
           token={token}
           squadId={squadId}
           onSuccess={onSuccess}
-          senderProfileId={senderProfileId} // profile id of the founder of the squad (inviter)
+          senderProfileId={senderProfileId}
           squadName={squadName}
           notificationId={notificationId}
         />,
       );
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      await withMinDelay(
+        (async () => {
+          await joinSquadAsMember({
+            squadId,
+            profileId,
+            role: "member",
+          }).unwrap();
+
+          // REMOVE INVITE TOKEN
+          const inviteRemovalResult = await removeSquadInviteByToken(token);
+
+          if (!inviteRemovalResult.success) {
+            throw inviteRemovalResult.error;
+          }
+
+          // DELETE NOTIFICATION -> IF APPLICABLE
+          if (notificationId) {
+            await deleteNotification({
+              notificationId,
+            }).unwrap();
+          }
+          // REFETCH NOTIFICATIONS TO UPDATE UI
+          await refetchNotifications();
+
+          const acceptedProfile = profiles.find((profile) => profile.id === profileId);
+
+          // SEND ACCEPT NOTIFICATION TO INVITER (SENDER) -> IF APPLICABLE
+          if (
+            senderAccountId &&
+            senderProfileId &&
+            squadName &&
+            acceptedProfile?.username
+          ) {
+            await createNotification({
+              recipient_profile_id: senderProfileId,
+              sender_account_id: acceptedProfile.account_id,
+              sender_profile_id: acceptedProfile.id,
+              entity_id: squadId,
+              type: "INVITE_ACCEPTED",
+              entity_type: "squad_invite",
+              metadata: {
+                squad_name: squadName,
+                recipient_username: acceptedProfile.username,
+              },
+            }).unwrap();
+          }
+        })(),
+        1000,
+      );
+
+      closeAllModals();
+      navigate(`/squad/${squadId}`);
+      onSuccess?.();
+      showToast({
+        usage: "success",
+        message: "Joined Squad.",
+      });
       return;
     } catch {
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     } finally {
       setIsLoading(false);
     }
+  }
+
+  const handleCancel = () => {
+    onCancel?.();
+    closeAllModals();
   }
   
   return (
@@ -157,11 +164,11 @@ const JoinSquad = ({
       buttons={{
         onCancel: {
           label: 'Cancel',
-          action: () => closeModal(),
+          action: handleCancel,
         },
         onContinue: {
           label: 'Join Squad',
-          action: () => handleContinue(),
+          action: handleContinue,
           loading: isLoading,
           loadingText: 'Loading...',
         }
