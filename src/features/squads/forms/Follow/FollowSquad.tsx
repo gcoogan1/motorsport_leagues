@@ -86,7 +86,7 @@ const FollowSquad = ({ accountId, squadIdToFollow }: FollowSquadProps) => {
         <ProfileSelectInput
           name="profile_following"
           type="profile"
-          fieldLabel="Following Squad"
+          fieldLabel="Select Your Profile"
           isLarge
           profiles={formatedProfiles}
           hasError={!!errors.profile_following}

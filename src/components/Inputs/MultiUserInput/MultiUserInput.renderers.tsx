@@ -53,7 +53,13 @@ export const CustomMultiValue = (props: MultiValueProps<SelectOption, true>) => 
   const { data } = props;
 
   const handleRemove = () => {
-    props.removeProps.onClick?.({} as React.MouseEvent<HTMLDivElement>);
+    const syntheticMouseDownEvent = {
+      preventDefault: () => undefined,
+      stopPropagation: () => undefined,
+      button: 0,
+    } as React.MouseEvent<HTMLDivElement>;
+
+    props.removeProps.onMouseDown?.(syntheticMouseDownEvent);
   };
 
   if (data.isEmail) {

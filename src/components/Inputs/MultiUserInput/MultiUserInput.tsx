@@ -16,8 +16,10 @@ import {
   CustomOption,
   CustomValueContainer,
 } from "./MultiUserInput.renderers";
+import type { GameType } from "@/types/profile.types";
 import type { Profile, SelectOption } from "./MultiUserInput.types";
-import { isValidEmail, MAX_SELECTIONS } from "./MultiUserInput.utils";
+import { isValidEmail } from "./MultiUserInput.utils";
+import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 
 type MultiUserInputProps = {
   profiles?: Profile[];
@@ -39,7 +41,7 @@ const MultiUserInput = ({
   onBlockedEmailAttempt,
 }: MultiUserInputProps) => {
   const inputId = useId(); // Generate a unique ID for the input field
-  const { control } = useFormContext();
+  const { control, trigger } = useFormContext();
   const [inputValue, setInputValue] = useState("");
 
   // Transform the provided profiles into the format expected by react-select
@@ -53,7 +55,7 @@ const MultiUserInput = ({
         avatarType: profile.avatarType,
         avatarValue: profile.avatarValue,
       },
-      secondaryInfo: profile.game,
+      secondaryInfo: convertGameTypeToFullName(profile.game as GameType),
     })) ?? [];
 
   return (
@@ -64,7 +66,6 @@ const MultiUserInput = ({
       render={({ field: { onChange, value, ref }, fieldState: { error } }) => {
         // Determine if the current input value is a valid email and not already selected
         const selectedValues = (value as MultiValue<SelectOption>) ?? [];
-        const isAtLimit = selectedValues.length >= MAX_SELECTIONS;
         const resolvedPlaceholder = placeholder ?? "";
 
         const MenuList = (props: MenuListProps<SelectOption, true>) => (
@@ -81,7 +82,6 @@ const MultiUserInput = ({
           const normalizedEmail = email.toLowerCase();
 
           if (!isValidEmail(email)) return;
-          if (selectedValues.length >= MAX_SELECTIONS) return;
 
           const isBlocked = blockedEmails.some(
             (blockedEmail) => blockedEmail.toLowerCase() === normalizedEmail,
@@ -98,7 +98,9 @@ const MultiUserInput = ({
             isEmail: true,
           };
 
-          onChange([...selectedValues, newOption]);
+          const nextValues = [...selectedValues, newOption];
+          onChange(nextValues);
+          void trigger(name);
           if (isBlocked) {
             onBlockedEmailAttempt?.(email);
           }
@@ -152,26 +154,20 @@ const MultiUserInput = ({
                   uniqueValues.add(key);
                   return true;
                 });
-                
-                onChange(filteredValues.slice(0, MAX_SELECTIONS));
+
+                onChange(filteredValues);
+                void trigger(name);
                 setInputValue("");
               }}
               options={options}
               isValidNewOption={() => false} // Disable the default "create new option" behavior since we're handling it manually
-              noOptionsMessage={() =>
-                isAtLimit ? `You can select up to ${MAX_SELECTIONS}.` : " "
-              }
+              noOptionsMessage={() => " "}
               // Custom function to create a new option when the user types an email and presses Enter
               getNewOptionData={(input): SelectOption => ({
                 value: input,
                 label: input,
                 isEmail: true,
               })}
-              // Disable options when the limit is reached, but allow already selected options to be deselected
-              isOptionDisabled={(option, selected) =>
-                selected.length >= MAX_SELECTIONS &&
-                !selected.some((item) => item.value === option.value)
-              }
               // Custom components to render options, selected values, and the menu list
               components={{
                 Option: CustomOption,
@@ -193,6 +189,7 @@ const MultiUserInput = ({
               }}
               placeholder={resolvedPlaceholder}
               hideSelectedOptions
+              menuPlacement="bottom"
               menuIsOpen={inputValue.length > 0}
               menuPortalTarget={document.body}
               menuPosition="fixed"
