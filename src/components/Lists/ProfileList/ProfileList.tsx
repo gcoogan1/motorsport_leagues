@@ -38,6 +38,7 @@ type ProfileListProps = {
   onClick?: (id: string, action: ProfileAction) => void;
   allowRemoveAction?: boolean;
   allowChangeRoleAction?: boolean;
+  removeType?: "member" | "user" | 'follower';
   listType?: ListType;
 };
 
@@ -46,13 +47,9 @@ const ProfileList = ({
   onClick,
   allowRemoveAction = false,
   allowChangeRoleAction = false,
+  removeType = "user",
   listType = "profile",
 }: ProfileListProps) => {
-  const viewType = useSelector(selectProfileViewType());
-  // Allow remove action if user is owner of the profile (for profile lists)
-  // or allowRemoveAction is explicitly set to true and the list type not profile (e.g. squad followers list where squad founder can remove followers)
-  const canRemove =
-    allowRemoveAction || (viewType === "owner" && listType === "profile");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const dropdownContainerRefs = useRef<Record<string, HTMLDivElement | null>>(
     {},
@@ -80,6 +77,31 @@ const ProfileList = ({
     };
   }, [openDropdown]);
 
+  // For squad member lists, we want to show founders first, then by alphabetical order
+  const sortItemsByFounder = (items: ProfileListItem[]) => {
+    if (listType === "squad") {
+      return items.sort((a, b) => {
+        const aIsFounder = a.tags?.includes("founder") ?? false;
+        const bIsFounder = b.tags?.includes("founder") ?? false;
+
+        if (aIsFounder && !bIsFounder) {
+          return -1;
+        } else if (!aIsFounder && bIsFounder) {
+          return 1;
+        } else {
+          return a.label.localeCompare(b.label);
+        }
+      });
+    }
+
+    // For other lists, sort by alphabetical order
+    return items.sort((a, b) => a.label.localeCompare(b.label));
+  };
+
+  const formatedItems = sortItemsByFounder(items);
+
+  // -- Handlers-- //
+
   const handleMenuClick = (id: string) => {
     setOpenDropdown(openDropdown === id ? null : id);
   };
@@ -96,7 +118,7 @@ const ProfileList = ({
 
   return (
     <ListContainer>
-      {items.map((item) => (
+      {formatedItems.map((item) => (
         <ProfileContainer key={item.id}>
           <UserProfileWrapper>
             <UserProfile
@@ -131,7 +153,7 @@ const ProfileList = ({
                     value: "view",
                     icon: <ProfileIcon />,
                   },
-                  ...(allowChangeRoleAction
+                  ...(allowChangeRoleAction && !item.tags?.includes("founder")
                     ? [
                         {
                           label: "Change Role",
@@ -140,10 +162,10 @@ const ProfileList = ({
                         },
                       ]
                     : []),
-                  ...(canRemove
+                  ...(allowRemoveAction && !item.tags?.includes("founder")
                     ? [
                         {
-                          label: "Remove User",
+                          label: `Remove ${removeType}`,
                           value: "remove",
                           icon: <KickIcon />,
                         },

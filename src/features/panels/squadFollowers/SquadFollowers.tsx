@@ -62,6 +62,7 @@ const SquadFollowers = ({ squadId }: SquadFollowersProps) => {
             items={formatedProfiles}
             onClick={handleProfileAction}
             allowRemoveAction={squadViewType === "founder"}
+            removeType="follower"
             listType="squad"
           />
         ) : (

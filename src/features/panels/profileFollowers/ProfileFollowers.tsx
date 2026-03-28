@@ -1,8 +1,10 @@
 import { useAuth } from "@/providers/auth/useAuth";
+import { useSelector } from "react-redux";
 import { useModal } from "@/providers/modal/useModal";
 import { navigate } from "@/app/navigation/navigation";
 import { usePanel } from "@/providers/panel/usePanel";
 import { useProfileFollowers } from "@/hooks/rtkQuery/queries/useProfileFollowers";
+import { selectProfileViewType } from "@/store/profile/profile.selectors";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import FollowersIcon from "@assets/Icon/Followers.svg?react";
@@ -19,6 +21,7 @@ const ProfileFollowers = ({ profileId }: ProfileFollowersProps) => {
   const { closePanel } = usePanel();
   const { user } = useAuth();
   const { data: followers = [] } = useProfileFollowers(profileId ?? "");
+  const viewType = useSelector(selectProfileViewType());
 
   const formatedProfiles = convertProfilesToSelectOptions(followers || []).map(
     (profile) => ({
@@ -54,6 +57,9 @@ const ProfileFollowers = ({ profileId }: ProfileFollowersProps) => {
             key={profileId}
             items={formatedProfiles}
             onClick={handleProfileAction}
+            allowRemoveAction={viewType === "owner"}
+            removeType="follower"
+            listType="profile"
           />
         ) : (
           <EmptyMessage

@@ -99,6 +99,7 @@ const SquadMembers = ({ squadId }: SquadMembersProps) => {
             onClick={handleProfileAction}
             allowRemoveAction={squadViewType === "founder"}
             allowChangeRoleAction={squadViewType === "founder"}
+            removeType="member"
             listType="squad"
           />
         ) : (
