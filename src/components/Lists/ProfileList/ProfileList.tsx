@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import { selectProfileViewType } from "@/store/profile/profile.selectors";
 import type { Tag } from "@/components/Tags/Tags.variants";
 import UserProfile from "@/components/Users/Profile/UserProfile";
 import Button from "@/components/Button/Button";
