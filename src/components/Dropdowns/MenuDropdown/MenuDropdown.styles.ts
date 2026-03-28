@@ -11,7 +11,7 @@ export const DropdownContainer = styled.div<{ $isStandAlone?: boolean }>`
   right: 0;
   display: flex;
   flex-direction: column;
-  width: ${({ $isStandAlone }) => ($isStandAlone ? "max-content" : "100%")};
+  width: ${({ $isStandAlone }) => ($isStandAlone ? "240px" : "100%")};
   min-width: 160px;
 
   border-radius: ${borders.radius.xxLarge};
@@ -23,6 +23,7 @@ export const DropdownContainer = styled.div<{ $isStandAlone?: boolean }>`
   /* margin-top: ${layout.space.xxSmall}; */
   margin-top: -4px;
   z-index: 1000;
+  align-items: flex-start;
 
   ${effects.boxShadow.elevationModal};
 `

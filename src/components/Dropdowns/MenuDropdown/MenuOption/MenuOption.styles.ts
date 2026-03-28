@@ -59,6 +59,7 @@ export const OptionLabel = styled.p`
   ${typography.body.mediumBold};
   color: ${colors.text.text1};
   margin: 0;
+  text-transform: capitalize;
 `
 
 export const OptionInfo = styled.p`
