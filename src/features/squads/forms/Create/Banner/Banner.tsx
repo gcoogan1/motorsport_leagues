@@ -24,11 +24,10 @@ const Banner = ({ onBack }: BannerProps) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const currentProfileId = useSelector((state: RootState) => state.profile.currentProfile?.id);
   const draft = useSelector((state: RootState) => state.squad.draft);
 
   const dispatch = useDispatch<AppDispatch>();
-
-  console.log("Current squad draft state in Banner component:", draft);
 
   // -- Form setup -- //
   const formMethods = useForm<BannerFormValues>({
@@ -50,7 +49,8 @@ const Banner = ({ onBack }: BannerProps) => {
   const handleOnSubmit = async (data: BannerFormValues) => {
     try {
       setIsLoading(true);
-      if (!accountId || !draft) return;
+      const founderProfileId = draft?.founder_profile_id ?? currentProfileId;
+      if (!accountId || !founderProfileId || !draft?.squad_name) return;
 
       const banner =
         data.banner.type === "preset"
@@ -59,8 +59,8 @@ const Banner = ({ onBack }: BannerProps) => {
           
       const payload = {
         founderAccountId: accountId,
-        founderProfileId: draft.founder_profile_id!,
-        squadName: draft.squad_name!,
+        founderProfileId,
+        squadName: draft.squad_name,
         banner,
       };
 

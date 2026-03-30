@@ -462,7 +462,6 @@ export const deleteProfile = async (
   }
   // Delete any squads founded by this profile before deleting the profile itself, to avoid orphaned squads without founders.
   const deleteFoundedSquadsResult = await deleteSquadsByFounderService(
-    profileRow.account_id,
     profileId,
   );
 

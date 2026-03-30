@@ -30,8 +30,6 @@ export type SquadDraft = {
 export type SquadTable = {
   id: string;
   created_at: string;
-  founder_account_id: string;
-  founder_profile_id: string;
   squad_name: string;
   squad_name_normalized: string;
   banner_type: "preset" | "upload";
@@ -119,6 +117,8 @@ export type CreateSquadResult = CreateSquadSuccess | SupabaseError;
 export type EditBannerPayload = {
   squadId: string;
   banner: BannerImageValue;
+  // Required for upload storage path (scoped by account ID in storage RLS)
+  accountId?: string;
 };
 
 // Edit Banner --> Success type

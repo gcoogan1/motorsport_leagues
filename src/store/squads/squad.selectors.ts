@@ -2,7 +2,9 @@ import type { SquadViewType } from "@/types/squad.types";
 import { squadApi } from "@/store/rtkQueryAPI/squadApi";
 import type { RootState } from "..";
 
-export const selectSquadViewType = () => (state: RootState): SquadViewType | "loading" => {
+export const selectSquadViewType = (
+  state: RootState,
+): SquadViewType | "loading" => {
   const account = state.account.data;
   const accountStatus = state.account.status;
   const currentUserProfiles = state.profile.data ?? [];
@@ -20,17 +22,30 @@ export const selectSquadViewType = () => (state: RootState): SquadViewType | "lo
   // Logged in, squad not loaded yet
   if (!currentSquad) return "loading";
 
-  // Founder
-  if (currentSquad.founder_account_id === account?.id) {
-    return "founder";
+  const squadMembersResult = squadApi.endpoints.getSquadMembers.select(
+    currentSquad.id,
+  )(state);
+
+  if (squadMembersResult.isUninitialized || squadMembersResult.isLoading) {
+    return "loading";
   }
 
-  const squadMembersResult = squadApi.endpoints.getSquadMembers.select(currentSquad.id)(state);
   const squadMembers = squadMembersResult?.data ?? [];
-  const currentUserProfileIds = new Set(currentUserProfiles.map((profile) => profile.id));
+  const currentUserProfileIds = new Set(
+    currentUserProfiles.map((profile) => profile.id),
+  );
+
   const isSquadMember = squadMembers.some((member) =>
     currentUserProfileIds.has(member.profile_id),
   );
+  const isSquadFounderByRole = squadMembers.some((member) =>
+    currentUserProfileIds.has(member.profile_id) && member.role === "founder",
+  );
+  
+  // Founder is derived from members table role only.
+  if (isSquadFounderByRole) {
+    return "founder";
+  }
 
   if (isSquadMember) {
     return "member";

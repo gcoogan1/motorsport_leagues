@@ -25,6 +25,7 @@ const EditBanner = () => {
   const currentSquad = useSelector(
     (state: RootState) => state.squad.currentSquad,
   );
+  const accountId = useSelector((state: RootState) => state.account.data?.id);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -95,7 +96,7 @@ const EditBanner = () => {
           }
 
           const squad = await dispatch(
-            editBannerThunk({ squadId: currentSquad?.id, banner: bannerPayload }),
+            editBannerThunk({ squadId: currentSquad?.id, banner: bannerPayload, accountId }),
           ).unwrap();
           await dispatch(clearSquadDraft());
           return squad;

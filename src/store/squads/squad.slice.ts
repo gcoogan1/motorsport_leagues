@@ -160,19 +160,13 @@ const squadSlice = createSlice({
         state.status = "rejected";
         state.error = (action.payload as string | undefined) ?? action.error.message;
       })
-      // Remove squads founded by deleted profile from local squad state
-      .addCase(deleteProfileThunk.fulfilled, (state, action) => {
-        const deletedProfileId = action.meta.arg.profileId;
-
-        if (state.data) {
-          state.data = state.data.filter(
-            (squad) => squad.founder_profile_id !== deletedProfileId,
-          );
-        }
-
-        if (state.currentSquad?.founder_profile_id === deletedProfileId) {
-          state.currentSquad = null;
-        }
+      // Remove squads from local state after profile deletion; the service has already deleted
+      // any squads where the deleted profile was the sole founder.
+      .addCase(deleteProfileThunk.fulfilled, (state) => {
+        state.data = null;
+        state.currentSquad = null;
+        state.status = "idle";
+        state.error = undefined;
       });
   },
 });

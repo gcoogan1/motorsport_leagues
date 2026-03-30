@@ -23,7 +23,7 @@ const SquadFollowers = ({ squadId }: SquadFollowersProps) => {
   const { closePanel } = usePanel();
   const { user } = useAuth();
   const currentSquad = useSelector(selectCurrentSquad);
-  const squadViewType = useSelector(selectSquadViewType());
+  const squadViewType = useSelector(selectSquadViewType);
   const resolvedSquadId = squadId ?? currentSquad?.id ?? "";
   const { data: followers = [] } = useSquadFollowers(resolvedSquadId);
 

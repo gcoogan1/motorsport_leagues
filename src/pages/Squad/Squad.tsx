@@ -21,6 +21,7 @@ import { useSquadInviteTokenFlow } from "../../hooks/useSquadInviteTokenFlow";
 import InviteSquad from "@/features/squads/forms/Invite/InviteSquad/InviteSquad";
 import LoadingScreen from "@/components/Messages/LoadingScreen/LoadingScreen";
 import { useSquadPageReadyState } from "@/hooks/useSquadPageReadyState";
+import { useSquadFounderContext } from "@/hooks/useSquadFounderContext";
 
 const Squad = () => {
   const { openPanel } = usePanel();
@@ -130,6 +131,17 @@ const Squad = () => {
     hasStoredInvite.current = true;
   }, [isReady, token, viewType, userAlreadyInSquad, squadId, userHasActiveProfile]);
 
+  const {
+    isViewerFounder,
+    inviterFounderUsername,
+    inviterFounderProfileId,
+    inviterFounderAccountId,
+  } = useSquadFounderContext({
+    squadMembers,
+    currentUserProfiles,
+    currentProfileId,
+  });
+
   // 🚫 block UI until ready
   if (!isReady || !squad || squad.id !== squadId) {
     return <LoadingScreen />;
@@ -149,13 +161,6 @@ const Squad = () => {
     avatarValue: member.avatar_value,
   }));
 
-  const founderUsername =
-    currentUserProfiles.find(
-      (p) =>
-        p.id === squad.founder_profile_id &&
-        p.account_id === accountId
-    )?.username ?? "";
-
   // Handlers
   const handleEditSquad = () => openPanel("SQUAD_EDIT");
 
@@ -174,13 +179,15 @@ const Squad = () => {
   };
 
   const handleInviteToSquad = () => {
+    if (!isViewerFounder) return;
+
     openModal(
       <InviteSquad
         squadId={squad.id}
         squadName={squad.squad_name}
-        founderName={founderUsername}
-        founderProfileId={squad.founder_profile_id}
-        founderAccountId={squad.founder_account_id}
+        founderName={inviterFounderUsername}
+        founderProfileId={inviterFounderProfileId}
+        founderAccountId={inviterFounderAccountId}
       />
     );
   };

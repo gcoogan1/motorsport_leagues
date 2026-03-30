@@ -53,10 +53,54 @@ export const resolveBannerValue = (
 export const getSquadsByAccountId = async (
   accountId: string,
 ): Promise<GetSquadsResult> => {
+  // Step 1: Get all profile IDs belonging to this account
+  const { data: profiles, error: profilesError } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("account_id", accountId);
+
+  if (profilesError) {
+    return {
+      success: false,
+      error: {
+        message: profilesError.message,
+        code: profilesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (!profiles.length) return { success: true, data: [] };
+
+  const profileIds = profiles.map((p) => p.id);
+
+  // Step 2: Get squad IDs where any profile has a founder role
+  const { data: founderMembers, error: membersError } = await supabase
+    .from("squad_members")
+    .select("squad_id")
+    .in("profile_id", profileIds)
+    .eq("role", "founder");
+
+  if (membersError) {
+    return {
+      success: false,
+      error: {
+        message: membersError.message,
+        code: membersError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (!founderMembers.length) return { success: true, data: [] };
+
+  const squadIds = [...new Set(founderMembers.map((m) => m.squad_id))];
+
+  // Step 3: Fetch the squads
   const { data, error } = await supabase
     .from("squads")
     .select("*, squad_members(count)")
-    .eq("founder_account_id", accountId);
+    .in("id", squadIds);
 
   if (error) {
     return {
@@ -84,22 +128,49 @@ export const getSquadsByFounderProfileId = async (
   founderProfileId: string,
   signal?: AbortSignal,
 ): Promise<GetSquadsResult> => {
-  let query = supabase
-    .from("squads")
-    .select("*, squad_members(count)")
-    .eq("founder_profile_id", founderProfileId);
+  // Step 1: Get squad IDs where this profile has a founder role
+  let membersQuery = supabase
+    .from("squad_members")
+    .select("squad_id")
+    .eq("profile_id", founderProfileId)
+    .eq("role", "founder");
 
-  if (signal) {
-    query = query.abortSignal(signal);
+  if (signal) membersQuery = membersQuery.abortSignal(signal);
+
+  const { data: memberRows, error: membersError } = await membersQuery;
+
+  if (membersError) {
+    if (membersError.code === "ABORT" || membersError.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+    return {
+      success: false,
+      error: {
+        message: membersError.message,
+        code: membersError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
   }
 
-  const { data, error } = await query;
+  if (!memberRows.length) return { success: true, data: [] };
+
+  const squadIds = memberRows.map((m) => m.squad_id);
+
+  // Step 2: Fetch the squads
+  let squadsQuery = supabase
+    .from("squads")
+    .select("*, squad_members(count)")
+    .in("id", squadIds);
+
+  if (signal) squadsQuery = squadsQuery.abortSignal(signal);
+
+  const { data, error } = await squadsQuery;
 
   if (error) {
     if (error.code === "ABORT" || error.message?.includes("abort")) {
       return { success: true, data: [] };
     }
-
     return {
       success: false,
       error: {
@@ -159,11 +230,13 @@ export const getMemberSquadsByAccountId = async (
   }
 
   const profileIds = profiles.map((profile) => profile.id);
-  // Get the squad memberships for all profiles associated with the account, then fetch the corresponding squads. 
+  // Get the squad memberships for all profiles associated with the account, then fetch the corresponding squads.
+  // Exclude founder memberships since founded squads are shown separately.
   let membersQuery = supabase
     .from("squad_members")
     .select("squad_id")
-    .in("profile_id", profileIds);
+    .in("profile_id", profileIds)
+    .neq("role", "founder");
 
   // Attach the abort signal to the members query, so that if the original request is cancelled (e.g., when the component unmounts or the accountId changes), this one will be too. 
   // This prevents unnecessary database load and potential memory leaks from unresolved promises.
@@ -203,8 +276,7 @@ export const getMemberSquadsByAccountId = async (
   let squadsQuery = supabase
     .from("squads")
     .select("*, squad_members(count)")
-    .in("id", squadIds)
-    .neq("founder_account_id", accountId); // Exclude squads where the account is the founder
+    .in("id", squadIds);
 
 
   if (signal) {
@@ -314,8 +386,6 @@ export const createSquadWithBanner = async ({
   const { data, error } = await supabase
     .from("squads")
     .insert({
-      founder_account_id: founderAccountId,
-      founder_profile_id: founderProfileId,
       squad_name: squadName,
       squad_name_normalized: normalizeName(squadName),
       banner_type: bannerType,
@@ -411,7 +481,7 @@ export const getSquadById = async (
 
 // -- Edit Banner -- //
 export const editSquadBanner = async (
-  { squadId, banner }: EditBannerPayload,
+  { squadId, banner, accountId }: EditBannerPayload,
 ): Promise<EditBannerResult> => {
   let bannerType: "preset" | "upload";
   let bannerValue: string;
@@ -423,28 +493,20 @@ export const editSquadBanner = async (
   } else {
     bannerType = "upload";
 
-    // Load founder account id so uploads follow the same storage path convention as create
-    // (required by storage RLS policies that scope uploads by account folder).
-    const { data: squadData, error: squadFetchError } = await supabase
-      .from("squads")
-      .select("founder_account_id")
-      .eq("id", squadId)
-      .single();
-
-    if (squadFetchError || !squadData?.founder_account_id) {
+    if (!accountId) {
       return {
         success: false,
         error: {
-          message: squadFetchError?.message || "Squad not found",
-          code: squadFetchError?.code || "SQUAD_NOT_FOUND",
-          status: 404,
+          message: "Account ID is required for banner uploads",
+          code: "MISSING_ACCOUNT_ID",
+          status: 400,
         },
       };
     }
 
-    // Generate a unique file path for the banner upload
+    // Generate a unique file path for the banner upload, scoped by account ID
     const fileExt = banner.file.name.split(".").pop();
-    const filePath = `${squadData.founder_account_id}/${crypto.randomUUID()}.${fileExt}`;
+    const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
 
     // Upload the banner file to Supabase Storage
     const { error } = await supabase.storage
@@ -535,6 +597,29 @@ export const getAllSquads = async (
   search?: string,
   signal?: AbortSignal,
 ): Promise<GetSquadsResult> => {
+  // If an account ID is provided, find squads where that account is a founder
+  // so we can exclude them from search results (user shouldn't see their own squads).
+  let excludeSquadIds: string[] = [];
+  if (founderAcctId) {
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("account_id", founderAcctId);
+
+    if (profiles?.length) {
+      const profileIds = profiles.map((p) => p.id);
+      const { data: founderMembers } = await supabase
+        .from("squad_members")
+        .select("squad_id")
+        .in("profile_id", profileIds)
+        .eq("role", "founder");
+
+      if (founderMembers?.length) {
+        excludeSquadIds = [...new Set(founderMembers.map((m) => m.squad_id))];
+      }
+    }
+  }
+
   let query = supabase
     .from("squads")
     .select("*, squad_members(count)");
@@ -544,8 +629,8 @@ export const getAllSquads = async (
     query = query.ilike("squad_name_normalized", `%${normalizedSearch}%`);
   }
 
-  if (founderAcctId) {
-    query = query.neq("founder_account_id", founderAcctId);
+  if (excludeSquadIds.length) {
+    query = query.not("id", "in", `(${excludeSquadIds.join(",")})`);
   }
 
   if (signal) {
@@ -1007,17 +1092,68 @@ export const getFollowingSquads = async (
 };
 
 // -- Delete Squads By Founder -- //
-// -> used when deleting a profile and the profile is a main founder of one or more squads
+// -> used when deleting a profile and the profile is the sole founder of one or more squads
 export const deleteSquadsByFounderService = async (
-  founderAccountId: string,
   founderProfileId: string,
 ) => {
-  // Fetch squads founded by this profile
+  // Find all squads where this profile has a founder role
+  const { data: founderMemberships, error: membershipsError } = await supabase
+    .from("squad_members")
+    .select("squad_id")
+    .eq("profile_id", founderProfileId)
+    .eq("role", "founder");
+
+  if (membershipsError) {
+    return {
+      success: false,
+      error: {
+        message: membershipsError.message,
+        code: membershipsError.code || "FOUNDED_SQUADS_FETCH_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  if (!founderMemberships.length) return { success: true };
+
+  const candidateSquadIds = founderMemberships.map((m) => m.squad_id);
+
+  // For each candidate squad, count how many founders it has.
+  // Only delete squads where this profile is the sole founder (co-founded squads continue).
+  const { data: allFounderMembers, error: foundersError } = await supabase
+    .from("squad_members")
+    .select("squad_id")
+    .in("squad_id", candidateSquadIds)
+    .eq("role", "founder");
+
+  if (foundersError) {
+    return {
+      success: false,
+      error: {
+        message: foundersError.message,
+        code: foundersError.code || "FOUNDED_SQUADS_FETCH_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const founderCountPerSquad = new Map<string, number>();
+  for (const m of allFounderMembers) {
+    founderCountPerSquad.set(m.squad_id, (founderCountPerSquad.get(m.squad_id) ?? 0) + 1);
+  }
+
+  // Only delete squads where this profile is the only founder
+  const squadIds = candidateSquadIds.filter(
+    (id) => (founderCountPerSquad.get(id) ?? 0) <= 1,
+  );
+
+  if (!squadIds.length) return { success: true };
+
+  // Fetch squad banner info for storage cleanup
   const { data: foundedSquads, error: foundedSquadsError } = await supabase
     .from("squads")
     .select("id, banner_type, banner_value")
-    .eq("founder_account_id", founderAccountId)
-    .eq("founder_profile_id", founderProfileId);
+    .in("id", squadIds);
 
   if (foundedSquadsError) {
     return {
@@ -1030,14 +1166,7 @@ export const deleteSquadsByFounderService = async (
     };
   }
 
-  if (!foundedSquads.length) {
-    return {
-      success: true,
-    };
-  }
-
   // Extract squad IDs and any uploaded banner paths for cleanup
-  const squadIds = foundedSquads.map((squad) => squad.id);
   const uploadedBannerPaths = foundedSquads
     .filter((squad) => squad.banner_type === "upload")
     .map((squad) => squad.banner_value);

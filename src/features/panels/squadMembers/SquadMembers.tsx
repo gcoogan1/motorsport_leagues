@@ -29,7 +29,7 @@ const SquadMembers = ({ squadId }: SquadMembersProps) => {
   const { openModal } = useModal();
   const { user } = useAuth();
   const currentSquad = useSelector(selectCurrentSquad);
-  const squadViewType = useSelector(selectSquadViewType());
+  const squadViewType = useSelector(selectSquadViewType);
   const resolvedSquadId = squadId ?? currentSquad?.id ?? "";
   const { data: members = [] } = useSquadMembers(resolvedSquadId);
 

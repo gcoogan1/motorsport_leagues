@@ -5,7 +5,7 @@ import { selectSquadViewType } from "@/store/squads/squad.selectors";
 export const useSquadPageReadyState = () => {
   const squadStatus = useSelector((state: RootState) => state.squad.status);
   const profileStatus = useSelector((state: RootState) => state.profile.status);
-  const viewType = useSelector(selectSquadViewType());
+  const viewType = useSelector(selectSquadViewType);
 
   const isReady =
     squadStatus !== "loading" &&
