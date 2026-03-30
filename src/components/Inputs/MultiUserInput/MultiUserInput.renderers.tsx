@@ -1,4 +1,11 @@
-import { components, type MenuListProps, type MultiValue, type MultiValueProps, type OptionProps, type ValueContainerProps } from "react-select";
+import {
+  components,
+  type MenuListProps,
+  type MultiValue,
+  type MultiValueProps,
+  type OptionProps,
+  type ValueContainerProps,
+} from "react-select";
 import Avatar from "@/components/Avatar/Avatar";
 import Chip from "@/components/Chip/Chip";
 import {
@@ -22,7 +29,6 @@ type CustomMenuListProps = MenuListProps<SelectOption, true> & {
 // - CustomMultiValue: Renders the selected values as Chips with avatars.
 // - CustomMenuList: Renders the dropdown menu list and includes logic to display the email being typed as an option.
 // - CustomValueContainer: Renders the container for selected values and shows an "Add more..." prompt when there are selected values and the input is empty.
-
 
 export const CustomOption = (props: OptionProps<SelectOption, true>) => {
   const { data, isFocused, isSelected } = props;
@@ -49,15 +55,13 @@ export const CustomOption = (props: OptionProps<SelectOption, true>) => {
   );
 };
 
-export const CustomMultiValue = (props: MultiValueProps<SelectOption, true>) => {
+export const CustomMultiValue = (
+  props: MultiValueProps<SelectOption, true>,
+) => {
   const { data } = props;
 
   const handleRemove = (event?: React.MouseEvent<HTMLButtonElement>) => {
     if (!event) return;
-
-    props.removeProps.onMouseDown?.(
-      event as unknown as React.MouseEvent<HTMLDivElement>,
-    );
 
     props.removeProps.onClick?.(
       event as unknown as React.MouseEvent<HTMLDivElement>,
@@ -140,16 +144,10 @@ export const CustomMenuList = (props: CustomMenuListProps) => {
             }
           }}
         >
-          <Avatar
-            size="small"
-            avatarType={"preset"}
-            avatarValue={"email"}
-          />
+          <Avatar size="small" avatarType={"preset"} avatarValue={"email"} />
           <OptionText>
             <OptionLabel>{input}</OptionLabel>
-            <OptionMeta>
-              Email Address
-            </OptionMeta>
+            <OptionMeta>Email Address</OptionMeta>
           </OptionText>
         </OptionRow>
       )}
