@@ -142,12 +142,14 @@ const MultiUserInput = ({
               onChange={(selected) => {
                 // When the selection changes (either by selecting an existing option or creating a new one), we need to update the form state.
                 const nextValue = (selected as MultiValue<SelectOption>) ?? [];
-                
+
                 // Filter out duplicates based on value (for emails/usernames) and profileId (for profiles)
                 const uniqueValues = new Set<string>();
                 const filteredValues = nextValue.filter((item) => {
                   // Use profileId as key if available, otherwise use value
-                  const key = item.profileId ? `profile:${item.profileId}` : `value:${item.value.toLowerCase()}`;
+                  const key = item.profileId
+                    ? `profile:${item.profileId}`
+                    : `value:${item.value.toLowerCase()}`;
                   if (uniqueValues.has(key)) {
                     return false; // Skip duplicate
                   }
@@ -190,6 +192,8 @@ const MultiUserInput = ({
               placeholder={resolvedPlaceholder}
               hideSelectedOptions
               menuPlacement="bottom"
+              menuShouldScrollIntoView={false}
+              captureMenuScroll={false}
               menuIsOpen={inputValue.length > 0}
               menuPortalTarget={document.body}
               menuPosition="fixed"
