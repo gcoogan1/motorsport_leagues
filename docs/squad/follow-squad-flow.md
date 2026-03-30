@@ -9,7 +9,7 @@
    - Page controller in [src/pages/Squad/Squad.tsx](src/pages/Squad/Squad.tsx)
 
 2. **Resolve Viewer Context**
-   - `viewType` derived from `selectSquadViewType()`
+   - `viewType` derived from `selectSquadViewType`
    - `hasProfile` from `selectHasProfiles`
    - Follow status from `useIsFollowingSquad`
    - Wiring in [src/pages/Squad/Squad.tsx](src/pages/Squad/Squad.tsx)

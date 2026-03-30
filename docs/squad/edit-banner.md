@@ -37,7 +37,7 @@
    - Thunk in [src/store/squads/squad.thunk.ts](src/store/squads/squad.thunk.ts)
 
 6. **Upload + Persist**
-   - If upload selected, service fetches `founder_account_id` and uploads to `banners` bucket using account-scoped path
+   - If upload selected, modal passes `accountId` and service uploads to `banners` bucket using account-scoped path
    - Updates `squads.banner_type` and `squads.banner_value`
    - Resolves uploaded value to public URL before returning
    - Service in [src/services/squad.service.ts](src/services/squad.service.ts)

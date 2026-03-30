@@ -52,7 +52,7 @@
 8. **Service Filtering**
    - `getAllSquads` applies:
      - normalized `ilike` search on `squad_name_normalized`
-     - exclusion of current user’s founded squads via `neq("founder_account_id", founderAcctId)`
+       - exclusion of current user’s founded squads by resolving their profile IDs and filtering squads where those profiles are founders in `squad_members`
      - abort signal for request cancellation
    - Service in [src/services/squad.service.ts](src/services/squad.service.ts)
 
