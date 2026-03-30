@@ -25,6 +25,7 @@ export const useSquadInviteTokenFlow = ({
 }: UseSquadInviteTokenFlowProps) => {
   const { openModal } = useModal();
   const dismissedInviteTokensRef = useRef<Set<string>>(new Set());
+  const openedInviteTokensRef = useRef<Set<string>>(new Set());
   const myProfileIds = useSelector(
     (state: RootState) => state.profile.data?.map((profile) => profile.id) ?? [],
   );
@@ -37,6 +38,11 @@ useEffect(() => {
     }
 
     if (dismissedInviteTokensRef.current.has(token)) {
+      return;
+    }
+
+    // Guard against duplicate modal opens from repeated effect runs
+    if (openedInviteTokensRef.current.has(token)) {
       return;
     }
 
@@ -75,12 +81,16 @@ useEffect(() => {
     // }
     
     if (viewType === "user" && userHasActiveProfile === false) {
+      openedInviteTokensRef.current.add(token);
       openModal(
         <JoinSquad
           squadId={squadId}
           hasProfile={false}
           token={token}
-          onCancel={() => dismissedInviteTokensRef.current.add(token)}
+          onCancel={() => {
+            dismissedInviteTokensRef.current.add(token);
+            openedInviteTokensRef.current.delete(token);
+          }}
           notificationId={existingNotificationId}
           senderAccountId={inviteTableResult.data.sender_account_id}
           senderProfileId={inviteTableResult.data.sender_profile_id}
@@ -91,18 +101,28 @@ useEffect(() => {
     }
     
     if (viewType === "guest") {
+      openedInviteTokensRef.current.add(token);
       openModal(
-        <GuestJoinSquad onCancel={() => dismissedInviteTokensRef.current.add(token)} />,
+        <GuestJoinSquad
+          onCancel={() => {
+            dismissedInviteTokensRef.current.add(token);
+            openedInviteTokensRef.current.delete(token);
+          }}
+        />,
       );
       return;
     }
 
+    openedInviteTokensRef.current.add(token);
     openModal(
       <JoinSquad
         squadId={squadId}
         hasProfile={true}
         token={token}
-        onCancel={() => dismissedInviteTokensRef.current.add(token)}
+        onCancel={() => {
+          dismissedInviteTokensRef.current.add(token);
+          openedInviteTokensRef.current.delete(token);
+        }}
         notificationId={existingNotificationId}
         profileId={inviteTableResult.data.profile_id}
         senderAccountId={inviteTableResult.data.sender_account_id}

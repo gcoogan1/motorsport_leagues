@@ -4,7 +4,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import ProfileSelectInput from "@/components/Inputs/ProfileSelectInput/ProfileSelectInput";
-import LeaveSquad from "./LeaveSqaud";
+import LeaveSquad from "./LeaveSquad";
 
 type LeaveSquadProfilePickerProps = {
   squadId: string;
@@ -64,7 +64,7 @@ const LeaveSquadProfilePicker = ({
       >
         <ProfileSelectInput
           name="profileId"
-          fieldLabel="Profile"
+          fieldLabel="Select Your Profile"
           type="profile"
           profiles={profileOptions}
           placeholder="Select profile..."

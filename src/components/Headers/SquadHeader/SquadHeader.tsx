@@ -40,7 +40,7 @@ import SquadGuestFollow from "@/features/squads/modals/errors/SquadGuestFollow/S
 import SquadNoProfile from "@/features/squads/modals/core/SquadNoProfile/SquadNoProfile";
 import FollowSquad from "@/features/squads/forms/Follow/FollowSquad";
 import UnfollowSquad from "@/features/squads/modals/errors/UnfollowSqaud/UnfollowSquad";
-import LeaveSquad from "@/features/squads/modals/core/LeaveSquad/LeaveSqaud";
+import LeaveSquad from "@/features/squads/modals/core/LeaveSquad/LeaveSquad";
 import LeaveSquadProfilePicker from "@/features/squads/modals/core/LeaveSquad/LeaveSquadPicker";
 
 type MemberAvatar = {
