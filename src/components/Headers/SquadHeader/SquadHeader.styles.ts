@@ -121,7 +121,7 @@ export const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0px ${layout.space.small};
+  padding: ${layout.space.xxSmall} ${layout.space.small};
   gap: ${layout.space.xSmall};
   background: ${colors.base.base2};
 `;

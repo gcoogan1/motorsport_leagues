@@ -5,7 +5,7 @@ import type { AvatarVariants } from "../Avatar/Avatar.variants";
 
 type ChipProps = {
   type: "profile" | "tag"
-  onClick?: () => void;
+  onClick?: (event?: React.MouseEvent<HTMLButtonElement>) => void;
   profile?: {
     avatarType: "preset" | "upload";
     avatarValue: AvatarVariants | string;
@@ -16,6 +16,12 @@ type ChipProps = {
 }
 
 const Chip = ({ type, onClick, profile, tagText }: ChipProps) => {
+  const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onClick?.(event);
+  };
+
   return (
     <ChipWrapper type={type}>
       {type === "profile" && profile && (
@@ -28,7 +34,12 @@ const Chip = ({ type, onClick, profile, tagText }: ChipProps) => {
             <Game>{profile.game}</Game>
           </ProfileTextContainer>
         </ProfileInfoContainer>
-          <ChipButton onClick={onClick} aria-label={`View ${profile.username}'s profile`}>
+          <ChipButton
+            type="button"
+            onMouseDown={handleMouseDown}
+            onClick={onClick}
+            aria-label={`View ${profile.username}'s profile`}
+          >
             <CloseIcon width={18} height={18} />
           </ChipButton>
         </>
