@@ -15,9 +15,9 @@ export const ProfileHeaderContainer = styled.div`
   ${layout.mediaQueries.mobile} {
     /* min-width: 360px; */
     max-width: 920px;
-    min-height: 440px;
+    /* min-height: 440px; */
     flex-direction: column;
-    padding-bottom: 20px;
+    /* padding-bottom: 20px; */
   }
 `;
 
@@ -66,6 +66,11 @@ export const AvatarContainer = styled.div`
   border-radius: ${borders.radius.round};
   background: ${colors.base.base2};
   padding: ${layout.space.small};
+  transform: translateY(20px);
+
+  ${layout.mediaQueries.mobile} {
+    transform: translateY(36px);
+  }
 `;
 
 export const Details = styled.div`
@@ -91,7 +96,6 @@ export const TextContainer = styled.div`
   ${layout.mediaQueries.mobile} {
     align-items: center;
     gap: ${layout.space.medium};
-    padding-top: 0;
   }
 `;
 
