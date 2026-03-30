@@ -1,7 +1,10 @@
 import { useSelector } from "react-redux";
 import { useModal } from "@/providers/modal/useModal";
 import { usePanel } from "@/providers/panel/usePanel";
+import type { RootState } from "@/store";
 import { selectCurrentSquad } from "@/store/squads/squad.selectors";
+import { useSquadMembers } from "@/hooks/rtkQuery/queries/useSquadMembers";
+import { useSquadFounderContext } from "@/hooks/useSquadFounderContext";
 import LinkList from "@/components/Lists/LinkList/LinkList";
 import EditIcon from "@assets/Icon/Edit.svg?react";
 import ImageChange from "@assets/Icon/Image_Change.svg?react";
@@ -12,12 +15,22 @@ import EditBanner from "./forms/EditBanner/EditBanner";
 import EditSquadName from "./forms/EditSquadName/EditSquadName";
 import CannotLeave from "./modals/error/CannotLeave/CannotLeave";
 import DeleteSquad from "./forms/DeleteSquad/DeleteSquad";
+import LeaveSquad from "./modals/core/LeaveSquad/LeaveSquad";
 
 const SquadEdit = () => {
   const { openModal } = useModal();
   const { closePanel } = usePanel();
 
   const squad = useSelector(selectCurrentSquad);
+  const currentUserProfiles = useSelector(
+    (state: RootState) => state.profile.data ?? [],
+  );
+  const { data: squadMembers = [] } = useSquadMembers(squad?.id);
+
+  const { isOnlyFounder, inviterFounderProfileId } = useSquadFounderContext({
+    squadMembers,
+    currentUserProfiles,
+  });
 
   if (!squad) return null;
 
@@ -31,8 +44,19 @@ const SquadEdit = () => {
   };
 
   const handleLeaveSquad = () => {
-    // Add error handling for if the user is the owner of the squad and tries to leave without deleting or transferring ownership first
-    openModal(<CannotLeave />);
+    if (isOnlyFounder) {
+      // Only founder cannot leave without transfer/delete.
+      openModal(<CannotLeave />);
+      return;
+    }
+
+    if (!inviterFounderProfileId) return;
+
+    // Founder is not the only founder (or viewer is not a founder).
+    openModal(
+      <LeaveSquad squadId={squad.id} profileId={inviterFounderProfileId} />,
+    );
+    return;
   };
 
   const handleDeleteSquad = () => {
