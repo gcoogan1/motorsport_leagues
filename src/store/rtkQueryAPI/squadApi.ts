@@ -13,6 +13,7 @@ import {
   unfollowSquadService,
   removeMemberFromSquad,
   updateSquadMemberRole,
+  getSquadsByProfileId,
 } from "@/services/squad.service";
 import type {
   AddSquadMemberPayload,
@@ -83,6 +84,34 @@ export const squadApi = createApi({
       queryFn: async (profileId, api) => {
         try {
           const result: GetSquadsResult = await getSquadsByFounderProfileId(
+            profileId,
+            api.signal,
+          );
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      providesTags: (_result, _error, profileId) => [
+        { type: "Squads", id: `profile-${profileId}` },
+      ],
+    }),
+    getSquadsByProfileId: builder.query<SquadTable[], string>({
+      queryFn: async (profileId, api) => {
+        try {
+          const result: GetSquadsResult = await getSquadsByProfileId(
             profileId,
             api.signal,
           );
@@ -399,6 +428,7 @@ export const squadApi = createApi({
 export const {
   useGetSquadsQuery,
   useGetSquadsByFounderProfileIdQuery,
+  useGetSquadsByProfileIdQuery,
   useGetMemberSquadsQuery,
   useGetSquadMembersQuery,
   useGetPendingSquadInvitesQuery,

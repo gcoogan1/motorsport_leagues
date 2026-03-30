@@ -106,7 +106,6 @@ const Squad = () => {
     }
   }, [squadId, squadStatus]);
 
-  // ✅ SAFE localStorage handling
   const hasStoredInvite = useRef(false);
 
   useEffect(() => {
@@ -142,12 +141,10 @@ const Squad = () => {
     currentProfileId,
   });
 
-  // 🚫 block UI until ready
   if (!isReady || !squad || squad.id !== squadId) {
     return <LoadingScreen />;
   }
 
-  // Derived
   const bannerImage =
     squad.banner_type === "preset"
       ? getBannerVariants()[
@@ -161,7 +158,7 @@ const Squad = () => {
     avatarValue: member.avatar_value,
   }));
 
-  // Handlers
+  // -- Handlers -- //
   const handleEditSquad = () => openPanel("SQUAD_EDIT");
 
   const handleOnFollowersClick = () => {

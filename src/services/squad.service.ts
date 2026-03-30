@@ -12,23 +12,23 @@ import type {
   FollowSquadPayload,
   FollowSquadResult,
   GetInviteTablesResult,
-  GetSquadInvitesResult,
   GetSquadFollowingResult,
+  GetSquadInvitesResult,
   GetSquadMembersResult,
   GetSquadsResult,
   InviteSquadPayload,
   InviteSquadResult,
   MarkSquadInviteClickedPayload,
   MarkSquadInviteClickedResult,
-  RemoveSquadInviteByTokenResult,
   RemoveSquadFollowerPayload,
   RemoveSquadFollowerResult,
+  RemoveSquadInviteByTokenResult,
   RemoveSquadMemberPayload,
   RemoveSquadMemberResult,
   UnfollowSquadPayload,
   UnfollowSquadResult,
-  UpdateSquadMemberRoleResult,
   UpdateSquadMemberRolePayload,
+  UpdateSquadMemberRoleResult,
 } from "@/types/squad.types";
 import { resolveAvatarValue } from "@/services/profile.service";
 import { normalizeName } from "@/utils/normalizeName";
@@ -47,7 +47,6 @@ export const resolveBannerValue = (
 
   return data.publicUrl;
 };
-
 
 // -- Get Squads by Account ID -- //
 export const getSquadsByAccountId = async (
@@ -140,7 +139,78 @@ export const getSquadsByFounderProfileId = async (
   const { data: memberRows, error: membersError } = await membersQuery;
 
   if (membersError) {
-    if (membersError.code === "ABORT" || membersError.message?.includes("abort")) {
+    if (
+      membersError.code === "ABORT" || membersError.message?.includes("abort")
+    ) {
+      return { success: true, data: [] };
+    }
+    return {
+      success: false,
+      error: {
+        message: membersError.message,
+        code: membersError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (!memberRows.length) return { success: true, data: [] };
+
+  const squadIds = memberRows.map((m) => m.squad_id);
+
+  // Step 2: Fetch the squads
+  let squadsQuery = supabase
+    .from("squads")
+    .select("*, squad_members(count)")
+    .in("id", squadIds);
+
+  if (signal) squadsQuery = squadsQuery.abortSignal(signal);
+
+  const { data, error } = await squadsQuery;
+
+  if (error) {
+    if (error.code === "ABORT" || error.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data.map((squad) => ({
+      ...squad,
+      member_count: squad.squad_members?.[0]?.count ?? 0,
+      banner_value: resolveBannerValue(squad.banner_type, squad.banner_value),
+    })),
+  };
+};
+
+// -- Get Squads by Profile ID (Member or Founder) -- //
+export const getSquadsByProfileId = async (
+  profileId: string,
+  signal?: AbortSignal,
+): Promise<GetSquadsResult> => {
+  // Step 1: Get squad IDs where this profile has a founder role
+  let membersQuery = supabase
+    .from("squad_members")
+    .select("squad_id")
+    .eq("profile_id", profileId);
+
+  if (signal) membersQuery = membersQuery.abortSignal(signal);
+
+  const { data: memberRows, error: membersError } = await membersQuery;
+
+  if (membersError) {
+    if (
+      membersError.code === "ABORT" || membersError.message?.includes("abort")
+    ) {
       return { success: true, data: [] };
     }
     return {
@@ -208,7 +278,9 @@ export const getMemberSquadsByAccountId = async (
   const { data: profiles, error: profilesError } = await profilesQuery;
   // If there's an error fetching profiles, return it. If the error is an abort, return an empty squad list since the request was cancelled.
   if (profilesError) {
-    if (profilesError.code === "ABORT" || profilesError.message?.includes("abort")) {
+    if (
+      profilesError.code === "ABORT" || profilesError.message?.includes("abort")
+    ) {
       return { success: true, data: [] };
     }
 
@@ -238,7 +310,7 @@ export const getMemberSquadsByAccountId = async (
     .in("profile_id", profileIds)
     .neq("role", "founder");
 
-  // Attach the abort signal to the members query, so that if the original request is cancelled (e.g., when the component unmounts or the accountId changes), this one will be too. 
+  // Attach the abort signal to the members query, so that if the original request is cancelled (e.g., when the component unmounts or the accountId changes), this one will be too.
   // This prevents unnecessary database load and potential memory leaks from unresolved promises.
   if (signal) {
     membersQuery = membersQuery.abortSignal(signal);
@@ -247,7 +319,9 @@ export const getMemberSquadsByAccountId = async (
   const { data: memberRows, error: membersError } = await membersQuery;
 
   if (membersError) {
-    if (membersError.code === "ABORT" || membersError.message?.includes("abort")) {
+    if (
+      membersError.code === "ABORT" || membersError.message?.includes("abort")
+    ) {
       return { success: true, data: [] };
     }
 
@@ -271,13 +345,12 @@ export const getMemberSquadsByAccountId = async (
     };
   }
 
-  // Fetch the squad details for all squads that the account's profiles are members of, including the member count for each squad. 
+  // Fetch the squad details for all squads that the account's profiles are members of, including the member count for each squad.
   // This is done in a single query to optimize performance and reduce latency, especially for accounts that are members of many squads.
   let squadsQuery = supabase
     .from("squads")
     .select("*, squad_members(count)")
     .in("id", squadIds);
-
 
   if (signal) {
     squadsQuery = squadsQuery.abortSignal(signal);
@@ -286,7 +359,9 @@ export const getMemberSquadsByAccountId = async (
   const { data: squads, error: squadsError } = await squadsQuery;
 
   if (squadsError) {
-    if (squadsError.code === "ABORT" || squadsError.message?.includes("abort")) {
+    if (
+      squadsError.code === "ABORT" || squadsError.message?.includes("abort")
+    ) {
       return { success: true, data: [] };
     }
 
@@ -565,7 +640,7 @@ export const editSquadBanner = async (
 
 // -- Edit Squad Name -- //
 export const editSquadName = async (
-  { squadId, newSquadName }: EditSquadNamePayload
+  { squadId, newSquadName }: EditSquadNamePayload,
 ): Promise<EditSquadNameResult> => {
   const { data, error } = await supabase
     .from("squads")
@@ -714,7 +789,9 @@ export const getSquadMembersBySquadId = async (
   const { data: memberRows, error: membersError } = await membersQuery;
 
   if (membersError) {
-    if (membersError.code === "ABORT" || membersError.message?.includes("abort")) {
+    if (
+      membersError.code === "ABORT" || membersError.message?.includes("abort")
+    ) {
       return { success: true, data: [] };
     }
 
@@ -736,7 +813,9 @@ export const getSquadMembersBySquadId = async (
   }
 
   // Get profile IDs from the member rows to fetch their profile details in a single query
-  const profileIds = [...new Set(memberRows.map((member) => member.profile_id))];
+  const profileIds = [
+    ...new Set(memberRows.map((member) => member.profile_id)),
+  ];
 
   let profilesQuery = supabase
     .from("profiles")
@@ -752,7 +831,9 @@ export const getSquadMembersBySquadId = async (
   const { data: profiles, error: profilesError } = await profilesQuery;
 
   if (profilesError) {
-    if (profilesError.code === "ABORT" || profilesError.message?.includes("abort")) {
+    if (
+      profilesError.code === "ABORT" || profilesError.message?.includes("abort")
+    ) {
       return { success: true, data: [] };
     }
 
@@ -772,7 +853,10 @@ export const getSquadMembersBySquadId = async (
       profile.id,
       {
         ...profile,
-        avatar_value: resolveAvatarValue(profile.avatar_type, profile.avatar_value),
+        avatar_value: resolveAvatarValue(
+          profile.avatar_type,
+          profile.avatar_value,
+        ),
       },
     ]),
   );
@@ -796,7 +880,9 @@ export const getSquadMembersBySquadId = async (
           role: member.role,
         };
       })
-      .filter((member): member is NonNullable<typeof member> => member !== null), // Type guard to filter out any null members in case of missing profile data
+      .filter((member): member is NonNullable<typeof member> =>
+        member !== null
+      ), // Type guard to filter out any null members in case of missing profile data
   };
 };
 
@@ -883,7 +969,7 @@ export const followSquadService = async (
   }
 
   return { success: true };
-}
+};
 
 // Unfollow a Squad -- //
 export const unfollowSquadService = async (
@@ -907,7 +993,7 @@ export const unfollowSquadService = async (
   }
 
   return { success: true };
-}
+};
 
 // -- Check if Profile is Following Squad -- //
 export const isFollowingSquadService = async (
@@ -984,14 +1070,17 @@ export const getSquadFollowersService = async (
     success: true,
     data: profiles.map((profile) => ({
       ...profile,
-      avatar_value: resolveAvatarValue(profile.avatar_type, profile.avatar_value),
+      avatar_value: resolveAvatarValue(
+        profile.avatar_type,
+        profile.avatar_value,
+      ),
     })),
   };
 };
 
 // -- Remove Follower From Squad -- //
 export const removeSquadFollowerService = async (
-  { squadId, followerProfileId }: RemoveSquadFollowerPayload
+  { squadId, followerProfileId }: RemoveSquadFollowerPayload,
 ): Promise<RemoveSquadFollowerResult> => {
   const { error } = await supabase
     .from("squad_follows")
@@ -1011,7 +1100,7 @@ export const removeSquadFollowerService = async (
   }
 
   return { success: true };
-} 
+};
 
 // Check if following -- //
 export const checkIfFollowingSquad = async (
@@ -1039,7 +1128,7 @@ export const checkIfFollowingSquad = async (
 // -- Get Squads Followed by an Account -- //
 export const getFollowingSquads = async (
   accountId: string,
-): Promise<GetSquadFollowingResult> => { 
+): Promise<GetSquadFollowingResult> => {
   const { data: followRows, error: followsError } = await supabase
     .from("squad_follows")
     .select("squad_id")
@@ -1070,7 +1159,7 @@ export const getFollowingSquads = async (
     .select("*, squad_members(count)")
     .in("id", squadIds);
 
-  if (squadsError)  {
+  if (squadsError) {
     return {
       success: false,
       error: {
@@ -1139,7 +1228,10 @@ export const deleteSquadsByFounderService = async (
 
   const founderCountPerSquad = new Map<string, number>();
   for (const m of allFounderMembers) {
-    founderCountPerSquad.set(m.squad_id, (founderCountPerSquad.get(m.squad_id) ?? 0) + 1);
+    founderCountPerSquad.set(
+      m.squad_id,
+      (founderCountPerSquad.get(m.squad_id) ?? 0) + 1,
+    );
   }
 
   // Only delete squads where this profile is the only founder
@@ -1348,32 +1440,32 @@ export const inviteToSquad = async (
     senderUsername,
     senderAccountId,
     senderProfileId,
-  }: InviteSquadPayload
-): Promise<InviteSquadResult> => {  
-    const { data, error } = await supabase.functions.invoke("invite_user", {
-      body: {
-        emails,
-        squadId,
-        squadName,
-        senderUsername,
-        senderAccountId,
-        senderProfileId,
+  }: InviteSquadPayload,
+): Promise<InviteSquadResult> => {
+  const { data, error } = await supabase.functions.invoke("invite_user", {
+    body: {
+      emails,
+      squadId,
+      squadName,
+      senderUsername,
+      senderAccountId,
+      senderProfileId,
+    },
+  });
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "INVITE_FAILED",
+        status: 500,
       },
-    });
+    };
+  }
 
-    if (error) {
-      return {
-        success: false,
-        error: {
-          message: error.message,
-          code: error.code || "INVITE_FAILED",
-          status: 500,
-        },
-      };
-    }
-
-    return { success: true, data: data.data }; 
-}
+  return { success: true, data: data.data };
+};
 
 // -- Get Invite Tables by Token -- //
 export const getInviteTablesByToken = async (
@@ -1400,7 +1492,7 @@ export const getInviteTablesByToken = async (
     success: true,
     data,
   };
-}
+};
 
 // -- Remove Squad Invite by Token -- //
 export const removeSquadInviteByToken = async (
@@ -1423,7 +1515,7 @@ export const removeSquadInviteByToken = async (
   }
 
   return { success: true };
-}
+};
 
 // -- Mark Squad Invite as Clicked -- //
 export const markSquadInviteClicked = async (
@@ -1452,7 +1544,7 @@ export const markSquadInviteClicked = async (
   }
 
   return { success: true };
-}
+};
 
 // -- Get Pending Squad Invites by Squad ID -- //
 export const getPendingSquadInvitesBySquadId = async (
@@ -1486,4 +1578,4 @@ export const getPendingSquadInvitesBySquadId = async (
     success: true,
     data,
   };
-}
+};

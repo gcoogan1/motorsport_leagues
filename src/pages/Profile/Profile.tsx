@@ -18,7 +18,7 @@ import {
   useIsFollowingProfile,
   useProfileFollowers,
 } from "@/hooks/rtkQuery/queries/useProfileFollowers";
-import { useProfileSquads } from "@/hooks/rtkQuery/queries/useSquads";
+import { useSquadsByProfileId } from "@/hooks/rtkQuery/queries/useSquads";
 import ProfileHeader from "@/components/Headers/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/ProfileStats/ProfileStats";
 import SquadsListCard from "@/components/Cards/CardList/SquadsListCard/SquadsListCard";
@@ -73,7 +73,7 @@ const Profile = () => {
   // -- RTK Query -- //
   // Fetch followers for this profile (used to display followers count and determine if current user is following this profile)
   const { data: followers = [] } = useProfileFollowers(profileId ?? "");
-  const { data: mySquads = [] } = useProfileSquads(profileId);
+  const { data: mySquads = [] } = useSquadsByProfileId(profileId);
   // Check if the logged in user is following the profile being viewed (used to determine follow/unfollow behavior)
   const { data: isFollowing = false } = useIsFollowingProfile(
     user?.id ?? "",
