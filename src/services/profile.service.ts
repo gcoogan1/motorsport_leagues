@@ -389,7 +389,7 @@ export const deleteProfile = async (
   avatarValue?: string,
 ) => {
   // Get the profile's account ID for any necessary cleanup of related data (like founded squads) before deleting the profile itself
-  const { data: profileRow, error: profileLookupError } = await supabase
+  const { error: profileLookupError } = await supabase
     .from("profiles")
     .select("account_id")
     .eq("id", profileId)
