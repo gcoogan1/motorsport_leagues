@@ -47,7 +47,7 @@ const JoinSquad = ({
   squadName,
   notificationId,
 }: JoinSquadProps) => {
-  const { openModal, closeModal, closeAllModals } = useModal();
+  const { openModal, closeAllModals } = useModal();
   const { showToast } = useToast();
   const [joinSquadAsMember] = useJoinSquadAsMember();
   const [createNotification] = useCreateNotification();
