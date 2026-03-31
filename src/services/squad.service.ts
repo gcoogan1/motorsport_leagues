@@ -744,6 +744,62 @@ export const getAllSquads = async (
 export const addMemberToSquad = async (
   { squadId, profileId, role }: AddSquadMemberPayload,
 ): Promise<AddSquadMemberResult> => {
+  // Resolve the account that owns the joining profile.
+  const { data: joiningProfile, error: joiningProfileError } = await supabase
+    .from("profiles")
+    .select("account_id")
+    .eq("id", profileId)
+    .single();
+
+  if (joiningProfileError) {
+    return {
+      success: false,
+      error: {
+        message: joiningProfileError.message,
+        code: joiningProfileError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  // Fetch every profile owned by this account so we can clear follows across all profiles.
+  const { data: accountProfiles, error: accountProfilesError } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("account_id", joiningProfile.account_id);
+
+  if (accountProfilesError) {
+    return {
+      success: false,
+      error: {
+        message: accountProfilesError.message,
+        code: accountProfilesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  const accountProfileIds = accountProfiles.map((profile) => profile.id);
+
+  if (accountProfileIds.length) {
+    const { error: unfollowError } = await supabase
+      .from("squad_follows")
+      .delete()
+      .eq("squad_id", squadId)
+      .in("follower_id", accountProfileIds);
+
+    if (unfollowError) {
+      return {
+        success: false,
+        error: {
+          message: unfollowError.message,
+          code: unfollowError.code || "SERVER_ERROR",
+          status: 500,
+        },
+      };
+    }
+  }
+
   const { data, error } = await supabase
     .from("squad_members")
     .insert({
@@ -945,7 +1001,7 @@ export const removeMemberFromSquad = async (
   return { success: true };
 };
 
-// Follow a Squad -- //
+// -- Follow a Squad -- //
 export const followSquadService = async (
   { squadId, profileId, accountId }: FollowSquadPayload,
 ): Promise<FollowSquadResult> => {
@@ -971,7 +1027,7 @@ export const followSquadService = async (
   return { success: true };
 };
 
-// Unfollow a Squad -- //
+// -- Unfollow a Squad -- //
 export const unfollowSquadService = async (
   { squadId, accountId }: UnfollowSquadPayload,
 ): Promise<UnfollowSquadResult> => {
