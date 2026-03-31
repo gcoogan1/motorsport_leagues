@@ -10,6 +10,8 @@ import {
   OptionTypeContainer,
 } from "./MenuOption.styles";
 import Avatar from "@/components/Avatar/Avatar";
+import Banner from "@/components/Banner/Banner";
+import type { BannerImageValue } from "@/types/squad.types";
 
 //NOTE: This component is meant to be used as a child of a Radix Select.Item component.
 
@@ -21,6 +23,7 @@ type MenuOptionProps = {
   value: string;
   secondaryInfo?: string;
   icon?: React.ReactNode;
+  banner?: BannerImageValue | "none";
   avatar?: {
     avatarType: "preset" | "upload";
     avatarValue: string;
@@ -35,6 +38,7 @@ const MenuOption = ({
   value,
   secondaryInfo,
   icon,
+  banner,
   avatar,
   isStandAlone = false,
   onSelect,
@@ -50,7 +54,10 @@ const MenuOption = ({
           <OptionContent>
             <OptionTypeContainer>
               {type === "squad" ? (
-                <OptionLabel>{label}</OptionLabel>
+                <>
+                  <Banner banner={banner ?? "none"} />
+                  <OptionLabel>{label}</OptionLabel>
+                </>
               ) : (
                 <>
                   {showAvatar && (
@@ -76,7 +83,10 @@ const MenuOption = ({
             <OptionContent>
               <OptionTypeContainer>
                 {type === "squad" ? (
-                  <OptionLabel>{label}</OptionLabel>
+                  <>
+                    <Banner banner={banner ?? "none"} />
+                    <OptionLabel>{label}</OptionLabel>
+                  </>
                 ) : (
                   <>
                     {showAvatar && (

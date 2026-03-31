@@ -1,6 +1,7 @@
 import * as Select from "@radix-ui/react-select";
 import { DropdownContainer } from './MenuDropdown.styles'
 import type { MenuTypes } from './MenuOption/MenuOption';
+import type { BannerImageValue } from "@/types/squad.types";
 import MenuOption from './MenuOption/MenuOption';
 
 //NOTE: This component is meant to be used as the content of a Radix Select.
@@ -13,6 +14,7 @@ type Options = {
   value: string;
   secondaryInfo?: string;
   icon?: React.ReactNode;
+  banner?: BannerImageValue | "none";
   avatar?: {
     avatarType: "preset" | "upload";
     avatarValue: string;
@@ -40,6 +42,7 @@ const MenuDropdown = ({ type, options, onSelect, isStandAlone }: MenuDropdownPro
             value={option.value}
             secondaryInfo={option.secondaryInfo}
             icon={option.icon}
+            banner={option.banner}
             isStandAlone={true}
             onSelect={onSelect}
           />
@@ -60,6 +63,7 @@ const MenuDropdown = ({ type, options, onSelect, isStandAlone }: MenuDropdownPro
             value={option.value}
             secondaryInfo={option.secondaryInfo}
             icon={option.icon}
+            banner={option.banner}
             avatar={option.avatar}
           />
         ))}
