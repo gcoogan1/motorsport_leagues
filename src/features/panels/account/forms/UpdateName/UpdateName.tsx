@@ -9,6 +9,7 @@ import { updateAccountNameThunk } from "@/store/account/account.thunks";
 import type { AppDispatch } from "@/store";
 import type { AccountTable } from "@/types/account.types";
 import { type UpdateNameSchema, updateNameSchema } from "./updateNameSchema";
+import { capitalizeString } from "@/utils/capitalizeString";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import NameUpdateFail from "../../modals/errors/NameUpdateFail/NameUpdateFail";
@@ -27,8 +28,8 @@ const UpdateName = ({ account }: UpdateNameProps) => {
   const formMethods = useForm<UpdateNameSchema>({
     resolver: zodResolver(updateNameSchema),
     defaultValues: {
-      firstName: account.firstName,
-      lastName: account.lastName,
+      firstName: capitalizeString(account.firstName),
+      lastName: capitalizeString(account.lastName),
     },
   });
 
