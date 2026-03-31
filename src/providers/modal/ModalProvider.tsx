@@ -1,8 +1,11 @@
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { ModalContext } from "./ModalContext";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 export const ModalProvider = ({ children }: { children: ReactNode }) => {
   const [modal, setModal] = useState<ReactNode[]>([]);
+
+  useLockBodyScroll(modal.length > 0);
 
   const openModal = useCallback((modalComponent: ReactNode) => {
     setModal((prev) => [...prev, modalComponent]);

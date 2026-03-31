@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import type { Tag } from "@/components/Tags/Tags.variants";
+import type { RootState } from "@/store";
 import UserProfile from "@/components/Users/Profile/UserProfile";
 import Button from "@/components/Button/Button";
 import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
@@ -49,6 +51,7 @@ const ProfileList = ({
   listType = "profile",
 }: ProfileListProps) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const profiles = useSelector((state: RootState) => state.profile.data);
   const dropdownContainerRefs = useRef<Record<string, HTMLDivElement | null>>(
     {},
   );
@@ -97,6 +100,10 @@ const ProfileList = ({
   };
 
   const formatedItems = sortItemsByFounder(items);
+
+  const isYourProfile = (profileId: string) => {
+    return profiles?.some((profile) => profile.id === profileId);
+  };
 
   // -- Handlers-- //
 
@@ -151,7 +158,7 @@ const ProfileList = ({
                     value: "view",
                     icon: <ProfileIcon />,
                   },
-                  ...(allowChangeRoleAction && !item.tags?.includes("founder")
+                  ...(allowChangeRoleAction && !isYourProfile(item.id)
                     ? [
                         {
                           label: "Change Role",
@@ -160,7 +167,7 @@ const ProfileList = ({
                         },
                       ]
                     : []),
-                  ...(allowRemoveAction && !item.tags?.includes("founder")
+                  ...(allowRemoveAction && !isYourProfile(item.id)
                     ? [
                         {
                           label: `Remove ${removeType}`,
