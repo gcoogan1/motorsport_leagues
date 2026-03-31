@@ -62,14 +62,14 @@ const JoinSquad = ({
     if (isLoading) return;
 
     if (!hasProfile) {
-      closeModal();
+      closeAllModals();
       openModal(<SquadNoProfile type="join" />);
       return;
     }
 
+    // If the user has a profile but no profileId is provided, open the AcceptJoinSquad modal to let them select a profile to join with
     if (!profileId) {
-      // If the user has a profile but no profileId is provided, open the AcceptJoinSquad modal to let them select a profile to join with
-      closeModal();
+      closeAllModals();
       openModal(
         <AcceptJoinSquad
           token={token}

@@ -73,14 +73,8 @@ useEffect(() => {
 
     if (viewType === "founder") return;
 
-    //     if (
-    //   inviteTableResult.data.status === "pending" &&
-    //   !inviteTableResult.data.clicked_at
-    // ) {
-    //   await markSquadInviteClickedByToken(token);
-    // }
     
-    if (viewType === "user" && userHasActiveProfile === false) {
+    if (viewType === "user" && (userHasActiveProfile === false)) {
       openedInviteTokensRef.current.add(token);
       openModal(
         <JoinSquad
