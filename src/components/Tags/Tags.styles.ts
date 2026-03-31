@@ -16,7 +16,7 @@ export const TagItem = styled.div<{ $variant: TagVariant }>`
   justify-content: center;
   text-align: center;
   padding: 0 ${layout.space.xxSmall};
-  border-radius: ${borders.radius.medium};
+  border-radius: ${borders.radius.small};
   color: ${({ $variant }) => $variant.color};
   background: ${({ $variant }) => $variant.background};
 

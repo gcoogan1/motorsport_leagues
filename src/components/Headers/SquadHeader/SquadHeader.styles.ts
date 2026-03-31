@@ -92,6 +92,7 @@ export const TextContainer = styled.div`
 export const Name = styled.h1`
   ${typography.title.large};
   color: ${colors.text.text1};
+  text-align: center;
 `;
 
 export const MemberTop = styled.div`
