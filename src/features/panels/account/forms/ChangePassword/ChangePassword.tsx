@@ -96,12 +96,14 @@ const ChangePassword = ({ account }: ChangePasswordProps) => {
         <PasswordInput
           name="currentPassword"
           label="Current Password"
+          autoComplete="one-time-code" // Use "one-time-code" to prevent browsers from auto-filling the current password
           hasError={!!errors.currentPassword}
           errorMessage={errors.currentPassword?.message}
         />
         <PasswordInput
           name="newPassword"
           label="New Password"
+          autoComplete="new-password"
           hasError={!!errors.newPassword}
           helperText="Minimum of 8 characters."
           errorMessage={errors.newPassword?.message}
