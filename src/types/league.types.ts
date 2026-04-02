@@ -1,0 +1,1 @@
+export type LeagueStatus = "setup" | "active" | "complete";
