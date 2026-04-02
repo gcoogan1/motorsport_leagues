@@ -3,6 +3,7 @@ import CreateProfile from "@/pages/CreateProfile/CreateProfile";
 import CreateSquad from "@/pages/CreateSquad/CreateSquad";
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 import Homepage from "@/pages/Hompage/Homepage";
+import League from "@/pages/League/League";
 import Login from "@/pages/Login/Login";
 import Profile from "@/pages/Profile/Profile";
 import ResetPassword from "@/pages/ResetPassword/ResetPassword";
@@ -65,6 +66,12 @@ export const ROUTES: Route[] = [
     element: <CreateSquad />,
     navbar: "core",
     protected: true,
+  },
+  {
+    path: "/league",
+    element: <League />,
+    navbar: "core",
+    // protected: true,
   },
   {
     path: "/error",

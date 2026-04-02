@@ -76,7 +76,7 @@ const NotificationCard = ({ avatar, title, message, time, buttons }: Notificatio
         )}
         {buttons?.middle && (
           <Button 
-              size="small"
+            size="small"
             rounded
             variant={buttons.middle.variant || "filled"}
             color={buttons.middle.color || "system"}
@@ -90,7 +90,7 @@ const NotificationCard = ({ avatar, title, message, time, buttons }: Notificatio
         )}
         {buttons?.right && (
           <Button 
-              size="small"
+            size="small"
             rounded
             variant={buttons.right.variant || "filled"}
             color={buttons.right.color || "system"}
