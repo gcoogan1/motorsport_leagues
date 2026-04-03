@@ -20,7 +20,7 @@ import {
 } from "@/hooks/rtkQuery/queries/useProfileFollowers";
 import { useSquadsByProfileId } from "@/hooks/rtkQuery/queries/useSquads";
 import ProfileHeader from "@/components/Headers/ProfileHeader/ProfileHeader";
-import ProfileStats from "@/components/ProfileStats/ProfileStats";
+import ProfileStats from "@/components/Structures/ProfileStats/ProfileStats";
 import SquadsListCard from "@/components/Cards/CardList/SquadsListCard/SquadsListCard";
 import LeaguesListCard from "@/components/Cards/CardList/LeaguesListCard/LeaguesListCard";
 import FollowProfile from "@/features/profiles/forms/Follow/FollowProfile";

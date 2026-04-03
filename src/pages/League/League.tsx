@@ -1,4 +1,4 @@
-import Cover from "@/components/Cover/Cover"
+import Cover from "@/components/Structures/Cover/Cover"
 import FollowIcon from "@assets/Icon/Follow.svg?react";
 import ShareIcon from "@assets/Icon/Share.svg?react";
 import CoverOne from "@assets/Cover/1.png";
