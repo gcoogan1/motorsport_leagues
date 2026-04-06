@@ -7,8 +7,8 @@ const { colors, gradients, layout, borders, typography } = designTokens;
 export const SubNavbarContainer = styled.div`
   display: flex;
   width: 100%;
-  max-width: 640px;
-  align-items: center;
+  max-width: 1200px;
+  align-items: flex-start;
   justify-content: center;
   padding: ${layout.space.medium} ${layout.space.large};
 
@@ -28,7 +28,6 @@ export const ContentContainer = styled.div`
   flex: 1 0 0;
 
     ${layout.mediaQueries.mobile} {
-    max-width: 360px;
     flex-direction: column;
     gap: ${layout.space.small};
     align-items: flex-start;
