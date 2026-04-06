@@ -3,7 +3,7 @@ import type {
   ButtonVariant,
 } from "@/components/Button/Button.variants";
 import type { LeagueStatus } from "@/types/league.types";
-import type { Tag } from "../Tags/Tags.variants";
+import type { Tag } from "../../Tags/Tags.variants";
 import type { GameType } from "@/types/profile.types";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import GameIcon from "@assets/Icon/Game.svg?react";
@@ -13,7 +13,8 @@ import FollowersIcon from "@assets/Icon/Followers.svg?react";
 import StatusSetupIcon from "@assets/Icon/Season_Setup.svg?react";
 import StatusActiveIcon from "@assets/Icon/Season_Active.svg?react";
 import StatusCompleteIcon from "@assets/Icon/Season_Complete.svg?react";
-import Button from "../Button/Button";
+import Button from "@/components/Button/Button";
+import Tags from "@/components/Tags/Tags";
 import {
   ActionsContainer,
   CoverBottom,
@@ -26,7 +27,7 @@ import {
   TextContainer,
   Title,
 } from "./Cover.styles";
-import Tags from "../Tags/Tags";
+
 
 type CoverAction = {
   label?: string;

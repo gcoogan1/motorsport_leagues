@@ -4,6 +4,7 @@ import CreateSquad from "@/pages/CreateSquad/CreateSquad";
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 import Homepage from "@/pages/Hompage/Homepage";
 import League from "@/pages/League/League";
+import LeagueManagement from "@/pages/LeagueManagement/LeagueManagment";
 import Login from "@/pages/Login/Login";
 import Profile from "@/pages/Profile/Profile";
 import ResetPassword from "@/pages/ResetPassword/ResetPassword";
@@ -70,7 +71,13 @@ export const ROUTES: Route[] = [
   {
     path: "/league",
     element: <League />,
-    navbar: "core",
+    navbar: "user",
+    // protected: true,
+  },
+  {
+    path: "/league/management",
+    element: <LeagueManagement />,
+    navbar: "user",
     // protected: true,
   },
   {

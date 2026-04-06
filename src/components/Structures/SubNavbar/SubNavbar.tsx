@@ -1,6 +1,6 @@
-import Button from "../Button/Button";
+import Button from "../../Button/Button";
 import BackIcon from "@assets/Icon/Arrow_Backward.svg?react";
-import type { ButtonVariant, ButtonColor } from "../Button/Button.variants";
+import type { ButtonVariant, ButtonColor } from "../../Button/Button.variants";
 import {
   ContentContainer,
   LeftContent,
