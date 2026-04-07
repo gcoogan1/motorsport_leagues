@@ -11,7 +11,7 @@ import {
   ModalOverlay,
   ResultsContainer,
 } from "./Search.styles";
-import SegmentedTab from "../SegmentedTabs/SegmentedTab";
+import SegmentedTab from "../Tabs/SegmentedTabs/SegmentedTab";
 import SearchInput from "../Inputs/SearchInput/SearchInput";
 
 type SearchProps = {
