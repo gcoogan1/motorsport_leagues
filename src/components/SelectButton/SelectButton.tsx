@@ -7,14 +7,7 @@ import Select, {
 import DropdownIcon from "@assets/Icon/Dropdown.svg?react";
 import CheckIcon from "@assets/Icon/Check.svg?react";
 import Icon from "@/components/Icon/Icon";
-import {
-  OptionContent,
-  OptionLabel,
-  OptionMeta,
-  OptionRow,
-  SelectMenuGlobalStyles,
-} from "@/components/Inputs/SelectInput/SelectInput.styles";
-import { SelectButtonWrapper } from "./SelectButton.styles";
+import { OptionContent, OptionLabel, OptionMeta, OptionRow, SelectButtonWrapper, SelectMenuGlobalStyles } from "./SelectButton.styles";
 
 export type SelectButtonOption = {
   value: string;
@@ -117,6 +110,10 @@ function SelectButton({
           Option,
         }}
         styles={{
+          control: (base) => ({
+            ...base,
+            boxShadow: "none",
+          }),
           menuPortal: (base) => ({ ...base, zIndex: 9999 }),
         }}
         menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}

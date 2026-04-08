@@ -8,7 +8,7 @@ import {
   PrimaryButtonContainer,
 } from "./PanelLayout.styles";
 import Button from "@/components/Button/Button";
-import SegmentedTab from "@/components/SegmentedTabs/SegmentedTab";
+import SegmentedTab from "@/components/Tabs/SegmentedTabs/SegmentedTab";
 import { useState } from "react";
 
 
