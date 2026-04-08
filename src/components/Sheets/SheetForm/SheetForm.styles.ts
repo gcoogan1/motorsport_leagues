@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { designTokens } from "@/app/design/tokens";
-import { topFadeBorder } from "@/app/design/mixens/edgeFadeBorder";
 import { gradientBorder } from "@/app/design/mixens/gradientBorder";
 
 const { colors, gradients, layout, borders, typography } = designTokens;
