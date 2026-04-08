@@ -8,7 +8,15 @@ import ManageMenu, {
   type ManageMenuSection,
 } from "@/components/Structures/ManageMenu/ManageMenu";
 import Button from "@/components/Button/Button";
-import { Content, ContentContainer, ManageMenuMobileWrapper, Wrapper } from "./LeagueManagment.styles";
+import {
+  Content,
+  ContentContainer,
+  ManageMenuMobileWrapper,
+  Wrapper,
+} from "./LeagueManagment.styles";
+import SheetForm from "@/components/Sheets/SheetForm/SheetForm";
+import SegmentedTab from "@/components/Tabs/SegmentedTabs/SegmentedTab";
+import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
 
 //TODO: Replace panelContent with SheetForms for each section once they are developed, and implement logic to fetch and display actual data for each section.
 
@@ -99,7 +107,7 @@ const LeagueManagment = () => {
               />
             </ManageMenuMobileWrapper>
           )}
-          <div
+          {/* <div
             id={`manage-panel-${activeSection}`}
             role="tabpanel"
             aria-labelledby={`manage-tab-${activeSection}`}
@@ -107,7 +115,38 @@ const LeagueManagment = () => {
           >
             <h2>{activePanel.title}</h2>
             <p>{activePanel.description}</p>
-          </div>
+          </div> */}
+          <SheetForm
+            id={`manage-panel-${activeSection}`}
+            seasonName="Season Name"
+            header="Sheet Header"
+            blockHeader="Setting Block Header"
+            blockDescription="Copy Below the header."
+            headerChildren={<div style={{ height: "300px"}}>Additional header content</div>}
+            tabs={
+              <div>
+                <SegmentedTab
+                tabs={[{ label: "Teams" }, { label: "Drivers" }]}
+                activeTab={"teams"}
+                onChange={() => {}}
+              />
+              </div>
+            }
+            filters={
+              <FilterBar
+                divisions={[{ label: "Division I", value: "division_1" }]}
+                rounds={[{ label: "Round 1", value: "round_1" }]}
+                events={[{ label: "Event A", value: "event_1" }]}
+                sessions={[{ label: "Qualifying Session", value: "session_1" }]}
+              />
+            }
+            details={{
+              title: "Details",
+              information: "Detailed information about the league.",
+            }}
+            listChildren={<div>List content</div>}
+            onSave={() => console.log("Save changes")}
+          />
         </Content>
       </ContentContainer>
     </Wrapper>
