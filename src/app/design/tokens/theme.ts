@@ -3,7 +3,7 @@ import { fadeGradient, withOpacity } from "./color";
 // --- THEME MODULE --- //
 
 // Types
-type Theme = 'yellow' | 'blue' | 'red' | 'green';
+export type Theme = 'yellow' | 'blue' | 'red' | 'green';
 type ThemeTokens = {
   primaryA: string;
   primaryA2: string;
