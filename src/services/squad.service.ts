@@ -474,7 +474,7 @@ export const createSquadWithBanner = async ({
       success: false,
       error: {
         message: error.message,
-        code: error.code || "PROFILE_CREATION_FAILED",
+        code: error.code || "SQUAD_CREATION_FAILED",
         status: 500,
       },
     };
