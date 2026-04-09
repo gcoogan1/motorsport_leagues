@@ -16,6 +16,7 @@ export const Label = styled.p`
 
 export const OptionsContainer = styled.div`
   display: flex;
+  width: 100%;
   border-radius: ${layout.space.medium};
   background: ${colors.base.translucent10};
   padding: ${layout.space.xSmall};
