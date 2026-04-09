@@ -9,16 +9,16 @@ import SegmentedOption from "./SegmentedOption/SegmentedOption";
 
 type SegmentedOptionItem = {
   label: string;
-  value: string;
+  value: string | number;
 };
 
 type SegmentedInputProps = {
   name?: string;
   inputLabel: string;
   options: SegmentedOptionItem[];
-  value?: string;
-  defaultValue?: string;
-  onChange?: (value: string) => void;
+  value?: string | number;
+  defaultValue?: string | number;
+  onChange?: (value: string | number) => void;
   helperMessage?: string;
 };
 
@@ -37,7 +37,7 @@ const SegmentedInput = ({
 
   const selectedValue = value ?? internalValue;
 
-  const handleSelect = (nextValue: string) => {
+  const handleSelect = (nextValue: string | number) => {
     if (value === undefined) {
       setInternalValue(nextValue);
     }

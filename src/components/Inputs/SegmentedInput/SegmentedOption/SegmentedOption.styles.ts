@@ -7,11 +7,11 @@ export const OptionContainer = styled.button<{ $isSelected?: boolean }>`
   // remove default button styles
   all: unset;
   min-width: 0;
-  flex-shrink: 0;
-  
-  
+  flex: 1 1 0;
+
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: ${layout.space.xxSmall} ${layout.space.small};
   gap: ${layout.space.xxSmall};
   border-radius: ${borders.radius.small};

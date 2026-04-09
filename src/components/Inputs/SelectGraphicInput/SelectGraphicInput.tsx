@@ -1,7 +1,10 @@
 import { useFormContext } from "react-hook-form";
 import { getAvatarVariants } from "@/components/Avatar/Avatar.variants";
 import { getBannerVariants } from "@/components/Banner/Banner.variants";
+import { getCoverVariants } from "@/components/Structures/Cover/Cover.variants";
+import { primaryThemeTokens, type Theme } from "@/app/design/tokens/theme";
 import { AVATAR_VARIANTS } from "@/types/profile.types";
+import { LEAGUE_COVER_VARIANTS, type CoverImageValue, type LeagueCover } from "@/types/league.types";
 import { SQUAD_BANNER_VARIANTS, type BannerImageValue, type SquadBanner } from "@/types/squad.types";
 import GraphicOption from "./GraphicOption/GraphicOption";
 import {
@@ -15,10 +18,12 @@ import type { AvatarFormValues } from "@/features/profiles/forms/Create/Avatar/a
 type GraphicInputFormValues = {
   avatar?: AvatarFormValues["avatar"];
   banner?: BannerImageValue;
+  cover?: CoverImageValue;
+  themeColor?: Theme;
 };
 
 type Props = {
-  name: "avatar" | "banner";
+  name: "avatar" | "banner" | "cover" | "themeColor";
   label: string;
   helperText?: string;
 };
@@ -32,8 +37,17 @@ const SelectGraphicInput = ({ name, label, helperText }: Props) => {
   );
 
   const badges = Object.entries(getBannerVariants());
+  const covers = Object.entries(getCoverVariants());
+  const themeColors = Object.entries(primaryThemeTokens);
 
-  const options = name === "banner" ? badges : avatars;
+  const options =
+    name === "banner"
+      ? badges
+      : name === "cover"
+        ? covers
+        : name === "themeColor"
+          ? themeColors
+          : avatars;
 
   // Handle selection of a graphic option
   // When an option is selected, we update the form state with either a preset selection or an upload type
@@ -46,6 +60,16 @@ const SelectGraphicInput = ({ name, label, helperText }: Props) => {
           ? (variant as SquadBanner)
           : SQUAD_BANNER_VARIANTS[0],
       });
+    } else if (name === "cover") {
+      setValue("cover", {
+        type: "preset",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        variant: LEAGUE_COVER_VARIANTS.includes(variant as any)
+          ? (variant as LeagueCover)
+          : LEAGUE_COVER_VARIANTS[0],
+      });
+    } else if (name === "themeColor") {
+      setValue("themeColor", variant as Theme);
     } else {
       setValue("avatar", {
         type: "preset",
@@ -58,10 +82,11 @@ const SelectGraphicInput = ({ name, label, helperText }: Props) => {
   };
 
   const isOptionSelected = (variant: string): boolean => {
+    if (name === "themeColor") return current === variant;
     // If current value is not preset or doesn't match the expected structure, treat as no selection
-    if (!current || current.type !== "preset") return false;
-    // For banner, compare against banner field; for avatar, compare against variant field
+    if (!current || typeof current !== "object" || current.type !== "preset") return false;
     if (name === "banner") return (current as Extract<BannerImageValue, { type: "preset" }>).variant === variant;
+    if (name === "cover") return (current as Extract<CoverImageValue, { type: "preset" }>).variant === variant;
     return (current as Extract<AvatarFormValues["avatar"], { type: "preset" }>).variant === variant;
   };
 
@@ -73,7 +98,19 @@ const SelectGraphicInput = ({ name, label, helperText }: Props) => {
         {options.map(([variant, data]) => (
           <GraphicOption
             key={variant}
-            graphicSrc={typeof data === "string" ? data : data.avatar!}
+            label={variant}
+            graphicSrc={
+              typeof data === "string"
+                ? data
+                : "avatar" in data
+                  ? data.avatar
+                  : undefined
+            }
+            swatchColor={
+              name === "themeColor" && typeof data !== "string" && "primaryA" in data
+                ? data.primaryA
+                : undefined
+            }
             isSelected={isOptionSelected(variant)}
             onClick={() => handleSelect(variant)}
           />

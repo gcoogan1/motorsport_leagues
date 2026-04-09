@@ -8,7 +8,7 @@ export const CheckboxContainer = styled.div<{ $isChecked?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: 400px;
+  width: 100%;
   padding: ${layout.space.medium};
   border-radius: ${borders.radius.medium};
 

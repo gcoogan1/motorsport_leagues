@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import Button from "@/components/Button/Button";
 import Avatar from "@/components/Avatar/Avatar";
 import { getBannerVariants } from "@/components/Banner/Banner.variants";
+import { getCoverVariants } from "@/components/Structures/Cover/Cover.variants";
 import UploadIcon from "@assets/Icon/Upload.svg?react";
 import Error_Outlined from "@assets/Icon/Error_Outlined.svg?react";
 import {
@@ -15,15 +16,17 @@ import {
 } from "./ImageUploadInput.styles";
 import { useFormContext } from "react-hook-form";
 import type { AvatarFormValues } from "@/features/panels/profileEdit/forms/EditAvatar/editAvatar.schema";
+import type { CoverImageValue } from "@/types/league.types";
 import type { BannerImageValue } from "@/types/squad.types";
 
 type ImageInputFormValues = {
   avatar?: AvatarFormValues["avatar"];
   banner?: BannerImageValue;
+  cover?: CoverImageValue;
 };
 
 type Props = {
-  name: "avatar" | "banner";
+  name: "avatar" | "banner" | "cover";
   isAvatar?: boolean;
   helperMessage?: string;
   hasError?: boolean;
@@ -63,6 +66,9 @@ const ImageUploadInput = ({
     if (fieldValue.type === "upload") return previewUrl;
     if (name === "banner" && fieldValue.type === "preset") {
       return getBannerVariants()[(fieldValue as Extract<BannerImageValue, { type: "preset" }>).variant];
+    }
+    if (name === "cover" && fieldValue.type === "preset") {
+      return getCoverVariants()[(fieldValue as Extract<CoverImageValue, { type: "preset" }>).variant];
     }
     return undefined;
   })();

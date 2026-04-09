@@ -1,7 +1,7 @@
 import Cover from "@/components/Structures/Cover/Cover"
 import FollowIcon from "@assets/Icon/Follow.svg?react";
 import ShareIcon from "@assets/Icon/Share.svg?react";
-import CoverOne from "@assets/Cover/1.png";
+import CoverOne from "@assets/Cover/cover1.png";
 import { Wrapper } from "./League.styles"
 
 // TODO: Update the League page to pull real data and implement actions

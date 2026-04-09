@@ -1,4 +1,5 @@
 import CreateAccount from "@/pages/CreateAccount/CreateAccount";
+import CreateLeague from "@/pages/CreateLeague/CreateLeague";
 import CreateProfile from "@/pages/CreateProfile/CreateProfile";
 import CreateSquad from "@/pages/CreateSquad/CreateSquad";
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
@@ -69,16 +70,22 @@ export const ROUTES: Route[] = [
     protected: true,
   },
   {
-    path: "/league",
-    element: <League />,
-    navbar: "user",
-    // protected: true,
+    path: "/create-league",
+    element: <CreateLeague />,
+    navbar: "core",
+    protected: true,
   },
   {
-    path: "/league/management",
+    path: "/league/:leagueId",
+    element: <League />,
+    navbar: "user",
+    protected: true,
+  },
+  {
+    path: "/league/:leagueId/management",
     element: <LeagueManagement />,
     navbar: "user",
-    // protected: true,
+    protected: true,
   },
   {
     path: "/error",

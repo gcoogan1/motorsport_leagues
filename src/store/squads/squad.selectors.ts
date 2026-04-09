@@ -1,6 +1,7 @@
 import type { SquadViewType } from "@/types/squad.types";
 import { squadApi } from "@/store/rtkQueryAPI/squadApi";
 import type { RootState } from "..";
+import { createSelector } from "@reduxjs/toolkit";
 
 export const selectSquadViewType = (
   state: RootState,
@@ -56,3 +57,12 @@ export const selectSquadViewType = (
 };
 
 export const selectCurrentSquad = (state: RootState) => state.squad.currentSquad;
+
+export const selectHasSquads = createSelector(
+  (state: RootState) => state.squad.data,
+  (state: RootState) => state.squad.status,
+  (squads, status) => {
+    if (status === "loading") return null;
+    return squads != null && squads.length > 0;
+  }
+)

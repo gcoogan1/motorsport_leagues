@@ -2,14 +2,14 @@ import { OptionContainer, OptionLabel } from "./SegmentedOption.styles";
 
 type SegmentedOptionProps = {
   label: string;
-  value: string;
+  value: string | number;
   isSelected?: boolean;
-  onClick: (value: string) => void;
+  onClick: (value: string | number) => void;
 };
 
 const SegmentedOption = ({ label, value, isSelected, onClick }: SegmentedOptionProps) => {
   return (
-    <OptionContainer $isSelected={isSelected} onClick={() => onClick(value)}>
+    <OptionContainer type="button" $isSelected={isSelected} onClick={() => onClick(value)}>
       <OptionLabel>{label}</OptionLabel>
     </OptionContainer>
   )

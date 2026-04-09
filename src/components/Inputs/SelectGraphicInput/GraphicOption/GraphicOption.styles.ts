@@ -30,10 +30,17 @@ export const GraphicContainer = styled.button<{ isSelected: boolean }>`
     isSelected ? colors.text.text1 : 'transparent'};
 `
 
-export const Graphic = styled.img`
+export const Graphic = styled.div<{ $swatchColor?: string }>`
   width: 48px;
   height: 48px;
-  object-fit: cover;
   border-radius: ${borders.radius.round};
-  background: ${colors.base.translucent10};
+  background: ${({ $swatchColor }) => $swatchColor ?? colors.base.translucent10};
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 `
