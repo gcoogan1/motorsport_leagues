@@ -11,6 +11,8 @@ import SamePassword from "@/features/auth/modals/errors/SamePassword/SamePasswor
 import NoProfile from "@/features/profiles/modals/core/NoProfile/NoProfile";
 import NameTaken from "@/features/squads/modals/errors/NameTaken/NameTaken";
 import GuestJoinSquad from "@/features/squads/modals/errors/GuestJoinSquad/GuestJoinSquad";
+import NoSquad from "@/features/leagues/modals/errors/NoSquad/NoSquad";
+import LeagueNameTaken from "@/features/leagues/modals/errors/LeagueNameTaken/LeagueNameTaken";
 
 // -- Modal Types & Variants -- //
 
@@ -29,7 +31,9 @@ export type MODAL_TYPES =
   | "SAME_PASSWORD"
   | "NO_PROFILE"
   | "NAME_TAKEN"
-  | "GUEST_JOIN_SQUAD";
+  | "GUEST_JOIN_SQUAD"
+  | "NO_SQUAD"
+  | "LEAGUE_NAME_TAKEN";
 
 // Additional modals that may require props can be added here
 export type OTHER_MODAL_TYPES =
@@ -59,5 +63,7 @@ export const modalVariants: Record<MODAL_TYPES, React.FC> = {
   SAME_PASSWORD: SamePassword,
   NO_PROFILE: NoProfile,
   NAME_TAKEN: NameTaken,
-  GUEST_JOIN_SQUAD: GuestJoinSquad
+  GUEST_JOIN_SQUAD: GuestJoinSquad,
+  NO_SQUAD: NoSquad,
+  LEAGUE_NAME_TAKEN: LeagueNameTaken
 };

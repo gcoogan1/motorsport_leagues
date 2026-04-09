@@ -76,16 +76,16 @@ export const ROUTES: Route[] = [
     protected: true,
   },
   {
-    path: "/league",
+    path: "/league/:leagueId",
     element: <League />,
     navbar: "user",
-    // protected: true,
+    protected: true,
   },
   {
-    path: "/league/management",
+    path: "/league/:leagueId/management",
     element: <LeagueManagement />,
     navbar: "user",
-    // protected: true,
+    protected: true,
   },
   {
     path: "/error",
