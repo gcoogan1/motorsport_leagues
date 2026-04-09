@@ -27,6 +27,9 @@ export type LeagueDraft = {
   hosting_squad_name?: string;
   cover_image?: CoverImageValue;
   theme_color?: Theme;
+  season_name?: string;
+  num_of_divisions?: number;
+  is_team_championship?: boolean;
 };
 
 // Supabase Service Types //
@@ -92,6 +95,7 @@ type SupabaseError = {
 
 // Create League --> Payload Type
 export type CreateLeaguePayload = {
+  accountId: string;
   leagueName: string;
   directorProfileId: string;
   gameType: GameType;
@@ -112,6 +116,15 @@ export type CreateLeagueSuccess = {
 
 // Create League --> Result type
 export type CreateLeagueResult = CreateLeagueSuccess | SupabaseError;
+
+// Get Leagues --> Success type
+export type GetLeaguesSuccess = {
+  success: true;
+  data: LeagueTable[];
+};
+
+// Get Leagues --> Result type
+export type GetLeaguesResult = GetLeaguesSuccess | SupabaseError;
 
 // Add League Participant --> Payload type
 export type AddLeagueParticipantPayload = {
@@ -145,3 +158,14 @@ export type CreateLeagueSeasonSuccess = {
 
 // Create League Season --> Result type
 export type CreateLeagueSeasonResult = CreateLeagueSeasonSuccess | SupabaseError;
+
+
+// Redux Types //
+// League State --> used in Redux slice for leagues
+export type LeagueState = {
+  data: LeagueTable[] | null;
+  currentLeague: LeagueTable | null;
+  status: "idle" | "loading" | "fulfilled" | "rejected";
+  error?: string;
+  draft: LeagueDraft;
+};

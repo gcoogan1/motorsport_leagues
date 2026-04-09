@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import accountReducer from "./account/account.slice";
+import leagueReducer from "./leagues/league.slice";
 import profileReducer from "./profile/profile.slice";
 import squadReducer from "./squads/squad.slice";
 import { notificationApi } from "./rtkQueryAPI/notificationApi";
@@ -9,6 +10,7 @@ import { squadApi } from "./rtkQueryAPI/squadApi";
 export const store = configureStore({
   reducer: {
     account: accountReducer,
+    league: leagueReducer,
     profile: profileReducer,
     squad: squadReducer,
     [notificationApi.reducerPath]: notificationApi.reducer,

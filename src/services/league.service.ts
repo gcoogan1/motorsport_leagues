@@ -1,5 +1,13 @@
 import { supabase } from "@/lib/supabase";
-import type { AddLeagueParticipantPayload, AddLeagueParticipantResult, CreateLeaguePayload, CreateLeagueResult, CreateLeagueSeasonPayload, CreateLeagueSeasonResult } from "@/types/league.types";
+import type {
+  AddLeagueParticipantPayload,
+  AddLeagueParticipantResult,
+  CreateLeaguePayload,
+  CreateLeagueResult,
+  CreateLeagueSeasonPayload,
+  CreateLeagueSeasonResult,
+  GetLeaguesResult,
+} from "@/types/league.types";
 import { normalizeName } from "@/utils/normalizeName";
 
 export const resolveCoverValue = (
@@ -16,9 +24,110 @@ export const resolveCoverValue = (
   return data.publicUrl;
 };
 
+// -- Get Leagues by Account ID -- //
+export const getLeaguesByAccountId = async (
+  accountId: string,
+): Promise<GetLeaguesResult> => {
+  const { data: profiles, error: profilesError } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("account_id", accountId);
+
+  if (profilesError) {
+    return {
+      success: false,
+      error: {
+        message: profilesError.message,
+        code: profilesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (!profiles.length) {
+    return { success: true, data: [] };
+  }
+
+  const profileIds = profiles.map((profile) => profile.id);
+
+  const { data: directorRows, error: participantsError } = await supabase
+    .from("league_participants")
+    .select("league_id")
+    .in("profile_id", profileIds)
+    .eq("league_role", "director");
+
+  if (participantsError) {
+    return {
+      success: false,
+      error: {
+        message: participantsError.message,
+        code: participantsError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (!directorRows.length) {
+    return { success: true, data: [] };
+  }
+
+  const leagueIds = [...new Set(directorRows.map((row) => row.league_id))];
+
+  const { data, error } = await supabase
+    .from("leagues")
+    .select("*")
+    .in("id", leagueIds)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data.map((league) => ({
+      ...league,
+      cover_value: resolveCoverValue(league.cover_type, league.cover_value),
+    })),
+  };
+};
+
+// -- Check League Name Availability -- //
+export const isLeagueNameAvailable = async (
+  leagueName: string,
+  leagueId?: string,
+): Promise<boolean> => {
+  const normalizedLeagueName = normalizeName(leagueName);
+  let query = supabase
+    .from("leagues")
+    .select("id")
+    .eq("league_name_normalized", normalizedLeagueName);
+
+  // If leagueId is provided, exclude that league from the check (useful when editing a league)
+  if (leagueId) {
+    query = query.neq("id", leagueId);
+  }
+
+  const { data, error } = await query;
+
+  if (error && error.code !== "PGRST116") {
+    return false;
+  }
+
+  return !data?.length;
+};
+
 // -- Create League with Cover -- //
 export const createLeagueWithCover = async (
   {
+    accountId,
     leagueName,
     directorProfileId,
     gameType,
@@ -29,7 +138,7 @@ export const createLeagueWithCover = async (
     seasonName,
     numOfDivisions,
     isTeamChampionship,
-  }: CreateLeaguePayload
+  }: CreateLeaguePayload,
 ): Promise<CreateLeagueResult> => {
   let coverType: "preset" | "upload";
   let coverValue: string;
@@ -43,7 +152,7 @@ export const createLeagueWithCover = async (
 
     // Generate a unique file path for the cover upload
     const fileExt = coverImage.file.name.split(".").pop();
-    const filePath = `${directorProfileId}/${crypto.randomUUID()}.${fileExt}`;
+    const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
 
     // Upload the cover file to Supabase Storage
     const { error } = await supabase.storage
@@ -52,7 +161,6 @@ export const createLeagueWithCover = async (
         upsert: true,
         contentType: coverImage.file.type,
       });
-
     if (error) {
       return {
         success: false,
@@ -147,7 +255,7 @@ export const addLeagueParticipant = async (
     leagueId,
     profileId,
     leagueRole,
-  }: AddLeagueParticipantPayload
+  }: AddLeagueParticipantPayload,
 ): Promise<AddLeagueParticipantResult> => {
   const { data, error } = await supabase
     .from("league_participants")
@@ -183,7 +291,7 @@ export const createLeagueSeason = async (
     seasonName,
     numOfDivisions,
     isTeamChampionship,
-  }: CreateLeagueSeasonPayload
+  }: CreateLeagueSeasonPayload,
 ): Promise<CreateLeagueSeasonResult> => {
   const { data, error } = await supabase
     .from("league_season")
@@ -212,6 +320,3 @@ export const createLeagueSeason = async (
     data,
   };
 };
-
-
-
