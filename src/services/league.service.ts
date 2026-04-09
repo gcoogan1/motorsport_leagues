@@ -7,11 +7,16 @@ import type {
   CreateLeagueSeasonPayload,
   CreateLeagueSeasonResult,
   GetLeagueParticipantsResult,
+  GetLeagueSeasonsResult,
   GetLeaguesResult,
   RemoveLeagueParticipantPayload,
   RemoveLeagueParticipantResult,
+  RemoveLeagueSeasonPayload,
+  RemoveLeagueSeasonResult,
   UpdateLeagueParticipantRolePayload,
   UpdateLeagueParticipantRoleResult,
+  UpdateLeagueSeasonPayload,
+  UpdateLeagueSeasonResult,
 } from "@/types/league.types";
 import { normalizeName } from "@/utils/normalizeName";
 
@@ -530,5 +535,113 @@ export const createLeagueSeason = async (
   return {
     success: true,
     data,
+  };
+};
+
+// -- Get League Seasons by League ID -- //
+export const getLeagueSeasonsByLeagueId = async (
+  leagueId: string,
+  signal?: AbortSignal,
+): Promise<GetLeagueSeasonsResult> => {
+  let query = supabase
+    .from("league_season")
+    .select("*")
+    .eq("league_id", leagueId)
+    .order("created_at", { ascending: true });
+
+  if (signal) {
+    query = query.abortSignal(signal);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    if (error.code === "ABORT" || error.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data,
+  };
+};
+
+// -- Update League Season -- //
+export const updateLeagueSeason = async (
+  {
+    seasonId,
+    seasonName,
+    numOfDivisions,
+    isTeamChampionship,
+  }: UpdateLeagueSeasonPayload,
+): Promise<UpdateLeagueSeasonResult> => {
+  const { data, error } = await supabase
+    .from("league_season")
+    .update({
+      season_name: seasonName,
+      num_of_divisions: numOfDivisions,
+      is_team_championship: isTeamChampionship,
+    })
+    .eq("id", seasonId)
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data,
+  };
+};
+
+// -- Remove League Season -- //
+export const removeLeagueSeason = async (
+  { seasonId }: RemoveLeagueSeasonPayload,
+  signal?: AbortSignal,
+): Promise<RemoveLeagueSeasonResult> => {
+  let query = supabase.from("league_season").delete().eq("id", seasonId);
+
+  if (signal) {
+    query = query.abortSignal(signal);
+  }
+
+  const { error } = await query;
+
+  if (error) {
+    if (error.code === "ABORT" || error.message?.includes("abort")) {
+      return { success: true };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
   };
 };

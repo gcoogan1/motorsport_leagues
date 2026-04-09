@@ -91,6 +91,13 @@ export type LeagueSeasonTable = {
   is_team_championship: boolean;
 };
 
+export type GetLeagueSeasonsSuccess = {
+  success: true;
+  data: LeagueSeasonTable[];
+};
+
+export type GetLeagueSeasonsResult = GetLeagueSeasonsSuccess | SupabaseError;
+
 
 // Supabase Error Type --> used in squad service results
 type SupabaseError = {
@@ -187,6 +194,25 @@ export type CreateLeagueSeasonSuccess = {
 
 // Create League Season --> Result type
 export type CreateLeagueSeasonResult = CreateLeagueSeasonSuccess | SupabaseError;
+
+export type UpdateLeagueSeasonPayload = {
+  seasonId: string;
+  seasonName: string;
+  numOfDivisions: number;
+  isTeamChampionship: boolean;
+};
+
+export type UpdateLeagueSeasonResult =
+  | { success: true; data: LeagueSeasonTable }
+  | SupabaseError;
+
+export type RemoveLeagueSeasonPayload = {
+  seasonId: string;
+};
+
+export type RemoveLeagueSeasonResult =
+  | { success: true }
+  | SupabaseError;
 
 
 // Redux Types //
