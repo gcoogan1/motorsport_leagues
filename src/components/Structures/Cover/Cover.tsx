@@ -2,10 +2,11 @@ import type {
   ButtonColor,
   ButtonVariant,
 } from "@/components/Button/Button.variants";
-import type { LeagueStatus } from "@/types/league.types";
+import type { LeagueCover, LeagueStatus } from "@/types/league.types";
 import type { Tag } from "../../Tags/Tags.variants";
 import type { GameType } from "@/types/profile.types";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
+import { getCoverVariants } from "./Cover.variants";
 import GameIcon from "@assets/Icon/Game.svg?react";
 import HostIcon from "@assets/Icon/Hosts.svg?react";
 import ParticipantsIcon from "@assets/Icon/Participants.svg?react";
@@ -73,11 +74,16 @@ const Cover = ({
   onFollowersClick,
   onStatusClick,
 }: CoverProps) => {
+  const coverVariants = getCoverVariants();
+  const resolvedBackgroundImageUrl =
+    backgroundImageUrl && backgroundImageUrl in coverVariants
+      ? coverVariants[backgroundImageUrl as LeagueCover]
+      : backgroundImageUrl;
 
   const participantText = participantsCount === 1 ? "Participant" : "Participants";
   const followerText = followersCount === 1 ? "Follower" : "Followers";
 
-  const statusContent = {
+  const statusContentMap = {
     setup: {
       label: "Coming Soon",
       icon: <StatusSetupIcon />,
@@ -90,12 +96,14 @@ const Cover = ({
       label: "Season Complete",
       icon: <StatusCompleteIcon />,
     },
-  }[status];
+  } as const;
+
+  const statusContent = statusContentMap[status] ?? statusContentMap.setup;
 
 
   return (
     <CoverWrapper>
-      <CoverContainer $backgroundImageUrl={backgroundImageUrl}>
+      <CoverContainer $backgroundImageUrl={resolvedBackgroundImageUrl}>
         <CoverTop>
           <DetailsContainer>
             <Button

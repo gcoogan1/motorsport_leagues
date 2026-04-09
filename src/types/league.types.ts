@@ -12,6 +12,8 @@ export const LEAGUE_PARTICIPANT_ROLES = ["director", "driver", "steward", "broad
 export const LEAGUE_COVER_VARIANTS = ["cover1", "cover2", "cover3", "cover4", "cover5"] as const;
 export type LeagueCover = typeof LEAGUE_COVER_VARIANTS[number];
 
+export type LeagueViewType = "participant" | "user" | "guest";
+
 // Cover Image Value --> discriminated union for draft/form stage
 export type CoverImageValue =
   | { type: "preset"; variant: LeagueCover }
@@ -41,8 +43,8 @@ export type LeagueTable = {
   game_type: GameType;
   league_name: string;
   league_name_normalized: string;
-  hosting_squad_id?: string;
-  hosting_squad_name?: string;
+  hosting_squad_id: string;
+  hosting_squad_name: string;
   cover_type: "preset" | "upload";
   cover_value: string;
   theme_color: Theme;

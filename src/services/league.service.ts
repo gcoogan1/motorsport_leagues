@@ -60,11 +60,10 @@ export const getLeaguesByAccountId = async (
 
   const profileIds = profiles.map((profile) => profile.id);
 
-  const { data: directorRows, error: participantsError } = await supabase
+  const { data: participantRows, error: participantsError } = await supabase
     .from("league_participants")
     .select("league_id")
-    .in("profile_id", profileIds)
-    .eq("league_role", "director");
+    .in("profile_id", profileIds);
 
   if (participantsError) {
     return {
@@ -77,11 +76,11 @@ export const getLeaguesByAccountId = async (
     };
   }
 
-  if (!directorRows.length) {
+  if (!participantRows.length) {
     return { success: true, data: [] };
   }
 
-  const leagueIds = [...new Set(directorRows.map((row) => row.league_id))];
+  const leagueIds = [...new Set(participantRows.map((row) => row.league_id))];
 
   const { data, error } = await supabase
     .from("leagues")
