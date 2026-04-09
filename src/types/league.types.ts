@@ -64,12 +64,22 @@ export type LeagueParticipantTable = {
 export type LeagueParticipantProfile = {
   id: string;
   profile_id: string;
+  account_id: string;
   username: string;
   game_type: GameType;
   avatar_type: "preset" | "upload";
   avatar_value: string;
   league_role: typeof LEAGUE_PARTICIPANT_ROLES[number];
 };
+
+export type GetLeagueParticipantsSuccess = {
+  success: true;
+  data: LeagueParticipantProfile[];
+};
+
+export type GetLeagueParticipantsResult =
+  | GetLeagueParticipantsSuccess
+  | SupabaseError;
 
 // League Seasons Table --> represents the "league_seasons" table in Supabase, which tracks the different seasons within a league
 export type LeagueSeasonTable = {
@@ -141,6 +151,25 @@ export type AddLeagueParticipantSuccess = {
 
 // Add League Participant --> Result type
 export type AddLeagueParticipantResult = AddLeagueParticipantSuccess | SupabaseError;
+
+export type UpdateLeagueParticipantRolePayload = {
+  leagueId: string;
+  profileId: string;
+  newLeagueRole: typeof LEAGUE_PARTICIPANT_ROLES[number];
+};
+
+export type UpdateLeagueParticipantRoleResult =
+  | { success: true }
+  | SupabaseError;
+
+export type RemoveLeagueParticipantPayload = {
+  leagueId: string;
+  profileId: string;
+};
+
+export type RemoveLeagueParticipantResult =
+  | { success: true }
+  | SupabaseError;
 
 // Create League Season --> Payload type
 export type CreateLeagueSeasonPayload = {
