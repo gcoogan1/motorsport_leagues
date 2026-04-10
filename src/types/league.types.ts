@@ -12,6 +12,8 @@ export const LEAGUE_PARTICIPANT_ROLES = ["director", "driver", "steward", "broad
 export const LEAGUE_COVER_VARIANTS = ["cover1", "cover2", "cover3", "cover4", "cover5"] as const;
 export type LeagueCover = typeof LEAGUE_COVER_VARIANTS[number];
 
+export type LeagueViewType = "participant" | "user" | "guest";
+
 // Cover Image Value --> discriminated union for draft/form stage
 export type CoverImageValue =
   | { type: "preset"; variant: LeagueCover }
@@ -41,8 +43,8 @@ export type LeagueTable = {
   game_type: GameType;
   league_name: string;
   league_name_normalized: string;
-  hosting_squad_id?: string;
-  hosting_squad_name?: string;
+  hosting_squad_id: string;
+  hosting_squad_name: string;
   cover_type: "preset" | "upload";
   cover_value: string;
   theme_color: Theme;
@@ -64,12 +66,22 @@ export type LeagueParticipantTable = {
 export type LeagueParticipantProfile = {
   id: string;
   profile_id: string;
+  account_id: string;
   username: string;
   game_type: GameType;
   avatar_type: "preset" | "upload";
   avatar_value: string;
   league_role: typeof LEAGUE_PARTICIPANT_ROLES[number];
 };
+
+export type GetLeagueParticipantsSuccess = {
+  success: true;
+  data: LeagueParticipantProfile[];
+};
+
+export type GetLeagueParticipantsResult =
+  | GetLeagueParticipantsSuccess
+  | SupabaseError;
 
 // League Seasons Table --> represents the "league_seasons" table in Supabase, which tracks the different seasons within a league
 export type LeagueSeasonTable = {
@@ -80,6 +92,13 @@ export type LeagueSeasonTable = {
   num_of_divisions: number;
   is_team_championship: boolean;
 };
+
+export type GetLeagueSeasonsSuccess = {
+  success: true;
+  data: LeagueSeasonTable[];
+};
+
+export type GetLeagueSeasonsResult = GetLeagueSeasonsSuccess | SupabaseError;
 
 
 // Supabase Error Type --> used in squad service results
@@ -142,6 +161,25 @@ export type AddLeagueParticipantSuccess = {
 // Add League Participant --> Result type
 export type AddLeagueParticipantResult = AddLeagueParticipantSuccess | SupabaseError;
 
+export type UpdateLeagueParticipantRolePayload = {
+  leagueId: string;
+  profileId: string;
+  newLeagueRole: typeof LEAGUE_PARTICIPANT_ROLES[number];
+};
+
+export type UpdateLeagueParticipantRoleResult =
+  | { success: true }
+  | SupabaseError;
+
+export type RemoveLeagueParticipantPayload = {
+  leagueId: string;
+  profileId: string;
+};
+
+export type RemoveLeagueParticipantResult =
+  | { success: true }
+  | SupabaseError;
+
 // Create League Season --> Payload type
 export type CreateLeagueSeasonPayload = {
   leagueId: string;
@@ -158,6 +196,25 @@ export type CreateLeagueSeasonSuccess = {
 
 // Create League Season --> Result type
 export type CreateLeagueSeasonResult = CreateLeagueSeasonSuccess | SupabaseError;
+
+export type UpdateLeagueSeasonPayload = {
+  seasonId: string;
+  seasonName: string;
+  numOfDivisions: number;
+  isTeamChampionship: boolean;
+};
+
+export type UpdateLeagueSeasonResult =
+  | { success: true; data: LeagueSeasonTable }
+  | SupabaseError;
+
+export type RemoveLeagueSeasonPayload = {
+  seasonId: string;
+};
+
+export type RemoveLeagueSeasonResult =
+  | { success: true }
+  | SupabaseError;
 
 
 // Redux Types //

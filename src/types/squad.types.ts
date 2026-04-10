@@ -61,6 +61,7 @@ export type SquadFollowsTable = {
   follower_account_id: string;
   squad_id: string;
 };
+
 export type SquadViewType = "founder" | "member" | "user" | "guest";
 
 // Supabase Error Type --> used in squad service results

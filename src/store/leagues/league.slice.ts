@@ -3,6 +3,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {
   createLeagueThunk,
   fetchLeaguesByAccountIdThunk,
+  getLeagueByIdThunk,
 } from "./league.thunk";
 
 const initialState: LeagueState = {
@@ -77,6 +78,19 @@ const leagueSlice = createSlice({
         state.draft = {};
       })
       .addCase(createLeagueThunk.rejected, (state, action) => {
+        state.status = "rejected";
+        state.error = action.payload ?? action.error.message;
+      })
+      // Get League By Id
+      .addCase(getLeagueByIdThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = undefined;
+      })
+      .addCase(getLeagueByIdThunk.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        state.currentLeague = action.payload;
+      })
+      .addCase(getLeagueByIdThunk.rejected, (state, action) => {
         state.status = "rejected";
         state.error = action.payload ?? action.error.message;
       });

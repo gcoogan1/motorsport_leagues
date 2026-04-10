@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
 	createLeagueWithCover,
+	getLeagueById,
 	getLeaguesByAccountId,
 } from "@/services/league.service";
 import type {
@@ -36,3 +37,19 @@ export const createLeagueThunk = createAsyncThunk<
 	return result.data;
 });
 
+export const getLeagueByIdThunk = createAsyncThunk<
+  LeagueTable,
+  string,
+  { rejectValue: string }
+>(
+  "league/getById",
+  async (leagueId: string, { rejectWithValue }) => {
+    const result = await getLeagueById(leagueId);
+
+    if (!result.success) {
+      return rejectWithValue(result.error.message);
+    }
+
+    return result.data;
+  },
+);
