@@ -78,7 +78,6 @@ export const ROUTES: Route[] = [
   {
     path: "/league/:leagueId",
     element: <League />,
-    navbar: "user",
   },
   {
     path: "/league/:leagueId/management",

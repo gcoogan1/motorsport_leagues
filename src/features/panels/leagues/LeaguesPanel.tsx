@@ -93,7 +93,7 @@ const LeaguesPanel = () => {
             ))}
           </div>
         ) : leagueStatus === "loading" ? (
-          <div>Loading...</div>
+          null
         ) : (
         <EmptyMessage
           title="No Leagues Created or Joined"
