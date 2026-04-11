@@ -13,6 +13,8 @@ export const AppThemeProvider = ({ children }: { children: React.ReactNode }) =>
   const [themeName, setThemeName] = useState<ThemeName>(() => {
     return (localStorage.getItem("theme") as ThemeName) || "yellow";
   });
+  const [overrideThemeName, setOverrideThemeName] = useState<ThemeName | null>(null);
+  const activeThemeName = overrideThemeName ?? themeName;
 
   // Persist theme changes to localStorage
   useEffect(() => {
@@ -21,11 +23,20 @@ export const AppThemeProvider = ({ children }: { children: React.ReactNode }) =>
 
   // Inject theme into styled-components ThemeProvider
   return (
-    <ThemeContext.Provider value={{ themeName, setThemeName }}>
+    <ThemeContext.Provider
+      value={{
+        themeName,
+        setThemeName,
+        overrideThemeName,
+        setOverrideThemeName,
+        clearOverrideThemeName: () => setOverrideThemeName(null),
+        activeThemeName,
+      }}
+    >
       <ThemeProvider
         theme={{
           ...designTokens,
-          theme: themeTokens[themeName],
+          theme: themeTokens[activeThemeName],
         }}
       >
         {children}
