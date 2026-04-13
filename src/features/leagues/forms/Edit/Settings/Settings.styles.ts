@@ -21,7 +21,6 @@ export const ListContainer = styled.div`
 
 export const FormList = styled.div`
   display: flex;
-  width: 360px;
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.medium};

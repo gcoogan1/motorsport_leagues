@@ -23,7 +23,7 @@ export const ImageUploadContainer = styled.div`
 `
 
 export const ImageUpload = styled.div`
-  width: 336px;
+  /* width: 336px; */
   max-width: 100%;
   aspect-ratio: 2 / 1;
   object-fit: cover;
@@ -39,7 +39,7 @@ export const ImageUpload = styled.div`
   }
 `
 export const Placeholder = styled.div`
-  width: 336px;
+  /* width: 336px; */
   max-width: 100%;
   aspect-ratio: 2 / 1;
   border-radius: ${borders.radius.medium};
