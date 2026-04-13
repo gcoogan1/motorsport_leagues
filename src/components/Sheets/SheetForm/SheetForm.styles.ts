@@ -64,6 +64,10 @@ export const BlockContainer = styled.div`
     gradient: gradients.base.fadeBottom10,
     width: borders.width.medium,
   })}
+
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.large};
+  }
 `;
 
 export const BlockHeaderContainer = styled.div`
