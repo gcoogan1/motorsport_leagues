@@ -2,35 +2,9 @@ import styled from "styled-components";
 import { designTokens } from "@/app/design/tokens";
 
 const { colors, layout, typography, borders } = designTokens;
-
-export const IconWrapper = styled.span<{ $hasValue?: boolean }>`
-  position: absolute;
-  left: ${layout.space.medium};
-  pointer-events: none;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 0;
-  color: ${({ $hasValue }) =>
-    $hasValue ? colors.text.text1 : colors.text.text2};
-  width: 20px;
-  height: 20px;
-`;
-
-export const InputWrapper = styled.div<{ $hasValue?: boolean }>`
+export const InputWrapper = styled.div`
   width: 100%;
   position: relative;
-  /* When the input is focused, change the icon color */
-  &:focus-within ${IconWrapper} {
-    color: ${colors.text.text1};
-  }
-  /* When the input is active, change the icon color */
-  &:active ${IconWrapper} {
-    color: ${({ $hasValue }) =>
-      $hasValue ? colors.text.text1 : colors.text.text2};
-  }
 `;
 
 export const LabelRow = styled.div`
@@ -58,14 +32,12 @@ export const InputContainer = styled.div`
 export const InputField = styled.textarea<{
   $hasError: boolean;
   $hasValue: boolean;
-  $hasIcon?: boolean;
 }>`
   width: 100%;
   border-radius: ${borders.radius.medium};
   padding-top: ${layout.space.medium};
   padding-bottom: ${layout.space.medium};
-  padding-left: ${({ $hasIcon }) =>
-    $hasIcon ? `44px` : layout.space.medium};
+  padding-left: ${layout.space.medium};
   padding-right: ${layout.space.medium};
   border: none;
   background: ${colors.base.translucent10};

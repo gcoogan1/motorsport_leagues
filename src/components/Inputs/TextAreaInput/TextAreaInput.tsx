@@ -4,7 +4,6 @@ import {
   Count,
   ErrorText,
   HelperText,
-  IconWrapper,
   InputContainer,
   InputField,
   InputWrapper,
@@ -17,7 +16,6 @@ import {
 type TextAreaInputProps = {
   name: string;
   label: string;
-  icon?: React.ReactNode;
   placeholder?: string;
   rows?: number;
   maxLength?: number;
@@ -31,7 +29,6 @@ type TextAreaInputProps = {
 const TextAreaInput = ({
   name,
   label,
-  icon,
   placeholder,
   rows = 5,
   maxLength = 1000,
@@ -47,10 +44,9 @@ const TextAreaInput = ({
   const hasValue = Boolean(value && value.length > 0);
 
   const count = value ? value.length : 0;
-  const hasIcon = !!icon;
 
   return (
-    <InputWrapper $hasValue={hasValue}>
+    <InputWrapper>
       <LabelRow>
         <Label>{label}</Label>
         {!!showCounter && <Count>{count}/{maxLength}</Count>}
@@ -65,9 +61,7 @@ const TextAreaInput = ({
           maxLength={maxLength}
           $hasError={!!hasError}
           $hasValue={hasValue}
-          $hasIcon={hasIcon}
         />
-        {icon && <IconWrapper $hasValue={hasValue}>{icon}</IconWrapper>}
       </InputContainer>
       <HelperText>{helperText}</HelperText>
       {!!hasError && (
