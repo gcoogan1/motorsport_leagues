@@ -2,8 +2,10 @@ import type { LeagueDraft, LeagueState } from "@/types/league.types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {
   createLeagueThunk,
+  deleteLeagueThunk,
   fetchLeaguesByAccountIdThunk,
   getLeagueByIdThunk,
+  updateLeagueThunk,
 } from "./league.thunk";
 
 const initialState: LeagueState = {
@@ -91,6 +93,51 @@ const leagueSlice = createSlice({
         state.currentLeague = action.payload;
       })
       .addCase(getLeagueByIdThunk.rejected, (state, action) => {
+        state.status = "rejected";
+        state.error = action.payload ?? action.error.message;
+      })
+      // Update League
+      .addCase(updateLeagueThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = undefined;
+      })
+      .addCase(updateLeagueThunk.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        const updatedLeague = action.payload;
+
+        // Update the current league with the new data
+        state.currentLeague = updatedLeague;
+
+        // Update the league in the data array if it exists
+        if (state.data) {
+          const index = state.data.findIndex((league) => league.id === updatedLeague.id);
+          if (index !== -1) {
+            state.data[index] = updatedLeague;
+          }
+        }
+      })
+      .addCase(updateLeagueThunk.rejected, (state, action) => {
+        state.status = "rejected";
+        state.error = action.payload ?? action.error.message;
+      })
+      // Delete League
+      .addCase(deleteLeagueThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = undefined;
+      })
+      .addCase(deleteLeagueThunk.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        const deletedLeagueId = action.meta.arg;
+
+        if (state.data) {
+          state.data = state.data.filter((league) => league.id !== deletedLeagueId);
+        }
+
+        if (state.currentLeague?.id === deletedLeagueId) {
+          state.currentLeague = null;
+        }
+      })
+      .addCase(deleteLeagueThunk.rejected, (state, action) => {
         state.status = "rejected";
         state.error = action.payload ?? action.error.message;
       });

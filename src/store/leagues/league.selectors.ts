@@ -5,6 +5,41 @@ import type { RootState } from "..";
 
 // Selector to determine the user's view type for the current league
 
+const selectCurrentLeagueParticipantsResult = (state: RootState) => {
+  const currentLeague = state.league.currentLeague;
+
+  if (!currentLeague) {
+    return null;
+  }
+
+  return leagueApi.endpoints.getLeagueParticipants.select(currentLeague.id)(state);
+};
+
+export const selectIsCurrentLeagueParticipantDirector = (
+  state: RootState,
+): boolean | null => {
+  const currentUserProfiles = state.profile.data ?? [];
+  const leagueParticipantsResult = selectCurrentLeagueParticipantsResult(state);
+
+  if (
+    !leagueParticipantsResult ||
+    leagueParticipantsResult.isUninitialized ||
+    leagueParticipantsResult.isLoading
+  ) {
+    return null;
+  }
+
+  const currentUserProfileIds = new Set(
+    currentUserProfiles.map((profile) => profile.id),
+  );
+
+  return (leagueParticipantsResult.data ?? []).some(
+    (participant) =>
+      currentUserProfileIds.has(participant.profile_id) &&
+      participant.league_role === "director",
+  );
+};
+
 export const selectLeagueViewType = (
   state: RootState,
 ): LeagueViewType | "loading" => {
@@ -26,10 +61,10 @@ export const selectLeagueViewType = (
     return "loading";
   }
 
-  const leagueParticipantsResult =
-    leagueApi.endpoints.getLeagueParticipants.select(currentLeague.id)(state);
+  const leagueParticipantsResult = selectCurrentLeagueParticipantsResult(state);
 
   if (
+    !leagueParticipantsResult ||
     leagueParticipantsResult.isUninitialized ||
     leagueParticipantsResult.isLoading
   ) {

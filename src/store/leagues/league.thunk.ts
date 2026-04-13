@@ -1,12 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
 	createLeagueWithCover,
+	deleteLeagueById,
 	getLeagueById,
 	getLeaguesByAccountId,
+	updateLeagueSettings,
 } from "@/services/league.service";
 import type {
 	CreateLeaguePayload,
 	LeagueTable,
+	UpdateLeaguePayload,
 } from "@/types/league.types";
 
 export const fetchLeaguesByAccountIdThunk = createAsyncThunk<
@@ -53,3 +56,31 @@ export const getLeagueByIdThunk = createAsyncThunk<
     return result.data;
   },
 );
+
+export const updateLeagueThunk = createAsyncThunk<
+  LeagueTable,
+  UpdateLeaguePayload,
+  { rejectValue: string }
+>("league/update", async (payload, { rejectWithValue }) => {
+  const result = await updateLeagueSettings(payload);
+
+  if (!result.success) {
+    return rejectWithValue(result.error.message);
+  }
+
+  return result.data;
+});
+
+export const deleteLeagueThunk = createAsyncThunk<
+	{ success: true },
+	string,
+	{ rejectValue: string }
+>("league/delete", async (leagueId, { rejectWithValue }) => {
+	const result = await deleteLeagueById(leagueId);
+
+	if (!result.success) {
+		return rejectWithValue(result.error.message);
+	}
+
+	return result;
+});
