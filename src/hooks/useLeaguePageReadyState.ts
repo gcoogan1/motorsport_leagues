@@ -1,11 +1,15 @@
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
-import { selectLeagueViewType } from "@/store/leagues/league.selectors";
+import {
+  selectIsCurrentLeagueParticipantDirector,
+  selectLeagueViewType,
+} from "@/store/leagues/league.selectors";
 
 export const useLeaguePageReadyState = () => {
   const leagueStatus = useSelector((state: RootState) => state.league.status);
   const profileStatus = useSelector((state: RootState) => state.profile.status);
   const viewType = useSelector(selectLeagueViewType);
+  const isDirector = useSelector(selectIsCurrentLeagueParticipantDirector);
 
   const isReady =
     leagueStatus !== "loading" &&
@@ -17,5 +21,6 @@ export const useLeaguePageReadyState = () => {
     leagueStatus,
     profileStatus,
     viewType,
+    isDirector,
   };
 };

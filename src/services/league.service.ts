@@ -6,6 +6,7 @@ import type {
   CreateLeagueResult,
   CreateLeagueSeasonPayload,
   CreateLeagueSeasonResult,
+  DeleteLeagueResult,
   GetLeagueParticipantsResult,
   GetLeagueSeasonsResult,
   GetLeaguesResult,
@@ -15,10 +16,14 @@ import type {
   RemoveLeagueSeasonResult,
   UpdateLeagueParticipantRolePayload,
   UpdateLeagueParticipantRoleResult,
+  UpdateLeaguePayload,
+  UpdateLeagueResult,
   UpdateLeagueSeasonPayload,
   UpdateLeagueSeasonResult,
 } from "@/types/league.types";
+import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import { normalizeName } from "@/utils/normalizeName";
+import { getCurrentTimezone } from "@/utils/timezone";
 
 export const resolveCoverValue = (
   coverType: "preset" | "upload",
@@ -179,6 +184,8 @@ export const createLeagueWithCover = async (
 ): Promise<CreateLeagueResult> => {
   let coverType: "preset" | "upload";
   let coverValue: string;
+  const currentTimezone = getCurrentTimezone();
+  const defaultDescription = `This is ${hostingSquadName}'s League for ${convertGameTypeToFullName(gameType)}.`;
 
   // --- Handle cover ---
   if (coverImage.type === "preset") {
@@ -225,6 +232,8 @@ export const createLeagueWithCover = async (
       cover_type: coverType,
       cover_value: coverValue,
       theme_color: themeColor,
+      timezone: currentTimezone,
+      description: defaultDescription,
     })
     .select()
     .single();
@@ -283,6 +292,109 @@ export const createLeagueWithCover = async (
       ...data,
       cover_value: resolvedCover,
     },
+  };
+};
+
+// -- Update League Settings -- //
+export const updateLeagueSettings = async (
+  {
+    accountId,
+    leagueId,
+    leagueName,
+    description,
+    timezone,
+    coverImage,
+    themeColor,
+  }: UpdateLeaguePayload,
+): Promise<UpdateLeagueResult> => {
+  // Build the update object with only provided fields
+  const updateData: Record<string, unknown> = {};
+
+  if (leagueName !== undefined) {
+    updateData.league_name = leagueName;
+    updateData.league_name_normalized = normalizeName(leagueName);
+  }
+
+  if (description !== undefined) {
+    updateData.description = description;
+  }
+
+  if (timezone !== undefined) {
+    updateData.timezone = timezone;
+  }
+
+  if (themeColor !== undefined) {
+    updateData.theme_color = themeColor;
+  }
+
+  // Handle cover image upload if provided
+  if (coverImage !== undefined) {
+    let coverType: "preset" | "upload";
+    let coverValue: string;
+
+    if (coverImage.type === "preset") {
+      coverType = "preset";
+      coverValue = coverImage.variant;
+    } else {
+      coverType = "upload";
+
+      // Generate a unique file path for the cover upload
+      const fileExt = coverImage.file.name.split(".").pop();
+      const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
+
+      // Upload the cover file to Supabase Storage
+      const { error } = await supabase.storage
+        .from("covers")
+        .upload(filePath, coverImage.file, {
+          upsert: true,
+          contentType: coverImage.file.type,
+        });
+
+      if (error) {
+        return {
+          success: false,
+          error: {
+            message: error.message,
+            code: "UPLOAD_FAILED",
+            status: 500,
+          },
+        };
+      }
+
+      coverValue = filePath;
+    }
+
+    updateData.cover_type = coverType;
+    updateData.cover_value = coverValue;
+  }
+
+  // Update the league in the database
+  const { data, error } = await supabase
+    .from("leagues")
+    .update(updateData)
+    .eq("id", leagueId)
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "UPDATE_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  // Resolve cover value if it was uploaded
+  if (coverImage !== undefined && coverImage.type === "upload") {
+    data.cover_value = resolveCoverValue(data.cover_type, data.cover_value);
+  }
+
+  return {
+    success: true,
+    data,
   };
 };
 
@@ -635,6 +747,98 @@ export const removeLeagueSeason = async (
       error: {
         message: error.message,
         code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
+// -- Delete League By ID -- //
+export const deleteLeagueById = async (
+  leagueId: string,
+): Promise<DeleteLeagueResult> => {
+  // Fetch cover info so uploaded assets can be cleaned up.
+  const { data: leagueData, error: leagueFetchError } = await supabase
+    .from("leagues")
+    .select("cover_type, cover_value")
+    .eq("id", leagueId)
+    .single();
+
+  if (leagueFetchError) {
+    return {
+      success: false,
+      error: {
+        message: leagueFetchError.message,
+        code: leagueFetchError.code || "LEAGUE_FETCH_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  if (leagueData.cover_type === "upload") {
+    const { error: coverDeleteError } = await supabase.storage
+      .from("covers")
+      .remove([leagueData.cover_value]);
+
+    if (coverDeleteError) {
+      return {
+        success: false,
+        error: {
+          message: coverDeleteError.message,
+          code: "LEAGUE_COVER_DELETION_FAILED",
+          status: 500,
+        },
+      };
+    }
+  }
+
+  const { error: participantsDeleteError } = await supabase
+    .from("league_participants")
+    .delete()
+    .eq("league_id", leagueId);
+
+  if (participantsDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: participantsDeleteError.message,
+        code: participantsDeleteError.code || "LEAGUE_PARTICIPANTS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const { error: seasonsDeleteError } = await supabase
+    .from("league_season")
+    .delete()
+    .eq("league_id", leagueId);
+
+  if (seasonsDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: seasonsDeleteError.message,
+        code: seasonsDeleteError.code || "LEAGUE_SEASONS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const { error: leagueDeleteError } = await supabase
+    .from("leagues")
+    .delete()
+    .eq("id", leagueId);
+
+  if (leagueDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: leagueDeleteError.message,
+        code: leagueDeleteError.code || "LEAGUE_DELETION_FAILED",
         status: 500,
       },
     };

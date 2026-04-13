@@ -1,19 +1,16 @@
 import { useEffect } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
 import { getLeagueByIdThunk } from "@/store/leagues/league.thunk";
 import { useModal } from "@/providers/modal/useModal";
+import { useAppTheme } from "@/providers/theme/useTheme";
 import { useLeagueParticipants } from "@/hooks/rtkQuery/queries/useLeagueParticipants";
 import { useLeaguePageReadyState } from "@/hooks/useLeaguePageReadyState";
 import Cover from "@/components/Structures/Cover/Cover";
-import FollowIcon from "@assets/Icon/Follow.svg?react";
-import ShareIcon from "@assets/Icon/Share.svg?react";
-import MoreIcon from "@assets/Icon/More_Vertical.svg?react";
-import AnnouncementsIcon from "@assets/Icon/Announcements.svg?react";
-import ChatIcon from "@assets/Icon/Chat.svg?react";
 import LoadingScreen from "@/components/Messages/LoadingScreen/LoadingScreen";
 import { Wrapper } from "./League.styles";
+import { getGuestActions, getParticipantActions } from "./League.actions";
 import Game from "@/features/leagues/modals/core/Game/Game";
 import HostSquad from "@/features/leagues/modals/core/HostSquad/HostSquad";
 import ShareLeague from "@/features/leagues/modals/core/ShareLeague/ShareLeague";
@@ -22,6 +19,8 @@ import ShareLeague from "@/features/leagues/modals/core/ShareLeague/ShareLeague"
 
 const League = () => {
   const { openModal, closeModal } = useModal();
+  const { setOverrideThemeName, clearOverrideThemeName } = useAppTheme();
+  const navigate = useNavigate();
   const { leagueId } = useParams<{ leagueId: string }>();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -31,14 +30,27 @@ const League = () => {
 
   const { data: participants = [] } = useLeagueParticipants(currentLeague?.id);
 
-  const { viewType } = useLeaguePageReadyState();
+  const { viewType, isDirector } = useLeaguePageReadyState();
 
-  // Load league
+  // Load league data
   useEffect(() => {
     if (leagueId) {
       dispatch(getLeagueByIdThunk(leagueId));
     }
   }, [leagueId, dispatch]);
+
+  // Set theme color based on league settings
+  useEffect(() => {
+    if (!currentLeague?.theme_color) {
+      return;
+    }
+
+    setOverrideThemeName(currentLeague.theme_color);
+
+    return () => {
+      clearOverrideThemeName();
+    };
+  }, [currentLeague?.theme_color, setOverrideThemeName, clearOverrideThemeName]);
 
   if (!currentLeague) {
     return <LoadingScreen />;
@@ -71,6 +83,18 @@ const League = () => {
     );
   };
 
+  const participantActions = getParticipantActions({
+    isDirector,
+    onManageLeague: () => {
+      navigate(`/league/${currentLeague.id}/management`);
+    },
+    onShareLeague: handleShareLeague,
+  });
+
+  const guestActions = getGuestActions({
+    onShareLeague: handleShareLeague,
+  });
+
   return (
     <Wrapper>
       <Cover
@@ -84,68 +108,13 @@ const League = () => {
         onSquadNameClick={handleHostingSquadClick}
         backgroundImageUrl={currentLeague.cover_value}
         status={currentLeague.league_status}
-        tags={["director"]}
+        tags={isDirector ? ["director"] : []}
         optionalActions={
           isViewTypeLoading
             ? undefined
             : isParticipantView
-              ? [
-                  {
-                    label: "Announcements",
-                    color: "base",
-                    leftIcon: <AnnouncementsIcon />,
-                    onClick: () => {
-                      console.log("Announcements clicked");
-                    },
-                  },
-                  {
-                    label: "Chat",
-                    color: "base",
-
-                    leftIcon: <ChatIcon />,
-                    onClick: () => {
-                      console.log("Chat clicked");
-                    },
-                  },
-                  {
-                    leftIcon: <ShareIcon />,
-                    color: "base",
-                    onClick: () => {
-                      handleShareLeague();
-                    },
-                  },
-                  {
-                    leftIcon: <MoreIcon />,
-                    color: "base",
-                    onClick: () => {
-                      console.log("More clicked");
-                    },
-                  },
-                ]
-              : [
-                  {
-                    label: "Join",
-                    color: "primary",
-                    onClick: () => {
-                      console.log("Share clicked");
-                    },
-                  },
-                  {
-                    label: "Follow",
-                    color: "base",
-                    leftIcon: <FollowIcon />,
-                    onClick: () => {
-                      console.log("Follow clicked");
-                    },
-                  },
-                  {
-                    leftIcon: <ShareIcon />,
-                    color: "base",
-                    onClick: () => {
-                      handleShareLeague();
-                    },
-                  },
-                ]
+              ? participantActions
+              : guestActions
         }
       />
     </Wrapper>

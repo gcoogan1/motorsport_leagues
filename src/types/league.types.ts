@@ -136,6 +136,31 @@ export type CreateLeagueSuccess = {
 // Create League --> Result type
 export type CreateLeagueResult = CreateLeagueSuccess | SupabaseError;
 
+// Update League --> Payload Type
+export type UpdateLeaguePayload = {
+  accountId: string;
+  leagueId: string;
+  leagueName?: string;
+  description?: string;
+  timezone?: string;
+  coverImage?: CoverImageValue;
+  themeColor?: Theme;
+};
+
+// Update League --> Success type
+export type UpdateLeagueSuccess = {
+  success: true;
+  data: LeagueTable;
+};
+
+// Update League --> Result type
+export type UpdateLeagueResult = UpdateLeagueSuccess | SupabaseError;
+
+// Get League By Id --> Result type
+export type DeleteLeagueResult =
+  | { success: true }
+  | SupabaseError;
+
 // Get Leagues --> Success type
 export type GetLeaguesSuccess = {
   success: true;

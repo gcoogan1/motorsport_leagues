@@ -30,7 +30,8 @@ import {
 } from "./Cover.styles";
 
 
-type CoverAction = {
+export type CoverAction = {
+  id?: string;
   label?: string;
   variant?: ButtonVariant;
   color?: ButtonColor;
@@ -128,10 +129,10 @@ const Cover = ({
             </Button>
           </DetailsContainer>
           <ActionsContainer>
-            {optionalActions.map((action) => (
+            {optionalActions.map((action, index) => (
               <Button
                 size="medium"
-                key={action.label}
+                key={action.id ?? action.label ?? `cover-action-${index}`}
                 icon={{
                   left: action.leftIcon,
                   right: action.rightIcon,

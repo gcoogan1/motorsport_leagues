@@ -40,6 +40,7 @@ type SelectInputProps = {
   noOptionsMessage?: string;
   isDisabled?: boolean;
   isClearable?: boolean;
+  isSearchable?: boolean;
 };
 
 const DropdownIndicator = (
@@ -90,6 +91,7 @@ const SelectInput = ({
   noOptionsMessage = "No options found.",
   isDisabled = false,
   isClearable = false,
+  isSearchable = false,
 }: SelectInputProps) => {
   const inputId = useId();
   const { control } = useFormContext();
@@ -137,7 +139,7 @@ const SelectInput = ({
               openMenuOnFocus
               openMenuOnClick
               tabSelectsValue={false}
-              isSearchable={false}
+              isSearchable={isSearchable}
               isDisabled={isDisabled}
               isClearable={isClearable}
               onBlur={field.onBlur}

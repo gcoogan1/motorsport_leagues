@@ -53,31 +53,47 @@ const SelectGraphicInput = ({ name, label, helperText }: Props) => {
   // When an option is selected, we update the form state with either a preset selection or an upload type
   const handleSelect = (variant: string) => {
     if (name === "banner") {
-      setValue("banner", {
-        type: "preset",
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        variant: SQUAD_BANNER_VARIANTS.includes(variant as any)
-          ? (variant as SquadBanner)
-          : SQUAD_BANNER_VARIANTS[0],
-      });
+      setValue(
+        "banner",
+        {
+          type: "preset",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          variant: SQUAD_BANNER_VARIANTS.includes(variant as any)
+            ? (variant as SquadBanner)
+            : SQUAD_BANNER_VARIANTS[0],
+        },
+        { shouldDirty: true, shouldValidate: true },
+      );
     } else if (name === "cover") {
-      setValue("cover", {
-        type: "preset",
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        variant: LEAGUE_COVER_VARIANTS.includes(variant as any)
-          ? (variant as LeagueCover)
-          : LEAGUE_COVER_VARIANTS[0],
-      });
+      setValue(
+        "cover",
+        {
+          type: "preset",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          variant: LEAGUE_COVER_VARIANTS.includes(variant as any)
+            ? (variant as LeagueCover)
+            : LEAGUE_COVER_VARIANTS[0],
+        },
+        { shouldDirty: true, shouldValidate: true },
+      );
     } else if (name === "themeColor") {
-      setValue("themeColor", variant as Theme);
+      setValue(
+        "themeColor",
+        variant as Theme,
+        { shouldDirty: true, shouldValidate: true },
+      );
     } else {
-      setValue("avatar", {
-        type: "preset",
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        variant: AVATAR_VARIANTS.includes(variant as any)
-          ? (variant as typeof AVATAR_VARIANTS[number])
-          : AVATAR_VARIANTS[0],
-      });
+      setValue(
+        "avatar",
+        {
+          type: "preset",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          variant: AVATAR_VARIANTS.includes(variant as any)
+            ? (variant as typeof AVATAR_VARIANTS[number])
+            : AVATAR_VARIANTS[0],
+        },
+        { shouldDirty: true, shouldValidate: true },
+      );
     }
   };
 
