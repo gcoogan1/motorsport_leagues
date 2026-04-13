@@ -32,13 +32,14 @@ const League = () => {
 
   const { viewType, isDirector } = useLeaguePageReadyState();
 
-  // Load league
+  // Load league data
   useEffect(() => {
     if (leagueId) {
       dispatch(getLeagueByIdThunk(leagueId));
     }
   }, [leagueId, dispatch]);
 
+  // Set theme color based on league settings
   useEffect(() => {
     if (!currentLeague?.theme_color) {
       return;
