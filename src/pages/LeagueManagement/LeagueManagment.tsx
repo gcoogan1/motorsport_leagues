@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
+import type { AppDispatch, RootState } from "@/store";
+import { getLeagueByIdThunk } from "@/store/leagues/league.thunk";
 import ManageIcon from "@assets/Icon/Manage.svg?react";
 import DropdownIcon from "@assets/Icon/Dropdown.svg?react";
 import SubNavbar from "@/components/Structures/SubNavbar/SubNavbar";
@@ -14,76 +18,134 @@ import {
   ManageMenuMobileWrapper,
   Wrapper,
 } from "./LeagueManagment.styles";
+import Settings from "@/features/leagues/forms/Edit/Settings/Settings";
 import SheetForm from "@/components/Sheets/SheetForm/SheetForm";
 import SegmentedTab from "@/components/Tabs/SegmentedTabs/SegmentedTab";
 import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
+import { navigate } from "@/app/navigation/navigation";
+import { useAppTheme } from "@/providers/theme/useTheme";
+import { useModal } from "@/providers/modal/useModal";
+import UnsavedChanges from "@/features/leagues/modals/errors/UnsavedChanges/UnsavedChanges";
 
 //TODO: Replace panelContent with SheetForms for each section once they are developed, and implement logic to fetch and display actual data for each section.
 
-// const panelContent: Record<
-//   ManageMenuSection,
-//   { title: string; description: string }
-// > = {
-//   "participant-roles": {
-//     title: "Participant Roles",
-//     description:
-//       "Hi there. This panel will become the participant roles management component.",
-//   },
-//   "league-settings": {
-//     title: "League Settings",
-//     description:
-//       "Hi there. This panel will become the league settings component.",
-//   },
-//   "season-settings": {
-//     title: "Season Settings",
-//     description:
-//       "Hi there. This panel will become the season settings component.",
-//   },
-//   "overview-page": {
-//     title: "Overview Page",
-//     description:
-//       "Hi there. This panel will become the overview page editor component.",
-//   },
-//   "driver-assignments": {
-//     title: "Driver Assignments",
-//     description:
-//       "Hi there. This panel will become the driver assignments component.",
-//   },
-//   "schedule-rounds": {
-//     title: "Schedule Rounds",
-//     description:
-//       "Hi there. This panel will become the schedule rounds component.",
-//   },
-//   "enter-results": {
-//     title: "Enter Results",
-//     description:
-//       "Hi there. This panel will become the results entry component.",
-//   },
-//   "rules-and-regulations": {
-//     title: "Rules & Regulations",
-//     description:
-//       "Hi there. This panel will become the rules management component.",
-//   },
-// };
-
 const LeagueManagment = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { openModal } = useModal();
+  const { setOverrideThemeName, clearOverrideThemeName } = useAppTheme();
+  const { leagueId } = useParams<{ leagueId: string }>();
   const [activeSection, setActiveSection] =
     useState<ManageMenuSection>("participant-roles");
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   // const activePanel = panelContent[activeSection];
   const [openManageMenu, setOpenManageMenu] = useState(false);
   const isLargeScreen = useMediaQuery("(min-width: 920px)");
+  const currentLeague = useSelector(
+    (state: RootState) => state.league.currentLeague,
+  );
 
   useLockBodyScroll(openManageMenu && !isLargeScreen);
 
+  // Load league data
+  useEffect(() => {
+    if (leagueId && currentLeague?.id !== leagueId) {
+      dispatch(getLeagueByIdThunk(leagueId));
+    }
+  }, [leagueId, currentLeague?.id, dispatch]);
+
+  // Set theme color based on league settings
+  useEffect(() => {
+    if (!currentLeague?.theme_color || currentLeague.id !== leagueId) {
+      return;
+    }
+
+    setOverrideThemeName(currentLeague.theme_color);
+
+    return () => {
+      clearOverrideThemeName();
+    };
+  }, [
+    currentLeague?.id,
+    currentLeague?.theme_color,
+    leagueId,
+    setOverrideThemeName,
+    clearOverrideThemeName,
+  ]);
+
+  const activeSheet =
+    activeSection === "league-settings" && leagueId ? (
+      <Settings leagueId={leagueId} onDirtyChange={setHasUnsavedChanges} />
+    ) : (
+      <SheetForm
+        id={`manage-panel-${activeSection}`}
+        seasonName="Season Name"
+        header="Sheet Header"
+        blockHeader="Setting Block Header"
+        blockDescription="Copy Below the header."
+        headerChildren={<div style={{ height: "300px" }}>Additional header content</div>}
+        tabs={
+          <div>
+            <SegmentedTab
+              tabs={[{ label: "Teams" }, { label: "Drivers" }]}
+              activeTab={"teams"}
+              onChange={() => {}}
+            />
+          </div>
+        }
+        filters={
+          <FilterBar
+            divisions={[{ label: "Division I", value: "division_1" }]}
+            rounds={[{ label: "Round 1", value: "round_1" }]}
+            events={[{ label: "Event A", value: "event_1" }]}
+            sessions={[{ label: "Qualifying Session", value: "session_1" }]}
+          />
+        }
+        details={{
+          title: "Details",
+          information: "Detailed information about the league.",
+        }}
+        listChildren={<div>List content</div>}
+        onSave={() => console.log("Save changes")}
+      />
+    );
+
+  const handlePendingNavigation = (action: () => void) => {
+    if (activeSection !== "league-settings" || !hasUnsavedChanges) {
+      action();
+      return;
+    }
+
+    openModal(
+      <UnsavedChanges
+        onDiscard={() => {
+          setHasUnsavedChanges(false);
+          action();
+        }}
+      />,
+    );
+  };
+
+  const handleGoBack = () => {
+    handlePendingNavigation(() => {
+      navigate(`/league/${leagueId}`);
+    });
+  }
+
+  const handleSectionChange = (section: ManageMenuSection) => {
+    handlePendingNavigation(() => {
+      setActiveSection(section);
+    });
+  };
+
   return (
     <Wrapper>
-      <SubNavbar name="Name of League" />
+      <SubNavbar name="Name of League" onBack={handleGoBack} />
       <ContentContainer>
         <Content>
           {isLargeScreen ? (
             <ManageMenu
               activeSection={activeSection}
-              onSectionChange={setActiveSection}
+              onSectionChange={handleSectionChange}
             />
           ) : (
             <Button
@@ -101,8 +163,10 @@ const LeagueManagment = () => {
               <ManageMenu
                 activeSection={activeSection}
                 onSectionChange={(section) => {
-                  setActiveSection(section);
-                  setOpenManageMenu(false);
+                  handlePendingNavigation(() => {
+                    setActiveSection(section);
+                    setOpenManageMenu(false);
+                  });
                 }}
               />
             </ManageMenuMobileWrapper>
@@ -116,37 +180,7 @@ const LeagueManagment = () => {
             <h2>{activePanel.title}</h2>
             <p>{activePanel.description}</p>
           </div> */}
-          <SheetForm
-            id={`manage-panel-${activeSection}`}
-            seasonName="Season Name"
-            header="Sheet Header"
-            blockHeader="Setting Block Header"
-            blockDescription="Copy Below the header."
-            headerChildren={<div style={{ height: "300px"}}>Additional header content</div>}
-            tabs={
-              <div>
-                <SegmentedTab
-                tabs={[{ label: "Teams" }, { label: "Drivers" }]}
-                activeTab={"teams"}
-                onChange={() => {}}
-              />
-              </div>
-            }
-            filters={
-              <FilterBar
-                divisions={[{ label: "Division I", value: "division_1" }]}
-                rounds={[{ label: "Round 1", value: "round_1" }]}
-                events={[{ label: "Event A", value: "event_1" }]}
-                sessions={[{ label: "Qualifying Session", value: "session_1" }]}
-              />
-            }
-            details={{
-              title: "Details",
-              information: "Detailed information about the league.",
-            }}
-            listChildren={<div>List content</div>}
-            onSave={() => console.log("Save changes")}
-          />
+          {activeSheet}
         </Content>
       </ContentContainer>
     </Wrapper>

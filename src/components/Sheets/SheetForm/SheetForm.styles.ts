@@ -120,10 +120,10 @@ export const FormList = styled.div`
   display: flex;
   max-width: 640px;
   flex-direction: column;
-  align-items: flex-start;
   gap: ${layout.space.medium};
-  align-self: stretch;
+  align-self: center;
 `;
+
 export const ButtonContainer = styled.div`
   position: absolute;
   right: 24px;
