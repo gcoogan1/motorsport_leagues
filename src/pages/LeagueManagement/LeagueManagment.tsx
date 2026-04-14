@@ -16,6 +16,7 @@ import {
   Content,
   ContentContainer,
   ManageMenuMobileWrapper,
+  ManageMenuWrapper,
   Wrapper,
 } from "./LeagueManagment.styles";
 import Settings from "@/features/leagues/forms/Edit/Settings/Settings";
@@ -143,10 +144,12 @@ const LeagueManagment = () => {
       <ContentContainer>
         <Content>
           {isLargeScreen ? (
-            <ManageMenu
-              activeSection={activeSection}
-              onSectionChange={handleSectionChange}
-            />
+            <ManageMenuWrapper>
+              <ManageMenu
+                activeSection={activeSection}
+                onSectionChange={handleSectionChange}
+              />
+            </ManageMenuWrapper>
           ) : (
             <Button
               color="primary"

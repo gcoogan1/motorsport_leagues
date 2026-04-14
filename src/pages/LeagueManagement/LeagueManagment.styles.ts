@@ -44,8 +44,15 @@ export const Content = styled.div`
   }
 `;
 
+export const ManageMenuWrapper = styled.div`
+  width: 100%;
+  max-width: 240px;
+  position: sticky;
+  top: ${layout.space.xLarge};
+`;
+
 export const ManageMenuMobileWrapper = styled.div`
-    position: fixed;
+  position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.8);
   display: flex;
