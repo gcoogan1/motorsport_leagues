@@ -82,6 +82,10 @@ export const ListContainer = styled.div`
     gradient: gradients.base.fadeBottom10,
     width: borders.width.medium,
   })};
+
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.medium};
+  }
 `;
 
 export const ResultsContainer = styled.div`

@@ -71,7 +71,7 @@ export const ClickableWrapper = styled.button<{ $cardSize: "small" | "medium" }>
   cursor: pointer;
   position: relative;
   width: 100%;
-  min-width: 264px;
+  /* min-width: 264px; */
   max-width: 384px;
   border-radius: ${borders.radius.large};
   background: ${gradients.base.fadeTop10};

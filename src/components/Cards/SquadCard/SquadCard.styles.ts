@@ -18,7 +18,7 @@ export const ClickableWrapper = styled.button<{ $cardSize: "small" | "medium" }>
   cursor: pointer;
 
   width: 100%;
-  min-width: 264px;
+  /* min-width: 264px; */
   max-width: 384px;
   border-radius: ${borders.radius.xLarge};
   background: ${gradients.base.fadeBottom10};
@@ -59,7 +59,7 @@ export const ClickableWrapper = styled.button<{ $cardSize: "small" | "medium" }>
 export const ImageContainer = styled.div<{ $cardSize: "small" | "medium", $imageBg?: string }>`
   width: 100%;
   max-width: 360px;
-  min-width: 240px;
+  /* min-width: 240px; */
   height: 118px;
   max-height: 118px;
   align-self: stretch;
@@ -87,6 +87,7 @@ export const TextContainer = styled.div<{ $cardSize: "small" | "medium" }>`
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.xxxSmall};
+  text-align: left;
   flex: 1;
   
   ${({ $cardSize }) => $cardSize === "small" && css`
