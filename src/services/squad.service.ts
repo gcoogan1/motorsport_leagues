@@ -671,11 +671,12 @@ export const getAllSquads = async (
   founderAcctId?: string,
   search?: string,
   signal?: AbortSignal,
+  includeOwnSquads: boolean = false,
 ): Promise<GetSquadsResult> => {
   // If an account ID is provided, find squads where that account is a founder
   // so we can exclude them from search results (user shouldn't see their own squads).
   let excludeSquadIds: string[] = [];
-  if (founderAcctId) {
+  if (founderAcctId && !includeOwnSquads) {
     const { data: profiles } = await supabase
       .from("profiles")
       .select("id")

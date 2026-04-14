@@ -23,11 +23,12 @@ export const GraphicContainer = styled.button<{ isSelected: boolean }>`
   height: 64px; */
   padding: ${layout.space.xSmall};
   gap: 10px;
-  
-  border-width: ${borders.width.medium};
-  border-style: solid;
-  border-color: ${({ isSelected }) =>
-    isSelected ? colors.text.text1 : 'transparent'};
+
+  /* Create the selection ring without affecting layout size */
+  box-shadow: ${({ isSelected }) =>
+    isSelected
+      ? `inset 0 0 0 ${borders.width.medium} ${colors.text.text1}`
+      : "inset 0 0 0 0 transparent"};
 `
 
 export const Graphic = styled.div<{ $swatchColor?: string }>`

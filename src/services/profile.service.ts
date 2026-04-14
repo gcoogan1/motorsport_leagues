@@ -504,6 +504,7 @@ export const getAllProfiles = async (
   currentUserId?: string,
   search?: string,
   signal?: AbortSignal,
+  includeOwnProfiles: boolean = false,
 ): Promise<GetProfilesResult> => {
   let query = supabase
     .from("profiles")
@@ -515,7 +516,7 @@ export const getAllProfiles = async (
   }
 
   // EXCLUSION: Return everyone EXCEPT the person searching
-  if (currentUserId) {
+  if (currentUserId && !includeOwnProfiles) {
     query = query.neq("account_id", currentUserId);
   }
 

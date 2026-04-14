@@ -8,11 +8,15 @@ export const useProfiles = (
   userId?: string,
   search?: string,
   activeTab?: string,
+  options?: {
+    includeOwnProfiles?: boolean;
+  },
 ) => {
   const skip = !userId || !search || activeTab !== "Profiles";
+  const includeOwnProfiles = options?.includeOwnProfiles ?? false;
 
   return useGetProfilesQuery(
-    { userId, search, activeTab },
+    { userId, search, activeTab, includeOwnProfiles },
     { skip },
   );
 };

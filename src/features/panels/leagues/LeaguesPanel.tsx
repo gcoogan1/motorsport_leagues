@@ -69,7 +69,7 @@ const LeaguesPanel = () => {
                 action: handleCreateLeague,
               },
               secondary: {
-                label: "Find a League",
+                label: "Search",
                 leftIcon: <SearchIcon />,
                 action: handleSearchLeagues,
               },

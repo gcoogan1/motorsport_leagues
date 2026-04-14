@@ -99,7 +99,7 @@ const SquadsPanel = () => {
                 action: handleCreateSquad,
               },
               secondary: {
-                label: "Find a Squad",
+                label: "Search",
                 leftIcon: <SearchIcon />,
                 action: handleSearchSquads,
               },

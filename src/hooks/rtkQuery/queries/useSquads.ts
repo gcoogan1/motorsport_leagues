@@ -13,11 +13,15 @@ export const useSquads = (
   userId?: string,
   search?: string,
   activeTab?: string,
+  options?: {
+    includeOwnSquads?: boolean;
+  },
 ) => {
   const skip = !userId || !search || activeTab !== "Squads";
+  const includeOwnSquads = options?.includeOwnSquads ?? false;
 
   return useGetSquadsQuery(
-    { founderAccountId: userId, search, activeTab },
+    { founderAccountId: userId, search, activeTab, includeOwnSquads },
     { skip },
   );
 };

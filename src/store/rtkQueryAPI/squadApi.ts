@@ -44,6 +44,7 @@ export type SquadQueryArgs = {
   founderAccountId?: string;
   search?: string;
   activeTab?: string;
+  includeOwnSquads?: boolean;
 }
 
 export const squadApi = createApi({
@@ -52,12 +53,13 @@ export const squadApi = createApi({
   tagTypes: ["Squads", "SquadMembers", "SquadFollowers", "SquadFollowing", "SquadInvites"],
   endpoints: (builder) => ({
     getSquads: builder.query<SquadTable[], SquadQueryArgs>({
-      queryFn: async ({ founderAccountId, search }, api) => {
+      queryFn: async ({ founderAccountId, search, includeOwnSquads }, api) => {
         try {
           const result: GetSquadsResult = await getAllSquads(
             founderAccountId,
             search,
             api.signal,
+            includeOwnSquads,
           );
 
           if (!result.success) {
@@ -77,7 +79,10 @@ export const squadApi = createApi({
         }
       },
       providesTags: (_result, _error, args) => [
-        { type: "Squads", id: `${args.activeTab ?? "all"}-${args.search ?? ""}` },
+        {
+          type: "Squads",
+          id: `${args.activeTab ?? "all"}-${args.search ?? ""}-${args.includeOwnSquads ? "include-own" : "exclude-own"}`,
+        },
       ],
     }),
     getSquadsByFounderProfileId: builder.query<SquadTable[], string>({

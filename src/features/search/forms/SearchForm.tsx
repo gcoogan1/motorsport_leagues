@@ -57,6 +57,7 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
     user?.id,
     debouncedSearch,
     activeTab, // Pass the tab here
+    { includeOwnProfiles: true }, // Include user's own profiles in search results
   );
 
   // -- Squads Query -- //
@@ -64,6 +65,7 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
     user?.id,
     debouncedSearch,
     activeTab, // Pass the tab here
+    { includeOwnSquads: true }, // Include user's own squads in search results
   );
 
   const hasSearchTerm = debouncedSearch.trim().length > 0;

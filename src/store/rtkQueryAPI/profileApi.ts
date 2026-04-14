@@ -24,6 +24,7 @@ export type ProfilesQueryArgs = {
   userId?: string;
   search?: string;
   activeTab?: string;
+  includeOwnProfiles?: boolean;
 };
 
 export type IsFollowingArgs = {
@@ -38,11 +39,12 @@ export const profileApi = createApi({
   tagTypes: ["Profiles", "Followers", "Following", "IsFollowing"],
   endpoints: (builder) => ({
     getProfiles: builder.query<ProfileTable[], ProfilesQueryArgs>({
-      queryFn: async ({ userId, search }, api) => {
+      queryFn: async ({ userId, search, includeOwnProfiles }, api) => {
         const result: GetProfilesResult = await getAllProfiles(
           userId,
           search,
           api.signal,
+          includeOwnProfiles,
         );
 
         if (!result.success) {
@@ -57,7 +59,10 @@ export const profileApi = createApi({
         return { data: result.data };
       },
       providesTags: (_result, _error, args) => [
-        { type: "Profiles", id: `${args.activeTab ?? "all"}-${args.search ?? ""}` },
+        {
+          type: "Profiles",
+          id: `${args.activeTab ?? "all"}-${args.search ?? ""}-${args.includeOwnProfiles ? "include-own" : "exclude-own"}`,
+        },
       ],
     }),
     getFollowers: builder.query<ProfileTable[], string>({

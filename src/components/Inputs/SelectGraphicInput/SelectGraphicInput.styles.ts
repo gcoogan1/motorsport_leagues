@@ -7,7 +7,7 @@ export const SelectGraphicInputContainer = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-  gap: ${layout.space.xxSmall};
+  gap: ${layout.space.xxxSmall};
 `;
 
 export const Label = styled.p`
