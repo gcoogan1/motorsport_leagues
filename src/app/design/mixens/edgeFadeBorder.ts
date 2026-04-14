@@ -19,9 +19,13 @@ const edgeFadeBorder = ({
   &::after {
     content: "";
     position: absolute;
+    inset: auto;
     left: 0;
     right: 0;
     height: ${width};
+    padding: 0;
+    -webkit-mask: none;
+    mask: none;
     background: ${gradient};
     pointer-events: none;
     ${edge === "top" &&  `
@@ -47,10 +51,14 @@ const edgeFadeBorder = ({
     &::before {
       content: "";
       position: absolute;
+      inset: auto;
       left: 0;
       right: 0;
       bottom: 0;
       height: ${width};
+      padding: 0;
+      -webkit-mask: none;
+      mask: none;
       background: ${gradient};
       pointer-events: none;
       border-bottom-left-radius: inherit;

@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 import { designTokens } from "@/app/design/tokens";
 import { gradientBorder } from "@/app/design/mixens/gradientBorder";
-import { bothFadeBorders, } from "@/app/design/mixens/edgeFadeBorder";
+import { bothFadeBorders } from "@/app/design/mixens/edgeFadeBorder";
 
 const { colors, gradients, layout, borders, typography } = designTokens;
 
@@ -30,18 +30,14 @@ export const FilterBarContainer = styled.div<{ $hasText: boolean }>`
         padding: ${layout.space.medium};
         flex-direction: column;
         justify-content: center;
-        border-radius: 0px;
-        ${bothFadeBorders({
-          gradient: gradients.base.fadeHorizontal10,
-          width: borders.width.medium,
-        })};
       }
     `};
 
     ${layout.mediaQueries.mobile} {
       border-radius: 0px;
+      border: none;
       ${bothFadeBorders({
-        gradient: gradients.base.fadeHorizontal10,
+        gradient: gradients.base.fadeOutHorizontal10,
         width: borders.width.medium,
       })};
     }
@@ -54,6 +50,7 @@ export const FilterList = styled.div`
   gap: ${layout.space.xSmall};
   flex: 1 0 0;
   flex-wrap: wrap;
+  justify-content: center;
 
 `
 

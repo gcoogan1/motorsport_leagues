@@ -79,7 +79,7 @@ export const SelectButtonWrapper = styled.div`
   }
 
   .select__menu {
-    min-width: 220px;
+    min-width: 200px;
   }
 `;
 

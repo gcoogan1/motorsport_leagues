@@ -114,6 +114,7 @@ function SelectButton({
             ...base,
             boxShadow: "none",
           }),
+          menu: (base) => ({ ...base, minWidth: "200px", width: "max-content" }),
           menuPortal: (base) => ({ ...base, zIndex: 9999 }),
         }}
         menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}

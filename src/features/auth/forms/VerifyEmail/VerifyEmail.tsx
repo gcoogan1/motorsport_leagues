@@ -131,7 +131,7 @@ const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
     <FormProvider {...formMethods}>
       <FormBlock
         title={title}
-        question={"Check your email"}
+        question={"Check Your Email"}
         helperMessage={helperMessage}
         onSubmit={handleSubmit(handleOnSubmit)}
         buttons={{
