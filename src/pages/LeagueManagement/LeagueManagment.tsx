@@ -139,7 +139,7 @@ const LeagueManagment = () => {
 
   return (
     <Wrapper>
-      <SubNavbar name="Name of League" onBack={handleGoBack} />
+      <SubNavbar name={currentLeague?.league_name ?? "League"} onBack={handleGoBack} />
       <ContentContainer>
         <Content>
           {isLargeScreen ? (

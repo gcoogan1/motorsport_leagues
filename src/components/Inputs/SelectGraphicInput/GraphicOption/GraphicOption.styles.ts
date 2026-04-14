@@ -19,8 +19,8 @@ export const GraphicContainer = styled.button<{ isSelected: boolean }>`
   align-items: center;
   justify-content: center;
   border-radius: ${borders.radius.round};
-  width: 64px;
-  height: 64px;
+  /* width: 64px;
+  height: 64px; */
   padding: ${layout.space.xSmall};
   gap: 10px;
   

@@ -18,7 +18,7 @@ const HostSquad = ({ squadName, squadId }: HostSquadProps) => {
   return (
     <Dialog
       type="core"
-      title={"Game"}
+      title={"Host"}
       subtitle={`This League is hosted by ${squadName}.`}
       buttons={{
         onCancel: {

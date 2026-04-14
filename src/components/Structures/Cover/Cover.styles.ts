@@ -12,15 +12,11 @@ export const CoverWrapper = styled.div<{ $backgroundImageUrl?: string }>`
   align-items: center;
 	background: "transparent";
   gap: ${layout.space.large};
-
-  ${layout.mediaQueries.mobile} {
-    max-width: 360px;
-  }
 `;
 
 export const CoverContainer = styled.div<{ $backgroundImageUrl?: string }>`
   width: 100%;
-  height: 480px;
+  min-height: 480px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -36,6 +32,7 @@ export const CoverContainer = styled.div<{ $backgroundImageUrl?: string }>`
     flex-direction: column;
     align-items: center;
     align-self: stretch;
+    min-height: 220px
   }
 `;
 
@@ -46,7 +43,7 @@ export const CoverTop = styled.div`
   align-items: flex-start;
   gap: ${layout.space.xLarge};
   align-self: stretch;
-  background: linear-gradient(180deg, #151515 0%, rgba(21, 21, 21, 0) 100%); // color.base.base2 
+  background: linear-gradient(180deg, var(--Color-Base-2, #151515) 0%, rgba(21, 21, 21, 0.00) 100%);
 
   ${layout.mediaQueries.mobile} {
     align-items: center;
@@ -96,7 +93,7 @@ export const CoverBottom = styled.div`
   align-items: center;
   gap: ${layout.space.xSmall};
   align-self: stretch;
-  background: linear-gradient(180deg, rgba(21, 21, 21, 0) 0%, #151515 80.29%); // color.base.base2 
+  background: linear-gradient(180deg, rgba(21, 21, 21, 0.00) 0%, var(--Color-Base-2, #151515) 80.29%);
 
   ${layout.mediaQueries.mobile} {
     padding: ${layout.space.xxLarge} ${layout.space.medium} 0 ${layout.space.medium};
@@ -110,6 +107,7 @@ export const TextContainer = styled.div`
   gap: ${layout.space.xxxSmall};
   align-items: center;
   text-align: center;
+  max-width: 960px;
 `;
 
 export const Title = styled.h1`
@@ -120,6 +118,7 @@ export const Title = styled.h1`
 export const Description = styled.p`
   ${typography.body.mediumRegular};
   color: ${colors.text.text2};
+  max-width: 640px;
 `;
 
 export const StatusContainer = styled.div`
