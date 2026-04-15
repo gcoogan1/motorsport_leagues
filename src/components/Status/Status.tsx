@@ -1,15 +1,15 @@
+import type { LeagueStatus } from "@/types/league.types";
 import { StatusContainer, StatusText } from "./Status.styles";
 
 
 const StatusContent = {
-  unavailable: "Season Unavailable",
-  open: "Registration Open",
+  setup: "Coming Soon",
   active: "Season Active",
   complete: "Season Complete",
 }
 
 type StatusProps ={
-  statusType: "unavailable" | "open" | "active" | "complete";
+  statusType: LeagueStatus;
 }
 
 const Status = ({ statusType }: StatusProps) => {
