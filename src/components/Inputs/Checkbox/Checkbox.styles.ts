@@ -50,12 +50,13 @@ export const CheckboxWrapper = styled.div`
   display: flex;
   align-items: flex-start;
   gap: ${layout.space.xSmall};
-  width: 320px;
+  /* width: 320px; */
 `
   
 export const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-self: center;
 `
 
 export const Label = styled.label`

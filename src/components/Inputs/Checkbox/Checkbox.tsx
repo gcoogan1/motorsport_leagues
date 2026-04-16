@@ -3,7 +3,7 @@ import CheckedIcon from "@assets/Icon/Checkbox_Checked.svg?react";
 import UncheckedIcon from "@assets/Icon/Checkbox_Unchecked.svg?react";
 import { CheckboxContainer, CheckboxWrapper, HelperMessage, Label, TextContainer } from "./Checkbox.styles";
 
-type CheckboxProps = {
+export type CheckboxOption = {
   name?: string;
   label: string;
   checked?: boolean;
@@ -11,6 +11,8 @@ type CheckboxProps = {
   helperMessage?: string;
   onChange?: (checked: boolean) => void;
 };
+
+type CheckboxProps = CheckboxOption;
 
 const Checkbox = ({ name, label, checked, defaultChecked, helperMessage, onChange }: CheckboxProps) => {
   const [internalChecked, setInternalChecked] = useState(defaultChecked ?? false);
