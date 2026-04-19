@@ -1,0 +1,2 @@
+[build]
+  command = "VITE_CONTEXT=$CONTEXT npm run build"
