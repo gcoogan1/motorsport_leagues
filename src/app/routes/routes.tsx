@@ -1,3 +1,4 @@
+import AlphaHomepage from "@/pages/AlphaHomepage/AlphaHomepage";
 import CreateAccount from "@/pages/CreateAccount/CreateAccount";
 import CreateLeague from "@/pages/CreateLeague/CreateLeague";
 import CreateProfile from "@/pages/CreateProfile/CreateProfile";
@@ -13,17 +14,24 @@ import Squad from "@/pages/Squad/Squad";
 import Unavailable from "@/pages/Unavailable/Unavailable";
 import VerifyAccount from "@/pages/VerifyAccount/VerifyAccount";
 
+const isProduction = import.meta.env.PROD;
+
 export type Route = {
   path: string;
   element: React.ReactNode;
-  navbar?: "core" | "user" | "guest"; 
+  navbar?: "core" | "user" | "guest" | "alpha";
   protected?: boolean; // If true, only accessible to authenticated users
 };
 
-export const ROUTES: Route[] = [
+const DEV_ROUTES: Route[] = [
   { 
     path: "/", 
     element: <Homepage />,
+  },
+  {
+    path: "/alpha",
+    element: <AlphaHomepage />,
+    navbar: "alpha",
   },
   {
     path: "/verify-account",
@@ -101,4 +109,19 @@ export const ROUTES: Route[] = [
     element: <Unavailable />,
     navbar: "core", 
   },
-]
+];
+
+const PRODUCTION_ROUTES: Route[] = [
+  {
+    path: "/",
+    element: <AlphaHomepage />,
+    navbar: "alpha",
+  },
+  {
+    path: "*",
+    element: <AlphaHomepage />,
+    navbar: "alpha",
+  },
+];
+
+export const ROUTES: Route[] = isProduction ? PRODUCTION_ROUTES : DEV_ROUTES;
