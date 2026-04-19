@@ -1,4 +1,5 @@
 import AlphaLogo from "@/assets/Alpha/VIPGTWC_LOGO.png";
+import ReactGA from "react-ga4";
 import DiscordIcon from "@assets/Icon/Discord.svg?react";
 import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import { Container, Content, DiscordButton, Logo, LogoImage, SubTitle, Wrapper } from "./AlphaHomepage.styles";
@@ -8,6 +9,15 @@ import Icon from "@/components/Icon/Icon";
 const DISCORD_INVITE_URL = "https://discord.gg/yjTMKydM9f";
 
 const AlphaHomepage = () => {
+  const handleDiscordClick = () => {
+    ReactGA.event({
+      category: "alpha_homepage",
+      action: "click_discord_invite",
+      label: "Join VIP Leagues Discord",
+    });
+
+    window.open(DISCORD_INVITE_URL, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <Wrapper>
@@ -18,7 +28,7 @@ const AlphaHomepage = () => {
             <SubTitle>8 July - 26 September 2026</SubTitle>
           </Logo>
           <DiscordButton
-            onClick={() => window.open(DISCORD_INVITE_URL, "_blank", "noopener,noreferrer")}
+            onClick={handleDiscordClick}
           >
             <DiscordIcon width={32} height={20} />
             Join VIP Leagues Discord
