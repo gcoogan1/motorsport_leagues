@@ -14,7 +14,13 @@ import Squad from "@/pages/Squad/Squad";
 import Unavailable from "@/pages/Unavailable/Unavailable";
 import VerifyAccount from "@/pages/VerifyAccount/VerifyAccount";
 
-const isProduction = import.meta.env.PROD;
+const context = import.meta.env.VITE_CONTEXT;
+
+export const ENV = {
+  isProduction: context === "production",
+  isBranchDeploy: context === "branch-deploy",
+  isPreview: context === "deploy-preview",
+};
 
 export type Route = {
   path: string;
@@ -124,4 +130,4 @@ const PRODUCTION_ROUTES: Route[] = [
   },
 ];
 
-export const ROUTES: Route[] = isProduction ? PRODUCTION_ROUTES : DEV_ROUTES;
+export const ROUTES: Route[] = ENV.isProduction ? PRODUCTION_ROUTES : DEV_ROUTES;
