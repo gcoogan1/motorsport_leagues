@@ -17,6 +17,7 @@ export const Wrapper = styled.div`
 
   ${layout.mediaQueries.mobile} {
     padding: 32px;
+    min-height: 0;
   }
 `;
 
