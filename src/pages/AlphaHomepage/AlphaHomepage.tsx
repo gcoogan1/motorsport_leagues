@@ -10,11 +10,10 @@ const DISCORD_INVITE_URL = "https://discord.gg/yjTMKydM9f";
 
 const AlphaHomepage = () => {
   const handleDiscordClick = () => {
-    ReactGA.event({
-      category: "alpha_homepage",
-      action: "click_discord_invite",
-      label: "Join VIP Leagues Discord",
-    });
+    ReactGA.event("discord_invite_click", {
+    page: "alpha_homepage",
+    button_text: "Join VIP Leagues Discord",
+  });
 
     window.open(DISCORD_INVITE_URL, "_blank", "noopener,noreferrer");
   };
