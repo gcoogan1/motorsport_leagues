@@ -25,6 +25,8 @@ const AppContent = () => {
   const { user, loading } = useAuth();
   const dispatch = useDispatch<AppDispatch>();
 
+  console.log("context:", import.meta.env.VITE_CONTEXT);
+
   // Resolve any stored squad invite notification only after auth/bootstrap state settles.
   usePendingInviteNotification();
 
