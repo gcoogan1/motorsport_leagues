@@ -19,7 +19,7 @@ type User = {
 };
 
 type ReadOnlyInputProps = {
-  label: string;
+  label?: string;
   helperText?: string;
   profile?: User;
   textValue?: string;
@@ -28,7 +28,7 @@ type ReadOnlyInputProps = {
 const ReadOnlyInput = ({ label, helperText, profile, textValue }: ReadOnlyInputProps) => {
   return (
     <InputWrapper>
-      <Label>{label}</Label>
+      {label && <Label>{label}</Label>}
       <InputField>
         {profile ? (
           <UserProfile
@@ -36,7 +36,7 @@ const ReadOnlyInput = ({ label, helperText, profile, textValue }: ReadOnlyInputP
             avatarType={profile.avatarType}
             avatarValue={profile.avatarValue}
             information={profile.information}
-            size="medium"
+            size={profile.size ?? "medium"}
             tags={profile.tags}
           />
         ) : (

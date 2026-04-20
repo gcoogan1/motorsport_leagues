@@ -29,7 +29,7 @@ type Profile = {
 
 type ProfileSelectInputProps = {
   name: string;
-  fieldLabel: string;
+  fieldLabel?: string;
   type: "profile" | "driver";
   isLarge?: boolean;
   helperText?: string;
@@ -61,6 +61,8 @@ const ProfileSelectInput = ({
 
   const selectedProfile = profiles.find((p) => p.value === field.value);
   const avatarSize = type === "profile" ? "medium" : "tiny";
+  const selectedSize = type === "profile" ? "medium" : "small";
+  const selectedInfo = type === "profile" ? selectedProfile?.secondaryInfo : undefined;
 
   // Prep options for the dropdown
   const dropdownOptions = profiles.map((profile) => ({
@@ -70,9 +72,11 @@ const ProfileSelectInput = ({
 
   return (
     <InputWrapper>
-      <LabelRow>
-        <FieldLabel>{fieldLabel}</FieldLabel>
-      </LabelRow>
+      {fieldLabel && (
+        <LabelRow>
+          <FieldLabel>{fieldLabel}</FieldLabel>
+        </LabelRow>
+      )}
 
       {/* The 'key' prop is a crucial workaround: it forces Radix to re-sync 
           whenever the underlying RHF value changes. */}
@@ -88,11 +92,11 @@ const ProfileSelectInput = ({
             <PlaceholderWrapper $isLarge={isLarge}>
               {selectedProfile ? (
                 <UserProfile
-                  size={"medium"}
+                  size={selectedSize}
                   username={selectedProfile.label}
                   avatarType={selectedProfile.avatar.avatarType}
                   avatarValue={selectedProfile.avatar.avatarValue}
-                  information={selectedProfile.secondaryInfo}
+                  information={selectedInfo}
                 />
               ) : (
                 <>

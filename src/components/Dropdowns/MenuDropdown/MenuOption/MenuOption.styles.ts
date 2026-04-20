@@ -60,12 +60,28 @@ export const OptionLabel = styled.p`
   color: ${colors.text.text1};
   margin: 0;
   text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+
+  ${layout.mediaQueries.mobile} {
+    max-width: 120px;
+  }
 `
 
 export const OptionInfo = styled.p`
   ${typography.body.smallRegular};
   color: ${colors.text.text2};
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+
+  ${layout.mediaQueries.mobile} {
+    max-width: 120px;
+  }
 `
 
 export const OptionIndicator = styled(Select.ItemIndicator)`

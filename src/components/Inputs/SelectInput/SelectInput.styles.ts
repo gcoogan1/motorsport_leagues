@@ -10,7 +10,10 @@ export const InputWrapper = styled.div<{ $hasValue?: boolean }>`
   width: 100%;
 
   .select__control {
-    min-height: 48px;
+    height: 52px;
+    min-height: 52px;
+    max-height: 52px;
+    box-sizing: border-box;
     background: ${colors.base.translucent10};
     border-radius: ${borders.radius.medium};
     padding: ${layout.space.medium};
@@ -51,9 +54,19 @@ export const InputWrapper = styled.div<{ $hasValue?: boolean }>`
 
   .select__value-container {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    height: 100%;
+    min-height: 0;
+    align-items: center;
     gap: ${layout.space.xxSmall};
     padding: 0;
+    overflow: hidden;
+  }
+
+  .select__single-value {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .select__input-container {
@@ -104,6 +117,7 @@ export const Label = styled.label`
 
 export const SelectMenuGlobalStyles = createGlobalStyle`
   .select__menu {
+    min-width: 200px;
     background: ${colors.base.base3};
     border: ${borders.width.thin} solid ${colors.base.translucent10};
     border-radius: ${borders.radius.xxLarge};

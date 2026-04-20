@@ -105,6 +105,7 @@ const MultiInput = ({
 						{label && <Label htmlFor={inputId}>{label}</Label>}
 						<Select<TagOption, true>
 							isMulti
+							isClearable={false}
 							unstyled
 							classNamePrefix="select"
 							ref={ref}
@@ -136,6 +137,7 @@ const MultiInput = ({
 								menuPortal: (base) => ({ ...base, zIndex: 9999 }),
 							}}
 							components={{
+								ClearIndicator: () => null,
 								DropdownIndicator,
 								IndicatorSeparator: () => null,
 								Option,

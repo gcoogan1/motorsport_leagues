@@ -61,6 +61,8 @@ export const InputField = styled.input<{
   $hasIcon?: boolean;
 }>`
   width: 100%;
+  height: 52px;
+  box-sizing: border-box;
   border-radius: ${borders.radius.medium};
   padding-top: ${layout.space.medium};
   padding-bottom: ${layout.space.medium};
@@ -78,13 +80,6 @@ export const InputField = styled.input<{
     $hasError
       ? `inset 0 0 0 2px ${colors.alert.alertA}`
       : `inset 0 0 0 2px transparent`};
-
-  /* Text is too long style */
-  padding-right: 28px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 0;
 
   /* Stop Safari focus state on mobile */
   font-size: 16px;
