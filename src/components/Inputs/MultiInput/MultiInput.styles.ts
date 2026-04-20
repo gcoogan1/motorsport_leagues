@@ -10,6 +10,10 @@ export const FieldWrapper = styled.div`
 	width: 100%;
 
 	.select__control {
+		height: 52px;
+		min-height: 52px;
+		max-height: 52px;
+		box-sizing: border-box;
     border-radius: ${borders.radius.medium};
     padding-top: ${layout.space.small};
     padding-bottom: ${layout.space.small};
@@ -52,6 +56,8 @@ export const FieldWrapper = styled.div`
 
 	.select__value-container {
 		display: flex;
+		height: 100%;
+		min-height: 0;
 		flex-wrap: nowrap;
 		gap: ${layout.space.xxSmall};
 		padding: 0;
