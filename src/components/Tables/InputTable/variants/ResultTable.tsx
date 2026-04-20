@@ -27,10 +27,11 @@ import Button from "@/components/Button/Button";
 type ResultTableProps = {
   name: string;
   columns: ResultTableRow;
-  customWidth?: string; // should be "116px"
+  customWidth?: string; // should be "116px",
+  moreOnClick?: () => void;
 };
 
-const ResultTable = ({ name, columns, customWidth }: ResultTableProps) => {
+const ResultTable = ({ name, columns, customWidth, moreOnClick }: ResultTableProps) => {
   const { control } = useFormContext();
   const { fields, remove } = useFieldArray({ control, name });
 
@@ -96,10 +97,11 @@ const ResultTable = ({ name, columns, customWidth }: ResultTableProps) => {
               <Button
                 size="small"
                 color="base"
+                rounded
                 variant="ghost"
                 ariaLabel="remove row"
                 icon={{ left: <MoreIcon /> }}
-                onClick={() => remove(i)}
+                onClick={() => moreOnClick && moreOnClick()}
               />
             </ExtraCell>
           </TableRow>
