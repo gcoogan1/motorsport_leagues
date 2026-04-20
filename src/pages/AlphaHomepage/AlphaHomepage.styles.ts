@@ -13,7 +13,7 @@ export const Wrapper = styled.div`
   align-items: center;
   padding: ${layout.space.xxxLarge};
   background-color: ${colors.base.base2};
-  min-height: 1024px;
+  height: 1024px;
 
   ${layout.mediaQueries.mobile} {
     padding: 32px;
@@ -37,10 +37,12 @@ export const Container = styled.div`
   border-top-right-radius: ${borders.radius.xxxLarge};
   border-top-left-radius: ${borders.radius.xxxLarge};
   padding: 64px 0;
+  height: 940px;
 
   ${layout.mediaQueries.mobile} {
     border-top-right-radius: 40px;
     border-top-left-radius: 40px;
+    height: 720px;
   }
 `;
 
@@ -79,6 +81,7 @@ export const SubTitle = styled.h2`
   font-weight: 700;
   line-height: normal;
   text-transform: uppercase;
+  opacity: 0.5;
 
   ${layout.mediaQueries.mobile} {
     font-size: 20px;
