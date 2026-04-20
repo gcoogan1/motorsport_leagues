@@ -33,7 +33,7 @@ type ResultTableProps = {
 
 const ResultTable = ({ name, columns, customWidth, moreOnClick }: ResultTableProps) => {
   const { control } = useFormContext();
-  const { fields, remove } = useFieldArray({ control, name });
+  const { fields } = useFieldArray({ control, name });
 
   return (
     <TableWrapper style={{ width: customWidth || "640px" }}>
