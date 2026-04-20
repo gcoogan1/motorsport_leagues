@@ -37,6 +37,8 @@ export const InputContainer = styled.div`
 
 export const PlaceholderWrapper = styled.div<{ $isLarge: boolean }>`
   display: flex;
+  width: 100%;
+  min-width: 0;
   align-items: center;
   gap: ${({ $isLarge }) => ($isLarge ? layout.space.xSmall : layout.space.xxSmall)};
   color: ${colors.text.text2};
@@ -44,6 +46,13 @@ export const PlaceholderWrapper = styled.div<{ $isLarge: boolean }>`
 
 export const PlaceholderText = styled.span`
   ${typography.body.mediumRegular}
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  ${layout.mediaQueries.mobile} {
+    max-width: 60px;
+  }
 `;
 
 export const HelperText = styled.span`
@@ -65,6 +74,8 @@ export const StyledTrigger = styled(SelectPrimitive.Trigger)<{
   $hasError?: boolean
 }>`
   width: 100%;
+  height: 52px;
+  box-sizing: border-box;
   border-radius: ${borders.radius.medium};
   padding: ${layout.space.medium};
   border: none;

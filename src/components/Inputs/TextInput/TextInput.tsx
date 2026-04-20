@@ -16,7 +16,7 @@ import {
 
 type TextInputProps = {
   name: string;
-  label: string;
+  label?: string;
   type?: "text" | "email" | "number";
   icon?: React.ReactNode;
   placeholder?: string;
@@ -48,13 +48,16 @@ const TextInput = ({
 
   const count = value ? value.length : 0;
   const hasIcon = !!icon;
+  const showLabelRow = Boolean(label || showCounter);
 
   return (
     <InputWrapper $hasValue={hasValue}>
-      <LabelRow>
-        <Label>{label}</Label>
-        {!!showCounter && <Count>{count}/{maxLength}</Count>}
-      </LabelRow>
+      {showLabelRow && (
+        <LabelRow>
+          {label && <Label>{label}</Label>}
+          {!!showCounter && <Count>{count}/{maxLength}</Count>}
+        </LabelRow>
+      )}
       <InputContainer>
         <InputField
           id={name}
@@ -71,7 +74,7 @@ const TextInput = ({
         />
         {icon && <IconWrapper $hasValue={hasValue}>{icon}</IconWrapper>}
       </InputContainer>
-      <HelperText>{helperText}</HelperText>
+      {helperText && <HelperText>{helperText}</HelperText>}
       {!!hasError && (
         <ErrorText>
           <Error_Outlined width={18} height={18} /> {errorMessage}
