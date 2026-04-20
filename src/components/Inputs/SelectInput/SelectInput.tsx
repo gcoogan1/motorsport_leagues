@@ -31,7 +31,7 @@ export type SelectInputOption = {
 
 type SelectInputProps = {
   name: string;
-  label: string;
+  label?: string;
   options: SelectInputOption[];
   placeholder?: string;
   helperText?: string;
@@ -125,7 +125,7 @@ const SelectInput = ({
           >
             <SelectMenuGlobalStyles />
             <LabelRow>
-              <Label htmlFor={inputId}>{label}</Label>
+              {label && <Label htmlFor={inputId}>{label}</Label>}
             </LabelRow>
 
             <Select<SelectInputOption, false>
