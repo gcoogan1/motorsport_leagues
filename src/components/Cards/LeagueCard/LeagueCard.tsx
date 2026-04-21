@@ -3,7 +3,7 @@ import type { Tag } from "@/components/Tags/Tags.variants";
 import type { LeagueStatus } from "@/types/league.types";
 import type { GameType } from "@/types/profile.types";
 import Icon from "@/components/Icon/Icon";
-import ParticipantsIcon from "@/assets/Icon/participants.svg?react";
+import ParticipantsIcon from "@/assets/Icon/Participants.svg?react";
 import GameIcon from "@/assets/Icon/game.svg?react";
 import HostIcon from "@/assets/Icon/hosts.svg?react";
 import { ClickableWrapper, Divider, ImageContainer, IndicatorsContainer, LeagueInfoContainer, LeagueInfoContent, LeagueInfoText, LeagueName, SquadInfoText, TextContainer } from "./LeagueCard.styles";
@@ -21,6 +21,7 @@ type LeagueCardProps = {
   tags?: Tag[];
   onClick?: () => void;
 }
+
 
 const LeagueCard = ({
   name,
