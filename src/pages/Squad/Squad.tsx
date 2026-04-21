@@ -22,6 +22,7 @@ import InviteSquad from "@/features/squads/forms/Invite/InviteSquad/InviteSquad"
 import LoadingScreen from "@/components/Messages/LoadingScreen/LoadingScreen";
 import { useSquadPageReadyState } from "@/hooks/useSquadPageReadyState";
 import { useSquadFounderContext } from "@/hooks/useSquadFounderContext";
+import { useSquadHostedLeagues } from "@/hooks/rtkQuery/queries/useLeagues";
 
 const Squad = () => {
   const { openPanel } = usePanel();
@@ -45,6 +46,7 @@ const Squad = () => {
 
   // RTK Query
   const { data: squadMembers = [] } = useSquadMembers(squadId);
+  const { data: hostedLeagues = [] } = useSquadHostedLeagues(squadId);
   const { data: followers = [] } = useSquadFollowers(squadId ?? "");
   const { data: isFollowing = false } = useIsFollowingSquad(
     squadId ?? "",
@@ -211,7 +213,11 @@ const Squad = () => {
       />
       <Contents>
         <Container>
-          <LeaguesListCard />
+          <LeaguesListCard
+            leagues={hostedLeagues}
+            currentUserId={accountId}
+            squadPageView={true}
+          />
         </Container>
       </Contents>
     </Wrapper>

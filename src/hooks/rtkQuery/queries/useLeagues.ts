@@ -1,6 +1,8 @@
 import {
 	useGetLeagueParticipantsQuery,
 	useGetLeaguesQuery,
+	useGetLeaguesByProfileIdQuery,
+	useGetLeaguesBySquadIdQuery,
 	useGetLeagueSeasonsQuery,
   useGetParticipantLeaguesQuery,
 } from "@/store/rtkQueryAPI/leagueApi";
@@ -44,3 +46,15 @@ export const useParticipantLeagues = (accountId?: string) =>
     skip: !accountId,
   }
   );
+
+// Query to fetch all enriched leagues for a given profile id
+export const useProfileLeagues = (profileId?: string) =>
+	useGetLeaguesByProfileIdQuery(profileId ?? "", {
+		skip: !profileId,
+	});
+
+// Query to fetch all enriched leagues hosted by a given squad id
+export const useSquadHostedLeagues = (squadId?: string) =>
+	useGetLeaguesBySquadIdQuery(squadId ?? "", {
+		skip: !squadId,
+	});

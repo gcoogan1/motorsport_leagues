@@ -432,6 +432,42 @@ export const getLeaguesWithInfoByAccountId = async (
 ): Promise<GetLeaguesWithInfoResult> =>
   getAllLeaguesWithInfo(accountId, undefined, signal, true);
 
+// -- Get Leagues with Info by Profile ID -- //
+export const getLeaguesWithInfoByProfileId = async (
+  profileId: string,
+  signal?: AbortSignal,
+): Promise<GetLeaguesWithInfoResult> => {
+  const result = await getAllLeaguesWithInfo(undefined, undefined, signal, true);
+
+  if (!result.success) {
+    return result;
+  }
+
+  return {
+    success: true,
+    data: result.data.filter((league) =>
+      league.participants.some((participant) => participant.profile_id === profileId),
+    ),
+  };
+};
+
+// -- Get Leagues with Info by Hosting Squad ID -- //
+export const getLeaguesWithInfoBySquadId = async (
+  squadId: string,
+  signal?: AbortSignal,
+): Promise<GetLeaguesWithInfoResult> => {
+  const result = await getAllLeaguesWithInfo(undefined, undefined, signal, true);
+
+  if (!result.success) {
+    return result;
+  }
+
+  return {
+    success: true,
+    data: result.data.filter((league) => league.hosting_squad_id === squadId),
+  };
+};
+
 // -- Get League by ID -- //
 export const getLeagueById = async (leagueId: string): Promise<CreateLeagueResult> => {
   const { data, error } = await supabase
