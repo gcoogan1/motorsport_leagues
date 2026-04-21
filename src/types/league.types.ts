@@ -90,6 +90,12 @@ export type GetLeagueParticipantsResult =
   | GetLeagueParticipantsSuccess
   | SupabaseError;
 
+export type LeagueWithInfo = LeagueTable & {
+  seasons: LeagueSeasonTable[];
+  participants: LeagueParticipantProfile[];
+  current_season_name?: string;
+};
+
 // League Seasons Table --> represents the "league_seasons" table in Supabase, which tracks the different seasons within a league
 export type LeagueSeasonTable = {
   id: string;
@@ -176,6 +182,13 @@ export type GetLeaguesSuccess = {
 
 // Get Leagues --> Result type
 export type GetLeaguesResult = GetLeaguesSuccess | SupabaseError;
+
+export type GetLeaguesWithInfoSuccess = {
+  success: true;
+  data: LeagueWithInfo[];
+};
+
+export type GetLeaguesWithInfoResult = GetLeaguesWithInfoSuccess | SupabaseError;
 
 // Add League Participant --> Payload type
 export type AddLeagueParticipantPayload = {
@@ -277,8 +290,8 @@ export type RemoveLeagueSeasonResult =
 // Redux Types //
 // League State --> used in Redux slice for leagues
 export type LeagueState = {
-  data: LeagueTable[] | null;
-  currentLeague: LeagueTable | null;
+  data: (LeagueWithInfo | LeagueTable)[] | null;
+  currentLeague: (LeagueWithInfo | LeagueTable) | null;
   status: "idle" | "loading" | "fulfilled" | "rejected";
   error?: string;
   draft: LeagueDraft;

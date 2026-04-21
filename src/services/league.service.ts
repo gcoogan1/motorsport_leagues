@@ -8,7 +8,9 @@ import type {
   CreateLeagueResult,
   CreateLeagueSeasonPayload,
   CreateLeagueSeasonResult,
+  GetLeaguesWithInfoResult,
   DeleteLeagueResult,
+  LeagueParticipantProfile,
   GetLeagueParticipantsResult,
   GetLeagueSeasonsResult,
   GetLeaguesResult,
@@ -117,6 +119,318 @@ export const getLeaguesByAccountId = async (
     })),
   };
 };
+
+// -- Get All Leagues with Seasons + Participants + Roles (with optional search) -- //
+export const getAllLeaguesWithInfo = async (
+  accountId?: string,
+  search?: string,
+  signal?: AbortSignal,
+  includeOwnLeagues: boolean = false,
+): Promise<GetLeaguesWithInfoResult> => {
+  // Match squads behavior: optionally hide the user's own leagues.
+  let excludeLeagueIds: string[] = [];
+
+  if (accountId && !includeOwnLeagues) {
+    const { data: profiles, error: profilesError } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("account_id", accountId);
+
+    if (profilesError) {
+      return {
+        success: false,
+        error: {
+          message: profilesError.message,
+          code: profilesError.code || "SERVER_ERROR",
+          status: 500,
+        },
+      };
+    }
+
+    if (profiles?.length) {
+      const profileIds = profiles.map((profile) => profile.id);
+
+      const { data: ownParticipantRows, error: ownParticipantsError } = await supabase
+        .from("league_participants")
+        .select("id, league_id")
+        .in("profile_id", profileIds);
+
+      if (ownParticipantsError) {
+        return {
+          success: false,
+          error: {
+            message: ownParticipantsError.message,
+            code: ownParticipantsError.code || "SERVER_ERROR",
+            status: 500,
+          },
+        };
+      }
+
+      if (ownParticipantRows?.length) {
+        const participantIds = ownParticipantRows.map((participant) => participant.id);
+
+        const { data: ownDirectorRoles, error: ownRolesError } = await supabase
+          .from("league_participants_role")
+          .select("participant_id")
+          .in("participant_id", participantIds)
+          .eq("role", "director");
+
+        if (ownRolesError) {
+          return {
+            success: false,
+            error: {
+              message: ownRolesError.message,
+              code: ownRolesError.code || "SERVER_ERROR",
+              status: 500,
+            },
+          };
+        }
+
+        if (ownDirectorRoles?.length) {
+          const ownDirectorParticipantIds = new Set(
+            ownDirectorRoles.map((role) => role.participant_id),
+          );
+
+          excludeLeagueIds = [
+            ...new Set(
+              ownParticipantRows
+                .filter((participant) => ownDirectorParticipantIds.has(participant.id))
+                .map((participant) => participant.league_id),
+            ),
+          ];
+        }
+      }
+    }
+  }
+
+  let leaguesQuery = supabase
+    .from("leagues")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (search) {
+    const normalizedSearch = normalizeName(search);
+    leaguesQuery = leaguesQuery.ilike("league_name_normalized", `%${normalizedSearch}%`);
+  }
+
+  if (excludeLeagueIds.length) {
+    leaguesQuery = leaguesQuery.not("id", "in", `(${excludeLeagueIds.join(",")})`);
+  }
+
+  if (signal) {
+    leaguesQuery = leaguesQuery.abortSignal(signal);
+  }
+
+  const { data: leaguesData, error: leaguesError } = await leaguesQuery;
+
+  if (leaguesError) {
+    if (leaguesError.code === "ABORT" || leaguesError.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: leaguesError.message,
+        code: leaguesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  const leagues = (leaguesData ?? []).map((league) => ({
+    ...league,
+    cover_value: resolveCoverValue(league.cover_type, league.cover_value),
+  }));
+
+  if (!leagues.length) {
+    return {
+      success: true,
+      data: [],
+    };
+  }
+
+  const leagueIds = leagues.map((league) => league.id);
+
+  let seasonsQuery = supabase
+    .from("league_season")
+    .select("*")
+    .in("league_id", leagueIds)
+    .order("created_at", { ascending: true });
+
+  if (signal) {
+    seasonsQuery = seasonsQuery.abortSignal(signal);
+  }
+
+  const { data: seasonsData, error: seasonsError } = await seasonsQuery;
+
+  if (seasonsError) {
+    return {
+      success: false,
+      error: {
+        message: seasonsError.message,
+        code: seasonsError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  let participantsQuery = supabase
+    .from("league_participants")
+    .select("id, league_id, profile_id")
+    .in("league_id", leagueIds);
+
+  if (signal) {
+    participantsQuery = participantsQuery.abortSignal(signal);
+  }
+
+  const { data: participantRows, error: participantsError } = await participantsQuery;
+
+  if (participantsError) {
+    return {
+      success: false,
+      error: {
+        message: participantsError.message,
+        code: participantsError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  const seasonsByLeague = new Map<string, typeof seasonsData>();
+  (seasonsData ?? []).forEach((season) => {
+    const current = seasonsByLeague.get(season.league_id) ?? [];
+    current.push(season);
+    seasonsByLeague.set(season.league_id, current);
+  });
+
+  if (!participantRows?.length) {
+    return {
+      success: true,
+      data: leagues.map((league) => {
+        const seasons = seasonsByLeague.get(league.id) ?? [];
+
+        return {
+          ...league,
+          seasons,
+          participants: [],
+          current_season_name: seasons.at(-1)?.season_name,
+        };
+      }),
+    };
+  }
+
+  const profileIds = [
+    ...new Set(participantRows.map((participant) => participant.profile_id)),
+  ];
+
+  let profilesQuery = supabase
+    .from("profiles")
+    .select("id, account_id, username, game_type, avatar_type, avatar_value")
+    .in("id", profileIds);
+
+  if (signal) {
+    profilesQuery = profilesQuery.abortSignal(signal);
+  }
+
+  const { data: profiles, error: profilesError } = await profilesQuery;
+
+  if (profilesError) {
+    return {
+      success: false,
+      error: {
+        message: profilesError.message,
+        code: profilesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  const participantIds = participantRows.map((participant) => participant.id);
+
+  let rolesQuery = supabase
+    .from("league_participants_role")
+    .select("participant_id, role")
+    .in("participant_id", participantIds);
+
+  if (signal) {
+    rolesQuery = rolesQuery.abortSignal(signal);
+  }
+
+  const { data: rolesData, error: rolesError } = await rolesQuery;
+
+  if (rolesError) {
+    return {
+      success: false,
+      error: {
+        message: rolesError.message,
+        code: rolesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  const profilesMap = new Map(
+    (profiles ?? []).map((profile) => [
+      profile.id,
+      {
+        ...profile,
+      },
+    ]),
+  );
+
+  const rolesMap = new Map<string, typeof LEAGUE_PARTICIPANT_ROLES[number][]>();
+  (rolesData ?? []).forEach((roleRow) => {
+    const roles = rolesMap.get(roleRow.participant_id) ?? [];
+    roles.push(roleRow.role as typeof LEAGUE_PARTICIPANT_ROLES[number]);
+    rolesMap.set(roleRow.participant_id, roles);
+  });
+
+  const participantsByLeague = new Map<string, LeagueParticipantProfile[]>();
+
+  participantRows.forEach((participant) => {
+    const profile = profilesMap.get(participant.profile_id);
+
+    if (!profile) return;
+
+    const leagueParticipants = participantsByLeague.get(participant.league_id) ?? [];
+
+    leagueParticipants.push({
+      id: participant.id,
+      profile_id: participant.profile_id,
+      account_id: profile.account_id,
+      username: profile.username,
+      game_type: profile.game_type,
+      avatar_type: profile.avatar_type,
+      avatar_value: profile.avatar_value,
+      roles: rolesMap.get(participant.id) ?? [],
+    });
+
+    participantsByLeague.set(participant.league_id, leagueParticipants);
+  });
+
+  return {
+    success: true,
+    data: leagues.map((league) => {
+      const seasons = seasonsByLeague.get(league.id) ?? [];
+
+      return {
+        ...league,
+        seasons,
+        participants: participantsByLeague.get(league.id) ?? [],
+        current_season_name: seasons.at(-1)?.season_name,
+      };
+    }),
+  };
+};
+
+//  -- Get Leagues with Info by Account ID (optionally include own leagues) -- //
+/* shortcut */
+export const getLeaguesWithInfoByAccountId = async (
+  accountId: string,
+  signal?: AbortSignal,
+): Promise<GetLeaguesWithInfoResult> =>
+  getAllLeaguesWithInfo(accountId, undefined, signal, true);
 
 // -- Get League by ID -- //
 export const getLeagueById = async (leagueId: string): Promise<CreateLeagueResult> => {
@@ -239,6 +553,7 @@ export const createLeagueWithCover = async (
       theme_color: themeColor,
       timezone: currentTimezone,
       description: defaultDescription,
+      league_status: "setup",
     })
     .select()
     .single();
@@ -485,6 +800,7 @@ export const addLeagueParticipantRole = async (
     data,
   };
 };
+
 
 // -- Remove League Participant Role -- //
 export const removeLeagueParticipantRole = async (

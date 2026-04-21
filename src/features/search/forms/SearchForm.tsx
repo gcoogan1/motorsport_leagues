@@ -5,6 +5,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { navigate } from "@/app/navigation/navigation";
 import { useProfiles } from "@/hooks/rtkQuery/queries/useProfiles";
 import { useSquads } from "@/hooks/rtkQuery/queries/useSquads";
+import { useLeagues } from "@/hooks/rtkQuery/queries/useLeagues";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
@@ -13,7 +14,9 @@ import ProfileCard from "@/components/Cards/ProfileCard/ProfileCard";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import SearchIcon from "@assets/Icon/Search.svg?react";
 import SquadCard from "@/components/Cards/SquadCard/SquadCard";
+import LeagueCard from "@/components/Cards/LeagueCard/LeagueCard";
 import { getBannerVariants } from "@/components/Banner/Banner.variants";
+import { getCoverVariants } from "@/components/Structures/Cover/Cover.variants";
 
 const SEARCH_TABS = [
   { label: "Profiles" },
@@ -68,6 +71,14 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
     { includeOwnSquads: true }, // Include user's own squads in search results
   );
 
+  // -- Leagues Query -- //
+  const { data: leagues = [] } = useLeagues(
+    user?.id,
+    debouncedSearch,
+    activeTab, // Pass the tab here
+    { includeOwnLeagues: true }, // Include user's own leagues in search results
+  );
+
   const hasSearchTerm = debouncedSearch.trim().length > 0;
 
   const showResults =
@@ -75,6 +86,9 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
   
   const showSquadResults =
     activeTab === "Squads" && hasSearchTerm;
+
+  const showLeagueResults =
+    activeTab === "Leagues" && hasSearchTerm;
 
   // -- Handlers -- //
   const handleTabChange = (tab: string) => {
@@ -90,6 +104,13 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
 
   const handleNavigateToSquad = (squadId: string) => {
     navigate(`/squad/${squadId}`);
+    closeModal();
+    closePanel?.();
+    return;
+  }
+
+  const handleNavigateToLeague = (leagueId: string) => {
+    navigate(`/league/${leagueId}`);
     closeModal();
     closePanel?.();
     return;
@@ -141,6 +162,28 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
                 }
                 size="small"
                 onClick={() => handleNavigateToSquad(squad.id)}
+              />
+            ))
+          ) : (
+            <EmptyMessage title="No Results" subtitle="Try a different search." />
+          )
+        ) : activeTab === "Leagues" ? (
+          leagues.length > 0 && showLeagueResults ? (
+            leagues.map((league) => (
+              <LeagueCard
+                key={league.id}
+                name={league.league_name}
+                coverImageUrl={
+                  league.cover_type === "preset"
+                    ? getCoverVariants()[league.cover_value as keyof ReturnType<typeof getCoverVariants>]
+                    : league.cover_value
+                }
+                seasonStatus={league.league_status}
+                size="small"
+                gameType={league.game_type}
+                hostingSquad={league.hosting_squad_name}
+                numOfParticipants={league.participants.length}
+                onClick={() => handleNavigateToLeague(league.id)}
               />
             ))
           ) : (

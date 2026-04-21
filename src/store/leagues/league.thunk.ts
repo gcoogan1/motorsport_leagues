@@ -3,21 +3,22 @@ import {
 	createLeagueWithCover,
 	deleteLeagueById,
 	getLeagueById,
-	getLeaguesByAccountId,
+	getLeaguesWithInfoByAccountId,
 	updateLeagueSettings,
 } from "@/services/league.service";
 import type {
 	CreateLeaguePayload,
 	LeagueTable,
+	LeagueWithInfo,
 	UpdateLeaguePayload,
 } from "@/types/league.types";
 
 export const fetchLeaguesByAccountIdThunk = createAsyncThunk<
-	LeagueTable[],
+	LeagueWithInfo[],
 	string,
 	{ rejectValue: string }
 >("league/getByAccountId", async (accountId, { rejectWithValue }) => {
-	const result = await getLeaguesByAccountId(accountId);
+	const result = await getLeaguesWithInfoByAccountId(accountId);
 
 	if (!result.success) {
 		return rejectWithValue(result.error.message);

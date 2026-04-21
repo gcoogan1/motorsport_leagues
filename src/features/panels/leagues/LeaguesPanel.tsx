@@ -2,16 +2,21 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
 import { usePanel } from "@/providers/panel/usePanel";
-import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
-import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
-import League from "@assets/Icon/League.svg?react";
-import CreateIcon from "@assets/Icon/Create.svg?react";
-import SearchIcon from "@assets/Icon/Search.svg?react";
 import { navigate } from "@/app/navigation/navigation";
+import { useModal } from "@/providers/modal/useModal";
 import {
   fetchLeaguesByAccountIdThunk,
   getLeagueByIdThunk,
 } from "@/store/leagues/league.thunk";
+import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import SearchForm from "@/features/search/forms/SearchForm";
+import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
+import League from "@assets/Icon/League.svg?react";
+import CreateIcon from "@assets/Icon/Create.svg?react";
+import SearchIcon from "@assets/Icon/Search.svg?react";
+import { useParticipantLeagues } from "@/hooks/rtkQuery/queries/useLeagues";
+import LeagueCard from "@/components/Cards/LeagueCard/LeagueCard";
+import { getCoverVariants } from "@/components/Structures/Cover/Cover.variants";
 
 const LEAGUE_TABS = [
   { label: "My Leagues", shouldExpand: true },
@@ -19,12 +24,18 @@ const LEAGUE_TABS = [
 ];
 
 const LeaguesPanel = () => {
+  const { openModal } = useModal();
   const { closePanel } = usePanel();
   const [activeTab, setActiveTab] = useState<string>(LEAGUE_TABS[0].label);
   const dispatch = useDispatch<AppDispatch>();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
   const leagues = useSelector((state: RootState) => state.league.data);
   const leagueStatus = useSelector((state: RootState) => state.league.status);
+  const { data: participantLeagues = [] } = useParticipantLeagues(accountId);
+  const myLeagues = [...(leagues ?? []), ...participantLeagues].filter(
+    (league, index, allLeagues) =>
+      allLeagues.findIndex((otherLeague) => otherLeague.id === league.id) === index,
+  );
 
   useEffect(() => {
     if (accountId) {
@@ -49,10 +60,8 @@ const LeaguesPanel = () => {
   };
 
   const handleSearchLeagues = () => {
-    // openModal(<SearchForm closePanel={closePanel} startingTab="Leagues" />);
+    openModal(<SearchForm closePanel={closePanel} startingTab="Leagues" />);
   };
-
-  const hasLeagues = (leagues?.length ?? 0) > 0;
 
   return (
     <PanelLayout
@@ -78,20 +87,32 @@ const LeaguesPanel = () => {
       }
     >
       {activeTab === "My Leagues" ? (
-        hasLeagues ? (
-          <div>
-            {leagues?.map((league) => (
-              <div
+        myLeagues.length > 0 ? (
+          myLeagues.map((league) => {
+            const participants =
+              "participants" in league ? league.participants : undefined;
+            const numOfParticipants = Array.isArray(participants)
+              ? participants.length
+              : undefined;
+            const coverImageUrl =
+              league.cover_type === "preset"
+                ? getCoverVariants()[league.cover_value as keyof ReturnType<typeof getCoverVariants>]
+                : league.cover_value;
+
+            return (
+              <LeagueCard
                 key={league.id}
-                onClick={() => {
-                  void handleGoToLeague(league.id);
-                }}
-                style={{ cursor: "pointer", padding: "12px 0" }}
-              >
-                {league.league_name}
-              </div>
-            ))}
-          </div>
+                name={league.league_name}
+                coverImageUrl={coverImageUrl}
+                seasonStatus={league.league_status}
+                size="medium"
+                gameType={league.game_type}
+                hostingSquad={league.hosting_squad_name}
+                numOfParticipants={numOfParticipants}
+                onClick={() => handleGoToLeague(league.id)}
+              />
+            );
+          })
         ) : leagueStatus === "loading" ? (
           null
         ) : (

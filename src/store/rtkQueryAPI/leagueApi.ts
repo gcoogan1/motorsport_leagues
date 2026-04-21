@@ -3,6 +3,7 @@ import {
   addLeagueParticipant,
   addLeagueParticipantRole,
   createLeagueSeason,
+  getAllLeaguesWithInfo,
   getLeagueParticipantsByLeagueId,
   getLeagueSeasonsByLeagueId,
   removeLeagueParticipant,
@@ -18,8 +19,10 @@ import type {
   AddLeagueParticipantRoleResult,
   CreateLeagueSeasonPayload,
   CreateLeagueSeasonResult,
+  GetLeaguesWithInfoResult,
   GetLeagueParticipantsResult,
   GetLeagueSeasonsResult,
+  LeagueWithInfo,
   LeagueParticipantProfile,
   LeagueSeasonTable,
   RemoveLeagueParticipantPayload,
@@ -34,11 +37,77 @@ import type {
   UpdateLeagueSeasonResult,
 } from "@/types/league.types";
 
+export type LeaguesQueryArgs = {
+  accountId?: string;
+  search?: string;
+  activeTab?: string;
+  includeOwnLeagues?: boolean;
+};
+
 export const leagueApi = createApi({
   reducerPath: "leagueApi",
   baseQuery: fakeBaseQuery(),
-  tagTypes: ["LeagueParticipants", "LeagueSeasons"],
+  tagTypes: ["Leagues", "LeagueParticipants", "LeagueSeasons"],
   endpoints: (builder) => ({
+    getLeagues: builder.query<LeagueWithInfo[], LeaguesQueryArgs>({
+      queryFn: async ({ accountId, search, includeOwnLeagues }, api) => {
+        try {
+          const result: GetLeaguesWithInfoResult = await getAllLeaguesWithInfo(
+            accountId,
+            search,
+            api.signal,
+            includeOwnLeagues,
+          );
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, args) => [
+        {
+          type: "Leagues",
+          id: `leagues-${args.activeTab ?? "all"}-${args.search ?? ""}-${args.includeOwnLeagues ? "include-own" : "exclude-own"}`,
+        },
+      ],
+    }),
+    getParticipantLeagues: builder.query<LeagueWithInfo[], string>({
+      queryFn: async (accountId, api) => {
+        try {
+          const result: GetLeaguesWithInfoResult = await getAllLeaguesWithInfo(
+            accountId,
+            undefined,
+            api.signal,
+            true, // includeOwnLeagues is true to get leagues where the user is a participant
+          );
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, accountId) => [
+        { type: "Leagues", id: `participant-leagues-${accountId}` },
+      ],
+    }),
     getLeagueParticipants: builder.query<LeagueParticipantProfile[], string>({
       queryFn: async (leagueId, api) => {
         try {
@@ -294,6 +363,8 @@ export const {
   useAddLeagueParticipantMutation,
   useAddLeagueParticipantRoleMutation,
   useCreateLeagueSeasonMutation,
+  useGetLeaguesQuery,
+  useGetParticipantLeaguesQuery,
   useGetLeagueParticipantsQuery,
   useGetLeagueSeasonsQuery,
   useRemoveLeagueParticipantMutation,

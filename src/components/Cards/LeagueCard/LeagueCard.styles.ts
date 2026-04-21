@@ -16,6 +16,7 @@ export const ClickableWrapper = styled.button<{ $cardSize: "small" | "medium" }>
   z-index: 0;
   overflow: hidden;
   cursor: pointer;
+  box-sizing: border-box;
 
   width: 100%;
   /* min-width: 264px; */
@@ -28,7 +29,7 @@ export const ClickableWrapper = styled.button<{ $cardSize: "small" | "medium" }>
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   flex-shrink: 0;
   ${({ theme }) => gradientBorder({ gradient: theme.theme.primaryGradientFadeTop10, width: borders.width.medium })};
 
@@ -55,12 +56,18 @@ export const ClickableWrapper = styled.button<{ $cardSize: "small" | "medium" }>
   ${({ $cardSize }) => $cardSize === "small" && css`
     border-radius: ${borders.radius.medium};
     flex-direction: row;
+    align-items: center;
+
+    ${layout.mediaQueries.mobile} {
+      flex-direction: column;
+    }
   `}
 `;
 
 
 export const ImageContainer = styled.div<{ $cardSize: "small" | "medium", $imageBg?: string }>`
   width: 100%;
+  max-width: 360px;
   height: 160px;
   align-self: stretch;
   border-radius: ${borders.radius.medium};
@@ -76,6 +83,10 @@ export const ImageContainer = styled.div<{ $cardSize: "small" | "medium", $image
     height: 80px;
     align-self: center;
     border-radius: ${borders.radius.small};
+
+    ${layout.mediaQueries.mobile} {
+      align-self: flex-start;
+    }
   `}
 `;
 
@@ -98,7 +109,7 @@ export const TextContainer = styled.div<{ $cardSize: "small" | "medium" }>`
   padding: 0px ${layout.space.small};
   gap: ${layout.space.xxSmall};
   text-align: left;
-  align-self: baseline;
+  align-self: stretch;
   flex: 1;
   width: 100%;
   
@@ -152,7 +163,10 @@ export const Divider = styled.div`
 export const SquadInfoText = styled.p`
   ${typography.body.smallRegular};
   color: ${colors.text.text2};
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+  ${layout.mediaQueries.mobile} {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `
