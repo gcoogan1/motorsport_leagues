@@ -2,7 +2,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import Button from "@/components/Button/Button";
 import SelectInput from "@/components/Inputs/SelectInput/SelectInput";
 import MoreIcon from "@assets/Icon/More_Vertical.svg?react";
-import type { CarTable as CarTableRow } from "./InputTable.variants";
+import type { CarTable as CarTableRow } from "../InputTable.variants";
 import {
   CarHeader,
   CategoryCell,

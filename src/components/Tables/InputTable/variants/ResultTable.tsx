@@ -20,7 +20,7 @@ import {
   TimeCell,
   TimeColumn,
 } from "../InputTable.styles";
-import type { ResultTable as ResultTableRow } from "./InputTable.variants";
+import type { ResultTable as ResultTableRow } from "../InputTable.variants";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import Button from "@/components/Button/Button";
 

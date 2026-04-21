@@ -11,26 +11,27 @@ type GradientBorderOptions = {
 export const gradientBorder = ({
   gradient,
   width,
-}: GradientBorderOptions) => css`
-  position: relative;
+}: GradientBorderOptions) =>
+  css`
+    position: relative;
 
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: ${width};
-    background: ${gradient};
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: ${width};
+      background: ${gradient};
 
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
 
-    pointer-events: none;
-  }
-`;
+      pointer-events: none;
+    }
+  `;

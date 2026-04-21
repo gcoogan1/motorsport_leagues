@@ -2,7 +2,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import ReadOnlyInput from "@/components/Inputs/ReadOnlyInput/ReadOnlyInput";
 import MultiInput from "@/components/Inputs/MultiInput/MultiInput";
 import MoreIcon from "@assets/Icon/More_Vertical.svg?react";
-import type { ParticipantTable as ParticipantTableRow } from "./InputTable.variants";
+import type { ParticipantTable as ParticipantTableRow } from "../InputTable.variants";
 import {
   ColumnText,
   ExtraCell,
