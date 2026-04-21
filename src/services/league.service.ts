@@ -2,6 +2,8 @@ import { supabase } from "@/lib/supabase";
 import type {
   AddLeagueParticipantPayload,
   AddLeagueParticipantResult,
+  AddLeagueParticipantRolePayload,
+  AddLeagueParticipantRoleResult,
   CreateLeaguePayload,
   CreateLeagueResult,
   CreateLeagueSeasonPayload,
@@ -12,15 +14,18 @@ import type {
   GetLeaguesResult,
   RemoveLeagueParticipantPayload,
   RemoveLeagueParticipantResult,
+  RemoveLeagueParticipantRolePayload,
+  RemoveLeagueParticipantRoleResult,
   RemoveLeagueSeasonPayload,
   RemoveLeagueSeasonResult,
-  UpdateLeagueParticipantRolePayload,
-  UpdateLeagueParticipantRoleResult,
+  // UpdateLeagueParticipantRolePayload,
+  // UpdateLeagueParticipantRoleResult,
   UpdateLeaguePayload,
   UpdateLeagueResult,
   UpdateLeagueSeasonPayload,
   UpdateLeagueSeasonResult,
 } from "@/types/league.types";
+import { LEAGUE_PARTICIPANT_ROLES } from "@/types/league.types";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import { normalizeName } from "@/utils/normalizeName";
 import { getCurrentTimezone } from "@/utils/timezone";
@@ -252,7 +257,6 @@ export const createLeagueWithCover = async (
   const participantResult = await addLeagueParticipant({
     leagueId: data.id,
     profileId: directorProfileId,
-    leagueRole: "director",
   });
 
   if (!participantResult.success) {
@@ -261,6 +265,24 @@ export const createLeagueWithCover = async (
       error: {
         message: participantResult.error.message,
         code: participantResult.error.code || "PARTICIPANT_CREATION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  // Add director role to the participant
+  const participantId = participantResult.data.id;
+  const roleResult = await addLeagueParticipantRole({
+    participantId,
+    role: "director",
+  });
+
+  if (!roleResult.success) {
+    return {
+      success: false,
+      error: {
+        message: roleResult.error.message,
+        code: roleResult.error.code || "ROLE_CREATION_FAILED",
         status: 500,
       },
     };
@@ -403,7 +425,6 @@ export const addLeagueParticipant = async (
   {
     leagueId,
     profileId,
-    leagueRole,
   }: AddLeagueParticipantPayload,
 ): Promise<AddLeagueParticipantResult> => {
   const { data, error } = await supabase
@@ -411,7 +432,6 @@ export const addLeagueParticipant = async (
     .insert({
       league_id: leagueId,
       profile_id: profileId,
-      league_role: leagueRole,
     })
     .select()
     .single();
@@ -433,19 +453,19 @@ export const addLeagueParticipant = async (
   };
 };
 
-// -- Update League Participant Role -- //
-export const updateLeagueParticipantRole = async (
+// -- Add League Participant Role -- //
+export const addLeagueParticipantRole = async (
   {
-    leagueId,
-    profileId,
-    newLeagueRole,
-  }: UpdateLeagueParticipantRolePayload,
-): Promise<UpdateLeagueParticipantRoleResult> => {
-  const { error } = await supabase
-    .from("league_participants")
-    .update({ league_role: newLeagueRole })
-    .eq("league_id", leagueId)
-    .eq("profile_id", profileId)
+    participantId,
+    role,
+  }: AddLeagueParticipantRolePayload,
+): Promise<AddLeagueParticipantRoleResult> => {
+  const { data, error } = await supabase
+    .from("league_participants_role")
+    .insert({
+      participant_id: participantId,
+      role,
+    })
     .select()
     .single();
 
@@ -462,8 +482,130 @@ export const updateLeagueParticipantRole = async (
 
   return {
     success: true,
+    data,
   };
 };
+
+// -- Remove League Participant Role -- //
+export const removeLeagueParticipantRole = async (
+  {
+    participantId,
+    role,
+  }: RemoveLeagueParticipantRolePayload,
+): Promise<RemoveLeagueParticipantRoleResult> => {
+  const { error } = await supabase
+    .from("league_participants_role")
+    .delete()
+    .eq("participant_id", participantId)
+    .eq("role", role);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
+// -- Update League Participant Role -- //
+// export const updateLeagueParticipantRole = async (
+//   {
+//     leagueId,
+//     profileId,
+//     newLeagueRole,
+//   }: UpdateLeagueParticipantRolePayload,
+// ): Promise<UpdateLeagueParticipantRoleResult> => {
+//   // Fetch the participant to get their ID
+//   const { data: participant, error: participantError } = await supabase
+//     .from("league_participants")
+//     .select("id")
+//     .eq("league_id", leagueId)
+//     .eq("profile_id", profileId)
+//     .single();
+
+//   if (participantError) {
+//     return {
+//       success: false,
+//       error: {
+//         message: participantError.message,
+//         code: participantError.code || "SERVER_ERROR",
+//         status: 500,
+//       },
+//     };
+//   }
+
+//   // Get all current roles for this participant
+//   const { data: currentRoles, error: rolesError } = await supabase
+//     .from("league_participant_roles")
+//     .select("role")
+//     .eq("participant_id", participant.id);
+
+//   if (rolesError) {
+//     return {
+//       success: false,
+//       error: {
+//         message: rolesError.message,
+//         code: rolesError.code || "SERVER_ERROR",
+//         status: 500,
+//       },
+//     };
+//   }
+
+//   // If the new role already exists, return success
+//   if (currentRoles.some((r) => r.role === newLeagueRole)) {
+//     return { success: true };
+//   }
+
+//   // Remove old role and add new role (assuming single role per participant for now)
+//   if (currentRoles.length > 0) {
+//     const { error: deleteError } = await supabase
+//       .from("league_participant_roles")
+//       .delete()
+//       .eq("participant_id", participant.id);
+
+//     if (deleteError) {
+//       return {
+//         success: false,
+//         error: {
+//           message: deleteError.message,
+//           code: deleteError.code || "SERVER_ERROR",
+//           status: 500,
+//         },
+//       };
+//     }
+//   }
+
+//   // Add the new role
+//   const { error: insertError } = await supabase
+//     .from("league_participants_role")
+//     .insert({
+//       participant_id: participant.id,
+//       role: newLeagueRole,
+//     });
+
+//   if (insertError) {
+//     return {
+//       success: false,
+//       error: {
+//         message: insertError.message,
+//         code: insertError.code || "SERVER_ERROR",
+//         status: 500,
+//       },
+//     };
+//   }
+
+//   return {
+//     success: true,
+//   };
+// };
 
 // -- Remove League Participant -- //
 export const removeLeagueParticipant = async (
@@ -509,7 +651,7 @@ export const getLeagueParticipantsByLeagueId = async (
 ): Promise<GetLeagueParticipantsResult> => {
   let participantsQuery = supabase
     .from("league_participants")
-    .select("id, profile_id, league_role")
+    .select("id, profile_id")
     .eq("league_id", leagueId);
 
   if (signal) {
@@ -586,6 +728,38 @@ export const getLeagueParticipantsByLeagueId = async (
     ]),
   );
 
+  // Fetch roles for all participants
+  const { data: rolesData, error: rolesError } = await supabase
+    .from("league_participants_role")
+    .select("participant_id, role")
+    .in(
+      "participant_id",
+      participantRows.map((p) => p.id),
+    );
+
+  if (rolesError) {
+    if (rolesError.code === "ABORT" || rolesError.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: rolesError.message,
+        code: rolesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  // Build a map of participant IDs to their roles
+  const rolesMap = new Map<string, typeof LEAGUE_PARTICIPANT_ROLES[number][]>();
+  (rolesData ?? []).forEach((roleRow) => {
+    const roles = rolesMap.get(roleRow.participant_id) ?? [];
+    roles.push(roleRow.role as typeof LEAGUE_PARTICIPANT_ROLES[number]);
+    rolesMap.set(roleRow.participant_id, roles);
+  });
+
   return {
     success: true,
     data: participantRows
@@ -602,7 +776,7 @@ export const getLeagueParticipantsByLeagueId = async (
           game_type: profile.game_type,
           avatar_type: profile.avatar_type,
           avatar_value: profile.avatar_value,
-          league_role: participant.league_role,
+          roles: rolesMap.get(participant.id) ?? [],
         };
       })
       .filter(

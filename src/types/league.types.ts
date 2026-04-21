@@ -59,8 +59,15 @@ export type LeagueParticipantTable = {
   created_at: string;
   league_id: string;
   profile_id: string;
-  league_role: typeof LEAGUE_PARTICIPANT_ROLES[number];
+  // league_role: typeof LEAGUE_PARTICIPANT_ROLES[number];
 };
+
+// League Participant Roles Table --> represents the "league_participant_roles" table in Supabase, which tracks the specific roles of participants within a league (director, driver, steward, etc.)
+export type LeagueParticipantRolesTable = {
+  id: string;
+  participant_id: string;
+  role: typeof LEAGUE_PARTICIPANT_ROLES[number];
+}
 
 // League Participant Profile --> combines participant table with profile info for display purposes (not in Supabase, but used in service results)
 export type LeagueParticipantProfile = {
@@ -71,7 +78,7 @@ export type LeagueParticipantProfile = {
   game_type: GameType;
   avatar_type: "preset" | "upload";
   avatar_value: string;
-  league_role: typeof LEAGUE_PARTICIPANT_ROLES[number];
+  roles: typeof LEAGUE_PARTICIPANT_ROLES[number][];
 };
 
 export type GetLeagueParticipantsSuccess = {
@@ -174,7 +181,6 @@ export type GetLeaguesResult = GetLeaguesSuccess | SupabaseError;
 export type AddLeagueParticipantPayload = {
   leagueId: string;
   profileId: string;
-  leagueRole: typeof LEAGUE_PARTICIPANT_ROLES[number];
 };
 
 // Add League Participant --> Success type
@@ -186,6 +192,21 @@ export type AddLeagueParticipantSuccess = {
 // Add League Participant --> Result type
 export type AddLeagueParticipantResult = AddLeagueParticipantSuccess | SupabaseError;
 
+// Add League Participant Role --> Payload type
+export type AddLeagueParticipantRolePayload = {
+  participantId: string;
+  role: typeof LEAGUE_PARTICIPANT_ROLES[number];
+};
+
+// Add League Participant Role --> Success type
+export type AddLeagueParticipantRoleSuccess = {
+  success: true;
+  data: LeagueParticipantRolesTable;
+};
+
+// Add League Participant Role --> Result type
+export type AddLeagueParticipantRoleResult = AddLeagueParticipantRoleSuccess | SupabaseError;
+
 export type UpdateLeagueParticipantRolePayload = {
   leagueId: string;
   profileId: string;
@@ -193,6 +214,17 @@ export type UpdateLeagueParticipantRolePayload = {
 };
 
 export type UpdateLeagueParticipantRoleResult =
+  | { success: true }
+  | SupabaseError;
+
+// Remove League Participant Role --> Payload type
+export type RemoveLeagueParticipantRolePayload = {
+  participantId: string;
+  role: typeof LEAGUE_PARTICIPANT_ROLES[number];
+};
+
+// Remove League Participant Role --> Result type
+export type RemoveLeagueParticipantRoleResult =
   | { success: true }
   | SupabaseError;
 

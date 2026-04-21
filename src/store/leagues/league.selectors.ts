@@ -36,7 +36,7 @@ export const selectIsCurrentLeagueParticipantDirector = (
   return (leagueParticipantsResult.data ?? []).some(
     (participant) =>
       currentUserProfileIds.has(participant.profile_id) &&
-      participant.league_role === "director",
+      participant.roles.includes("director"),
   );
 };
 

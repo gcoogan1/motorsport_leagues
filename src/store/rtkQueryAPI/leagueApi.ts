@@ -1,17 +1,21 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
   addLeagueParticipant,
+  addLeagueParticipantRole,
   createLeagueSeason,
   getLeagueParticipantsByLeagueId,
   getLeagueSeasonsByLeagueId,
   removeLeagueParticipant,
+  removeLeagueParticipantRole,
   removeLeagueSeason,
-  updateLeagueParticipantRole,
+  // updateLeagueParticipantRole,
   updateLeagueSeason,
 } from "@/services/league.service";
 import type {
   AddLeagueParticipantPayload,
   AddLeagueParticipantResult,
+  AddLeagueParticipantRolePayload,
+  AddLeagueParticipantRoleResult,
   CreateLeagueSeasonPayload,
   CreateLeagueSeasonResult,
   GetLeagueParticipantsResult,
@@ -20,10 +24,12 @@ import type {
   LeagueSeasonTable,
   RemoveLeagueParticipantPayload,
   RemoveLeagueParticipantResult,
+  RemoveLeagueParticipantRolePayload,
+  RemoveLeagueParticipantRoleResult,
   RemoveLeagueSeasonPayload,
   RemoveLeagueSeasonResult,
-  UpdateLeagueParticipantRolePayload,
-  UpdateLeagueParticipantRoleResult,
+  // UpdateLeagueParticipantRolePayload,
+  // UpdateLeagueParticipantRoleResult,
   UpdateLeagueSeasonPayload,
   UpdateLeagueSeasonResult,
 } from "@/types/league.types";
@@ -107,6 +113,54 @@ export const leagueApi = createApi({
         { type: "LeagueParticipants", id: payload.leagueId },
       ],
     }),
+    addLeagueParticipantRole: builder.mutation<
+      AddLeagueParticipantRoleResult,
+      AddLeagueParticipantRolePayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await addLeagueParticipantRole(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: () => ["LeagueParticipants"],
+    }),
+    removeLeagueParticipantRole: builder.mutation<
+      RemoveLeagueParticipantRoleResult,
+      RemoveLeagueParticipantRolePayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await removeLeagueParticipantRole(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: () => ["LeagueParticipants"],
+    }),
     createLeagueSeason: builder.mutation<
       CreateLeagueSeasonResult,
       CreateLeagueSeasonPayload
@@ -133,32 +187,32 @@ export const leagueApi = createApi({
         { type: "LeagueSeasons", id: payload.leagueId },
       ],
     }),
-    updateLeagueParticipantRole: builder.mutation<
-      UpdateLeagueParticipantRoleResult,
-      UpdateLeagueParticipantRolePayload
-    >({
-      queryFn: async (payload) => {
-        try {
-          const result = await updateLeagueParticipantRole(payload);
+    // updateLeagueParticipantRole: builder.mutation<
+    //   UpdateLeagueParticipantRoleResult,
+    //   UpdateLeagueParticipantRolePayload
+    // >({
+    //   queryFn: async (payload) => {
+    //     try {
+    //       const result = await updateLeagueParticipantRole(payload);
 
-          if (!result.success) {
-            return {
-              error: {
-                status: result.error.status,
-                data: result.error,
-              },
-            };
-          }
+    //       if (!result.success) {
+    //         return {
+    //           error: {
+    //             status: result.error.status,
+    //             data: result.error,
+    //           },
+    //         };
+    //       }
 
-          return { data: result };
-        } catch (error) {
-          return { error };
-        }
-      },
-      invalidatesTags: (_result, _error, payload) => [
-        { type: "LeagueParticipants", id: payload.leagueId },
-      ],
-    }),
+    //       return { data: result };
+    //     } catch (error) {
+    //       return { error };
+    //     }
+    //   },
+    //   invalidatesTags: (_result, _error, payload) => [
+    //     { type: "LeagueParticipants", id: payload.leagueId },
+    //   ],
+    // }),
     updateLeagueSeason: builder.mutation<
       UpdateLeagueSeasonResult,
       UpdateLeagueSeasonPayload
@@ -238,11 +292,13 @@ export const leagueApi = createApi({
 
 export const {
   useAddLeagueParticipantMutation,
+  useAddLeagueParticipantRoleMutation,
   useCreateLeagueSeasonMutation,
   useGetLeagueParticipantsQuery,
   useGetLeagueSeasonsQuery,
   useRemoveLeagueParticipantMutation,
+  useRemoveLeagueParticipantRoleMutation,
   useRemoveLeagueSeasonMutation,
-  useUpdateLeagueParticipantRoleMutation,
+  // useUpdateLeagueParticipantRoleMutation,
   useUpdateLeagueSeasonMutation,
 } = leagueApi;
