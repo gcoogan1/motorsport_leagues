@@ -128,7 +128,7 @@ export const SmallSize: Story = {
     size: "small",
     avatarType: "preset",
     avatarValue: "black",
-    tags: ["broadcast", "founder"],
+    tags: ["broadcaster", "founder"],
   },
 };
 
