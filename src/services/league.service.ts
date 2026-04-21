@@ -424,7 +424,8 @@ export const getAllLeaguesWithInfo = async (
   };
 };
 
-// Backward-compatible alias for old call sites.
+//  -- Get Leagues with Info by Account ID (optionally include own leagues) -- //
+/* shortcut */
 export const getLeaguesWithInfoByAccountId = async (
   accountId: string,
   signal?: AbortSignal,
@@ -799,6 +800,7 @@ export const addLeagueParticipantRole = async (
     data,
   };
 };
+
 
 // -- Remove League Participant Role -- //
 export const removeLeagueParticipantRole = async (

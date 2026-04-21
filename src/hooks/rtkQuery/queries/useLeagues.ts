@@ -1,4 +1,9 @@
-import { useGetLeaguesQuery } from "@/store/rtkQueryAPI/leagueApi";
+import {
+	useGetLeagueParticipantsQuery,
+	useGetLeaguesQuery,
+	useGetLeagueSeasonsQuery,
+  useGetParticipantLeaguesQuery,
+} from "@/store/rtkQueryAPI/leagueApi";
 
 // --- Queries --- //
 // Used to fetch data //
@@ -20,3 +25,22 @@ export const useLeagues = (
 		{ skip },
 	);
 };
+
+// Query to fetch participants for a league
+export const useLeagueParticipants = (leagueId?: string) =>
+	useGetLeagueParticipantsQuery(leagueId ?? "", {
+		skip: !leagueId,
+	});
+
+// Query to fetch seasons for a league
+export const useLeagueSeasons = (leagueId?: string) =>
+	useGetLeagueSeasonsQuery(leagueId ?? "", {
+		skip: !leagueId,
+	});
+
+// Query to fetch leagues where any profile of this account is a league participant
+export const useParticipantLeagues = (accountId?: string) =>
+  useGetParticipantLeaguesQuery(accountId ?? "", {
+    skip: !accountId,
+  }
+  );

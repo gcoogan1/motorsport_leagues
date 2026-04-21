@@ -80,6 +80,34 @@ export const leagueApi = createApi({
         },
       ],
     }),
+    getParticipantLeagues: builder.query<LeagueWithInfo[], string>({
+      queryFn: async (accountId, api) => {
+        try {
+          const result: GetLeaguesWithInfoResult = await getAllLeaguesWithInfo(
+            accountId,
+            undefined,
+            api.signal,
+            true, // includeOwnLeagues is true to get leagues where the user is a participant
+          );
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, accountId) => [
+        { type: "Leagues", id: `participant-leagues-${accountId}` },
+      ],
+    }),
     getLeagueParticipants: builder.query<LeagueParticipantProfile[], string>({
       queryFn: async (leagueId, api) => {
         try {
@@ -336,6 +364,7 @@ export const {
   useAddLeagueParticipantRoleMutation,
   useCreateLeagueSeasonMutation,
   useGetLeaguesQuery,
+  useGetParticipantLeaguesQuery,
   useGetLeagueParticipantsQuery,
   useGetLeagueSeasonsQuery,
   useRemoveLeagueParticipantMutation,

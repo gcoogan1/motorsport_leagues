@@ -290,8 +290,8 @@ export type RemoveLeagueSeasonResult =
 // Redux Types //
 // League State --> used in Redux slice for leagues
 export type LeagueState = {
-  data: LeagueTable[] | null;
-  currentLeague: LeagueTable | null;
+  data: (LeagueWithInfo | LeagueTable)[] | null;
+  currentLeague: (LeagueWithInfo | LeagueTable) | null;
   status: "idle" | "loading" | "fulfilled" | "rejected";
   error?: string;
   draft: LeagueDraft;

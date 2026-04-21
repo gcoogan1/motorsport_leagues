@@ -5,7 +5,7 @@ import type { AppDispatch, RootState } from "@/store";
 import { getLeagueByIdThunk } from "@/store/leagues/league.thunk";
 import { useModal } from "@/providers/modal/useModal";
 import { useAppTheme } from "@/providers/theme/useTheme";
-import { useLeagueParticipants } from "@/hooks/rtkQuery/queries/useLeagueParticipants";
+import { useLeagueParticipants } from "@/hooks/rtkQuery/queries/useLeagues";
 import { useLeaguePageReadyState } from "@/hooks/useLeaguePageReadyState";
 import Cover from "@/components/Structures/Cover/Cover";
 import LoadingScreen from "@/components/Messages/LoadingScreen/LoadingScreen";
