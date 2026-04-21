@@ -4,6 +4,8 @@ import {
   addLeagueParticipantRole,
   createLeagueSeason,
   getAllLeaguesWithInfo,
+  getLeaguesWithInfoByProfileId,
+  getLeaguesWithInfoBySquadId,
   getLeagueParticipantsByLeagueId,
   getLeagueSeasonsByLeagueId,
   removeLeagueParticipant,
@@ -106,6 +108,62 @@ export const leagueApi = createApi({
       },
       providesTags: (_result, _error, accountId) => [
         { type: "Leagues", id: `participant-leagues-${accountId}` },
+      ],
+    }),
+    getLeaguesByProfileId: builder.query<LeagueWithInfo[], string>({
+      queryFn: async (profileId, api) => {
+        try {
+          const result: GetLeaguesWithInfoResult = await getLeaguesWithInfoByProfileId(
+            profileId,
+            api.signal,
+          );
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      providesTags: (_result, _error, profileId) => [
+        { type: "Leagues", id: `profile-${profileId}` },
+      ],
+    }),
+    getLeaguesBySquadId: builder.query<LeagueWithInfo[], string>({
+      queryFn: async (squadId, api) => {
+        try {
+          const result: GetLeaguesWithInfoResult = await getLeaguesWithInfoBySquadId(
+            squadId,
+            api.signal,
+          );
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return {
+            error,
+          };
+        }
+      },
+      providesTags: (_result, _error, squadId) => [
+        { type: "Leagues", id: `squad-${squadId}` },
       ],
     }),
     getLeagueParticipants: builder.query<LeagueParticipantProfile[], string>({
@@ -365,6 +423,8 @@ export const {
   useCreateLeagueSeasonMutation,
   useGetLeaguesQuery,
   useGetParticipantLeaguesQuery,
+  useGetLeaguesByProfileIdQuery,
+  useGetLeaguesBySquadIdQuery,
   useGetLeagueParticipantsQuery,
   useGetLeagueSeasonsQuery,
   useRemoveLeagueParticipantMutation,

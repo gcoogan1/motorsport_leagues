@@ -19,6 +19,7 @@ import {
   useProfileFollowers,
 } from "@/hooks/rtkQuery/queries/useProfileFollowers";
 import { useSquadsByProfileId } from "@/hooks/rtkQuery/queries/useSquads";
+import { useProfileLeagues } from "@/hooks/rtkQuery/queries/useLeagues";
 import ProfileHeader from "@/components/Headers/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/Structures/ProfileStats/ProfileStats";
 import SquadsListCard from "@/components/Cards/CardList/SquadsListCard/SquadsListCard";
@@ -74,6 +75,7 @@ const Profile = () => {
   // Fetch followers for this profile (used to display followers count and determine if current user is following this profile)
   const { data: followers = [] } = useProfileFollowers(profileId ?? "");
   const { data: mySquads = [] } = useSquadsByProfileId(profileId);
+  const { data: myLeagues = [] } = useProfileLeagues(profileId);
   // Check if the logged in user is following the profile being viewed (used to determine follow/unfollow behavior)
   const { data: isFollowing = false } = useIsFollowingProfile(
     user?.id ?? "",
@@ -149,6 +151,16 @@ const Profile = () => {
     return
   }
 
+  const handleCreateLeague = () => {
+    navigate("/create-league");
+    return
+  };
+
+  const handleFindLeague = () => {
+    openModal(<SearchForm startingTab="Leagues" />);
+    return
+  };
+
   return (
     <Wrapper>
       <ProfileHeader
@@ -187,7 +199,13 @@ const Profile = () => {
                 onClick: () => navigate(`/squad/${squad.id}`),
               }))}
             />
-            <LeaguesListCard />
+            <LeaguesListCard
+              leagues={myLeagues}
+              currentUserId={user?.id}
+              isOwner={viewType === "owner"}
+              onCreateLeague={handleCreateLeague}
+              onFindLeague={handleFindLeague}
+            />
           </ListContainer>
         </Container>
       </Content>
