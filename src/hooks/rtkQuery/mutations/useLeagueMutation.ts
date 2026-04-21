@@ -6,7 +6,7 @@ import {
   useCreateLeagueSeasonMutation,
   useRemoveLeagueParticipantMutation,
   useRemoveLeagueSeasonMutation,
-  useUpdateLeagueParticipantRoleMutation,
+  // useUpdateLeagueParticipantRoleMutation,
   useUpdateLeagueSeasonMutation,
 } from "@/store/rtkQueryAPI/leagueApi";
 
@@ -17,10 +17,10 @@ export const useAddLeagueParticipant = () => {
   return useAddLeagueParticipantMutation();
 };
 
-// Mutation for updating a PARTICIPANT's role in a league.
-export const useUpdateLeagueParticipantRole = () => {
-  return useUpdateLeagueParticipantRoleMutation();
-};
+// // Mutation for updating a PARTICIPANT's role in a league.
+// export const useUpdateLeagueParticipantRole = () => {
+//   return useUpdateLeagueParticipantRoleMutation();
+// };
 
 // Mutation for removing a PARTICIPANT from a league.
 export const useRemoveLeagueParticipant = () => {
