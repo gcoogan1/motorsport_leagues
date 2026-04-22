@@ -2,6 +2,7 @@ import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
   addLeagueParticipant,
   addLeagueParticipantRole,
+  createLeagueJoinRequestService,
   createLeagueSeason,
   followLeagueService,
   getAllLeaguesWithInfo,
@@ -13,6 +14,7 @@ import {
   getLeagueParticipantsByLeagueId,
   getLeagueSeasonsByLeagueId,
   isFollowingLeagueService,
+  joinLeagueWithRolesService,
   removeLeagueParticipant,
   removeLeagueParticipantRole,
   removeLeagueFollowerService,
@@ -26,10 +28,14 @@ import type {
   AddLeagueParticipantResult,
   AddLeagueParticipantRolePayload,
   AddLeagueParticipantRoleResult,
+  CreateLeagueJoinRequestPayload,
+  CreateLeagueJoinRequestResult,
   CreateLeagueSeasonPayload,
   CreateLeagueSeasonResult,
   FollowLeaguePayload,
   FollowLeagueResult,
+  JoinLeagueWithRolesPayload,
+  JoinLeagueWithRolesResult,
   GetLeagueFollowersResult,
   GetLeagueFollowingResult,
   GetLeaguesWithInfoResult,
@@ -379,6 +385,57 @@ export const leagueApi = createApi({
         { type: "LeagueParticipants", id: payload.leagueId },
       ],
     }),
+    createLeagueJoinRequest: builder.mutation<
+      CreateLeagueJoinRequestResult,
+      CreateLeagueJoinRequestPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await createLeagueJoinRequestService(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+    }),
+    joinLeagueWithRoles: builder.mutation<
+      JoinLeagueWithRolesResult,
+      JoinLeagueWithRolesPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await joinLeagueWithRolesService(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueParticipants", id: payload.leagueId },
+        { type: "LeagueFollowers", id: payload.leagueId },
+        { type: "LeagueFollowing", id: payload.accountId },
+      ],
+    }),
     addLeagueParticipantRole: builder.mutation<
       AddLeagueParticipantRoleResult,
       AddLeagueParticipantRolePayload
@@ -558,6 +615,8 @@ export const leagueApi = createApi({
 
 export const {
   useAddLeagueParticipantMutation,
+  useCreateLeagueJoinRequestMutation,
+  useJoinLeagueWithRolesMutation,
   useAddLeagueParticipantRoleMutation,
   useCreateLeagueSeasonMutation,
   useFollowLeagueMutation,

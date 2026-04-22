@@ -13,7 +13,8 @@ export type PanelTypes =
   | "SQUAD_EDIT"
   | "SQUAD_FOLLOWERS"
   | "SQUAD_MEMBERS"
-  | "LEAGUE_FOLLOWERS";
+  | "LEAGUE_FOLLOWERS"
+  | "LEAGUE_JOIN";
   
 
 export type PanelProviderTypes = "none" | PanelTypes;

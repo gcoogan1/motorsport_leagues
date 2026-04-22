@@ -14,6 +14,7 @@ type GetParticipantActionsParams = {
 };
 
 type GetGuestActionsParams = {
+  onJoinLeague: () => void;
   onShareLeague: () => void;
   onFollowLeague: () => void;
   isFollowing: boolean;
@@ -72,6 +73,7 @@ export const getParticipantActions = ({
 };
 
 export const getGuestActions = ({
+  onJoinLeague,
   onShareLeague,
   onFollowLeague,
   isFollowing = false,
@@ -81,9 +83,7 @@ export const getGuestActions = ({
       id: "join",
       label: "Join",
       color: "primary" as const,
-      onClick: () => {
-        console.log("Share clicked");
-      },
+      onClick: onJoinLeague,
     },
     {
       id: "follow",

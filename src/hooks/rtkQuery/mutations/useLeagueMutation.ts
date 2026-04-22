@@ -4,8 +4,10 @@
 import {
   useAddLeagueParticipantMutation,
   useAddLeagueParticipantRoleMutation,
+  useCreateLeagueJoinRequestMutation,
   useCreateLeagueSeasonMutation,
   useFollowLeagueMutation,
+  useJoinLeagueWithRolesMutation,
   useRemoveLeagueFollowerMutation,
   useRemoveLeagueParticipantMutation,
   useRemoveLeagueParticipantRoleMutation,
@@ -25,7 +27,12 @@ export const useAddLeagueParticipant = () => {
 // Mutation for joining a league as a participant.
 // This mirrors the squad-member helper naming while keeping league terminology.
 export const useJoinLeagueAsParticipant = () => {
-  return useAddLeagueParticipantMutation();
+  return useJoinLeagueWithRolesMutation();
+};
+
+// Mutation for creating a join request for a league.
+export const useCreateLeagueJoinRequest = () => {
+  return useCreateLeagueJoinRequestMutation();
 };
 
 // Mutation for adding a role to a participant in a league.
