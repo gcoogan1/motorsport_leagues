@@ -6,12 +6,13 @@ import GuestProfilesPanel from "./profiles/variants/GuestProfilesPanel";
 import SquadsPanel from "./squads/SquadsPanel";
 import LeaguesPanel from "./leagues/LeaguesPanel";
 import GuestSquadsPanel from "./squads/vaiants/GuestSquadsPanel";
-import GuestLeaguesPanel from "./leagues/GuestLeaguesPanel";
+import GuestLeaguesPanel from "./leagues/variants/GuestLeaguesPanel";
 import ProfileEdit from "./profileEdit/ProfileEdit";
 import ProfileFollowers from "./profileFollowers/ProfileFollowers";
 import SquadEdit from "./squadEdit/SquadEdit";
 import SquadFollowers from "./squadFollowers/SquadFollowers";
 import SquadMembers from "./squadMembers/SquadMembers";
+import LeagueFollowers from "./leagueFollowers/LeagueFollowers";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,5 +29,6 @@ export const panelVariants: Record<PanelTypes, React.ComponentType<any>> = {
   PROFILE_FOLLOWERS: ProfileFollowers,
   SQUAD_EDIT: SquadEdit,
   SQUAD_FOLLOWERS: SquadFollowers,
-  SQUAD_MEMBERS: SquadMembers
+  SQUAD_MEMBERS: SquadMembers,
+  LEAGUE_FOLLOWERS: LeagueFollowers
 };

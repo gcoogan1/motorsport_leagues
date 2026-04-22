@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
 import { usePanel } from "@/providers/panel/usePanel";
 import { navigate } from "@/app/navigation/navigation";
 import { useModal } from "@/providers/modal/useModal";
-import {
-  fetchLeaguesByAccountIdThunk,
-  getLeagueByIdThunk,
-} from "@/store/leagues/league.thunk";
+import { getLeagueByIdThunk } from "@/store/leagues/league.thunk";
+import type { LeagueTable } from "@/types/league.types";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import SearchForm from "@/features/search/forms/SearchForm";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
@@ -15,6 +13,7 @@ import League from "@assets/Icon/League.svg?react";
 import CreateIcon from "@assets/Icon/Create.svg?react";
 import SearchIcon from "@assets/Icon/Search.svg?react";
 import { useParticipantLeagues } from "@/hooks/rtkQuery/queries/useLeagues";
+import { useLeagueFollowing } from "@/hooks/rtkQuery/queries/useLeagueFollowers";
 import LeagueCard from "@/components/Cards/LeagueCard/LeagueCard";
 import { getCoverVariants } from "@/components/Structures/Cover/Cover.variants";
 
@@ -23,25 +22,43 @@ const LEAGUE_TABS = [
   { label: "Following" },
 ];
 
+type LeagueListItemProps = {
+  league: LeagueTable;
+  onClick: () => void;
+  isSmall?: boolean;
+};
+
+// This component is used to render each league in the list of leagues on the LeaguesPanel. It displays the league name, member count, and banner image.
+const LeagueListItem = ({ league, onClick, isSmall }: LeagueListItemProps) => {
+  const coverImage =
+    league.cover_type === "preset"
+      ? getCoverVariants()[
+          league.cover_value as keyof ReturnType<typeof getCoverVariants>
+        ]
+      : league.cover_value;
+
+  return (
+    <LeagueCard
+      name={league.league_name}
+      hostingSquad={league.hosting_squad_name}
+      coverImageUrl={coverImage}
+      size={isSmall ? "small" : "medium"}
+      onClick={onClick}
+      seasonStatus={league.league_status}
+    />
+  );
+};
+
 const LeaguesPanel = () => {
   const { openModal } = useModal();
   const { closePanel } = usePanel();
   const [activeTab, setActiveTab] = useState<string>(LEAGUE_TABS[0].label);
   const dispatch = useDispatch<AppDispatch>();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
-  const leagues = useSelector((state: RootState) => state.league.data);
-  const leagueStatus = useSelector((state: RootState) => state.league.status);
-  const { data: participantLeagues = [] } = useParticipantLeagues(accountId);
-  const myLeagues = [...(leagues ?? []), ...participantLeagues].filter(
-    (league, index, allLeagues) =>
-      allLeagues.findIndex((otherLeague) => otherLeague.id === league.id) === index,
-  );
-
-  useEffect(() => {
-    if (accountId) {
-      dispatch(fetchLeaguesByAccountIdThunk(accountId));
-    }
-  }, [accountId, dispatch]);
+  const { data: following = [] } = useLeagueFollowing(accountId ?? "");
+  const {
+    data: myLeagues = [],
+  } = useParticipantLeagues(accountId);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -70,7 +87,7 @@ const LeaguesPanel = () => {
       tabs={LEAGUE_TABS}
       onTabChange={handleTabChange}
       actions={
-        activeTab === "My Leagues" || activeTab === "Following"
+        activeTab === "My Leagues" || (activeTab === "Following" && following && following.length > 0)
           ? {
               primary: {
                 label: "Create New League",
@@ -89,15 +106,12 @@ const LeaguesPanel = () => {
       {activeTab === "My Leagues" ? (
         myLeagues.length > 0 ? (
           myLeagues.map((league) => {
-            const participants =
-              "participants" in league ? league.participants : undefined;
-            const numOfParticipants = Array.isArray(participants)
-              ? participants.length
-              : undefined;
             const coverImageUrl =
               league.cover_type === "preset"
                 ? getCoverVariants()[league.cover_value as keyof ReturnType<typeof getCoverVariants>]
                 : league.cover_value;
+            const participant = league.participants.find((p) => p.account_id === accountId);
+            const roleTags = participant?.roles ?? [];
 
             return (
               <LeagueCard
@@ -108,13 +122,12 @@ const LeaguesPanel = () => {
                 size="medium"
                 gameType={league.game_type}
                 hostingSquad={league.hosting_squad_name}
-                numOfParticipants={numOfParticipants}
+                numOfParticipants={league.participants.length}
                 onClick={() => handleGoToLeague(league.id)}
+                tags={roleTags}
               />
             );
           })
-        ) : leagueStatus === "loading" ? (
-          null
         ) : (
         <EmptyMessage
           title="No Leagues Created or Joined"
@@ -135,6 +148,18 @@ const LeaguesPanel = () => {
         />
         )
       ) : (
+        following && following.length > 0 ?  (
+          following.map((league) => {
+            return (
+              <LeagueListItem
+                key={league.id}
+                league={league}
+                onClick={() => handleGoToLeague(league.id)}
+                isSmall
+              />
+            );
+          })
+        ) : (
         <EmptyMessage
           title="Not Following Any Leagues"
           icon={<League />}
@@ -152,6 +177,7 @@ const LeaguesPanel = () => {
             },
           }}
         />
+        )
       )}
     </PanelLayout>
   );

@@ -15,6 +15,7 @@ const selectCurrentLeagueParticipantsResult = (state: RootState) => {
   return leagueApi.endpoints.getLeagueParticipants.select(currentLeague.id)(state);
 };
 
+// Selector to determine if the current user is a director of the current league
 export const selectIsCurrentLeagueParticipantDirector = (
   state: RootState,
 ): boolean | null => {
@@ -40,6 +41,8 @@ export const selectIsCurrentLeagueParticipantDirector = (
   );
 };
 
+// Main selector to determine the league view type for the current user
+// view types: "loading" (while data is loading), "guest" (not logged in), "user" (logged in but not a participant), "participant" (logged in and a participant)
 export const selectLeagueViewType = (
   state: RootState,
 ): LeagueViewType | "loading" => {

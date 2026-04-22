@@ -1,5 +1,6 @@
 import type { CoverAction } from "@/components/Structures/Cover/Cover";
 import FollowIcon from "@assets/Icon/Follow.svg?react";
+import FollowingIcon from "@assets/Icon/Following.svg?react";
 import ShareIcon from "@assets/Icon/Share.svg?react";
 import MoreIcon from "@assets/Icon/More_Vertical.svg?react";
 import AnnouncementsIcon from "@assets/Icon/Announcements.svg?react";
@@ -14,6 +15,8 @@ type GetParticipantActionsParams = {
 
 type GetGuestActionsParams = {
   onShareLeague: () => void;
+  onFollowLeague: () => void;
+  isFollowing: boolean;
 };
 
 export const getParticipantActions = ({
@@ -70,6 +73,8 @@ export const getParticipantActions = ({
 
 export const getGuestActions = ({
   onShareLeague,
+  onFollowLeague,
+  isFollowing = false,
 }: GetGuestActionsParams): CoverAction[] => {
   return [
     {
@@ -82,12 +87,10 @@ export const getGuestActions = ({
     },
     {
       id: "follow",
-      label: "Follow",
-      color: "base" as const,
-      leftIcon: <FollowIcon />,
-      onClick: () => {
-        console.log("Follow clicked");
-      },
+      label: isFollowing ? "Following" : "Follow",
+      color: isFollowing ? "system" as const : "base" as const,
+      leftIcon: isFollowing ? <FollowingIcon /> : <FollowIcon />,
+      onClick: onFollowLeague,
     },
     {
       id: "share",

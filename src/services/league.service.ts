@@ -20,6 +20,14 @@ import type {
   RemoveLeagueParticipantRoleResult,
   RemoveLeagueSeasonPayload,
   RemoveLeagueSeasonResult,
+  FollowLeaguePayload,
+  FollowLeagueResult,
+  UnfollowLeaguePayload,
+  UnfollowLeagueResult,
+  RemoveLeagueFollowerPayload,
+  RemoveLeagueFollowerResult,
+  GetLeagueFollowersResult,
+  GetLeagueFollowingResult,
   // UpdateLeagueParticipantRolePayload,
   // UpdateLeagueParticipantRoleResult,
   UpdateLeaguePayload,
@@ -28,6 +36,7 @@ import type {
   UpdateLeagueSeasonResult,
 } from "@/types/league.types";
 import { LEAGUE_PARTICIPANT_ROLES } from "@/types/league.types";
+import { resolveAvatarValue } from "@/services/profile.service";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import { normalizeName } from "@/utils/normalizeName";
 import { getCurrentTimezone } from "@/utils/timezone";
@@ -44,80 +53,6 @@ export const resolveCoverValue = (
     .getPublicUrl(coverValue);
 
   return data.publicUrl;
-};
-
-// -- Get Leagues by Account ID -- //
-export const getLeaguesByAccountId = async (
-  accountId: string,
-): Promise<GetLeaguesResult> => {
-  const { data: profiles, error: profilesError } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("account_id", accountId);
-
-  if (profilesError) {
-    return {
-      success: false,
-      error: {
-        message: profilesError.message,
-        code: profilesError.code || "SERVER_ERROR",
-        status: 500,
-      },
-    };
-  }
-
-  if (!profiles.length) {
-    return { success: true, data: [] };
-  }
-
-  const profileIds = profiles.map((profile) => profile.id);
-
-  const { data: participantRows, error: participantsError } = await supabase
-    .from("league_participants")
-    .select("league_id")
-    .in("profile_id", profileIds);
-
-  if (participantsError) {
-    return {
-      success: false,
-      error: {
-        message: participantsError.message,
-        code: participantsError.code || "SERVER_ERROR",
-        status: 500,
-      },
-    };
-  }
-
-  if (!participantRows.length) {
-    return { success: true, data: [] };
-  }
-
-  const leagueIds = [...new Set(participantRows.map((row) => row.league_id))];
-
-  const { data, error } = await supabase
-    .from("leagues")
-    .select("*")
-    .in("id", leagueIds)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    return {
-      success: false,
-      error: {
-        message: error.message,
-        code: error.code || "SERVER_ERROR",
-        status: 500,
-      },
-    };
-  }
-
-  return {
-    success: true,
-    data: data.map((league) => ({
-      ...league,
-      cover_value: resolveCoverValue(league.cover_type, league.cover_value),
-    })),
-  };
 };
 
 // -- Get All Leagues with Seasons + Participants + Roles (with optional search) -- //
@@ -429,8 +364,20 @@ export const getAllLeaguesWithInfo = async (
 export const getLeaguesWithInfoByAccountId = async (
   accountId: string,
   signal?: AbortSignal,
-): Promise<GetLeaguesWithInfoResult> =>
-  getAllLeaguesWithInfo(accountId, undefined, signal, true);
+): Promise<GetLeaguesWithInfoResult> => {
+  const result = await getAllLeaguesWithInfo(undefined, undefined, signal, true);
+
+  if (!result.success) {
+    return result;
+  }
+
+  return {
+    success: true,
+    data: result.data.filter((league) =>
+      league.participants.some((participant) => participant.account_id === accountId),
+    ),
+  };
+};
 
 // -- Get Leagues with Info by Profile ID -- //
 export const getLeaguesWithInfoByProfileId = async (
@@ -770,6 +717,307 @@ export const updateLeagueSettings = async (
     data,
   };
 };
+
+// -- Follow a League -- //
+export const followLeagueService = async (
+  { leagueId, profileId, accountId }: FollowLeaguePayload,
+): Promise<FollowLeagueResult> => {
+  const { error } = await supabase
+    .from("league_follows")
+    .insert({
+      follower_id: profileId,
+      follower_account_id: accountId,
+      league_id: leagueId,
+    });
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
+};
+
+// -- Unfollow a League -- //
+export const unfollowLeagueService = async (
+  { leagueId, accountId }: UnfollowLeaguePayload,
+): Promise<UnfollowLeagueResult> => {
+  const { error } = await supabase
+    .from("league_follows")
+    .delete()
+    .eq("follower_account_id", accountId)
+    .eq("league_id", leagueId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
+};
+
+// -- Check if Profile is Following League -- //
+export const isFollowingLeagueService = async (
+  leagueId: string,
+  accountId: string,
+): Promise<boolean> => {
+  const { data, error } = await supabase
+    .from("league_follows")
+    .select("league_id")
+    .eq("follower_account_id", accountId)
+    .eq("league_id", leagueId)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      return false;
+    }
+
+    console.error("Error checking if profile is following league:", error);
+    return false;
+  }
+
+  return !!data;
+};
+
+// Get Followers of a League -- //
+export const getLeagueFollowersService = async (
+  leagueId: string,
+): Promise<GetLeagueFollowersResult> => {
+  const { data: followRows, error: followsError } = await supabase
+    .from("league_follows")
+    .select("follower_id")
+    .eq("league_id", leagueId);
+
+  if (followsError) {
+    return {
+      success: false,
+      error: {
+        message: followsError.message,
+        code: followsError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (!followRows.length) {
+    return {
+      success: true,
+      data: [],
+    };
+  }
+
+  const profileIds = followRows.map((row) => row.follower_id);
+
+  const { data: profiles, error: profilesError } = await supabase
+    .from("profiles")
+    .select("*")
+    .in("id", profileIds);
+
+  if (profilesError) {
+    return {
+      success: false,
+      error: {
+        message: profilesError.message,
+        code: profilesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: profiles.map((profile) => ({
+      ...profile,
+      avatar_value: resolveAvatarValue(
+        profile.avatar_type,
+        profile.avatar_value,
+      ),
+    })),
+  };
+};
+
+// -- Remove Follower From League -- //
+export const removeLeagueFollowerService = async (
+  { leagueId, followerProfileId }: RemoveLeagueFollowerPayload,
+): Promise<RemoveLeagueFollowerResult> => {
+  const { error } = await supabase
+    .from("league_follows")
+    .delete()
+    .eq("league_id", leagueId)
+    .eq("follower_id", followerProfileId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
+};
+
+// -- Get Leagues Followed by an Account -- //
+export const getFollowingLeagues = async (
+  accountId: string,
+): Promise<GetLeagueFollowingResult> => {
+  const { data: followRows, error: followsError } = await supabase
+    .from("league_follows")
+    .select("league_id")
+    .eq("follower_account_id", accountId);
+
+  if (followsError) {
+    return {
+      success: false,
+      error: {
+        message: followsError.message,
+        code: followsError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (!followRows.length) {
+    return {
+      success: true,
+      data: [],
+    };
+  }
+
+  const leagueIds = followRows.map((row) => row.league_id);
+
+  const { data: leagues, error: leaguesError } = await supabase
+    .from("leagues")
+    .select("*")
+    .in("id", leagueIds)
+    .order("created_at", { ascending: false });
+
+  if (leaguesError) {
+    return {
+      success: false,
+      error: {
+        message: leaguesError.message,
+        code: leaguesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: leagues.map((league) => ({
+      ...league,
+      cover_value: resolveCoverValue(league.cover_type, league.cover_value),
+    })),
+  };
+};
+
+// Backward-compatible aliases
+export const followLeague = async (
+  leagueId: string,
+  profileId: string,
+): Promise<boolean> => {
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("account_id")
+    .eq("id", profileId)
+    .single();
+
+  if (error) {
+    return false;
+  }
+
+  const result = await followLeagueService({
+    leagueId,
+    profileId,
+    accountId: profile.account_id,
+  });
+
+  return result.success;
+};
+
+export const unfollowLeague = async (
+  leagueId: string,
+  profileId: string,
+): Promise<boolean> => {
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("account_id")
+    .eq("id", profileId)
+    .single();
+
+  if (error) {
+    return false;
+  }
+
+  const result = await unfollowLeagueService({
+    leagueId,
+    accountId: profile.account_id,
+  });
+
+  return result.success;
+};
+
+export const getLeagueFollowers = async (
+  leagueId: string,
+) => {
+  const result = await getLeagueFollowersService(leagueId);
+  return result.success ? result.data : [];
+};
+
+export const isFollowingLeague = async (
+  leagueId: string,
+  profileId: string,
+): Promise<boolean> => {
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("account_id")
+    .eq("id", profileId)
+    .single();
+
+  if (error) {
+    return false;
+  }
+
+  return isFollowingLeagueService(leagueId, profile.account_id);
+};
+
+export const removeFollowerFromLeague = async (
+  leagueId: string,
+  followerProfileId: string,
+): Promise<boolean> => {
+  const result = await removeLeagueFollowerService({
+    leagueId,
+    followerProfileId,
+  });
+
+  return result.success;
+};
+
+export const checkIfFollowingLeague = async (
+  leagueId: string,
+  accountId: string,
+): Promise<boolean> => isFollowingLeagueService(leagueId, accountId);
+
+export const getFollowedLeaguesByAccountId = async (
+  accountId: string,
+): Promise<GetLeaguesResult> => getFollowingLeagues(accountId);
 
 // -- Add League Participant -- //
 export const addLeagueParticipant = async (
