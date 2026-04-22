@@ -13,6 +13,7 @@ import NameTaken from "@/features/squads/modals/errors/NameTaken/NameTaken";
 import GuestJoinSquad from "@/features/squads/modals/errors/GuestJoinSquad/GuestJoinSquad";
 import NoSquad from "@/features/leagues/modals/errors/NoSquad/NoSquad";
 import LeagueNameTaken from "@/features/leagues/modals/errors/LeagueNameTaken/LeagueNameTaken";
+import RequestSent from "@/features/panels/leagueJoin/modals/success/RequestSent/RequestSent";
 
 // -- Modal Types & Variants -- //
 
@@ -33,7 +34,8 @@ export type MODAL_TYPES =
   | "NAME_TAKEN"
   | "GUEST_JOIN_SQUAD"
   | "NO_SQUAD"
-  | "LEAGUE_NAME_TAKEN";
+  | "LEAGUE_NAME_TAKEN"
+  | "REQUEST_SENT";
 
 // Additional modals that may require props can be added here
 export type OTHER_MODAL_TYPES =
@@ -65,5 +67,6 @@ export const modalVariants: Record<MODAL_TYPES, React.FC> = {
   NAME_TAKEN: NameTaken,
   GUEST_JOIN_SQUAD: GuestJoinSquad,
   NO_SQUAD: NoSquad,
-  LEAGUE_NAME_TAKEN: LeagueNameTaken
+  LEAGUE_NAME_TAKEN: LeagueNameTaken,
+  REQUEST_SENT: RequestSent
 };

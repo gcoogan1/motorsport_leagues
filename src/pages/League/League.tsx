@@ -125,6 +125,18 @@ const League = () => {
     openPanel("LEAGUE_FOLLOWERS", { leagueId: currentLeague.id });
   };
 
+  const handleJoinLeague = () => {
+    if (viewType === "guest" || !accountId) {
+      return openModal(<LeagueGuestFollow type="join" />);
+    }
+
+    if (viewType === "user" && !hasProfile) {
+      return openModal(<LeagueNoProfile type="join" />);
+    }
+
+    openPanel("LEAGUE_JOIN", { leagueId: currentLeague.id });
+  };
+
 
   const handleFollowLeague = () => {
     if (viewType === "guest" || !accountId) {
@@ -161,6 +173,7 @@ const League = () => {
   });
 
   const guestActions = getGuestActions({
+    onJoinLeague: handleJoinLeague,
     onShareLeague: handleShareLeague,
     onFollowLeague: handleFollowLeague,
     isFollowing,
