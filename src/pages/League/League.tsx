@@ -4,25 +4,41 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
 import { getLeagueByIdThunk } from "@/store/leagues/league.thunk";
 import { useModal } from "@/providers/modal/useModal";
+import { usePanel } from "@/providers/panel/usePanel";
 import { useAppTheme } from "@/providers/theme/useTheme";
 import { useLeagueParticipants } from "@/hooks/rtkQuery/queries/useLeagues";
 import { useLeaguePageReadyState } from "@/hooks/useLeaguePageReadyState";
 import Cover from "@/components/Structures/Cover/Cover";
 import LoadingScreen from "@/components/Messages/LoadingScreen/LoadingScreen";
 import { Wrapper } from "./League.styles";
+import { selectHasProfiles } from "@/store/profile/profile.selectors";
 import { getGuestActions, getParticipantActions } from "./League.actions";
 import Game from "@/features/leagues/modals/core/Game/Game";
 import HostSquad from "@/features/leagues/modals/core/HostSquad/HostSquad";
 import ShareLeague from "@/features/leagues/modals/core/ShareLeague/ShareLeague";
+import LeagueGuestFollow from "@/features/leagues/modals/errors/LeagueGuestFollow/LeagueGuestFollow";
+import LeagueNoProfile from "@/features/leagues/modals/core/LeagueNoProfile/LeagueNoProfile";
+import FollowLeague from "@/features/leagues/forms/Follow/FollowLeague";
+import { useIsFollowingLeague, useLeagueFollowers } from "@/hooks/rtkQuery/queries/useLeagueFollowers";
+import UnfollowLeague from "@/features/leagues/modals/errors/UnfollowLeague/UnfollowLeague";
 
 // TODO: Update the League page to pull real data and implement actions
 
 const League = () => {
   const { openModal, closeModal } = useModal();
+  const { openPanel } = usePanel();
   const { setOverrideThemeName, clearOverrideThemeName } = useAppTheme();
   const navigate = useNavigate();
+  const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const hasProfile = useSelector(selectHasProfiles);
   const { leagueId } = useParams<{ leagueId: string }>();
   const dispatch = useDispatch<AppDispatch>();
+  const { data: followers = [] } = useLeagueFollowers(leagueId ?? "");
+  const { data: isFollowing = false } = useIsFollowingLeague(
+    leagueId ?? "",
+    accountId ?? "",
+  );
+  const leagueStatus = useSelector((state: RootState) => state.league.status);
 
   const currentLeague = useSelector(
     (state: RootState) => state.league.currentLeague,
@@ -34,10 +50,22 @@ const League = () => {
 
   // Load league data
   useEffect(() => {
-    if (leagueId) {
+    if (leagueId && currentLeague?.id !== leagueId) {
       dispatch(getLeagueByIdThunk(leagueId));
     }
-  }, [leagueId, dispatch]);
+  }, [leagueId, currentLeague?.id, dispatch]);
+
+  // Keep behavior consistent with other entity pages: redirect invalid/unavailable routes.
+  useEffect(() => {
+    if (!leagueId) {
+      navigate("/unavailable", { replace: true });
+      return;
+    }
+
+    if (leagueStatus === "rejected") {
+      navigate("/unavailable", { replace: true });
+    }
+  }, [leagueId, leagueStatus, navigate]);
 
   // Set theme color based on league settings
   useEffect(() => {
@@ -50,9 +78,19 @@ const League = () => {
     return () => {
       clearOverrideThemeName();
     };
-  }, [currentLeague?.theme_color, setOverrideThemeName, clearOverrideThemeName]);
+  }, [
+    currentLeague?.theme_color,
+    setOverrideThemeName,
+    clearOverrideThemeName,
+  ]);
 
-  if (!currentLeague) {
+  const isLeagueLoading =
+    !leagueId ||
+    leagueStatus === "loading" ||
+    !currentLeague ||
+    currentLeague.id !== leagueId;
+
+  if (isLeagueLoading) {
     return <LoadingScreen />;
   }
 
@@ -83,6 +121,37 @@ const League = () => {
     );
   };
 
+  const handleFollowersClick = () => {
+    openPanel("LEAGUE_FOLLOWERS", { leagueId: currentLeague.id });
+  };
+
+
+  const handleFollowLeague = () => {
+    if (viewType === "guest" || !accountId) {
+      return openModal(<LeagueGuestFollow />);
+    }
+
+    if (viewType === "user" && !hasProfile) {
+      return openModal(<LeagueNoProfile />);
+    }
+
+    if (isFollowing) {
+      openModal(
+        <UnfollowLeague leagueId={currentLeague.id} accountId={accountId} />,
+      );
+      return;
+    }
+
+    openModal(
+      <FollowLeague
+        leagueIdToFollow={currentLeague.id}
+        accountId={accountId}
+      />,
+    );
+    return;
+  };
+
+  // -- Action buttons based on view type -- //
   const participantActions = getParticipantActions({
     isDirector,
     onManageLeague: () => {
@@ -93,6 +162,8 @@ const League = () => {
 
   const guestActions = getGuestActions({
     onShareLeague: handleShareLeague,
+    onFollowLeague: handleFollowLeague,
+    isFollowing,
   });
 
   return (
@@ -103,7 +174,8 @@ const League = () => {
         squadName={currentLeague.hosting_squad_name}
         description={currentLeague.description}
         participantsCount={participantsCount}
-        followersCount={0}
+        followersCount={followers.length}
+        onFollowersClick={handleFollowersClick}
         onGameClick={handleGameTypeClick}
         onSquadNameClick={handleHostingSquadClick}
         backgroundImageUrl={currentLeague.cover_value}
