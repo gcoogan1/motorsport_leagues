@@ -55,80 +55,6 @@ export const resolveCoverValue = (
   return data.publicUrl;
 };
 
-// -- Get Leagues by Account ID -- //
-export const getLeaguesByAccountId = async (
-  accountId: string,
-): Promise<GetLeaguesResult> => {
-  const { data: profiles, error: profilesError } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("account_id", accountId);
-
-  if (profilesError) {
-    return {
-      success: false,
-      error: {
-        message: profilesError.message,
-        code: profilesError.code || "SERVER_ERROR",
-        status: 500,
-      },
-    };
-  }
-
-  if (!profiles.length) {
-    return { success: true, data: [] };
-  }
-
-  const profileIds = profiles.map((profile) => profile.id);
-
-  const { data: participantRows, error: participantsError } = await supabase
-    .from("league_participants")
-    .select("league_id")
-    .in("profile_id", profileIds);
-
-  if (participantsError) {
-    return {
-      success: false,
-      error: {
-        message: participantsError.message,
-        code: participantsError.code || "SERVER_ERROR",
-        status: 500,
-      },
-    };
-  }
-
-  if (!participantRows.length) {
-    return { success: true, data: [] };
-  }
-
-  const leagueIds = [...new Set(participantRows.map((row) => row.league_id))];
-
-  const { data, error } = await supabase
-    .from("leagues")
-    .select("*")
-    .in("id", leagueIds)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    return {
-      success: false,
-      error: {
-        message: error.message,
-        code: error.code || "SERVER_ERROR",
-        status: 500,
-      },
-    };
-  }
-
-  return {
-    success: true,
-    data: data.map((league) => ({
-      ...league,
-      cover_value: resolveCoverValue(league.cover_type, league.cover_value),
-    })),
-  };
-};
-
 // -- Get All Leagues with Seasons + Participants + Roles (with optional search) -- //
 export const getAllLeaguesWithInfo = async (
   accountId?: string,
@@ -438,8 +364,20 @@ export const getAllLeaguesWithInfo = async (
 export const getLeaguesWithInfoByAccountId = async (
   accountId: string,
   signal?: AbortSignal,
-): Promise<GetLeaguesWithInfoResult> =>
-  getAllLeaguesWithInfo(accountId, undefined, signal, true);
+): Promise<GetLeaguesWithInfoResult> => {
+  const result = await getAllLeaguesWithInfo(undefined, undefined, signal, true);
+
+  if (!result.success) {
+    return result;
+  }
+
+  return {
+    success: true,
+    data: result.data.filter((league) =>
+      league.participants.some((participant) => participant.account_id === accountId),
+    ),
+  };
+};
 
 // -- Get Leagues with Info by Profile ID -- //
 export const getLeaguesWithInfoByProfileId = async (

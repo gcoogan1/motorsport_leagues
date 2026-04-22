@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
 import { usePanel } from "@/providers/panel/usePanel";
 import { navigate } from "@/app/navigation/navigation";
 import { useModal } from "@/providers/modal/useModal";
-import {
-  fetchLeaguesByAccountIdThunk,
-  getLeagueByIdThunk,
-} from "@/store/leagues/league.thunk";
+import { getLeagueByIdThunk } from "@/store/leagues/league.thunk";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import SearchForm from "@/features/search/forms/SearchForm";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
@@ -29,19 +26,10 @@ const LeaguesPanel = () => {
   const [activeTab, setActiveTab] = useState<string>(LEAGUE_TABS[0].label);
   const dispatch = useDispatch<AppDispatch>();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
-  const leagues = useSelector((state: RootState) => state.league.data);
-  const leagueStatus = useSelector((state: RootState) => state.league.status);
-  const { data: participantLeagues = [] } = useParticipantLeagues(accountId);
-  const myLeagues = [...(leagues ?? []), ...participantLeagues].filter(
-    (league, index, allLeagues) =>
-      allLeagues.findIndex((otherLeague) => otherLeague.id === league.id) === index,
-  );
-
-  useEffect(() => {
-    if (accountId) {
-      dispatch(fetchLeaguesByAccountIdThunk(accountId));
-    }
-  }, [accountId, dispatch]);
+  const {
+    data: myLeagues = [],
+    isLoading: isParticipantLeaguesLoading,
+  } = useParticipantLeagues(accountId);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -89,11 +77,6 @@ const LeaguesPanel = () => {
       {activeTab === "My Leagues" ? (
         myLeagues.length > 0 ? (
           myLeagues.map((league) => {
-            const participants =
-              "participants" in league ? league.participants : undefined;
-            const numOfParticipants = Array.isArray(participants)
-              ? participants.length
-              : undefined;
             const coverImageUrl =
               league.cover_type === "preset"
                 ? getCoverVariants()[league.cover_value as keyof ReturnType<typeof getCoverVariants>]
@@ -108,12 +91,12 @@ const LeaguesPanel = () => {
                 size="medium"
                 gameType={league.game_type}
                 hostingSquad={league.hosting_squad_name}
-                numOfParticipants={numOfParticipants}
+                numOfParticipants={league.participants.length}
                 onClick={() => handleGoToLeague(league.id)}
               />
             );
           })
-        ) : leagueStatus === "loading" ? (
+        ) : isParticipantLeaguesLoading ? (
           null
         ) : (
         <EmptyMessage

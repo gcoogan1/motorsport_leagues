@@ -3,7 +3,6 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {
   createLeagueThunk,
   deleteLeagueThunk,
-  fetchLeaguesByAccountIdThunk,
   getLeagueByIdThunk,
   updateLeagueThunk,
 } from "./league.thunk";
@@ -40,25 +39,6 @@ const leagueSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Get Leagues By Account Id
-      .addCase(fetchLeaguesByAccountIdThunk.pending, (state) => {
-        state.status = "loading";
-        state.error = undefined;
-      })
-      .addCase(fetchLeaguesByAccountIdThunk.fulfilled, (state, action) => {
-        state.status = "fulfilled";
-        state.data = action.payload;
-
-        // Keep the currently viewed league intact (e.g. route `/league/:id`) and
-        // only fallback to first owned league when no current league is selected.
-        if (!state.currentLeague) {
-          state.currentLeague = action.payload[0] ?? null;
-        }
-      })
-      .addCase(fetchLeaguesByAccountIdThunk.rejected, (state, action) => {
-        state.status = "rejected";
-        state.error = action.payload ?? action.error.message;
-      })
       // Create League
       .addCase(createLeagueThunk.pending, (state) => {
         state.status = "loading";

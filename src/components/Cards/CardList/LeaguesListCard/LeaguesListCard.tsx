@@ -71,7 +71,7 @@ const LeaguesListCard: FC<LeaguesListCardProps> = ({
               : false;
             const participant = isParticipant
               ? league.participants.find((p) => p.account_id === currentUserId)
-              : league.participants[0];
+              : undefined;
             const roleTags: Tag[] = participant?.roles ?? [];
 
             return (

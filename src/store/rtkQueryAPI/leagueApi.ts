@@ -7,6 +7,7 @@ import {
   getAllLeaguesWithInfo,
   getFollowingLeagues,
   getLeagueFollowersService,
+  getLeaguesWithInfoByAccountId,
   getLeaguesWithInfoByProfileId,
   getLeaguesWithInfoBySquadId,
   getLeagueParticipantsByLeagueId,
@@ -101,11 +102,9 @@ export const leagueApi = createApi({
     getParticipantLeagues: builder.query<LeagueWithInfo[], string>({
       queryFn: async (accountId, api) => {
         try {
-          const result: GetLeaguesWithInfoResult = await getAllLeaguesWithInfo(
+          const result: GetLeaguesWithInfoResult = await getLeaguesWithInfoByAccountId(
             accountId,
-            undefined,
             api.signal,
-            true, // includeOwnLeagues is true to get leagues where the user is a participant
           );
 
           if (!result.success) {
