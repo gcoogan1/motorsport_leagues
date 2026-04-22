@@ -1,5 +1,5 @@
 import type { Theme } from "@/app/design/tokens/theme";
-import type { GameType } from "./profile.types";
+import type { GameType, ProfileTable } from "./profile.types";
 
 // -- League Types -- //
 
@@ -51,6 +51,13 @@ export type LeagueTable = {
   description?: string;
   timezone?: string;
   league_status: LeagueStatus;
+};
+
+// League Follows Table --> represents the "league_follows" table in Supabase, which tracks which profiles are following which leagues
+export type LeagueFollowsTable = {
+  follower_id: string;
+  follower_account_id: string;
+  league_id: string;
 };
 
 // League Participant Table --> represents the "league_participants" table in Supabase, which tracks which profiles are participating in which leagues and their roles
@@ -285,6 +292,58 @@ export type RemoveLeagueSeasonPayload = {
 export type RemoveLeagueSeasonResult =
   | { success: true }
   | SupabaseError;
+
+// Follow League --> Payload type
+export type FollowLeaguePayload = {
+  leagueId: string;
+  profileId: string;
+  accountId: string;
+};
+
+// Follow League --> Result type
+export type FollowLeagueResult = 
+  | { success: true }
+  | SupabaseError;
+
+// Unfollow League --> Payload type
+export type UnfollowLeaguePayload = {
+  leagueId: string;
+  accountId: string;
+};
+
+// Unfollow League --> Result type
+export type UnfollowLeagueResult = 
+  | { success: true }
+  | SupabaseError;
+
+// Remove League Follower --> Payload type
+export type RemoveLeagueFollowerPayload = {
+  leagueId: string;
+  followerProfileId: string;
+};
+
+// Remove League Follower --> Result type
+export type RemoveLeagueFollowerResult = 
+  | { success: true }
+  | SupabaseError;
+
+// Get League Followers --> Success type
+export type GetLeagueFollowersSuccess = {
+  success: true;
+  data: ProfileTable[];
+};
+
+// Get League Followers --> Result type
+export type GetLeagueFollowersResult = GetLeagueFollowersSuccess | SupabaseError;
+
+// Get League Following --> Success type
+export type GetLeagueFollowingSuccess = {
+  success: true;
+  data: LeagueTable[];
+};
+
+// Get League Following --> Result type
+export type GetLeagueFollowingResult = GetLeagueFollowingSuccess | SupabaseError;
 
 
 // Redux Types //

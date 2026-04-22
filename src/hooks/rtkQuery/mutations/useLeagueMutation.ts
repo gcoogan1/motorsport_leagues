@@ -5,9 +5,12 @@ import {
   useAddLeagueParticipantMutation,
   useAddLeagueParticipantRoleMutation,
   useCreateLeagueSeasonMutation,
+  useFollowLeagueMutation,
+  useRemoveLeagueFollowerMutation,
   useRemoveLeagueParticipantMutation,
   useRemoveLeagueParticipantRoleMutation,
   useRemoveLeagueSeasonMutation,
+  useUnfollowLeagueMutation,
   // useUpdateLeagueParticipantRoleMutation,
   useUpdateLeagueSeasonMutation,
 } from "@/store/rtkQueryAPI/leagueApi";
@@ -48,6 +51,21 @@ export const useRemoveParticipantFromLeague = () => {
 // Mutation for removing a role from a participant in a league.
 export const useRemoveLeagueParticipantRole = () => {
   return useRemoveLeagueParticipantRoleMutation();
+};
+
+// Mutation for following a league.
+export const useFollowLeague = () => {
+  return useFollowLeagueMutation();
+};
+
+// Mutation for unfollowing a league.
+export const useUnfollowLeague = () => {
+  return useUnfollowLeagueMutation();
+};
+
+// Mutation for removing a follower from a league.
+export const useRemoveLeagueFollower = () => {
+  return useRemoveLeagueFollowerMutation();
 };
 
 // Mutation for creating a new SEASON in a league.
