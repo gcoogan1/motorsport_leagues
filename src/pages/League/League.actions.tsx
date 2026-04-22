@@ -14,6 +14,7 @@ type GetParticipantActionsParams = {
 
 type GetGuestActionsParams = {
   onShareLeague: () => void;
+  onFollowLeague: () => void;
 };
 
 export const getParticipantActions = ({
@@ -70,6 +71,7 @@ export const getParticipantActions = ({
 
 export const getGuestActions = ({
   onShareLeague,
+  onFollowLeague,
 }: GetGuestActionsParams): CoverAction[] => {
   return [
     {
@@ -85,9 +87,7 @@ export const getGuestActions = ({
       label: "Follow",
       color: "base" as const,
       leftIcon: <FollowIcon />,
-      onClick: () => {
-        console.log("Follow clicked");
-      },
+      onClick: onFollowLeague,
     },
     {
       id: "share",
