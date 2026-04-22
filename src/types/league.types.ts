@@ -257,6 +257,44 @@ export type RemoveLeagueParticipantResult =
   | { success: true }
   | SupabaseError;
 
+// Join League with Roles --> Payload type
+export type JoinLeagueWithRolesPayload = {
+  leagueId: string;
+  profileId: string;
+  accountId: string;
+  roles: typeof LEAGUE_PARTICIPANT_ROLES[number][];
+};
+
+// Join League with Roles --> Result type
+export type JoinLeagueWithRolesResult =
+  | { success: true; data: LeagueParticipantTable }
+  | SupabaseError;
+
+// League Join Request Table --> represents the "league_join_requests" table in Supabase, which tracks requests to join a league with specific roles and contact info
+export type LeagueJoinRequestTable = {
+  id: string;
+  created_at: string;
+  league_id: string;
+  profile_id: string;
+  account_id: string;
+  contact_info: string;
+  requested_role: typeof LEAGUE_PARTICIPANT_ROLES[number];
+};
+
+// Create League Join Request --> Payload type
+export type CreateLeagueJoinRequestPayload = {
+  leagueId: string;
+  profileId: string;
+  accountId: string;
+  contactInfo: string;
+  roles: typeof LEAGUE_PARTICIPANT_ROLES[number][];
+};
+
+// Create League Join Request --> Result type
+export type CreateLeagueJoinRequestResult =
+  | { success: true; data: LeagueJoinRequestTable[] }
+  | SupabaseError;
+
 // Create League Season --> Payload type
 export type CreateLeagueSeasonPayload = {
   leagueId: string;

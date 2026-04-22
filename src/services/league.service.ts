@@ -16,6 +16,10 @@ import type {
   GetLeaguesResult,
   RemoveLeagueParticipantPayload,
   RemoveLeagueParticipantResult,
+  CreateLeagueJoinRequestPayload,
+  CreateLeagueJoinRequestResult,
+  JoinLeagueWithRolesPayload,
+  JoinLeagueWithRolesResult,
   RemoveLeagueParticipantRolePayload,
   RemoveLeagueParticipantRoleResult,
   RemoveLeagueSeasonPayload,
@@ -1241,6 +1245,162 @@ export const removeLeagueParticipant = async (
 
   return {
     success: true,
+  };
+};
+
+// -- Join League with Roles (atomic-like with rollback) -- //
+export const joinLeagueWithRolesService = async (
+  {
+    leagueId,
+    profileId,
+    accountId,
+    roles,
+  }: JoinLeagueWithRolesPayload,
+): Promise<JoinLeagueWithRolesResult> => {
+  // If the account follows this league, remove follow first.
+  const following = await isFollowingLeagueService(leagueId, accountId);
+
+  if (following) {
+    const unfollowResult = await unfollowLeagueService({ leagueId, accountId });
+
+    if (!unfollowResult.success) {
+      return {
+        success: false,
+        error: {
+          message: unfollowResult.error.message,
+          code: unfollowResult.error.code || "SERVER_ERROR",
+          status: unfollowResult.error.status,
+        },
+      };
+    }
+  }
+
+  const participantResult = await addLeagueParticipant({ leagueId, profileId });
+
+  if (!participantResult.success) {
+    return participantResult;
+  }
+
+  // De-duplicate requested roles to avoid duplicate insert errors.
+  const uniqueRoles = [...new Set(roles)];
+
+  for (const role of uniqueRoles) {
+    const roleResult = await addLeagueParticipantRole({
+      participantId: participantResult.data.id,
+      role,
+    });
+
+    if (!roleResult.success) {
+      // Roll back participant creation if any role assignment fails.
+      const rollbackResult = await removeLeagueParticipant({
+        leagueId,
+        profileId,
+      });
+
+      if (!rollbackResult.success) {
+        return {
+          success: false,
+          error: {
+            message: `Role assignment failed and rollback failed: ${roleResult.error.message}`,
+            code: roleResult.error.code || "SERVER_ERROR",
+            status: roleResult.error.status,
+          },
+        };
+      }
+
+      return {
+        success: false,
+        error: {
+          message: roleResult.error.message,
+          code: roleResult.error.code || "SERVER_ERROR",
+          status: roleResult.error.status,
+        },
+      };
+    }
+  }
+
+  return {
+    success: true,
+    data: participantResult.data,
+  };
+};
+
+// -- Create League Join Request (one role per row) -- //
+export const createLeagueJoinRequestService = async (
+  {
+    leagueId,
+    profileId,
+    accountId,
+    contactInfo,
+    roles,
+  }: CreateLeagueJoinRequestPayload,
+): Promise<CreateLeagueJoinRequestResult> => {
+  const uniqueRoles = [...new Set(roles)];
+
+  if (!uniqueRoles.length) {
+    return {
+      success: false,
+      error: {
+        message: "At least one role is required.",
+        code: "VALIDATION_ERROR",
+        status: 400,
+      },
+    };
+  }
+
+  // Check for existing requests for this profile+league with the same roles
+  const { data: existing, error: fetchError } = await supabase
+    .from("league_join_request")
+    .select("requested_role")
+    .eq("league_id", leagueId)
+    .eq("profile_id", profileId)
+    .in("requested_role", uniqueRoles);
+
+  if (fetchError) {
+    return {
+      success: false,
+      error: {
+        message: fetchError.message,
+        code: fetchError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  const existingRoles = new Set((existing ?? []).map((r) => r.requested_role));
+  const newRoles = uniqueRoles.filter((role) => !existingRoles.has(role));
+
+  if (!newRoles.length) {
+    return { success: true, data: [] };
+  }
+
+  const requestRows = newRoles.map((role) => ({
+    league_id: leagueId,
+    profile_id: profileId,
+    account_id: accountId,
+    contact_info: contactInfo.trim(),
+    requested_role: role,
+  }));
+
+  const { data, error } = await supabase
+    .from("league_join_request")
+    .insert(requestRows)
+    .select();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data,
   };
 };
 
