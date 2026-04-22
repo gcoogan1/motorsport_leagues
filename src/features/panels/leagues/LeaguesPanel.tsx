@@ -81,6 +81,8 @@ const LeaguesPanel = () => {
               league.cover_type === "preset"
                 ? getCoverVariants()[league.cover_value as keyof ReturnType<typeof getCoverVariants>]
                 : league.cover_value;
+            const participant = league.participants.find((p) => p.account_id === accountId);
+            const roleTags = participant?.roles ?? [];
 
             return (
               <LeagueCard
@@ -93,6 +95,7 @@ const LeaguesPanel = () => {
                 hostingSquad={league.hosting_squad_name}
                 numOfParticipants={league.participants.length}
                 onClick={() => handleGoToLeague(league.id)}
+                tags={roleTags}
               />
             );
           })
