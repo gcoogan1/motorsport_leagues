@@ -1,5 +1,6 @@
 import {
 	useGetLeagueParticipantsQuery,
+	useGetLeagueJoinRequestsQuery,
 	useGetLeaguesQuery,
 	useGetLeaguesByProfileIdQuery,
 	useGetLeaguesBySquadIdQuery,
@@ -37,6 +38,12 @@ export const useLeagueParticipants = (leagueId?: string) =>
 // Query to fetch seasons for a league
 export const useLeagueSeasons = (leagueId?: string) =>
 	useGetLeagueSeasonsQuery(leagueId ?? "", {
+		skip: !leagueId,
+	});
+
+// Query to fetch join requests for a league
+export const useLeagueJoinRequests = (leagueId?: string) =>
+	useGetLeagueJoinRequestsQuery(leagueId ?? "", {
 		skip: !leagueId,
 	});
 

@@ -8,6 +8,7 @@ import {
   useCreateLeagueSeasonMutation,
   useFollowLeagueMutation,
   useJoinLeagueWithRolesMutation,
+  useRemoveLeagueJoinRequestMutation,
   useRemoveLeagueFollowerMutation,
   useRemoveLeagueParticipantMutation,
   useRemoveLeagueParticipantRoleMutation,
@@ -33,6 +34,11 @@ export const useJoinLeagueAsParticipant = () => {
 // Mutation for creating a join request for a league.
 export const useCreateLeagueJoinRequest = () => {
   return useCreateLeagueJoinRequestMutation();
+};
+
+// Mutation for removing a join request from a league.
+export const useRemoveLeagueJoinRequest = () => {
+  return useRemoveLeagueJoinRequestMutation();
 };
 
 // Mutation for adding a role to a participant in a league.

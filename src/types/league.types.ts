@@ -295,6 +295,34 @@ export type CreateLeagueJoinRequestResult =
   | { success: true; data: LeagueJoinRequestTable[] }
   | SupabaseError;
 
+// Remove League Join Request --> Payload type
+export type RemoveLeagueJoinRequestPayload = {
+  requestId: string;
+};
+
+// Remove League Join Request --> Result type
+export type RemoveLeagueJoinRequestResult =
+  | { success: true }
+  | SupabaseError;
+
+// Get League Join Requests --> Result type
+export type LeagueJoinRequestWithProfile = LeagueJoinRequestTable & {
+  username: string;
+  avatar_type: "preset" | "upload";
+  avatar_value: string;
+};
+
+// Get League Join Requests --> Result type
+export type GetLeagueJoinRequestsSuccess = {
+  success: true;
+  data: LeagueJoinRequestWithProfile[];
+};
+
+// Get League Join Requests --> Result type
+export type GetLeagueJoinRequestsResult =
+  | GetLeagueJoinRequestsSuccess
+  | SupabaseError;
+
 // Create League Season --> Payload type
 export type CreateLeagueSeasonPayload = {
   leagueId: string;
