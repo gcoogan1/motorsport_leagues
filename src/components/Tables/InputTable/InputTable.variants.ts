@@ -13,9 +13,9 @@ type ProfileOption = {
   avatar: { avatarType: "preset" | "upload"; avatarValue: string };
 };
 
-type ParticipantOption = {
+export type ParticipantOption = {
   username: string;
-  information: string;
+  information?: string;
   size: "small" | "medium" | "large";
   avatarType: "preset" | "upload";
   avatarValue: string;
@@ -50,7 +50,6 @@ export type ParticipantTable = {
   participant?: {
     id: string | number;
     name: string;
-    user: ParticipantOption;
   };
   role?: {
     id: string | number;

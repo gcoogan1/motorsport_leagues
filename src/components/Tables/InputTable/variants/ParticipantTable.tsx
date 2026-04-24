@@ -2,7 +2,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import ReadOnlyInput from "@/components/Inputs/ReadOnlyInput/ReadOnlyInput";
 import MultiInput from "@/components/Inputs/MultiInput/MultiInput";
 import MoreIcon from "@assets/Icon/More_Vertical.svg?react";
-import type { ParticipantTable as ParticipantTableRow } from "../InputTable.variants";
+import type { ParticipantOption, ParticipantTable as ParticipantTableRow } from "../InputTable.variants";
 import {
   ColumnText,
   ExtraCell,
@@ -27,10 +27,6 @@ type ParticipantTableProps = {
   moreOnClick?: () => void;
 };
 
-type ParticipantProfile = NonNullable<
-  ParticipantTableRow["participant"]
->["user"];
-
 const ParticipantTable = ({
   name,
   columns,
@@ -38,6 +34,8 @@ const ParticipantTable = ({
   moreOnClick,
 }: ParticipantTableProps) => {
   const { control } = useFormContext();
+  // The fields is the mapped array of participants that is being rendered in the table. 
+  // Each field corresponds to a row in the table.
   const { fields } = useFieldArray({ control, name });
 
   return (
@@ -64,7 +62,7 @@ const ParticipantTable = ({
       <TableBody>
         {fields.map((field, i) => {
           const participantProfile = (
-            field as { participant?: ParticipantProfile }
+            field as { participant?: ParticipantOption }
           ).participant;
 
           return (
@@ -84,6 +82,7 @@ const ParticipantTable = ({
                   <MultiInput
                     name={`${name}.${i}.${columns.role.name}`}
                     options={columns.role.options}
+                    useCheckboxOptions
                   />
                 </RoleCell>
               )}

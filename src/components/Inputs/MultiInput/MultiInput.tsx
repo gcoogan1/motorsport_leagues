@@ -9,6 +9,8 @@ import Select, {
 import Error_Outlined from "@assets/Icon/Error_Outlined.svg?react";
 import DropdownIcon from "@assets/Icon/Dropdown.svg?react";
 import CheckIcon from "@assets/Icon/Check.svg?react";
+import CheckboxCheckedIcon from "@assets/Icon/Checkbox_Checked.svg?react";
+import CheckboxUncheckedIcon from "@assets/Icon/Checkbox_Unchecked.svg?react";
 import { getTagVariants, type Tag } from "@/components/Tags/Tags.variants";
 import { useAppTheme } from "@/providers/theme/useTheme";
 import Icon from "@/components/Icon/Icon";
@@ -35,6 +37,9 @@ type MultiInputProps = {
 	placeholder?: string;
 	options?: TagOption[];
 	onChange?: (selectedTags: Tag[]) => void;
+	useCheckboxOptions?: boolean;
+	hasError?: boolean;
+	errorMessage?: string;
 };
 
 const DropdownIndicator = (props: DropdownIndicatorProps<TagOption, true>) => {
@@ -45,8 +50,8 @@ const DropdownIndicator = (props: DropdownIndicatorProps<TagOption, true>) => {
 	);
 };
 
-const Option = (props: OptionProps<TagOption, true>) => {
-	const { children, innerRef, innerProps, isFocused, isSelected } = props;
+const Option = (props: OptionProps<TagOption, true> & { useCheckboxOptions?: boolean }) => {
+	const { children, innerRef, innerProps, isFocused, isSelected, useCheckboxOptions } = props;
 
 	return (
 		<components.Option {...props}>
@@ -59,7 +64,12 @@ const Option = (props: OptionProps<TagOption, true>) => {
 				<OptionContent>
 					<OptionLabel>{children}</OptionLabel>
 				</OptionContent>
-				{isSelected && (
+				{useCheckboxOptions && (
+					<Icon size="small">
+						{isSelected ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon />}
+					</Icon>
+				)}
+				{!useCheckboxOptions && isSelected && (
 					<Icon size="small">
 						<CheckIcon />
 					</Icon>
@@ -76,10 +86,13 @@ const MultiInput = ({
 	placeholder = "Select tags",
 	options,
 	onChange,
+	useCheckboxOptions = false,
+	hasError = false,
+	errorMessage,
 }: MultiInputProps) => {
 	const inputId = useId();
 	const { themeName } = useAppTheme();
-	const { control, trigger } = useFormContext();
+	const { clearErrors, control, trigger } = useFormContext();
 
 	const tagOptions: TagOption[] =
 		options ??
@@ -94,6 +107,8 @@ const MultiInput = ({
 			control={control}
 			defaultValue={[]}
 			render={({ field: { onChange: onFieldChange, value, ref }, fieldState: { error } }) => {
+				const resolvedHasError = Boolean(hasError || error);
+				const resolvedErrorMessage = errorMessage ?? error?.message;
 				const selectedTags = Array.isArray(value) ? (value as Tag[]) : [];
 				const selectedOptions = tagOptions.filter((option) =>
 					selectedTags.includes(option.value),
@@ -127,11 +142,12 @@ const MultiInput = ({
 								);
 
 								onFieldChange(nextSelected);
+								clearErrors(name);
 								onChange?.(nextSelected);
 								void trigger(name);
 							}}
 							classNames={{
-								control: () => (error ? "select__control--has-error" : ""),
+								control: () => (resolvedHasError ? "select__control--has-error" : ""),
 							}}
 							styles={{
 								menuPortal: (base) => ({ ...base, zIndex: 9999 }),
@@ -140,14 +156,19 @@ const MultiInput = ({
 								ClearIndicator: () => null,
 								DropdownIndicator,
 								IndicatorSeparator: () => null,
-								Option,
+								Option: (optionProps) => (
+									<Option
+										{...optionProps}
+										useCheckboxOptions={useCheckboxOptions}
+									/>
+								),
 							}}
 						/>
 						{helperText && <HelperText>{helperText}</HelperText>}
-						{error && (
+						{resolvedHasError && resolvedErrorMessage && (
 							<ErrorText>
 								<Error_Outlined width={18} height={18} />
-								{error.message}
+								{resolvedErrorMessage}
 							</ErrorText>
 						)}
 					</FieldWrapper>

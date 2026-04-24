@@ -3,11 +3,12 @@ import { designTokens } from "@app/design/tokens";
 
 const { colors, layout, typography } = designTokens;
 
-export const TableWrapper = styled.div`
+export const TableWrapper = styled.table`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.xSmall};
+  border-collapse: collapse;
 `;
 
 /* Table Sections */
