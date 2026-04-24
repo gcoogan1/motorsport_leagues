@@ -7,7 +7,7 @@ import {
   getLeagueByIdThunk,
   updateLeagueThunk,
 } from "@/store/leagues/league.thunk";
-import type { LeagueCover, UpdateLeaguePayload } from "@/types/league.types";
+import type { UpdateLeaguePayload } from "@/types/league.types";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
@@ -15,7 +15,6 @@ import { withMinDelay } from "@/utils/withMinDelay";
 import {
   formatTimezoneLabel,
   getCurrentTimezone,
-  getTimezoneOptions,
 } from "@/utils/timezone";
 import ImageUploadInput from "@/components/Inputs/ImageUploadInput/ImageUploadInput";
 import SelectGraphicInput from "@/components/Inputs/SelectGraphicInput/SelectGraphicInput";
@@ -25,53 +24,17 @@ import TextAreaInput from "@/components/Inputs/TextAreaInput/TextAreaInput";
 import SelectInput from "@/components/Inputs/SelectInput/SelectInput";
 import Button from "@/components/Button/Button";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
-import { settingsFormSchema, type SettingsFormValues } from "./settingsSchema";
-import { ContentContainer, FormList, ListContainer, LoadingContainer } from "./Settings.styles";
 import CannotSave from "@/features/leagues/modals/errors/CannotSave/CannotSave";
 import DeleteLeague from "../../DeleteLeague/DeleteLeague";
+import { ContentContainer, FormList, ListContainer, LoadingContainer } from "./Settings.styles";
+import { settingsFormSchema, type SettingsFormValues } from "./settingsSchema";
+import { baseTimezoneOptions, getLeagueSettingsValues, getDefaultSettingsValues } from "./Settings.util";
 
 type SettingsProps = {
   leagueId: string;
   onDirtyChange?: (isDirty: boolean) => void;
 };
 
-const baseTimezoneOptions = getTimezoneOptions();
-
-const getDefaultSettingsValues = (fallbackTimezone: string): SettingsFormValues => ({
-  leagueName: "",
-  description: "",
-  timezone: fallbackTimezone,
-  cover: {
-    type: "preset",
-    variant: "cover1",
-  },
-  themeColor: "yellow",
-});
-
-const getLeagueSettingsValues = (
-  leagueName: string,
-  description: string | undefined,
-  timezone: string | undefined,
-  fallbackTimezone: string,
-  coverType: "preset" | "upload",
-  coverValue: string,
-  themeColor: SettingsFormValues["themeColor"],
-): SettingsFormValues => ({
-  leagueName,
-  description: description ?? "",
-  timezone: timezone ?? fallbackTimezone,
-  cover:
-    coverType === "preset"
-      ? {
-          type: "preset",
-          variant: coverValue as LeagueCover,
-        }
-      : {
-          type: "upload",
-          previewUrl: coverValue,
-        },
-  themeColor,
-});
 
 const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
   const dispatch = useDispatch<AppDispatch>();
