@@ -1658,7 +1658,10 @@ export const getLeagueParticipantsByLeagueId = async (
           username: profile.username,
           game_type: profile.game_type,
           avatar_type: profile.avatar_type,
-          avatar_value: profile.avatar_value,
+          avatar_value: resolveAvatarValue(
+            profile.avatar_type,
+            profile.avatar_value,
+          ),
           roles: rolesMap.get(participant.id) ?? [],
         };
       })
