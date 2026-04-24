@@ -145,6 +145,7 @@ export const ParticipantColumn = styled.th`
 
 export const RoleColumn = styled.th`
   display: flex;
+  min-width: 0;
   align-items: center;
   flex: 1 0 0;
   text-align: left; 
@@ -176,6 +177,7 @@ export const ParticipantCell = styled.td`
 
 export const RoleCell = styled.td`
   display: flex;
+  min-width: 0;
   align-items: center;
   flex: 1 0 0;
   text-align: left; 

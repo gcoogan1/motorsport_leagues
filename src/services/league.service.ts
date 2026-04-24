@@ -1031,6 +1031,7 @@ export const addLeagueParticipant = async (
   {
     leagueId,
     profileId,
+    contactInfo,
   }: AddLeagueParticipantPayload,
 ): Promise<AddLeagueParticipantResult> => {
   const { data, error } = await supabase
@@ -1038,6 +1039,7 @@ export const addLeagueParticipant = async (
     .insert({
       league_id: leagueId,
       profile_id: profileId,
+      contact_info: contactInfo?.trim() ? contactInfo.trim() : null,
     })
     .select()
     .single();
@@ -1257,6 +1259,7 @@ export const joinLeagueWithRolesService = async (
     leagueId,
     profileId,
     accountId,
+    contactInfo,
     roles,
   }: JoinLeagueWithRolesPayload,
 ): Promise<JoinLeagueWithRolesResult> => {
@@ -1278,7 +1281,11 @@ export const joinLeagueWithRolesService = async (
     }
   }
 
-  const participantResult = await addLeagueParticipant({ leagueId, profileId });
+  const participantResult = await addLeagueParticipant({
+    leagueId,
+    profileId,
+    contactInfo,
+  });
 
   if (!participantResult.success) {
     return participantResult;
@@ -1534,7 +1541,7 @@ export const getLeagueParticipantsByLeagueId = async (
 ): Promise<GetLeagueParticipantsResult> => {
   let participantsQuery = supabase
     .from("league_participants")
-    .select("id, profile_id")
+    .select("id, profile_id, contact_info")
     .eq("league_id", leagueId);
 
   if (signal) {
@@ -1655,6 +1662,7 @@ export const getLeagueParticipantsByLeagueId = async (
           id: participant.id,
           profile_id: participant.profile_id,
           account_id: profile.account_id,
+          contact_info: participant.contact_info ?? undefined,
           username: profile.username,
           game_type: profile.game_type,
           avatar_type: profile.avatar_type,

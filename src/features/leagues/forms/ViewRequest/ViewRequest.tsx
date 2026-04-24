@@ -61,6 +61,7 @@ const ViewRequest = ({ leagueId, request }: ViewRequestProps) => {
         leagueId,
         profileId: request.profileId,
         accountId: request.accountId,
+        contactInfo: request.contactInfo,
         roles: selectedRoles,
       }).unwrap();
 
