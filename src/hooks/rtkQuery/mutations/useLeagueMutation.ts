@@ -2,12 +2,14 @@
 // Used to modify data //
 
 import {
+  useAddLeagueApplicationOptionsMutation,
   useAddLeagueParticipantMutation,
   useAddLeagueParticipantRoleMutation,
   useCreateLeagueJoinRequestMutation,
   useCreateLeagueSeasonMutation,
   useFollowLeagueMutation,
   useJoinLeagueWithRolesMutation,
+  useRemoveLeagueApplicationOptionsMutation,
   useRemoveLeagueJoinRequestMutation,
   useRemoveLeagueFollowerMutation,
   useRemoveLeagueParticipantMutation,
@@ -15,8 +17,14 @@ import {
   useRemoveLeagueSeasonMutation,
   useUnfollowLeagueMutation,
   // useUpdateLeagueParticipantRoleMutation,
+  useUpdateLeagueApplicationOptionsMutation,
   useUpdateLeagueSeasonMutation,
 } from "@/store/rtkQueryAPI/leagueApi";
+
+// Mutation for adding league application options.
+export const useAddLeagueApplicationOptions = () => {
+  return useAddLeagueApplicationOptionsMutation();
+};
 
 // Mutation for adding a PARTICIPANT to a league.
 // This hook provides a mutation function that can be called to add a PARTICIPANT,
@@ -39,6 +47,11 @@ export const useCreateLeagueJoinRequest = () => {
 // Mutation for removing a join request from a league.
 export const useRemoveLeagueJoinRequest = () => {
   return useRemoveLeagueJoinRequestMutation();
+};
+
+// Mutation for removing league application options.
+export const useRemoveLeagueApplicationOptions = () => {
+  return useRemoveLeagueApplicationOptionsMutation();
 };
 
 // Mutation for adding a role to a participant in a league.
@@ -89,6 +102,11 @@ export const useCreateLeagueSeason = () => {
 // Mutation for updating an existing SEASON in a league.
 export const useUpdateLeagueSeason = () => {
   return useUpdateLeagueSeasonMutation();
+};
+
+// Mutation for updating league application options.
+export const useUpdateLeagueApplicationOptions = () => {
+  return useUpdateLeagueApplicationOptionsMutation();
 };
 
 // Mutation for removing a SEASON from a league.

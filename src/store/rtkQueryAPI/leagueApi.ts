@@ -1,10 +1,12 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
+  addLeagueApplicationOptions,
   addLeagueParticipant,
   addLeagueParticipantRole,
   createLeagueJoinRequestService,
   createLeagueSeason,
   followLeagueService,
+  getLeagueApplicationOptionsByLeagueId,
   getLeagueJoinRequestsByLeagueId,
   getAllLeaguesWithInfo,
   getFollowingLeagues,
@@ -17,15 +19,19 @@ import {
   isFollowingLeagueService,
   joinLeagueWithRolesService,
   removeLeagueJoinRequestService,
+  removeLeagueApplicationOptions,
   removeLeagueParticipant,
   removeLeagueParticipantRole,
   removeLeagueFollowerService,
   removeLeagueSeason,
   unfollowLeagueService,
+  updateLeagueApplicationOptions,
   // updateLeagueParticipantRole,
   updateLeagueSeason,
 } from "@/services/league.service";
 import type {
+  AddLeagueApplicationOptionsPayload,
+  AddLeagueApplicationOptionsResult,
   AddLeagueParticipantPayload,
   AddLeagueParticipantResult,
   AddLeagueParticipantRolePayload,
@@ -37,6 +43,7 @@ import type {
   FollowLeaguePayload,
   FollowLeagueResult,
   GetLeagueJoinRequestsResult,
+  GetLeagueApplicationOptionsResult,
   JoinLeagueWithRolesPayload,
   JoinLeagueWithRolesResult,
   GetLeagueFollowersResult,
@@ -45,10 +52,13 @@ import type {
   GetLeagueParticipantsResult,
   GetLeagueSeasonsResult,
   LeagueWithInfo,
+  LeagueApplicationOptions,
   LeagueTable,
   LeagueParticipantProfile,
   LeagueJoinRequestWithProfile,
   LeagueSeasonTable,
+  RemoveLeagueApplicationOptionsPayload,
+  RemoveLeagueApplicationOptionsResult,
   RemoveLeagueParticipantPayload,
   RemoveLeagueParticipantResult,
   RemoveLeagueJoinRequestPayload,
@@ -63,6 +73,8 @@ import type {
   UnfollowLeagueResult,
   // UpdateLeagueParticipantRolePayload,
   // UpdateLeagueParticipantRoleResult,
+  UpdateLeagueApplicationOptionsPayload,
+  UpdateLeagueApplicationOptionsResult,
   UpdateLeagueSeasonPayload,
   UpdateLeagueSeasonResult,
 } from "@/types/league.types";
@@ -78,7 +90,7 @@ export type LeaguesQueryArgs = {
 export const leagueApi = createApi({
   reducerPath: "leagueApi",
   baseQuery: fakeBaseQuery(),
-  tagTypes: ["Leagues", "LeagueParticipants", "LeagueSeasons", "LeagueFollowers", "LeagueFollowing", "LeagueJoinRequests"],
+  tagTypes: ["Leagues", "LeagueParticipants", "LeagueSeasons", "LeagueFollowers", "LeagueFollowing", "LeagueJoinRequests", "LeagueApplicationOptions"],
   endpoints: (builder) => ({
     getLeagues: builder.query<LeagueWithInfo[], LeaguesQueryArgs>({
       queryFn: async ({ accountId, search, includeOwnLeagues }, api) => {
@@ -265,6 +277,30 @@ export const leagueApi = createApi({
         { type: "LeagueJoinRequests", id: leagueId },
       ],
     }),
+    getLeagueApplicationOptions: builder.query<LeagueApplicationOptions, string>({
+      queryFn: async (leagueId) => {
+        try {
+          const result: GetLeagueApplicationOptionsResult =
+            await getLeagueApplicationOptionsByLeagueId(leagueId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, leagueId) => [
+        { type: "LeagueApplicationOptions", id: leagueId },
+      ],
+    }),
     followLeague: builder.mutation<FollowLeagueResult, FollowLeaguePayload>({
       queryFn: async (payload) => {
         try {
@@ -413,6 +449,32 @@ export const leagueApi = createApi({
       },
       invalidatesTags: (_result, _error, payload) => [
         { type: "LeagueParticipants", id: payload.leagueId },
+      ],
+    }),
+    addLeagueApplicationOptions: builder.mutation<
+      AddLeagueApplicationOptionsResult,
+      AddLeagueApplicationOptionsPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await addLeagueApplicationOptions(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueApplicationOptions", id: payload.leagueId },
       ],
     }),
     createLeagueJoinRequest: builder.mutation<
@@ -619,6 +681,32 @@ export const leagueApi = createApi({
       },
       invalidatesTags: () => ["LeagueSeasons"],
     }),
+    updateLeagueApplicationOptions: builder.mutation<
+      UpdateLeagueApplicationOptionsResult,
+      UpdateLeagueApplicationOptionsPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await updateLeagueApplicationOptions(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueApplicationOptions", id: payload.leagueId },
+      ],
+    }),
     removeLeagueParticipant: builder.mutation<
       RemoveLeagueParticipantResult,
       RemoveLeagueParticipantPayload
@@ -669,10 +757,37 @@ export const leagueApi = createApi({
       },
       invalidatesTags: () => ["LeagueSeasons"],
     }),
+    removeLeagueApplicationOptions: builder.mutation<
+      RemoveLeagueApplicationOptionsResult,
+      RemoveLeagueApplicationOptionsPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await removeLeagueApplicationOptions(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueApplicationOptions", id: payload.leagueId },
+      ],
+    }),
   }),
 });
 
 export const {
+  useAddLeagueApplicationOptionsMutation,
   useAddLeagueParticipantMutation,
   useCreateLeagueJoinRequestMutation,
   useRemoveLeagueJoinRequestMutation,
@@ -688,13 +803,16 @@ export const {
   useGetLeaguesBySquadIdQuery,
   useIsFollowingLeagueQuery,
   useGetLeagueParticipantsQuery,
+  useGetLeagueApplicationOptionsQuery,
   useGetLeagueSeasonsQuery,
   useGetLeagueJoinRequestsQuery,
   useUnfollowLeagueMutation,
   useRemoveLeagueFollowerMutation,
+  useRemoveLeagueApplicationOptionsMutation,
   useRemoveLeagueParticipantMutation,
   useRemoveLeagueParticipantRoleMutation,
   useRemoveLeagueSeasonMutation,
   // useUpdateLeagueParticipantRoleMutation,
+  useUpdateLeagueApplicationOptionsMutation,
   useUpdateLeagueSeasonMutation,
 } = leagueApi;
