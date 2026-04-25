@@ -67,7 +67,7 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
     reset,
     setError,
     setValue,
-    formState: { isDirty },
+    formState: { isDirty, isSubmitting },
   } = formMethods;
 
   const selectedRoles = useWatch({
@@ -592,6 +592,8 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
         blockDescription="Select which roles you want to allow users to apply for in this League. Unselect all to keep registration closed."
         listChildren={listChildren}
         onSave={handleSave}
+        isSaving={isSubmitting}
+        saveLoadingText="Saving Changes..."
       />
     </FormProvider>
   );

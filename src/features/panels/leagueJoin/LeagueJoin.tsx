@@ -96,10 +96,14 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 
 	const {
 		handleSubmit,
+		clearErrors,
+		setError,
 		setValue,
 		control,
 		formState: { errors },
 	} = formMethods;
+
+	const showContactInfo = leagueApplicationOptions?.contact_info ?? true;
 
 	useEffect(() => {
 		setValue("leagueId", resolvedLeagueId, { shouldDirty: false });
@@ -111,6 +115,18 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 			shouldValidate: false,
 		});
 	}, [defaultOptions, setValue]);
+
+	useEffect(() => {
+		if (showContactInfo) {
+			return;
+		}
+
+		setValue("contactInfo", "", {
+			shouldDirty: false,
+			shouldValidate: false,
+		});
+		clearErrors("contactInfo");
+	}, [showContactInfo, setValue, clearErrors]);
 
 	const optionValues = useWatch({
 		control,
@@ -142,6 +158,14 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 			return;
 		}
 
+		if (showContactInfo && data.contactInfo.trim().length < 2) {
+			setError("contactInfo", {
+				type: "manual",
+				message: "Please enter contact information.",
+			});
+			return;
+		}
+
 		try {
 			setIsSubmitting(true);
 
@@ -152,7 +176,7 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 					leagueId: resolvedLeagueId,
 					profileId: data.profile_joining,
 					accountId,
-					contactInfo: data.contactInfo,
+					contactInfo: showContactInfo ? data.contactInfo : "",
 					roles: selectedRoles,
 				}).unwrap(),
 				600,
@@ -197,6 +221,7 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 						optionsError={optionsErrorMessage}
 						profileError={errors.profile_joining?.message}
 						contactInfoError={errors.contactInfo?.message}
+						showContactInfo={showContactInfo}
 						onOptionChange={handleOptionChange}
 						onSubmit={handleSubmit(handleJoinSubmit)}
 						submitLabel={isSubmitting ? "Requesting..." : "Request To Join"}

@@ -37,6 +37,7 @@ export type JoinProfileOption = {
 type JoinFormProps = {
   options: CheckboxOption[];
   profiles: JoinProfileOption[];
+  showContactInfo?: boolean;
   optionValues?: Record<string, boolean>;
   optionsError?: string;
   profileError?: string;
@@ -53,6 +54,7 @@ type JoinFormProps = {
 const JoinForm = ({
   options,
   profiles,
+  showContactInfo = true,
   optionValues = {},
   optionsError,
   profileError,
@@ -100,16 +102,18 @@ const JoinForm = ({
           errorMessage={profileError}
         />
 
-        <TextInput
-          name="contactInfo"
-          label="Contact Information"
-          placeholder="Discord, Email, etc."
-          helperText="Enter a way to be contacted by the League Director(s)."
-          showCounter
-          maxLength={64}
-          hasError={!!contactInfoError}
-          errorMessage={contactInfoError}
-        />
+        {showContactInfo && (
+          <TextInput
+            name="contactInfo"
+            label="Contact Information"
+            placeholder="Discord, Email, etc."
+            helperText="Enter a way to be contacted by the League Director(s)."
+            showCounter
+            maxLength={64}
+            hasError={!!contactInfoError}
+            errorMessage={contactInfoError}
+          />
+        )}
 
         <Button color="primary" fullWidth type="submit">{submitLabel}</Button>
       </FormInputs>

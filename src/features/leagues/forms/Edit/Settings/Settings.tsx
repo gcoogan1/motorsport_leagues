@@ -77,7 +77,7 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
 
   const {
     handleSubmit,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isSubmitting },
     reset,
   } = formMethods;
 
@@ -267,6 +267,8 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
         listChildren={listChildern}
         headerChildren={headerChildren}
         onSave={onSave}
+        isSaving={isSubmitting}
+        saveLoadingText="Saving Changes..."
       />
     </FormProvider>
   );

@@ -6,7 +6,6 @@ export const joinFormSchema = z.object({
   contactInfo: z
     .string()
     .trim()
-    .min(2, "Please enter contact information.")
     .max(64, "Contact information must be 64 characters or less."),
   options: z
     .record(z.string(), z.boolean())
