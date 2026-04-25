@@ -97,6 +97,7 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 	const {
 		handleSubmit,
 		clearErrors,
+		getValues,
 		setError,
 		setValue,
 		control,
@@ -197,6 +198,22 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 		}
 	};
 
+	const handleInvalidSubmit = () => {
+		if (!showContactInfo) {
+			clearErrors("contactInfo");
+			return;
+		}
+
+		const contactValue = (getValues("contactInfo") ?? "").trim();
+
+		if (contactValue.length < 2) {
+			setError("contactInfo", {
+				type: "manual",
+				message: "Please enter contact information.",
+			});
+		}
+	};
+
 	if (isApplicationOptionsLoading) {
 		return null;
 	}
@@ -223,7 +240,7 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 						contactInfoError={errors.contactInfo?.message}
 						showContactInfo={showContactInfo}
 						onOptionChange={handleOptionChange}
-						onSubmit={handleSubmit(handleJoinSubmit)}
+						onSubmit={handleSubmit(handleJoinSubmit, handleInvalidSubmit)}
 						submitLabel={isSubmitting ? "Requesting..." : "Request To Join"}
 					/>
 				</FormProvider>
