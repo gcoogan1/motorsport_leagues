@@ -70,12 +70,16 @@ export const FieldWrapper = styled.div`
 		height: 100%;
 		min-width: 0;
 		min-height: 0;
-		flex-wrap: nowrap;
-		gap: ${layout.space.xxSmall};
-		padding: 0;
-		overflow-x: auto;
-		overflow-y: hidden;
-		white-space: nowrap;
+    flex-wrap: wrap;
+    gap: ${layout.space.xxSmall};
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    word-break: break-word;
+    white-space: normal;
+    ${layout.mediaQueries.mobile} {
+      gap: ${layout.space.xxxSmall};
+    }
 	}
 
 	.select__placeholder {
@@ -86,13 +90,18 @@ export const FieldWrapper = styled.div`
 
 	.select__multi-value {
 		margin: 0;
-		flex-shrink: 0;
+		flex-shrink: 1;
 		background: ${colors.base.translucent10};
 		border-radius: ${borders.radius.round};
 		padding: ${layout.space.xxSmall} ${layout.space.xSmall};
 		display: inline-flex;
 		align-items: center;
 		gap: ${layout.space.xxxSmall};
+		min-width: 0;
+		max-width: 100%;
+		${layout.mediaQueries.mobile} {
+			padding: ${layout.space.xxxSmall} ${layout.space.xxSmall};
+		}
 	}
 
 	.select__multi-value__label {

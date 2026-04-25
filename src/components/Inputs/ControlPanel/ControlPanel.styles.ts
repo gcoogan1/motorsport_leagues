@@ -9,6 +9,8 @@ export const PanelContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  min-width: 0;
 `;
 
 export const SecondaryContainer = styled.div`
@@ -25,4 +27,10 @@ export const SecondaryContainer = styled.div`
     gradient: gradients.base.fadeTop10,
     width: borders.width.thin,
   })}
+  width: 100%;
+  min-width: 0;
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.small} ${layout.space.small};
+    gap: 4px;
+  }
 `;

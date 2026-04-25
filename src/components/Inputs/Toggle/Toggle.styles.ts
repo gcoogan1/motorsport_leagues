@@ -5,9 +5,13 @@ const { colors, layout, typography } = designTokens;
 
 export const ToggleContainer = styled.div`
   display: flex;
-  width: 320px;
+  width: 100%;
+  min-width: 0;
   align-items: flex-start;
   gap: ${layout.space.xSmall};
+  ${layout.mediaQueries.mobile} {
+    gap: ${layout.space.xxxSmall};
+  }
 `;
 
 export const TextContainer = styled.div`

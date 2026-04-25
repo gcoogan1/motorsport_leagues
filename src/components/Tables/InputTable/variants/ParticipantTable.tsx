@@ -77,7 +77,9 @@ const ParticipantTable = ({
   const { fields } = useFieldArray({ control, name });
 
   return (
-    <TableWrapper style={{ width: customWidth || "640px" }}>
+    <TableWrapper
+      style={customWidth ? { width: customWidth } : { width: "100%", maxWidth: "640px" }}
+    >
       <ParticipantHeader>
         <TableRow>
           {columns.number && (

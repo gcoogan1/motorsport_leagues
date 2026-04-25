@@ -10,7 +10,9 @@ export const FormContainer = styled.div`
   align-items: center;
   justify-content: center;
   position: relative;
+  flex: 1;
   width: 100%;
+  min-width: 0;
   border-radius: ${borders.radius.xxxLarge};
   background: ${({ theme }) => theme.theme.primaryGradientFadeBottom30};
   padding: ${layout.space.xxLarge} ${layout.space.xLarge};
@@ -122,7 +124,9 @@ export const DetailsContent = styled.p`
 
 export const FormList = styled.div`
   display: flex;
+  width: 100%;
   max-width: 640px;
+  min-width: 0;
   flex-direction: column;
   gap: ${layout.space.medium};
   align-self: center;

@@ -7,6 +7,8 @@ export const TableWrapper = styled.table`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  min-width: 0;
   gap: ${layout.space.xSmall};
   border-collapse: collapse;
 `;
@@ -132,6 +134,9 @@ export const NumberColumn = styled.th`
   align-items: center;
   flex-shrink: 0;
   text-align: center; 
+  ${layout.mediaQueries.mobile} {
+    width: 40px;
+  }
 `;
 
 export const ParticipantColumn = styled.th`
@@ -141,6 +146,11 @@ export const ParticipantColumn = styled.th`
   align-items: center;
   flex: 1 0 0;
   text-align: left; 
+  ${layout.mediaQueries.mobile} {
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 0;
+  }
 `;
 
 export const RoleColumn = styled.th`
@@ -159,6 +169,9 @@ export const NumberCell = styled.td`
   align-items: center;
   flex-shrink: 0;
   text-align: center; 
+  ${layout.mediaQueries.mobile} {
+    width: 40px;
+  }
 `;
 
 export const NumberText = styled.p`
@@ -173,6 +186,11 @@ export const ParticipantCell = styled.td`
   align-items: center;
   flex: 1 0 0;
   text-align: left; 
+  ${layout.mediaQueries.mobile} {
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 0;
+  }
 `;
 
 export const RoleCell = styled.td`
@@ -191,6 +209,9 @@ export const CategoryColumn = styled.th`
   align-items: center;
   flex-shrink: 0;
   text-align: left; 
+  ${layout.mediaQueries.mobile} {
+    width: 36px;
+  }
 `;
 
 export const ModelColumn = styled.th`
@@ -234,7 +255,11 @@ export const ColumnText = styled.span`
 export const TableRow = styled.tr`
   display: flex;
   width: 100%;
+  min-width: 0;
   align-items: center;
   gap: ${layout.space.xSmall};
   align-self: stretch;
+  ${layout.mediaQueries.mobile} {
+    gap: ${layout.space.xxxSmall};
+  }
 `
