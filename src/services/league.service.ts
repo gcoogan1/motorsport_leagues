@@ -2059,6 +2059,22 @@ export const deleteLeagueById = async (
     };
   }
 
+  const { error: applicationOptionsDeleteError } = await supabase
+    .from("league_application_options")
+    .delete()
+    .eq("league_id", leagueId);
+
+  if (applicationOptionsDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: applicationOptionsDeleteError.message,
+        code: applicationOptionsDeleteError.code || "LEAGUE_APPLICATION_OPTIONS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
   const { error: leagueDeleteError } = await supabase
     .from("leagues")
     .delete()
