@@ -17,6 +17,10 @@ export const FormContainer = styled.div`
   background: ${({ theme }) => theme.theme.primaryGradientFadeBottom30};
   padding: ${layout.space.xxLarge} ${layout.space.xLarge};
   gap: ${layout.space.xLarge};
+
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.xxLarge} ${layout.space.medium};
+  }
 `;
 
 export const FormHeader = styled.div`
