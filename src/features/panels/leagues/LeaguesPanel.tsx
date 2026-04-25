@@ -55,9 +55,13 @@ const LeaguesPanel = () => {
   const [activeTab, setActiveTab] = useState<string>(LEAGUE_TABS[0].label);
   const dispatch = useDispatch<AppDispatch>();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
-  const { data: following = [] } = useLeagueFollowing(accountId ?? "");
+  const {
+    data: following = [],
+    isLoading: isFollowingLoading,
+  } = useLeagueFollowing(accountId ?? "");
   const {
     data: myLeagues = [],
+    isLoading: isMyLeaguesLoading,
   } = useParticipantLeagues(accountId);
 
   const handleTabChange = (tab: string) => {
@@ -79,6 +83,14 @@ const LeaguesPanel = () => {
   const handleSearchLeagues = () => {
     openModal(<SearchForm closePanel={closePanel} startingTab="Leagues" />);
   };
+
+  if (activeTab === "My Leagues" && isMyLeaguesLoading) {
+    return null;
+  }
+
+  if (activeTab === "Following" && isFollowingLoading) {
+    return null;
+  }
 
   return (
     <PanelLayout

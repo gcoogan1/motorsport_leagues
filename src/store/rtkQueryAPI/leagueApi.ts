@@ -5,6 +5,7 @@ import {
   createLeagueJoinRequestService,
   createLeagueSeason,
   followLeagueService,
+  getLeagueJoinRequestsByLeagueId,
   getAllLeaguesWithInfo,
   getFollowingLeagues,
   getLeagueFollowersService,
@@ -15,6 +16,7 @@ import {
   getLeagueSeasonsByLeagueId,
   isFollowingLeagueService,
   joinLeagueWithRolesService,
+  removeLeagueJoinRequestService,
   removeLeagueParticipant,
   removeLeagueParticipantRole,
   removeLeagueFollowerService,
@@ -34,6 +36,7 @@ import type {
   CreateLeagueSeasonResult,
   FollowLeaguePayload,
   FollowLeagueResult,
+  GetLeagueJoinRequestsResult,
   JoinLeagueWithRolesPayload,
   JoinLeagueWithRolesResult,
   GetLeagueFollowersResult,
@@ -44,9 +47,12 @@ import type {
   LeagueWithInfo,
   LeagueTable,
   LeagueParticipantProfile,
+  LeagueJoinRequestWithProfile,
   LeagueSeasonTable,
   RemoveLeagueParticipantPayload,
   RemoveLeagueParticipantResult,
+  RemoveLeagueJoinRequestPayload,
+  RemoveLeagueJoinRequestResult,
   RemoveLeagueFollowerPayload,
   RemoveLeagueFollowerResult,
   RemoveLeagueParticipantRolePayload,
@@ -72,7 +78,7 @@ export type LeaguesQueryArgs = {
 export const leagueApi = createApi({
   reducerPath: "leagueApi",
   baseQuery: fakeBaseQuery(),
-  tagTypes: ["Leagues", "LeagueParticipants", "LeagueSeasons", "LeagueFollowers", "LeagueFollowing"],
+  tagTypes: ["Leagues", "LeagueParticipants", "LeagueSeasons", "LeagueFollowers", "LeagueFollowing", "LeagueJoinRequests"],
   endpoints: (builder) => ({
     getLeagues: builder.query<LeagueWithInfo[], LeaguesQueryArgs>({
       queryFn: async ({ accountId, search, includeOwnLeagues }, api) => {
@@ -233,6 +239,30 @@ export const leagueApi = createApi({
       },
       providesTags: (_result, _error, leagueId) => [
         { type: "LeagueSeasons", id: leagueId },
+      ],
+    }),
+    getLeagueJoinRequests: builder.query<LeagueJoinRequestWithProfile[], string>({
+      queryFn: async (leagueId, api) => {
+        try {
+          const result: GetLeagueJoinRequestsResult =
+            await getLeagueJoinRequestsByLeagueId(leagueId, api.signal);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, leagueId) => [
+        { type: "LeagueJoinRequests", id: leagueId },
       ],
     }),
     followLeague: builder.mutation<FollowLeagueResult, FollowLeaguePayload>({
@@ -407,6 +437,35 @@ export const leagueApi = createApi({
           return { error };
         }
       },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueJoinRequests", id: payload.leagueId },
+      ],
+    }),
+    removeLeagueJoinRequest: builder.mutation<
+      RemoveLeagueJoinRequestResult,
+      RemoveLeagueJoinRequestPayload & { leagueId: string }
+    >({
+      queryFn: async ({ requestId }) => {
+        try {
+          const result = await removeLeagueJoinRequestService({ requestId });
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueJoinRequests", id: payload.leagueId },
+      ],
     }),
     joinLeagueWithRoles: builder.mutation<
       JoinLeagueWithRolesResult,
@@ -616,6 +675,7 @@ export const leagueApi = createApi({
 export const {
   useAddLeagueParticipantMutation,
   useCreateLeagueJoinRequestMutation,
+  useRemoveLeagueJoinRequestMutation,
   useJoinLeagueWithRolesMutation,
   useAddLeagueParticipantRoleMutation,
   useCreateLeagueSeasonMutation,
@@ -629,6 +689,7 @@ export const {
   useIsFollowingLeagueQuery,
   useGetLeagueParticipantsQuery,
   useGetLeagueSeasonsQuery,
+  useGetLeagueJoinRequestsQuery,
   useUnfollowLeagueMutation,
   useRemoveLeagueFollowerMutation,
   useRemoveLeagueParticipantMutation,

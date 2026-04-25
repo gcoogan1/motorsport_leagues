@@ -8,8 +8,18 @@ export const FieldWrapper = styled.div`
 	flex-direction: column;
 	gap: ${layout.space.xxxSmall};
 	width: 100%;
+	min-width: 0;
+
+	.select__container {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
 
 	.select__control {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
 		height: 52px;
 		min-height: 52px;
 		max-height: 52px;
@@ -56,7 +66,9 @@ export const FieldWrapper = styled.div`
 
 	.select__value-container {
 		display: flex;
+		flex: 1 1 auto;
 		height: 100%;
+		min-width: 0;
 		min-height: 0;
 		flex-wrap: nowrap;
 		gap: ${layout.space.xxSmall};

@@ -45,3 +45,9 @@ export const ReadOnlyRow = styled.div`
   align-items: center;
   gap: ${layout.space.xSmall};
 `;
+
+export const ActionsContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;

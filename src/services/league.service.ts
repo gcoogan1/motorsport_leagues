@@ -18,6 +18,9 @@ import type {
   RemoveLeagueParticipantResult,
   CreateLeagueJoinRequestPayload,
   CreateLeagueJoinRequestResult,
+  RemoveLeagueJoinRequestPayload,
+  RemoveLeagueJoinRequestResult,
+  GetLeagueJoinRequestsResult,
   JoinLeagueWithRolesPayload,
   JoinLeagueWithRolesResult,
   RemoveLeagueParticipantRolePayload,
@@ -1028,6 +1031,7 @@ export const addLeagueParticipant = async (
   {
     leagueId,
     profileId,
+    contactInfo,
   }: AddLeagueParticipantPayload,
 ): Promise<AddLeagueParticipantResult> => {
   const { data, error } = await supabase
@@ -1035,6 +1039,7 @@ export const addLeagueParticipant = async (
     .insert({
       league_id: leagueId,
       profile_id: profileId,
+      contact_info: contactInfo?.trim() ? contactInfo.trim() : null,
     })
     .select()
     .single();
@@ -1254,6 +1259,7 @@ export const joinLeagueWithRolesService = async (
     leagueId,
     profileId,
     accountId,
+    contactInfo,
     roles,
   }: JoinLeagueWithRolesPayload,
 ): Promise<JoinLeagueWithRolesResult> => {
@@ -1275,7 +1281,11 @@ export const joinLeagueWithRolesService = async (
     }
   }
 
-  const participantResult = await addLeagueParticipant({ leagueId, profileId });
+  const participantResult = await addLeagueParticipant({
+    leagueId,
+    profileId,
+    contactInfo,
+  });
 
   if (!participantResult.success) {
     return participantResult;
@@ -1404,6 +1414,126 @@ export const createLeagueJoinRequestService = async (
   };
 };
 
+// -- Get League Join Requests By League Id -- //
+export const getLeagueJoinRequestsByLeagueId = async (
+  leagueId: string,
+  signal?: AbortSignal,
+): Promise<GetLeagueJoinRequestsResult> => {
+  let joinRequestsQuery = supabase
+    .from("league_join_request")
+    .select("id, created_at, league_id, profile_id, account_id, contact_info, requested_role")
+    .eq("league_id", leagueId)
+    .order("created_at", { ascending: false });
+
+  if (signal) {
+    joinRequestsQuery = joinRequestsQuery.abortSignal(signal);
+  }
+
+  const { data: joinRequests, error: joinRequestsError } = await joinRequestsQuery;
+
+  if (joinRequestsError) {
+    if (
+      joinRequestsError.code === "ABORT" ||
+      joinRequestsError.message?.includes("abort")
+    ) {
+      return { success: true, data: [] };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: joinRequestsError.message,
+        code: joinRequestsError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (!joinRequests?.length) {
+    return {
+      success: true,
+      data: [],
+    };
+  }
+
+  const profileIds = [...new Set(joinRequests.map((request) => request.profile_id))];
+
+  let profilesQuery = supabase
+    .from("profiles")
+    .select("id, username, avatar_type, avatar_value")
+    .in("id", profileIds);
+
+  if (signal) {
+    profilesQuery = profilesQuery.abortSignal(signal);
+  }
+
+  const { data: profiles, error: profilesError } = await profilesQuery;
+
+  if (profilesError) {
+    if (profilesError.code === "ABORT" || profilesError.message?.includes("abort")) {
+      return { success: true, data: [] };
+    }
+
+    return {
+      success: false,
+      error: {
+        message: profilesError.message,
+        code: profilesError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  const profilesMap = new Map(
+    (profiles ?? []).map((profile) => [profile.id, profile]),
+  );
+
+  return {
+    success: true,
+    data: joinRequests
+      .map((request) => {
+        const profile = profilesMap.get(request.profile_id);
+
+        if (!profile) {
+          return null;
+        }
+
+        return {
+          ...request,
+          username: profile.username,
+          avatar_type: profile.avatar_type,
+          avatar_value: resolveAvatarValue(profile.avatar_type, profile.avatar_value),
+        };
+      })
+      .filter((request): request is NonNullable<typeof request> => request !== null),
+  };
+};
+
+// -- Remove League Join Request -- //
+export const removeLeagueJoinRequestService = async (
+  { requestId }: RemoveLeagueJoinRequestPayload,
+): Promise<RemoveLeagueJoinRequestResult> => {
+  const { error } = await supabase
+    .from("league_join_request")
+    .delete()
+    .eq("id", requestId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
 // -- Get League Participants by League ID -- //
 export const getLeagueParticipantsByLeagueId = async (
   leagueId: string,
@@ -1411,7 +1541,7 @@ export const getLeagueParticipantsByLeagueId = async (
 ): Promise<GetLeagueParticipantsResult> => {
   let participantsQuery = supabase
     .from("league_participants")
-    .select("id, profile_id")
+    .select("id, profile_id, contact_info")
     .eq("league_id", leagueId);
 
   if (signal) {
@@ -1532,10 +1662,14 @@ export const getLeagueParticipantsByLeagueId = async (
           id: participant.id,
           profile_id: participant.profile_id,
           account_id: profile.account_id,
+          contact_info: participant.contact_info ?? undefined,
           username: profile.username,
           game_type: profile.game_type,
           avatar_type: profile.avatar_type,
-          avatar_value: profile.avatar_value,
+          avatar_value: resolveAvatarValue(
+            profile.avatar_type,
+            profile.avatar_value,
+          ),
           roles: rolesMap.get(participant.id) ?? [],
         };
       })

@@ -66,6 +66,7 @@ export type LeagueParticipantTable = {
   created_at: string;
   league_id: string;
   profile_id: string;
+  contact_info?: string;
   // league_role: typeof LEAGUE_PARTICIPANT_ROLES[number];
 };
 
@@ -81,6 +82,7 @@ export type LeagueParticipantProfile = {
   id: string;
   profile_id: string;
   account_id: string;
+  contact_info?: string;
   username: string;
   game_type: GameType;
   avatar_type: "preset" | "upload";
@@ -201,6 +203,7 @@ export type GetLeaguesWithInfoResult = GetLeaguesWithInfoSuccess | SupabaseError
 export type AddLeagueParticipantPayload = {
   leagueId: string;
   profileId: string;
+  contactInfo?: string;
 };
 
 // Add League Participant --> Success type
@@ -262,6 +265,7 @@ export type JoinLeagueWithRolesPayload = {
   leagueId: string;
   profileId: string;
   accountId: string;
+  contactInfo?: string;
   roles: typeof LEAGUE_PARTICIPANT_ROLES[number][];
 };
 
@@ -293,6 +297,34 @@ export type CreateLeagueJoinRequestPayload = {
 // Create League Join Request --> Result type
 export type CreateLeagueJoinRequestResult =
   | { success: true; data: LeagueJoinRequestTable[] }
+  | SupabaseError;
+
+// Remove League Join Request --> Payload type
+export type RemoveLeagueJoinRequestPayload = {
+  requestId: string;
+};
+
+// Remove League Join Request --> Result type
+export type RemoveLeagueJoinRequestResult =
+  | { success: true }
+  | SupabaseError;
+
+// Get League Join Requests --> Result type
+export type LeagueJoinRequestWithProfile = LeagueJoinRequestTable & {
+  username: string;
+  avatar_type: "preset" | "upload";
+  avatar_value: string;
+};
+
+// Get League Join Requests --> Result type
+export type GetLeagueJoinRequestsSuccess = {
+  success: true;
+  data: LeagueJoinRequestWithProfile[];
+};
+
+// Get League Join Requests --> Result type
+export type GetLeagueJoinRequestsResult =
+  | GetLeagueJoinRequestsSuccess
   | SupabaseError;
 
 // Create League Season --> Payload type
