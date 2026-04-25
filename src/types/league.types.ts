@@ -90,15 +90,60 @@ export type LeagueParticipantProfile = {
   roles: typeof LEAGUE_PARTICIPANT_ROLES[number][];
 };
 
+export type LeagueApplicationOptionsTable = {
+  id: string;
+  league_id: string;
+  open_roles: typeof LEAGUE_PARTICIPANT_ROLES[number][];
+  contact_info?: boolean;
+  is_closed?: boolean;
+}
+
+export type AddLeagueApplicationOptionsPayload = {
+  leagueId: string;
+  openRoles: typeof LEAGUE_PARTICIPANT_ROLES[number][];
+  contactInfo: boolean;
+  isClosed?: boolean;
+};
+
+export type AddLeagueApplicationOptionsResult =
+  | { success: true; data: LeagueApplicationOptionsTable }
+  | SupabaseError;
+
+export type GetLeagueApplicationOptionsResult =
+  | { success: true; data: LeagueApplicationOptionsTable }
+  | SupabaseError;
+
+export type UpdateLeagueApplicationOptionsPayload = {
+  leagueId: string;
+  openRoles?: typeof LEAGUE_PARTICIPANT_ROLES[number][];
+  contactInfo?: boolean;
+  isClosed?: boolean;
+};
+
+export type UpdateLeagueApplicationOptionsResult =
+  | { success: true; data: LeagueApplicationOptionsTable }
+  | SupabaseError;
+
+export type RemoveLeagueApplicationOptionsPayload = {
+  leagueId: string;
+};
+
+export type RemoveLeagueApplicationOptionsResult =
+  | { success: true }
+  | SupabaseError;
+
+// Get League Participants --> Result type
 export type GetLeagueParticipantsSuccess = {
   success: true;
   data: LeagueParticipantProfile[];
 };
 
+// Get League Participants --> Result type
 export type GetLeagueParticipantsResult =
   | GetLeagueParticipantsSuccess
   | SupabaseError;
 
+  // League with Info --> combines league table with related info like seasons and participants for display purposes (not in Supabase, but used in service results)
 export type LeagueWithInfo = LeagueTable & {
   seasons: LeagueSeasonTable[];
   participants: LeagueParticipantProfile[];

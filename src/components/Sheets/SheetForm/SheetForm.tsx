@@ -33,6 +33,8 @@ type SheetFormProps = {
   };
   listChildren: React.ReactNode;
   onSave: () => void;
+  isSaving?: boolean;
+  saveLoadingText?: string;
 };
 
 const SheetForm = ({
@@ -47,6 +49,8 @@ const SheetForm = ({
   details,
   listChildren,
   onSave,
+  isSaving = false,
+  saveLoadingText = "Saving...",
 }: SheetFormProps) => {
 
   const isMobile = useMediaQuery("(max-width: 919px)");
@@ -80,6 +84,8 @@ const SheetForm = ({
           color="primary"
           variant="filled"
           rounded
+          isLoading={isSaving}
+          loadingText={saveLoadingText}
         >
           Save Changes
         </Button>

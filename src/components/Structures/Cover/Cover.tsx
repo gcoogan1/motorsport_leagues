@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import type {
   ButtonColor,
   ButtonVariant,
 } from "@/components/Button/Button.variants";
+import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import type { LeagueCover, LeagueStatus } from "@/types/league.types";
 import type { Tag } from "../../Tags/Tags.variants";
 import type { GameType } from "@/types/profile.types";
@@ -17,6 +19,7 @@ import StatusCompleteIcon from "@assets/Icon/Season_Complete.svg?react";
 import Button from "@/components/Button/Button";
 import Tags from "@/components/Tags/Tags";
 import {
+  ActionDropdownContainer,
   ActionsContainer,
   CoverBottom,
   CoverContainer,
@@ -38,6 +41,12 @@ export type CoverAction = {
   onClick?: () => void;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  dropdownOptions?: {
+    label: string;
+    value: string;
+    icon?: React.ReactNode;
+  }[];
+  onDropdownSelect?: (value: string) => void;
 };
 
 type CoverProps = {
@@ -75,6 +84,7 @@ const Cover = ({
   onFollowersClick,
   onStatusClick,
 }: CoverProps) => {
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const coverVariants = getCoverVariants();
   const resolvedBackgroundImageUrl =
     backgroundImageUrl && backgroundImageUrl in coverVariants
@@ -100,6 +110,28 @@ const Cover = ({
   } as const;
 
   const statusContent = statusContentMap[status] ?? statusContentMap.setup;
+
+  useEffect(() => {
+    if (!openDropdownId) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+
+      if (target?.closest("[data-cover-actions-container='true']")) {
+        return;
+      }
+
+      setOpenDropdownId(null);
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openDropdownId]);
 
 
   return (
@@ -129,22 +161,63 @@ const Cover = ({
             </Button>
           </DetailsContainer>
           <ActionsContainer>
-            {optionalActions.map((action, index) => (
-              <Button
-                size="medium"
-                key={action.id ?? action.label ?? `cover-action-${index}`}
-                icon={{
-                  left: action.leftIcon,
-                  right: action.rightIcon,
-                }}
-                onClick={action.onClick}
-                variant={action.variant || "filled"}
-                color={action.color || "primary"}
-                ariaLabel={action.label}
-              >
-                {action.label}
-              </Button>
-            ))}
+            {optionalActions.map((action, index) => {
+              const actionId = action.id ?? action.label ?? `cover-action-${index}`;
+              const hasDropdown = Boolean(action.dropdownOptions?.length);
+
+              if (hasDropdown) {
+                return (
+                  <ActionDropdownContainer
+                    key={actionId}
+                    data-cover-actions-container="true"
+                  >
+                    <Button
+                      size="medium"
+                      icon={{
+                        left: action.leftIcon,
+                        right: action.rightIcon,
+                      }}
+                      onClick={() => {
+                        setOpenDropdownId((prev) => (prev === actionId ? null : actionId));
+                      }}
+                      variant={action.variant || "filled"}
+                      color={action.color || "primary"}
+                      ariaLabel={action.label}
+                    >
+                      {action.label}
+                    </Button>
+                    {openDropdownId === actionId && (
+                      <MenuDropdown
+                        type="text"
+                        isStandAlone={true}
+                        options={action.dropdownOptions ?? []}
+                        onSelect={(value) => {
+                          action.onDropdownSelect?.(value);
+                          setOpenDropdownId(null);
+                        }}
+                      />
+                    )}
+                  </ActionDropdownContainer>
+                );
+              }
+
+              return (
+                <Button
+                  size="medium"
+                  key={actionId}
+                  icon={{
+                    left: action.leftIcon,
+                    right: action.rightIcon,
+                  }}
+                  onClick={action.onClick}
+                  variant={action.variant || "filled"}
+                  color={action.color || "primary"}
+                  ariaLabel={action.label}
+                >
+                  {action.label}
+                </Button>
+              );
+            })}
           </ActionsContainer>
         </CoverTop>
         <CoverBottom>

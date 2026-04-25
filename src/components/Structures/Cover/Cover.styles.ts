@@ -85,6 +85,11 @@ export const ActionsContainer = styled.div`
   }
 `;
 
+export const ActionDropdownContainer = styled.div`
+  position: relative;
+  display: flex;
+`;
+
 export const CoverBottom = styled.div`
   display: flex;
   padding: ${layout.space.xLarge} ${layout.space.xLarge} 0 ${layout.space.xLarge};

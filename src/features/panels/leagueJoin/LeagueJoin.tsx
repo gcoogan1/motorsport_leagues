@@ -9,8 +9,10 @@ import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { useCreateLeagueJoinRequest } from "@/hooks/rtkQuery/mutations/useLeagueMutation";
+import { useLeagueApplicationOptions } from "@/hooks/rtkQuery/queries/useLeagues";
 import { LEAGUE_PARTICIPANT_ROLES } from "@/types/league.types";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
+import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import LeagueIcon from "@assets/Icon/League.svg?react";
 import JoinForm from "@/components/Forms/JoinForm/JoinForm";
 import { joinFormSchema, type JoinFormValues } from "./leagueJoinSchema";
@@ -20,9 +22,7 @@ type LeagueJoinProps = {
 	leagueId?: string;
 };
 
-const selectableJoinRoles = LEAGUE_PARTICIPANT_ROLES.filter(
-	(role) => role !== "director",
-);
+type JoinRole = Exclude<typeof LEAGUE_PARTICIPANT_ROLES[number], "director">;
 
 const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 	const { closePanel } = usePanel();
@@ -35,19 +35,43 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 	const [createLeagueJoinRequest] = useCreateLeagueJoinRequest();
 
 	const resolvedLeagueId = leagueId ?? currentLeagueId ?? "";
+
+  // Fetch league application options to determine which roles are open for joining and if the league is accepting applications at all.
+	const {
+		data: leagueApplicationOptions,
+		isLoading: isApplicationOptionsLoading,
+	} = useLeagueApplicationOptions(resolvedLeagueId);
 	const profileOptions = convertProfilesToSelectOptions(profiles ?? []);
 
+  // Determine which participant roles are available for joining based on league application options.
+	const availableJoinRoles = useMemo(() => {
+		if (leagueApplicationOptions?.is_closed) {
+			return [] as JoinRole[];
+		}
+
+		const optionsRoles = (leagueApplicationOptions?.open_roles ?? []) as typeof LEAGUE_PARTICIPANT_ROLES[number][];
+		const configuredRoles = optionsRoles.filter((role): role is JoinRole => role !== "director");
+
+		if (configuredRoles.length === 0) {
+			return [] as JoinRole[];
+		}
+
+		return configuredRoles;
+	}, [leagueApplicationOptions]);
+
+  // Format available roles into options for the form.
 	const joinOptions = useMemo(
 		() =>
-			selectableJoinRoles.map((role) => ({
+			availableJoinRoles.map((role, index) => ({
 				id: role,
 				name: role,
 				label: role.charAt(0).toUpperCase() + role.slice(1),
-				defaultChecked: role === "driver",
+				defaultChecked: role === "driver" || (index === 0 && !availableJoinRoles.includes("driver")),
 			})),
-		[],
+		[availableJoinRoles],
 	);
 
+  // Set default option values based on available roles and their defaultChecked status for form default values.
 	const defaultOptions = useMemo(
 		() =>
 			joinOptions.reduce<Record<string, boolean>>((acc, option, index) => {
@@ -72,14 +96,38 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 
 	const {
 		handleSubmit,
+		clearErrors,
+		getValues,
+		setError,
 		setValue,
 		control,
 		formState: { errors },
 	} = formMethods;
 
+	const showContactInfo = leagueApplicationOptions?.contact_info ?? true;
+
 	useEffect(() => {
 		setValue("leagueId", resolvedLeagueId, { shouldDirty: false });
 	}, [resolvedLeagueId, setValue]);
+
+	useEffect(() => {
+		setValue("options", defaultOptions, {
+			shouldDirty: false,
+			shouldValidate: false,
+		});
+	}, [defaultOptions, setValue]);
+
+	useEffect(() => {
+		if (showContactInfo) {
+			return;
+		}
+
+		setValue("contactInfo", "", {
+			shouldDirty: false,
+			shouldValidate: false,
+		});
+		clearErrors("contactInfo");
+	}, [showContactInfo, setValue, clearErrors]);
 
 	const optionValues = useWatch({
 		control,
@@ -111,17 +159,25 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 			return;
 		}
 
+		if (showContactInfo && data.contactInfo.trim().length < 2) {
+			setError("contactInfo", {
+				type: "manual",
+				message: "Please enter contact information.",
+			});
+			return;
+		}
+
 		try {
 			setIsSubmitting(true);
 
-			const selectedRoles = selectableJoinRoles.filter((role) => data.options[role]);
+			const selectedRoles = availableJoinRoles.filter((role) => data.options[role]);
 
 			const requestResult = await withMinDelay(
 				createLeagueJoinRequest({
 					leagueId: resolvedLeagueId,
 					profileId: data.profile_joining,
 					accountId,
-					contactInfo: data.contactInfo,
+					contactInfo: showContactInfo ? data.contactInfo : "",
 					roles: selectedRoles,
 				}).unwrap(),
 				600,
@@ -142,21 +198,53 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 		}
 	};
 
+	const handleInvalidSubmit = () => {
+		if (!showContactInfo) {
+			clearErrors("contactInfo");
+			return;
+		}
+
+		const contactValue = (getValues("contactInfo") ?? "").trim();
+
+		if (contactValue.length < 2) {
+			setError("contactInfo", {
+				type: "manual",
+				message: "Please enter contact information.",
+			});
+		}
+	};
+
+	if (isApplicationOptionsLoading) {
+		return null;
+	}
+
+	const isLeagueClosedForApplications =
+		availableJoinRoles.length === 0;
+
 	return (
 		<PanelLayout panelTitle="Join League" panelTitleIcon={<LeagueIcon />}>
-			<FormProvider {...formMethods}>
-				<JoinForm
-					profiles={profileOptions}
-					options={joinOptions}
-					optionValues={optionValues}
-					optionsError={optionsErrorMessage}
-					profileError={errors.profile_joining?.message}
-					contactInfoError={errors.contactInfo?.message}
-					onOptionChange={handleOptionChange}
-					onSubmit={handleSubmit(handleJoinSubmit)}
-					submitLabel={isSubmitting ? "Requesting..." : "Request To Join"}
+			{isLeagueClosedForApplications ? (
+				<EmptyMessage
+					title="Applications Closed"
+					icon={<LeagueIcon />}
+					subtitle="This League is not currently accepting participants at this time."
 				/>
-			</FormProvider>
+			) : (
+				<FormProvider {...formMethods}>
+					<JoinForm
+						profiles={profileOptions}
+						options={joinOptions}
+						optionValues={optionValues}
+						optionsError={optionsErrorMessage}
+						profileError={errors.profile_joining?.message}
+						contactInfoError={errors.contactInfo?.message}
+						showContactInfo={showContactInfo}
+						onOptionChange={handleOptionChange}
+						onSubmit={handleSubmit(handleJoinSubmit, handleInvalidSubmit)}
+						submitLabel={isSubmitting ? "Requesting..." : "Request To Join"}
+					/>
+				</FormProvider>
+			)}
 		</PanelLayout>
 	);
 };

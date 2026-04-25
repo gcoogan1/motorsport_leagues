@@ -1,13 +1,19 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { navigate } from "@/app/navigation/navigation";
 import { useToast } from "@/providers/toast/useToast";
 import { useModal } from "@/providers/modal/useModal";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { LEAGUE_PARTICIPANT_ROLES } from "@/types/league.types";
-import { useLeagueJoinRequests, useLeagueParticipants } from "@/hooks/rtkQuery/queries/useLeagues";
 import {
+  useLeagueApplicationOptions,
+  useLeagueJoinRequests,
+  useLeagueParticipants,
+} from "@/hooks/rtkQuery/queries/useLeagues";
+import {
+  useAddLeagueApplicationOptions,
   useAddLeagueParticipantRole,
   useRemoveLeagueParticipantRole,
+  useUpdateLeagueApplicationOptions,
 } from "@/hooks/rtkQuery/mutations/useLeagueMutation";
 import { ParticipantTable } from "@/components/Tables/InputTable/InputTable";
 import ProfileIcon from "@assets/Icon/Profile.svg?react";
@@ -34,8 +40,12 @@ type RolesProps = {
 const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
   const { openModal } = useModal();
   const { showToast } = useToast();
+  const hasHydratedRef = useRef(false);
+  const [addLeagueApplicationOptions] = useAddLeagueApplicationOptions();
   const [addLeagueParticipantRole] = useAddLeagueParticipantRole();
   const [removeLeagueParticipantRole] = useRemoveLeagueParticipantRole();
+  const [updateLeagueApplicationOptions] = useUpdateLeagueApplicationOptions();
+  const { data: leagueApplicationOptions } = useLeagueApplicationOptions(leagueId);
   const { data: joinRequests = [] } = useLeagueJoinRequests(leagueId);
   const { data: participants = [] } = useLeagueParticipants(leagueId);
   
@@ -52,11 +62,12 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
   const {
     clearErrors,
     control,
+    getValues,
     handleSubmit,
     reset,
     setError,
     setValue,
-    formState: { isDirty },
+    formState: { isDirty, isSubmitting },
   } = formMethods;
 
   const selectedRoles = useWatch({
@@ -149,23 +160,46 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
     [],
   );
 
-  // Keep the form rows in sync with the latest participant data - so role changes are reflected in the UI.
+  // Keep participants in sync and treat synced data as clean defaults.
   useEffect(() => {
-    setValue("participants", participantFormRows, {
-      shouldDirty: false,
-      shouldTouch: false,
-      shouldValidate: false,
-    });
-  }, [participantFormRows, setValue]);
+    if (isDirty) {
+      return;
+    }
+
+    // Get open roles from league application options.
+    const optionsSource = (leagueApplicationOptions?.open_roles ?? ["driver"]) as LeagueRole[];
+    const nextOptions = optionsSource.filter((role) => role !== "director") as LeagueRoleTag[];
+
+    const currentValues = getValues();
+    reset(
+      {
+        ...currentValues,
+        options: nextOptions,
+        openApplications: leagueApplicationOptions?.contact_info ?? true,
+        participants: participantFormRows,
+      },
+      {
+        keepDirty: false,
+        keepTouched: false,
+      },
+    );
+
+    hasHydratedRef.current = true;
+  }, [participantFormRows, leagueApplicationOptions, isDirty, getValues, reset]);
 
   // Notify parent page to gate section navigation with UnsavedChanges modal.
   useEffect(() => {
+    if (!hasHydratedRef.current) {
+      onDirtyChange?.(false);
+      return;
+    }
+
     onDirtyChange?.(isDirty);
   }, [isDirty, onDirtyChange]);
 
   // Warn users about unsaved changes on tab/browser close.
   useEffect(() => {
-    if (!isDirty) {
+    if (!hasHydratedRef.current || !isDirty) {
       return undefined;
     }
 
@@ -261,6 +295,47 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
           };
         }),
       };
+      // Control Panel changes //
+
+      // Check if application options have changed and need to be updated/added before participant role changes.
+      const nextOpenRoles = [...new Set(savePayload.controlPanel.selectedRoles)] as LeagueRole[];
+      const currentOpenRoles = [...new Set(leagueApplicationOptions?.open_roles ?? [])] as LeagueRole[];
+      const hasOpenRolesChanged =
+        nextOpenRoles.length !== currentOpenRoles.length
+        || nextOpenRoles.some((role) => !currentOpenRoles.includes(role));
+
+      const nextContactInfo = savePayload.controlPanel.openApplications;
+      const currentContactInfo = leagueApplicationOptions?.contact_info ?? true;
+
+      const nextIsClosed = nextOpenRoles.length === 0;
+      const currentIsClosed = leagueApplicationOptions?.is_closed ?? false;
+
+      const shouldUpdateApplicationOptions =
+        !leagueApplicationOptions
+        || hasOpenRolesChanged
+        || nextContactInfo !== currentContactInfo
+        || nextIsClosed !== currentIsClosed;
+
+      if (shouldUpdateApplicationOptions) {
+        const applicationOptionsResult = leagueApplicationOptions
+          ? await updateLeagueApplicationOptions({
+            leagueId,
+            openRoles: nextOpenRoles,
+            contactInfo: nextContactInfo,
+            isClosed: nextIsClosed,
+          }).unwrap()
+          : await addLeagueApplicationOptions({
+            leagueId,
+            openRoles: nextOpenRoles,
+            contactInfo: nextContactInfo,
+            isClosed: nextIsClosed,
+          }).unwrap();
+
+        if (!applicationOptionsResult.success) {
+          handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
+          return;
+        }
+      }
 
       // Participant role changes //
 
@@ -287,7 +362,16 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
         });
       });
 
-      if (!roleChangeRequests.length) {
+      const hasParticipantRoleChanges = roleChangeRequests.length > 0;
+
+      if (!hasParticipantRoleChanges) {
+        if (shouldUpdateApplicationOptions) {
+          showToast({
+            usage: "success",
+            message: "Application options updated.",
+          });
+        }
+
         // Treat this as a save checkpoint so unsaved-changes guard does not linger.
         reset(data);
         return;
@@ -302,7 +386,9 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
 
       showToast({
         usage: "success",
-        message: "Participant roles updated.",
+        message: shouldUpdateApplicationOptions
+          ? "Participant roles and application options updated."
+          : "Participant roles updated.",
       });
 
       // Update form defaults to latest saved values to clear dirty state.
@@ -506,6 +592,8 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
         blockDescription="Select which roles you want to allow users to apply for in this League. Unselect all to keep registration closed."
         listChildren={listChildren}
         onSave={handleSave}
+        isSaving={isSubmitting}
+        saveLoadingText="Saving Changes..."
       />
     </FormProvider>
   );
