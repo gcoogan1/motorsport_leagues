@@ -21,6 +21,7 @@ import LeagueNoProfile from "@/features/leagues/modals/core/LeagueNoProfile/Leag
 import FollowLeague from "@/features/leagues/forms/Follow/FollowLeague";
 import { useIsFollowingLeague, useLeagueFollowers } from "@/hooks/rtkQuery/queries/useLeagueFollowers";
 import UnfollowLeague from "@/features/leagues/modals/errors/UnfollowLeague/UnfollowLeague";
+import LeaveLeague from "@/features/leagues/modals/core/LeaveLeague/LeaveLeague";
 
 // TODO: Update the League page to pull real data and implement actions
 
@@ -97,6 +98,9 @@ const League = () => {
   const isParticipantView = viewType === "participant";
   const isViewTypeLoading = viewType === "loading";
   const participantsCount = participants.length;
+  const currentParticipant = participants.find(
+    (participant) => participant.account_id === accountId,
+  );
 
   // -- HANDLERS -- //
   const handleGameTypeClick = () => {
@@ -163,6 +167,19 @@ const League = () => {
     return;
   };
 
+  const handleLeaveLeague = () => {
+    if (!currentParticipant) {
+      return;
+    }
+
+    openModal(
+      <LeaveLeague
+        leagueId={currentLeague.id}
+        profileId={currentParticipant.profile_id}
+      />,
+    );
+  };
+
   // -- Action buttons based on view type -- //
   const participantActions = getParticipantActions({
     isDirector,
@@ -170,6 +187,7 @@ const League = () => {
       navigate(`/league/${currentLeague.id}/management`);
     },
     onShareLeague: handleShareLeague,
+    onLeaveLeague: handleLeaveLeague,
   });
 
   const guestActions = getGuestActions({
