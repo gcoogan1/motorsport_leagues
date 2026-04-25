@@ -199,6 +199,16 @@ export const RoleCell = styled.td`
   align-items: center;
   flex: 1 0 0;
   text-align: left; 
+  ${layout.mediaQueries.mobile} {
+    min-width: 80px;
+    max-width: 120px;
+    width: 100px;
+    & > div {
+      min-width: 80px;
+      max-width: 120px;
+      width: 100px;
+    }
+  }
 `;  
 
 
