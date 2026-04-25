@@ -52,7 +52,7 @@ import type {
   GetLeagueParticipantsResult,
   GetLeagueSeasonsResult,
   LeagueWithInfo,
-  LeagueApplicationOptions,
+  LeagueApplicationOptionsTable,
   LeagueTable,
   LeagueParticipantProfile,
   LeagueJoinRequestWithProfile,
@@ -277,7 +277,7 @@ export const leagueApi = createApi({
         { type: "LeagueJoinRequests", id: leagueId },
       ],
     }),
-    getLeagueApplicationOptions: builder.query<LeagueApplicationOptions, string>({
+    getLeagueApplicationOptions: builder.query<LeagueApplicationOptionsTable, string>({
       queryFn: async (leagueId) => {
         try {
           const result: GetLeagueApplicationOptionsResult =
