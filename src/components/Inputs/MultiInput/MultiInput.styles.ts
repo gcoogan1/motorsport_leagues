@@ -70,7 +70,6 @@ export const FieldWrapper = styled.div`
 		height: 100%;
 		min-width: 0;
 		min-height: 0;
-    flex-wrap: wrap;
     gap: ${layout.space.xxSmall};
     padding: 0;
     overflow-x: auto;
@@ -180,15 +179,6 @@ export const OptionContent = styled.div`
 	display: flex;
 	flex-direction: column;
 	flex: 1;
-	  ${layout.mediaQueries.mobile} {
-	    .select__container,
-	    .select__control,
-	    .select__value-container {
-	      min-width: 80px;
-	      max-width: 120px;
-	      width: 100px;
-	    }
-	  }
 `;
 
 export const OptionLabel = styled.span`

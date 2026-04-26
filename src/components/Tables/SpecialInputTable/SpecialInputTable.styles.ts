@@ -55,11 +55,4 @@ export const ActionsContainer = styled.div`
     min-width: 160px;
     max-width: 240px;
   }
-  ${layout.mediaQueries.mobile} {
-    & > div {
-      width: 140px !important;
-      min-width: 140px;
-      max-width: 140px;
-    }
-  }
 `;

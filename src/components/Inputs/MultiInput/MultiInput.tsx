@@ -1,10 +1,10 @@
 import { useId } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import Select, {
-	components,
-	type DropdownIndicatorProps,
-	type MultiValue,
-	type OptionProps,
+  components,
+  type DropdownIndicatorProps,
+  type MultiValue,
+  type OptionProps,
 } from "react-select";
 import Error_Outlined from "@assets/Icon/Error_Outlined.svg?react";
 import DropdownIcon from "@assets/Icon/Dropdown.svg?react";
@@ -15,167 +15,192 @@ import { getTagVariants, type Tag } from "@/components/Tags/Tags.variants";
 import { useAppTheme } from "@/providers/theme/useTheme";
 import Icon from "@/components/Icon/Icon";
 import {
-	ErrorText,
-	FieldWrapper,
-	HelperText,
-	Label,
-	MultiInputMenuGlobalStyles,
-	OptionContent,
-	OptionLabel,
-	OptionRow,
+  ErrorText,
+  FieldWrapper,
+  HelperText,
+  Label,
+  MultiInputMenuGlobalStyles,
+  OptionContent,
+  OptionLabel,
+  OptionRow,
 } from "./MultiInput.styles";
 
 type TagOption = {
-	value: Tag;
-	label: string;
+  value: Tag;
+  label: string;
 };
 
 type MultiInputProps = {
-	name?: string;
-	label?: string;
-	helperText?: string;
-	placeholder?: string;
-	options?: TagOption[];
-	onChange?: (selectedTags: Tag[]) => void;
-	useCheckboxOptions?: boolean;
-	hasError?: boolean;
-	errorMessage?: string;
+  name?: string;
+  label?: string;
+  helperText?: string;
+  placeholder?: string;
+  options?: TagOption[];
+  onChange?: (selectedTags: Tag[]) => void;
+  useCheckboxOptions?: boolean;
+  hasError?: boolean;
+  errorMessage?: string;
 };
 
 const DropdownIndicator = (props: DropdownIndicatorProps<TagOption, true>) => {
-	return (
-		<components.DropdownIndicator {...props}>
-			<DropdownIcon width={18} height={18} />
-		</components.DropdownIndicator>
-	);
+  return (
+    <components.DropdownIndicator {...props}>
+      <DropdownIcon width={18} height={18} />
+    </components.DropdownIndicator>
+  );
 };
 
-const Option = (props: OptionProps<TagOption, true> & { useCheckboxOptions?: boolean }) => {
-	const { children, innerRef, innerProps, isFocused, isSelected, useCheckboxOptions } = props;
+const Option = (
+  props: OptionProps<TagOption, true> & { useCheckboxOptions?: boolean },
+) => {
+  const {
+    children,
+    innerRef,
+    innerProps,
+    isFocused,
+    isSelected,
+    useCheckboxOptions,
+  } = props;
 
-	return (
-		<components.Option {...props}>
-			<OptionRow
-				ref={innerRef}
-				{...innerProps}
-				$isFocused={isFocused}
-				$isSelected={isSelected}
-			>
-				<OptionContent>
-					<OptionLabel>{children}</OptionLabel>
-				</OptionContent>
-				{useCheckboxOptions && (
-					<Icon size="small">
-						{isSelected ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon />}
-					</Icon>
-				)}
-				{!useCheckboxOptions && isSelected && (
-					<Icon size="small">
-						<CheckIcon />
-					</Icon>
-				)}
-			</OptionRow>
-		</components.Option>
-	);
+  return (
+    <components.Option {...props}>
+      <OptionRow
+        ref={innerRef}
+        {...innerProps}
+        $isFocused={isFocused}
+        $isSelected={isSelected}
+      >
+        <OptionContent>
+          <OptionLabel>{children}</OptionLabel>
+        </OptionContent>
+        {useCheckboxOptions && (
+          <Icon size="small">
+            {isSelected ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon />}
+          </Icon>
+        )}
+        {!useCheckboxOptions && isSelected && (
+          <Icon size="small">
+            <CheckIcon />
+          </Icon>
+        )}
+      </OptionRow>
+    </components.Option>
+  );
 };
 
 const MultiInput = ({
-	name = "multiInput",
-	label,
-	helperText,
-	placeholder = "Select tags",
-	options,
-	onChange,
-	useCheckboxOptions = false,
-	hasError = false,
-	errorMessage,
+  name = "multiInput",
+  label,
+  helperText,
+  placeholder = "Select tags",
+  options,
+  onChange,
+  useCheckboxOptions = false,
+  hasError = false,
+  errorMessage,
 }: MultiInputProps) => {
-	const inputId = useId();
-	const { themeName } = useAppTheme();
-	const { clearErrors, control, trigger } = useFormContext();
+  const inputId = useId();
+  const { themeName } = useAppTheme();
+  const { clearErrors, control, trigger } = useFormContext();
 
-	const tagOptions: TagOption[] =
-		options ??
-		getTagVariants(themeName).map((tag) => ({
-			value: tag.name as Tag,
-			label: tag.label,
-		}));
+  const tagOptions: TagOption[] =
+    options ??
+    getTagVariants(themeName).map((tag) => ({
+      value: tag.name as Tag,
+      label: tag.label,
+    }));
 
-	return (
-		<Controller
-			name={name}
-			control={control}
-			defaultValue={[]}
-			render={({ field: { onChange: onFieldChange, value, ref }, fieldState: { error } }) => {
-				const resolvedHasError = Boolean(hasError || error);
-				const resolvedErrorMessage = errorMessage ?? error?.message;
-				const selectedTags = Array.isArray(value) ? (value as Tag[]) : [];
-				const selectedOptions = tagOptions.filter((option) =>
-					selectedTags.includes(option.value),
-				);
+  return (
+    <Controller
+      name={name}
+      control={control}
+      defaultValue={[]}
+      render={({
+        field: { onChange: onFieldChange, value, ref },
+        fieldState: { error },
+      }) => {
+        const resolvedHasError = Boolean(hasError || error);
+        const resolvedErrorMessage = errorMessage ?? error?.message;
+        const selectedTags = Array.isArray(value) ? (value as Tag[]) : [];
+        const selectedOptions = tagOptions.filter((option) =>
+          selectedTags.includes(option.value),
+        );
 
-				return (
-					<FieldWrapper>
-						<MultiInputMenuGlobalStyles />
-						{label && <Label htmlFor={inputId}>{label}</Label>}
-						<Select<TagOption, true>
-							isMulti
-							isClearable={false}
-							unstyled
-							classNamePrefix="select"
-							ref={ref}
-							inputId={inputId}
-							value={selectedOptions}
-							options={tagOptions}
-							hideSelectedOptions={false}
-							closeMenuOnSelect={false}
-							menuPlacement="bottom"
-							menuShouldScrollIntoView={false}
-							captureMenuScroll={false}
-							menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
-							menuPosition="fixed"
-							placeholder={selectedOptions.length > 0 ? `${selectedOptions.length} selected` : placeholder}
-							noOptionsMessage={() => "No tags found"}
-							onChange={(selected) => {
-								const nextSelected = ((selected as MultiValue<TagOption>) ?? []).map(
-									(option) => option.value,
-								);
+        return (
+          <FieldWrapper>
+            <MultiInputMenuGlobalStyles />
+            {label && <Label htmlFor={inputId}>{label}</Label>}
+            <Select<TagOption, true>
+              isMulti
+              isClearable={false}
+              unstyled
+              classNamePrefix="select"
+              ref={ref}
+              inputId={inputId}
+              value={selectedOptions}
+              options={tagOptions}
+              hideSelectedOptions={false}
+              closeMenuOnSelect={false}
+              menuPlacement="bottom"
+              menuShouldScrollIntoView={false}
+              captureMenuScroll={false}
+              menuPortalTarget={
+                typeof document !== "undefined" ? document.body : undefined
+              }
+              menuPosition="fixed"
+              placeholder={
+                selectedOptions.length > 0
+                  ? `${selectedOptions.length} selected`
+                  : placeholder
+              }
+              noOptionsMessage={() => "No tags found"}
+              onChange={(selected) => {
+                const nextSelected = (
+                  (selected as MultiValue<TagOption>) ?? []
+                ).map((option) => option.value);
 
-								onFieldChange(nextSelected);
-								clearErrors(name);
-								onChange?.(nextSelected);
-								void trigger(name);
-							}}
-							classNames={{
-								control: () => (resolvedHasError ? "select__control--has-error" : ""),
-							}}
-							styles={{
-								menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-							}}
-							components={{
-								ClearIndicator: () => null,
-								DropdownIndicator,
-								IndicatorSeparator: () => null,
-								Option: (optionProps) => (
-									<Option
-										{...optionProps}
-										useCheckboxOptions={useCheckboxOptions}
-									/>
-								),
-							}}
-						/>
-						{helperText && <HelperText>{helperText}</HelperText>}
-						{resolvedHasError && resolvedErrorMessage && (
-							<ErrorText>
-								<Error_Outlined width={18} height={18} />
-								{resolvedErrorMessage}
-							</ErrorText>
-						)}
-					</FieldWrapper>
-				);
-			}}
-		/>
-	);
+                onFieldChange(nextSelected);
+                clearErrors(name);
+                onChange?.(nextSelected);
+                void trigger(name);
+              }}
+              classNames={{
+                control: () =>
+                  resolvedHasError ? "select__control--has-error" : "",
+              }}
+              styles={{
+                menu: (provided) => ({
+                  ...provided,
+                  minWidth: "240px",
+                  right: 0, // Align the right edge of menu with right edge of input
+                  left: "auto",
+                }),
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+              }}
+              components={{
+                ClearIndicator: () => null,
+                DropdownIndicator,
+                IndicatorSeparator: () => null,
+                Option: (optionProps) => (
+                  <Option
+                    {...optionProps}
+                    useCheckboxOptions={useCheckboxOptions}
+                  />
+                ),
+              }}
+            />
+            {helperText && <HelperText>{helperText}</HelperText>}
+            {resolvedHasError && resolvedErrorMessage && (
+              <ErrorText>
+                <Error_Outlined width={18} height={18} />
+                {resolvedErrorMessage}
+              </ErrorText>
+            )}
+          </FieldWrapper>
+        );
+      }}
+    />
+  );
 };
 
 export default MultiInput;
