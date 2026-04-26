@@ -76,6 +76,8 @@ const ParticipantTable = ({
   // Each field corresponds to a row in the table.
   const { fields } = useFieldArray({ control, name });
 
+  const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
+
   return (
     <TableWrapper
       style={customWidth ? { width: customWidth } : { width: "100%", maxWidth: "640px" }}
@@ -123,6 +125,9 @@ const ParticipantTable = ({
                     name={`${name}.${i}.${columns.role.name}`}
                     options={columns.role.options}
                     useCheckboxOptions
+                    menuIsOpen={openDropdownIndex === i}
+                    onMenuOpen={() => setOpenDropdownIndex(i)}
+                    onMenuClose={() => setOpenDropdownIndex(null)}
                   />
                 </RoleCell>
               )}

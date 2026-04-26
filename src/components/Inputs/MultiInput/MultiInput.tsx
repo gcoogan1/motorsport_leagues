@@ -40,6 +40,9 @@ type MultiInputProps = {
   useCheckboxOptions?: boolean;
   hasError?: boolean;
   errorMessage?: string;
+  menuIsOpen?: boolean;
+  onMenuOpen?: () => void;
+  onMenuClose?: () => void;
 };
 
 const DropdownIndicator = (props: DropdownIndicatorProps<TagOption, true>) => {
@@ -98,6 +101,9 @@ const MultiInput = ({
   useCheckboxOptions = false,
   hasError = false,
   errorMessage,
+  menuIsOpen,
+  onMenuOpen,
+  onMenuClose,
 }: MultiInputProps) => {
   const inputId = useId();
   const { themeName } = useAppTheme();
@@ -148,6 +154,9 @@ const MultiInput = ({
                 typeof document !== "undefined" ? document.body : undefined
               }
               menuPosition="fixed"
+              menuIsOpen={menuIsOpen}
+              onMenuOpen={onMenuOpen}
+              onMenuClose={onMenuClose}
               placeholder={
                 selectedOptions.length > 0
                   ? `${selectedOptions.length} selected`
