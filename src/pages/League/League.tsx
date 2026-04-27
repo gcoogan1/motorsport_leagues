@@ -180,6 +180,10 @@ const League = () => {
     );
   };
 
+  const handleParticipantsClick = () => {
+    openPanel("LEAGUE_PARTICIPANTS", { leagueId: currentLeague.id });
+  }
+
   // -- Action buttons based on view type -- //
   const participantActions = getParticipantActions({
     isDirector,
@@ -207,6 +211,7 @@ const League = () => {
         participantsCount={participantsCount}
         followersCount={followers.length}
         onFollowersClick={handleFollowersClick}
+        onParticipantsClick={handleParticipantsClick}
         onGameClick={handleGameTypeClick}
         onSquadNameClick={handleHostingSquadClick}
         backgroundImageUrl={currentLeague.cover_value}

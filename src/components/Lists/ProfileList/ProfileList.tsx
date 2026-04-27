@@ -8,6 +8,7 @@ import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import More_Vertical from "@assets/Icon/More_Vertical.svg?react";
 import ProfileIcon from "@assets/Icon/Profile.svg?react";
 import KickIcon from "@assets/Icon/Kick.svg?react";
+import ManageIcon from "@assets/Icon/Manage.svg?react";
 import RoleIcon from "@assets/Icon/Role.svg?react";
 import {
   ListContainer,
@@ -18,7 +19,7 @@ import {
 
 // TODO: Add Tags back
 
-export type ProfileAction = "view" | "remove" | "changeRole";
+export type ProfileAction = "view" | "remove" | "changeRole" | "manage";
 
 type ListType = "profile" | "squad" | "league";
 
@@ -38,6 +39,7 @@ type ProfileListProps = {
   onClick?: (id: string, action: ProfileAction) => void;
   allowRemoveAction?: boolean;
   allowChangeRoleAction?: boolean;
+  allowManageAction?: boolean;
   removeType?: "member" | "user" | 'follower';
   listType?: ListType;
 };
@@ -47,6 +49,7 @@ const ProfileList = ({
   onClick,
   allowRemoveAction = false,
   allowChangeRoleAction = false,
+  allowManageAction = false,
   removeType = "user",
   listType = "profile",
 }: ProfileListProps) => {
@@ -113,7 +116,7 @@ const ProfileList = ({
 
   const handleAction = (
     id: string,
-    action: "view" | "remove" | "changeRole",
+    action: "view" | "remove" | "changeRole" | "manage",
   ) => {
     if (onClick) {
       onClick(id, action);
@@ -176,11 +179,20 @@ const ProfileList = ({
                         },
                       ]
                     : []),
+                  ...(allowManageAction
+                    ? [
+                        {
+                          label: `Manage Participant`,
+                          value: "manage",
+                          icon: <ManageIcon />,
+                        },
+                      ]
+                    : []),
                 ]}
                 onSelect={(value) =>
                   handleAction(
                     item.id,
-                    value as "view" | "remove" | "changeRole",
+                    value as "view" | "remove" | "changeRole" | "manage",
                   )
                 }
               />

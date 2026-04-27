@@ -14,6 +14,7 @@ import SquadFollowers from "./squadFollowers/SquadFollowers";
 import SquadMembers from "./squadMembers/SquadMembers";
 import LeagueFollowers from "./leagueFollowers/LeagueFollowers";
 import LeagueJoin from "./leagueJoin/LeagueJoin";
+import LeagueParticipants from "./leagueParticipants/LeaguePart";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,4 +34,5 @@ export const panelVariants: Record<PanelTypes, React.ComponentType<any>> = {
   SQUAD_MEMBERS: SquadMembers,
   LEAGUE_FOLLOWERS: LeagueFollowers,
   LEAGUE_JOIN: LeagueJoin,
+  LEAGUE_PARTICIPANTS: LeagueParticipants,
 };

@@ -13,7 +13,7 @@ import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import FollowersIcon from "@assets/Icon/Followers.svg?react";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
-import ProfileList from "@/components/Lists/ProfileList/ProfileList";
+import ProfileList, { type ProfileAction } from "@/components/Lists/ProfileList/ProfileList";
 import ChangeMemberRole from "./modals/form/ChangeMemberRole/ChangeMemberRole";
 import RemoveSquadMember from "./modals/core/RemoveSquadMember/RemoveSquadMember";
 
@@ -50,7 +50,7 @@ const SquadMembers = ({ squadId }: SquadMembersProps) => {
 
   const handleProfileAction = (
     selectedProfileId: string,
-    action: "view" | "remove" | "changeRole",
+    action: ProfileAction,
   ) => {
     if (action === "view") {
       closePanel();
