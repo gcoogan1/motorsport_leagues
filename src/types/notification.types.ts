@@ -7,7 +7,7 @@ export type NotificationType =
   | "INVITE_ACCEPTED"
   | "ANNOUNCEMENT";
 
-export type EntityType = "squad" | "squad_invite" | "profile";
+export type EntityType = "squad" | "squad_invite" | "profile" | "league" | "league_invite";
 
 // Notification Metadata //
 
@@ -17,6 +17,7 @@ export type InviteReceivedMetadata = {
   sender_username: string;
   invite_token: string;
   receiver_profile_username?: string;
+  league_name?: string;
 };
 
 // INVITE_ACCEPTED Metadata
@@ -64,7 +65,7 @@ export interface SquadInviteAcceptedNotification extends NotificationBase {
 // Announcement Notification --> notification row for general announcements
 export interface AnnouncementNotification extends NotificationBase {
   type: "ANNOUNCEMENT";
-  entity_type: "profile" | "squad";
+  entity_type: "profile" | "squad" | "league";
   metadata: AnnouncementMetadata;
 }
 
@@ -105,7 +106,7 @@ export interface CreateInviteAcceptedNotificationPayload
 export interface CreateAnnouncementNotificationPayload
   extends CreateNotificationBase {
   type: "ANNOUNCEMENT";
-  entity_type: "profile" | "squad";
+  entity_type: "profile" | "squad" | "league";
   metadata: AnnouncementMetadata;
 }
 
