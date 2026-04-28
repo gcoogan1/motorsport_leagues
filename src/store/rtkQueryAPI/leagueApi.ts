@@ -28,6 +28,7 @@ import {
   updateLeagueApplicationOptions,
   // updateLeagueParticipantRole,
   updateLeagueSeason,
+  getPendingLeagueInvitesByLeagueId,
 } from "@/services/league.service";
 import type {
   AddLeagueApplicationOptionsPayload,
@@ -77,6 +78,8 @@ import type {
   UpdateLeagueApplicationOptionsResult,
   UpdateLeagueSeasonPayload,
   UpdateLeagueSeasonResult,
+  LeagueInviteTable,
+  GetLeagueInvitesResult,
 } from "@/types/league.types";
 import type { ProfileTable } from "@/types/profile.types";
 
@@ -90,7 +93,7 @@ export type LeaguesQueryArgs = {
 export const leagueApi = createApi({
   reducerPath: "leagueApi",
   baseQuery: fakeBaseQuery(),
-  tagTypes: ["Leagues", "LeagueParticipants", "LeagueSeasons", "LeagueFollowers", "LeagueFollowing", "LeagueJoinRequests", "LeagueApplicationOptions"],
+  tagTypes: ["Leagues", "LeagueParticipants", "LeagueSeasons", "LeagueFollowers", "LeagueFollowing", "LeagueJoinRequests", "LeagueApplicationOptions", "LeagueInvites"],
   endpoints: (builder) => ({
     getLeagues: builder.query<LeagueWithInfo[], LeaguesQueryArgs>({
       queryFn: async ({ accountId, search, includeOwnLeagues }, api) => {
@@ -783,6 +786,34 @@ export const leagueApi = createApi({
         { type: "LeagueApplicationOptions", id: payload.leagueId },
       ],
     }),
+        getPendingLeagueInvites: builder.query<LeagueInviteTable[], string>({
+          queryFn: async (leagueId, api) => {
+            try {
+              const result: GetLeagueInvitesResult = await getPendingLeagueInvitesByLeagueId(
+                leagueId,
+                api.signal,
+              );
+    
+              if (!result.success) {
+                return {
+                  error: {
+                    status: result.error.status,
+                    data: result.error,
+                  },
+                };
+              }
+    
+              return { data: result.data };
+            } catch (error) {
+              return {
+                error,
+              };
+            }
+          },
+          providesTags: (_result, _error, leagueId) => [
+            { type: "LeagueInvites", id: leagueId },
+          ],
+        }),
   }),
 });
 
@@ -815,4 +846,5 @@ export const {
   // useUpdateLeagueParticipantRoleMutation,
   useUpdateLeagueApplicationOptionsMutation,
   useUpdateLeagueSeasonMutation,
+  useGetPendingLeagueInvitesQuery,
 } = leagueApi;

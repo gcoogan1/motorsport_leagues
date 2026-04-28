@@ -6,45 +6,51 @@ import type {
   AddLeagueParticipantResult,
   AddLeagueParticipantRolePayload,
   AddLeagueParticipantRoleResult,
+  CreateLeagueJoinRequestPayload,
+  CreateLeagueJoinRequestResult,
   CreateLeaguePayload,
   CreateLeagueResult,
   CreateLeagueSeasonPayload,
   CreateLeagueSeasonResult,
-  GetLeaguesWithInfoResult,
   DeleteLeagueResult,
-  LeagueParticipantProfile,
+  FollowLeaguePayload,
+  FollowLeagueResult,
+  GetLeagueApplicationOptionsResult,
+  GetLeagueFollowersResult,
+  GetLeagueFollowingResult,
+  GetLeagueInviteTablesResult,
+  GetLeagueJoinRequestsResult,
   GetLeagueParticipantsResult,
   GetLeagueSeasonsResult,
   GetLeaguesResult,
-  RemoveLeagueParticipantPayload,
-  RemoveLeagueParticipantResult,
-  CreateLeagueJoinRequestPayload,
-  CreateLeagueJoinRequestResult,
-  RemoveLeagueJoinRequestPayload,
-  RemoveLeagueJoinRequestResult,
-  GetLeagueJoinRequestsResult,
-  GetLeagueApplicationOptionsResult,
+  GetLeaguesWithInfoResult,
+  InviteLeaguePayload,
+  InviteLeagueResult,
   JoinLeagueWithRolesPayload,
   JoinLeagueWithRolesResult,
+  LeagueParticipantProfile,
+  MarkLeagueInviteClickedPayload,
+  MarkLeagueInviteClickedResult,
   RemoveLeagueApplicationOptionsPayload,
   RemoveLeagueApplicationOptionsResult,
+  RemoveLeagueFollowerPayload,
+  RemoveLeagueFollowerResult,
+  RemoveLeagueInviteByTokenResult,
+  RemoveLeagueJoinRequestPayload,
+  RemoveLeagueJoinRequestResult,
+  RemoveLeagueParticipantPayload,
+  RemoveLeagueParticipantResult,
   RemoveLeagueParticipantRolePayload,
   RemoveLeagueParticipantRoleResult,
   RemoveLeagueSeasonPayload,
   RemoveLeagueSeasonResult,
-  FollowLeaguePayload,
-  FollowLeagueResult,
   UnfollowLeaguePayload,
   UnfollowLeagueResult,
-  RemoveLeagueFollowerPayload,
-  RemoveLeagueFollowerResult,
-  GetLeagueFollowersResult,
-  GetLeagueFollowingResult,
+  UpdateLeagueApplicationOptionsPayload,
+  UpdateLeagueApplicationOptionsResult,
   // UpdateLeagueParticipantRolePayload,
   // UpdateLeagueParticipantRoleResult,
   UpdateLeaguePayload,
-  UpdateLeagueApplicationOptionsPayload,
-  UpdateLeagueApplicationOptionsResult,
   UpdateLeagueResult,
   UpdateLeagueSeasonPayload,
   UpdateLeagueSeasonResult,
@@ -55,12 +61,13 @@ import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import { normalizeName } from "@/utils/normalizeName";
 import { getCurrentTimezone } from "@/utils/timezone";
 
-const DEFAULT_LEAGUE_APPLICATION_OPEN_ROLES: typeof LEAGUE_PARTICIPANT_ROLES[number][] = [
-  "driver",
-  "steward",
-  "broadcaster",
-  "staff",
-];
+const DEFAULT_LEAGUE_APPLICATION_OPEN_ROLES:
+  typeof LEAGUE_PARTICIPANT_ROLES[number][] = [
+    "driver",
+    "steward",
+    "broadcaster",
+    "staff",
+  ];
 
 export const resolveCoverValue = (
   coverType: "preset" | "upload",
@@ -106,10 +113,11 @@ export const getAllLeaguesWithInfo = async (
     if (profiles?.length) {
       const profileIds = profiles.map((profile) => profile.id);
 
-      const { data: ownParticipantRows, error: ownParticipantsError } = await supabase
-        .from("league_participants")
-        .select("id, league_id")
-        .in("profile_id", profileIds);
+      const { data: ownParticipantRows, error: ownParticipantsError } =
+        await supabase
+          .from("league_participants")
+          .select("id, league_id")
+          .in("profile_id", profileIds);
 
       if (ownParticipantsError) {
         return {
@@ -123,7 +131,9 @@ export const getAllLeaguesWithInfo = async (
       }
 
       if (ownParticipantRows?.length) {
-        const participantIds = ownParticipantRows.map((participant) => participant.id);
+        const participantIds = ownParticipantRows.map((participant) =>
+          participant.id
+        );
 
         const { data: ownDirectorRoles, error: ownRolesError } = await supabase
           .from("league_participants_role")
@@ -150,7 +160,9 @@ export const getAllLeaguesWithInfo = async (
           excludeLeagueIds = [
             ...new Set(
               ownParticipantRows
-                .filter((participant) => ownDirectorParticipantIds.has(participant.id))
+                .filter((participant) =>
+                  ownDirectorParticipantIds.has(participant.id)
+                )
                 .map((participant) => participant.league_id),
             ),
           ];
@@ -166,11 +178,18 @@ export const getAllLeaguesWithInfo = async (
 
   if (search) {
     const normalizedSearch = normalizeName(search);
-    leaguesQuery = leaguesQuery.ilike("league_name_normalized", `%${normalizedSearch}%`);
+    leaguesQuery = leaguesQuery.ilike(
+      "league_name_normalized",
+      `%${normalizedSearch}%`,
+    );
   }
 
   if (excludeLeagueIds.length) {
-    leaguesQuery = leaguesQuery.not("id", "in", `(${excludeLeagueIds.join(",")})`);
+    leaguesQuery = leaguesQuery.not(
+      "id",
+      "in",
+      `(${excludeLeagueIds.join(",")})`,
+    );
   }
 
   if (signal) {
@@ -180,7 +199,9 @@ export const getAllLeaguesWithInfo = async (
   const { data: leaguesData, error: leaguesError } = await leaguesQuery;
 
   if (leaguesError) {
-    if (leaguesError.code === "ABORT" || leaguesError.message?.includes("abort")) {
+    if (
+      leaguesError.code === "ABORT" || leaguesError.message?.includes("abort")
+    ) {
       return { success: true, data: [] };
     }
 
@@ -240,7 +261,8 @@ export const getAllLeaguesWithInfo = async (
     participantsQuery = participantsQuery.abortSignal(signal);
   }
 
-  const { data: participantRows, error: participantsError } = await participantsQuery;
+  const { data: participantRows, error: participantsError } =
+    await participantsQuery;
 
   if (participantsError) {
     return {
@@ -349,7 +371,8 @@ export const getAllLeaguesWithInfo = async (
 
     if (!profile) return;
 
-    const leagueParticipants = participantsByLeague.get(participant.league_id) ?? [];
+    const leagueParticipants =
+      participantsByLeague.get(participant.league_id) ?? [];
 
     leagueParticipants.push({
       id: participant.id,
@@ -386,7 +409,12 @@ export const getLeaguesWithInfoByAccountId = async (
   accountId: string,
   signal?: AbortSignal,
 ): Promise<GetLeaguesWithInfoResult> => {
-  const result = await getAllLeaguesWithInfo(undefined, undefined, signal, true);
+  const result = await getAllLeaguesWithInfo(
+    undefined,
+    undefined,
+    signal,
+    true,
+  );
 
   if (!result.success) {
     return result;
@@ -395,7 +423,9 @@ export const getLeaguesWithInfoByAccountId = async (
   return {
     success: true,
     data: result.data.filter((league) =>
-      league.participants.some((participant) => participant.account_id === accountId),
+      league.participants.some((participant) =>
+        participant.account_id === accountId
+      )
     ),
   };
 };
@@ -405,7 +435,12 @@ export const getLeaguesWithInfoByProfileId = async (
   profileId: string,
   signal?: AbortSignal,
 ): Promise<GetLeaguesWithInfoResult> => {
-  const result = await getAllLeaguesWithInfo(undefined, undefined, signal, true);
+  const result = await getAllLeaguesWithInfo(
+    undefined,
+    undefined,
+    signal,
+    true,
+  );
 
   if (!result.success) {
     return result;
@@ -414,7 +449,9 @@ export const getLeaguesWithInfoByProfileId = async (
   return {
     success: true,
     data: result.data.filter((league) =>
-      league.participants.some((participant) => participant.profile_id === profileId),
+      league.participants.some((participant) =>
+        participant.profile_id === profileId
+      )
     ),
   };
 };
@@ -424,7 +461,12 @@ export const getLeaguesWithInfoBySquadId = async (
   squadId: string,
   signal?: AbortSignal,
 ): Promise<GetLeaguesWithInfoResult> => {
-  const result = await getAllLeaguesWithInfo(undefined, undefined, signal, true);
+  const result = await getAllLeaguesWithInfo(
+    undefined,
+    undefined,
+    signal,
+    true,
+  );
 
   if (!result.success) {
     return result;
@@ -437,7 +479,9 @@ export const getLeaguesWithInfoBySquadId = async (
 };
 
 // -- Get League by ID -- //
-export const getLeagueById = async (leagueId: string): Promise<CreateLeagueResult> => {
+export const getLeagueById = async (
+  leagueId: string,
+): Promise<CreateLeagueResult> => {
   const { data, error } = await supabase
     .from("leagues")
     .select("*")
@@ -508,7 +552,9 @@ export const createLeagueWithCover = async (
   let coverType: "preset" | "upload";
   let coverValue: string;
   const currentTimezone = getCurrentTimezone();
-  const defaultDescription = `This is ${hostingSquadName}'s League for ${convertGameTypeToFullName(gameType)}.`;
+  const defaultDescription = `This is ${hostingSquadName}'s League for ${
+    convertGameTypeToFullName(gameType)
+  }.`;
 
   // --- Handle cover ---
   if (coverImage.type === "preset") {
@@ -637,7 +683,8 @@ export const createLeagueWithCover = async (
       success: false,
       error: {
         message: applicationOptionsResult.error.message,
-        code: applicationOptionsResult.error.code || "APPLICATION_OPTIONS_CREATION_FAILED",
+        code: applicationOptionsResult.error.code ||
+          "APPLICATION_OPTIONS_CREATION_FAILED",
         status: 500,
       },
     };
@@ -1257,7 +1304,6 @@ export const addLeagueParticipantRole = async (
   };
 };
 
-
 // -- Remove League Participant Role -- //
 export const removeLeagueParticipantRole = async (
   {
@@ -1474,7 +1520,8 @@ export const joinLeagueWithRolesService = async (
         return {
           success: false,
           error: {
-            message: `Role assignment failed and rollback failed: ${roleResult.error.message}`,
+            message:
+              `Role assignment failed and rollback failed: ${roleResult.error.message}`,
             code: roleResult.error.code || "SERVER_ERROR",
             status: roleResult.error.status,
           },
@@ -1584,7 +1631,9 @@ export const getLeagueJoinRequestsByLeagueId = async (
 ): Promise<GetLeagueJoinRequestsResult> => {
   let joinRequestsQuery = supabase
     .from("league_join_request")
-    .select("id, created_at, league_id, profile_id, account_id, contact_info, requested_role")
+    .select(
+      "id, created_at, league_id, profile_id, account_id, contact_info, requested_role",
+    )
     .eq("league_id", leagueId)
     .order("created_at", { ascending: false });
 
@@ -1592,7 +1641,8 @@ export const getLeagueJoinRequestsByLeagueId = async (
     joinRequestsQuery = joinRequestsQuery.abortSignal(signal);
   }
 
-  const { data: joinRequests, error: joinRequestsError } = await joinRequestsQuery;
+  const { data: joinRequests, error: joinRequestsError } =
+    await joinRequestsQuery;
 
   if (joinRequestsError) {
     if (
@@ -1619,7 +1669,9 @@ export const getLeagueJoinRequestsByLeagueId = async (
     };
   }
 
-  const profileIds = [...new Set(joinRequests.map((request) => request.profile_id))];
+  const profileIds = [
+    ...new Set(joinRequests.map((request) => request.profile_id)),
+  ];
 
   let profilesQuery = supabase
     .from("profiles")
@@ -1633,7 +1685,9 @@ export const getLeagueJoinRequestsByLeagueId = async (
   const { data: profiles, error: profilesError } = await profilesQuery;
 
   if (profilesError) {
-    if (profilesError.code === "ABORT" || profilesError.message?.includes("abort")) {
+    if (
+      profilesError.code === "ABORT" || profilesError.message?.includes("abort")
+    ) {
       return { success: true, data: [] };
     }
 
@@ -1665,10 +1719,15 @@ export const getLeagueJoinRequestsByLeagueId = async (
           ...request,
           username: profile.username,
           avatar_type: profile.avatar_type,
-          avatar_value: resolveAvatarValue(profile.avatar_type, profile.avatar_value),
+          avatar_value: resolveAvatarValue(
+            profile.avatar_type,
+            profile.avatar_value,
+          ),
         };
       })
-      .filter((request): request is NonNullable<typeof request> => request !== null),
+      .filter((request): request is NonNullable<typeof request> =>
+        request !== null
+      ),
   };
 };
 
@@ -2037,7 +2096,8 @@ export const deleteLeagueById = async (
       success: false,
       error: {
         message: participantsDeleteError.message,
-        code: participantsDeleteError.code || "LEAGUE_PARTICIPANTS_DELETION_FAILED",
+        code: participantsDeleteError.code ||
+          "LEAGUE_PARTICIPANTS_DELETION_FAILED",
         status: 500,
       },
     };
@@ -2069,7 +2129,8 @@ export const deleteLeagueById = async (
       success: false,
       error: {
         message: applicationOptionsDeleteError.message,
-        code: applicationOptionsDeleteError.code || "LEAGUE_APPLICATION_OPTIONS_DELETION_FAILED",
+        code: applicationOptionsDeleteError.code ||
+          "LEAGUE_APPLICATION_OPTIONS_DELETION_FAILED",
         status: 500,
       },
     };
@@ -2093,5 +2154,157 @@ export const deleteLeagueById = async (
 
   return {
     success: true,
+  };
+};
+
+// -- Invite To League -- //
+export const inviteToLeague = async (
+  {
+    emails,
+    leagueId,
+    leagueName,
+    senderUsername,
+    senderAccountId,
+    senderProfileId,
+  }: InviteLeaguePayload,
+): Promise<InviteLeagueResult> => {
+  const { data, error } = await supabase.functions.invoke(
+    "invite-user-league",
+    {
+      body: {
+        emails,
+        leagueId,
+        leagueName,
+        senderUsername,
+        senderAccountId,
+        senderProfileId,
+      },
+    },
+  );
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "INVITE_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true, data: data.data };
+};
+
+// -- Get League Invite Tables by Token -- //
+export const getLeagueInviteTablesByToken = async (
+  inviteToken: string,
+): Promise<GetLeagueInviteTablesResult> => {
+  const { data, error } = await supabase
+    .from("league_invites")
+    .select("*")
+    .eq("token", inviteToken)
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data,
+  };
+};
+
+// -- Remove League Invite by Token -- //
+export const removeLeagueInviteByToken = async (
+  inviteToken: string,
+): Promise<RemoveLeagueInviteByTokenResult> => {
+  const { error } = await supabase
+    .from("league_invites")
+    .delete()
+    .eq("token", inviteToken);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
+};
+
+// -- Mark League Invite as Clicked -- //
+export const markLeagueInviteClicked = async (
+  { inviteId, profileId }: MarkLeagueInviteClickedPayload,
+): Promise<MarkLeagueInviteClickedResult> => {
+  const { error } = await supabase
+    .from("league_invites")
+    .update({
+      profile_id: profileId,
+      status: "clicked",
+      clicked_at: new Date().toISOString(),
+    })
+    .eq("id", inviteId)
+    .eq("status", "pending")
+    .is("clicked_at", null);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
+};
+
+// -- Get Pending League Invites by League ID -- //
+export const getPendingLeagueInvitesByLeagueId = async (
+  leagueId: string,
+  signal?: AbortSignal,
+): Promise<GetLeagueInviteTablesResult> => {
+  let query = supabase
+    .from("league_invites")
+    .select("*")
+    .eq("league_id", leagueId)
+    .eq("status", "pending");
+
+  if (signal) {
+    query = query.abortSignal(signal);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data,
   };
 };

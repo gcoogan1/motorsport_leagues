@@ -98,6 +98,25 @@ export type LeagueApplicationOptionsTable = {
   is_closed?: boolean;
 }
 
+// League Invite Table
+export type LeagueInviteTable = {
+  id: string;
+  created_at: string;
+  clicked_at?: string;
+  token?: string;
+  league_id: string;
+  email: string;
+  league_name: string;
+  role: typeof LEAGUE_PARTICIPANT_ROLES[number];
+  sender_username: string;
+  sender_account_id?: string;
+  sender_profile_id?: string;
+  status: "pending" | "accepted" | "clicked";
+  profile_id?: string; // invitee's profile ID if they have an account, used to link the invite to a profile for notifications and tracking purposes
+}
+
+
+// Add League Application Options --> Payload type
 export type AddLeagueApplicationOptionsPayload = {
   leagueId: string;
   openRoles: typeof LEAGUE_PARTICIPANT_ROLES[number][];
@@ -105,14 +124,17 @@ export type AddLeagueApplicationOptionsPayload = {
   isClosed?: boolean;
 };
 
+// Add League Application Options --> Result type
 export type AddLeagueApplicationOptionsResult =
   | { success: true; data: LeagueApplicationOptionsTable }
   | SupabaseError;
 
+  // Get League Application Options --> Result type
 export type GetLeagueApplicationOptionsResult =
   | { success: true; data: LeagueApplicationOptionsTable }
   | SupabaseError;
 
+  // Update League Application Options --> Payload type
 export type UpdateLeagueApplicationOptionsPayload = {
   leagueId: string;
   openRoles?: typeof LEAGUE_PARTICIPANT_ROLES[number][];
@@ -120,14 +142,17 @@ export type UpdateLeagueApplicationOptionsPayload = {
   isClosed?: boolean;
 };
 
+// Update League Application Options --> Result type
 export type UpdateLeagueApplicationOptionsResult =
   | { success: true; data: LeagueApplicationOptionsTable }
   | SupabaseError;
 
+  // Remove League Application Options --> Payload type
 export type RemoveLeagueApplicationOptionsPayload = {
   leagueId: string;
 };
 
+// Remove League Application Options --> Result type
 export type RemoveLeagueApplicationOptionsResult =
   | { success: true }
   | SupabaseError;
@@ -160,11 +185,13 @@ export type LeagueSeasonTable = {
   is_team_championship: boolean;
 };
 
+// Get League Seasons --> Result type
 export type GetLeagueSeasonsSuccess = {
   success: true;
   data: LeagueSeasonTable[];
 };
 
+// Get League Seasons --> Result type
 export type GetLeagueSeasonsResult = GetLeagueSeasonsSuccess | SupabaseError;
 
 
@@ -460,6 +487,50 @@ export type GetLeagueFollowingSuccess = {
 // Get League Following --> Result type
 export type GetLeagueFollowingResult = GetLeagueFollowingSuccess | SupabaseError;
 
+export type EmailInvite = {
+  email: string;
+  profileId?: string; // invitee's profile ID if they have an account, used to link the invite to a profile for notifications and tracking purposes
+};
+
+// Invite League --> Payload type
+export type InviteLeaguePayload = {
+  emails: EmailInvite[];
+  leagueId: string;
+  leagueName: string;
+  role: typeof LEAGUE_PARTICIPANT_ROLES[number];
+  senderUsername: string;
+  senderAccountId: string;
+  senderProfileId: string;
+};
+
+// Invite League --> Result type
+export type InviteLeagueResult = 
+  | { success: true, data: LeagueInviteTable[] }
+  | SupabaseError;
+
+export type RemoveLeagueInviteByTokenResult =
+  | { success: true }
+  | SupabaseError;
+
+export type MarkLeagueInviteClickedPayload = {
+  inviteId: string;
+  profileId: string;
+};
+
+export type MarkLeagueInviteClickedResult =
+  | { success: true }
+  | SupabaseError;
+
+export type GetLeagueInviteTablesResult =
+  | { success: true; data: LeagueInviteTable[] }
+  | SupabaseError;
+  
+  export type GetLeagueInvitesSuccess = {
+    success: true;
+    data: LeagueInviteTable[];
+  };
+  
+  export type GetLeagueInvitesResult = GetLeagueInvitesSuccess | SupabaseError;
 
 // Redux Types //
 // League State --> used in Redux slice for leagues
