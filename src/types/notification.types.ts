@@ -13,16 +13,17 @@ export type EntityType = "squad" | "squad_invite" | "profile" | "league" | "leag
 
 // INVITE_RECEIVED Metadata
 export type InviteReceivedMetadata = {
-  squad_name: string;
   sender_username: string;
   invite_token: string;
-  receiver_profile_username?: string;
+  squad_name?: string;
   league_name?: string;
+  receiver_profile_username?: string;
 };
 
 // INVITE_ACCEPTED Metadata
 export type InviteAcceptedMetadata = {
-  squad_name: string;
+  squad_name?: string;
+  league_name?: string;
   recipient_email?: string;
   recipient_username: string;
 };
@@ -62,6 +63,20 @@ export interface SquadInviteAcceptedNotification extends NotificationBase {
   metadata: InviteAcceptedMetadata;
 }
 
+// League Invite Received Notification --> notification row for league invite receipt
+export interface LeagueInviteNotification extends NotificationBase {
+  type: "INVITE_RECEIVED";
+  entity_type: "league_invite";
+  metadata: InviteReceivedMetadata;
+}
+
+// League Invite Accepted Notification --> notification row for accepted league invite
+export interface LeagueInviteAcceptedNotification extends NotificationBase {
+  type: "INVITE_ACCEPTED";
+  entity_type: "league_invite";
+  metadata: InviteAcceptedMetadata;
+}
+
 // Announcement Notification --> notification row for general announcements
 export interface AnnouncementNotification extends NotificationBase {
   type: "ANNOUNCEMENT";
@@ -73,6 +88,8 @@ export interface AnnouncementNotification extends NotificationBase {
 export type Notification =
   | SquadInviteNotification
   | SquadInviteAcceptedNotification
+  | LeagueInviteNotification
+  | LeagueInviteAcceptedNotification
   | AnnouncementNotification;
 
 // -- Service Payloads and Results Types  --//
@@ -90,7 +107,7 @@ interface CreateNotificationBase {
 export interface CreateInviteReceivedNotificationPayload
   extends CreateNotificationBase {
   type: "INVITE_RECEIVED";
-  entity_type: "squad_invite";
+  entity_type: "squad_invite" | "league_invite";
   metadata: InviteReceivedMetadata;
 }
 
@@ -98,7 +115,7 @@ export interface CreateInviteReceivedNotificationPayload
 export interface CreateInviteAcceptedNotificationPayload
   extends CreateNotificationBase {
   type: "INVITE_ACCEPTED";
-  entity_type: "squad_invite";
+  entity_type: "squad_invite" | "league_invite";
   metadata: InviteAcceptedMetadata;
 }
 
