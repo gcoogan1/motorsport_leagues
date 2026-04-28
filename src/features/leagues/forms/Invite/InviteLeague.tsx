@@ -21,7 +21,6 @@ import { inviteSchema } from "./inviteLeagueSchema";
 import { useCreateNotification } from "@/hooks/rtkQuery/mutations/useNotificationMutation";
 import { useLeagueParticipants } from "@/hooks/rtkQuery/queries/useLeagues";
 import { useLeagueInvites } from "@/hooks/rtkQuery/queries/useLeagueInvites";
-import MultiInput from "@/components/Inputs/MultiInput/MultiInput";
 import type { Tag } from "@/components/Tags/Tags.variants";
 import SelectInput from "@/components/Inputs/SelectInput/SelectInput";
 

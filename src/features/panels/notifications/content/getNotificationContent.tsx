@@ -52,8 +52,15 @@ export const getNotificationContent = (notification: Notification, handlers: Not
     }
   }
 
+  if (notification.type === "ANNOUNCEMENT") {
+    return {
+      title: "Announcement",
+      message: notification.metadata.message,
+    };
+  }
+
   return {
-    title: "Announcement",
-    message: notification.metadata.message,
+    title: "Notification",
+    message: "You have a new notification.",
   };
 };
