@@ -12,7 +12,7 @@ export const LEAGUE_PARTICIPANT_ROLES = ["director", "driver", "steward", "broad
 export const LEAGUE_COVER_VARIANTS = ["cover1", "cover2", "cover3", "cover4", "cover5"] as const;
 export type LeagueCover = typeof LEAGUE_COVER_VARIANTS[number];
 
-export type LeagueViewType = "participant" | "user" | "guest";
+export type LeagueViewType = "participant" | "user" | "guest" | "director" | "loading";
 
 // Cover Image Value --> discriminated union for draft/form stage
 export type CoverImageValue =
