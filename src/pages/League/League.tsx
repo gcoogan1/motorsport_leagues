@@ -19,9 +19,14 @@ import ShareLeague from "@/features/leagues/modals/core/ShareLeague/ShareLeague"
 import LeagueGuestFollow from "@/features/leagues/modals/errors/LeagueGuestFollow/LeagueGuestFollow";
 import LeagueNoProfile from "@/features/leagues/modals/core/LeagueNoProfile/LeagueNoProfile";
 import FollowLeague from "@/features/leagues/forms/Follow/FollowLeague";
-import { useIsFollowingLeague, useLeagueFollowers } from "@/hooks/rtkQuery/queries/useLeagueFollowers";
+import {
+  useIsFollowingLeague,
+  useLeagueFollowers,
+} from "@/hooks/rtkQuery/queries/useLeagueFollowers";
 import UnfollowLeague from "@/features/leagues/modals/errors/UnfollowLeague/UnfollowLeague";
 import LeaveLeague from "@/features/leagues/modals/core/LeaveLeague/LeaveLeague";
+import InviteLeague from "@/features/leagues/forms/Invite/InviteLeague";
+import { useLeagueDirectorContext } from "@/hooks/useLeagueDirectorContext";
 
 // TODO: Update the League page to pull real data and implement actions
 
@@ -91,9 +96,8 @@ const League = () => {
     !currentLeague ||
     currentLeague.id !== leagueId;
 
-  if (isLeagueLoading) {
-    return <LoadingScreen />;
-  }
+  // Get all user profiles from Redux (must be before any early return)
+  const currentUserProfiles = useSelector((state: RootState) => state.profile.data ?? []);
 
   const isParticipantView = viewType === "participant";
   const isViewTypeLoading = viewType === "loading";
@@ -101,6 +105,21 @@ const League = () => {
   const currentParticipant = participants.find(
     (participant) => participant.account_id === accountId,
   );
+
+  // Use league director context (must be before any early return)
+  const {
+    inviterDirectorUsername,
+    inviterDirectorProfileId,
+    inviterDirectorAccountId,
+  } = useLeagueDirectorContext({
+    leagueParticipants: participants,
+    currentUserProfiles,
+    currentProfileId: currentParticipant?.profile_id,
+  });
+
+  if (isLeagueLoading) {
+    return <LoadingScreen />;
+  }
 
   // -- HANDLERS -- //
   const handleGameTypeClick = () => {
@@ -140,7 +159,6 @@ const League = () => {
 
     openPanel("LEAGUE_JOIN", { leagueId: currentLeague.id });
   };
-
 
   const handleFollowLeague = () => {
     if (viewType === "guest" || !accountId) {
@@ -182,7 +200,7 @@ const League = () => {
 
   const handleParticipantsClick = () => {
     openPanel("LEAGUE_PARTICIPANTS", { leagueId: currentLeague.id });
-  }
+  };
 
   // -- Action buttons based on view type -- //
   const participantActions = getParticipantActions({
@@ -192,6 +210,17 @@ const League = () => {
     },
     onShareLeague: handleShareLeague,
     onLeaveLeague: handleLeaveLeague,
+    onInviteParticipants: () => {
+      openModal(
+        <InviteLeague
+          leagueId={currentLeague.id}
+          leagueName={currentLeague.league_name}
+          directorName={inviterDirectorUsername}
+          directorProfileId={inviterDirectorProfileId}
+          directorAccountId={inviterDirectorAccountId}
+        />,
+      );
+    },
   });
 
   const guestActions = getGuestActions({

@@ -7,12 +7,14 @@ import LeaveIcon from "@assets/Icon/Leave.svg?react";
 import AnnouncementsIcon from "@assets/Icon/Announcements.svg?react";
 import ChatIcon from "@assets/Icon/Chat.svg?react";
 import ManageIcon from "@assets/Icon/Manage.svg?react";
+import InviteIcon from "@assets/Icon/Invite.svg?react";
 
 type GetParticipantActionsParams = {
   isDirector: boolean | null;
   onManageLeague: () => void;
   onShareLeague: () => void;
   onLeaveLeague: () => void;
+  onInviteParticipants: () => void;
 };
 
 type GetGuestActionsParams = {
@@ -27,6 +29,7 @@ export const getParticipantActions = ({
   onManageLeague,
   onShareLeague,
   onLeaveLeague,
+  onInviteParticipants,
 }: GetParticipantActionsParams): CoverAction[] => {
   return [
     ...(isDirector
@@ -58,6 +61,17 @@ export const getParticipantActions = ({
         console.log("Chat clicked");
       },
     },
+    ...(isDirector
+      ? [
+          {
+            id: "invite-participants",
+            label: "Invite",
+            color: "base" as const,
+            leftIcon: <InviteIcon />,
+            onClick: onInviteParticipants,
+          },
+        ]
+      : []),
     {
       id: "share",
       leftIcon: <ShareIcon />,
