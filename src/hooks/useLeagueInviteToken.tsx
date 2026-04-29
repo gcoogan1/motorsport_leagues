@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { getLeagueInviteTablesByToken } from "@/services/league/leagueInvite.service";
+import { getLeagueInviteTableByToken } from "@/services/league/leagueInvite.service";
 import { getNotificationsByRecipientIds } from "@/services/notification.service";
 import { useModal } from "@/providers/modal/useModal";
 import { useSelector } from "react-redux";
@@ -47,7 +47,7 @@ useEffect(() => {
 
     if (!leagueId) return;
 
-    const inviteTableResult = await getLeagueInviteTablesByToken(token);
+    const inviteTableResult = await getLeagueInviteTableByToken(token);
     if (!inviteTableResult.success) return;
 
     let existingNotificationId: string | undefined;

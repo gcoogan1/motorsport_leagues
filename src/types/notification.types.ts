@@ -1,5 +1,7 @@
 // -- Notification Types -- //
 
+import type { LeagueRole } from "@/features/leagues/forms/Roles/Roles.types";
+
 // Constants //
 
 export type NotificationType =
@@ -17,6 +19,7 @@ export type InviteReceivedMetadata = {
   invite_token: string;
   squad_name?: string;
   league_name?: string;
+  league_role?: LeagueRole;
   receiver_profile_username?: string;
 };
 
@@ -24,6 +27,7 @@ export type InviteReceivedMetadata = {
 export type InviteAcceptedMetadata = {
   squad_name?: string;
   league_name?: string;
+  league_role?: LeagueRole;
   recipient_email?: string;
   recipient_username: string;
 };

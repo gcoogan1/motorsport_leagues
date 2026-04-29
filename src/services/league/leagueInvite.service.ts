@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { GetLeagueInviteTablesResult, InviteLeaguePayload, InviteLeagueResult, MarkLeagueInviteClickedPayload, MarkLeagueInviteClickedResult, RemoveLeagueInviteByTokenResult } from "@/types/league.types";
+import type { GetLeagueInvitesResult, GetLeagueInviteTableResult, InviteLeaguePayload, InviteLeagueResult, MarkLeagueInviteClickedPayload, MarkLeagueInviteClickedResult, RemoveLeagueInviteByTokenResult } from "@/types/league.types";
 
 // --- League Invite Service --- //
 
@@ -42,10 +42,10 @@ export const inviteToLeague = async (
   return { success: true, data: data.data };
 };
 
-// -- Get League Invite Tables by Token -- //
-export const getLeagueInviteTablesByToken = async (
+// -- Get League Invite Table by Token -- //
+export const getLeagueInviteTableByToken = async (
   inviteToken: string,
-): Promise<GetLeagueInviteTablesResult> => {
+): Promise<GetLeagueInviteTableResult> => {
   const { data, error } = await supabase
     .from("league_invites")
     .select("*")
@@ -125,7 +125,7 @@ export const markLeagueInviteClicked = async (
 export const getPendingLeagueInvitesByLeagueId = async (
   leagueId: string,
   signal?: AbortSignal,
-): Promise<GetLeagueInviteTablesResult> => {
+): Promise<GetLeagueInvitesResult> => {
   let query = supabase
     .from("league_invites")
     .select("*")
