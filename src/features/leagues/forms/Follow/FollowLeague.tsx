@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type RootState } from "@/store";
 import { useModal } from "@/providers/modal/useModal";
 import { withMinDelay } from "@/utils/withMinDelay";
-import { useFollowLeagueMutation } from "@/store/rtkQueryAPI/leagueApi";
+import { useFollowLeagueMutation } from "@/rtkQuery/API/leagueApi";
 import { useToast } from "@/providers/toast/useToast";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";

@@ -3,7 +3,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { usePanel } from "@/providers/panel/usePanel";
 import type { RootState } from "@/store";
 import { selectCurrentSquad } from "@/store/squads/squad.selectors";
-import { useSquadMembers } from "@/hooks/rtkQuery/queries/useSquadMembers";
+import { useSquadMembers } from "@/rtkQuery/hooks/queries/useSquadMembers";
 import { useSquadFounderContext } from "@/hooks/useSquadFounderContext";
 import LinkList from "@/components/Lists/LinkList/LinkList";
 import EditIcon from "@assets/Icon/Edit.svg?react";

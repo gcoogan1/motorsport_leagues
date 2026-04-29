@@ -4,7 +4,7 @@ import { useToast } from "@/providers/toast/useToast";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import Dialog from "@/components/Dialog/Dialog";
-import { useRemoveLeagueFollowerMutation } from "@/store/rtkQueryAPI/leagueApi";
+import { useRemoveLeagueFollowerMutation } from "@/rtkQuery/API/leagueApi";
 
 type RemoveLeagueFollowerProps = {
   followerProfileId: string;

@@ -5,7 +5,7 @@ import { navigate } from "@/app/navigation/navigation";
 import { usePanel } from "@/providers/panel/usePanel";
 import { useAuth } from "@/providers/auth/useAuth";
 import { useModal } from "@/providers/modal/useModal";
-import { useProfileFollowing } from "@/hooks/rtkQuery/queries/useProfileFollowers";
+import { useProfileFollowing } from "@/rtkQuery/hooks/queries/useProfileFollowers";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import Create from "@assets/Icon/Create.svg?react";

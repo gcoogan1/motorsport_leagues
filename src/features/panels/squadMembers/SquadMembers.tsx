@@ -8,7 +8,7 @@ import {
   selectSquadViewType,
 } from "@/store/squads/squad.selectors";
 import type { Tag } from "@/components/Tags/Tags.variants";
-import { useSquadMembers } from "@/hooks/rtkQuery/queries/useSquadMembers";
+import { useSquadMembers } from "@/rtkQuery/hooks/queries/useSquadMembers";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import FollowersIcon from "@assets/Icon/Followers.svg?react";

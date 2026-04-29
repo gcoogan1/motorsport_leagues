@@ -2,7 +2,7 @@ import {
   useGetNotificationsByRecipientIdsQuery,
   useGetNotificationsQuery,
   useGetUnreadNotificationsCountQuery,
-} from "@/store/rtkQueryAPI/notificationApi";
+} from "@/rtkQuery/API/notificationApi";
 
 // --- Queries --- //
 // Used to fetch data //

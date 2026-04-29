@@ -6,7 +6,7 @@ import {
   updateProfileAvatar,
   updateProfileUsername,
 } from "@/services/profile.service";
-import { squadApi } from "@/store/rtkQueryAPI/squadApi";
+import { squadApi } from "@/rtkQuery/API/squadApi";
 import type {  CreateProfilePayload, UpdateAvatarPayload, UpdateUsernamePayload } from "@/types/profile.types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 

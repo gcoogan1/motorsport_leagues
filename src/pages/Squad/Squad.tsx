@@ -6,7 +6,7 @@ import { getSquadByIdThunk } from "@/store/squads/squad.thunk";
 import { usePanel } from "@/providers/panel/usePanel";
 import { navigate } from "@/app/navigation/navigation";
 import { getBannerVariants } from "@/components/Banner/Banner.variants";
-import { useSquadMembers } from "@/hooks/rtkQuery/queries/useSquadMembers";
+import { useSquadMembers } from "@/rtkQuery/hooks/queries/useSquadMembers";
 import { selectHasProfiles } from "@/store/profile/profile.selectors";
 import SquadHeader from "@/components/Headers/SquadHeader/SquadHeader";
 import LeaguesListCard from "@/components/Cards/CardList/LeaguesListCard/LeaguesListCard";
@@ -14,7 +14,7 @@ import { Container, Contents, Wrapper } from "./Squad.styles";
 import {
   useSquadFollowers,
   useIsFollowingSquad,
-} from "@/hooks/rtkQuery/queries/useSquadFollowers";
+} from "@/rtkQuery/hooks/queries/useSquadFollowers";
 import ShareSquad from "@/features/squads/forms/Share/ShareSquad/ShareSquad";
 import { useModal } from "@/providers/modal/useModal";
 import { useSquadInviteTokenFlow } from "../../hooks/useSquadInviteTokenFlow";
@@ -22,7 +22,7 @@ import InviteSquad from "@/features/squads/forms/Invite/InviteSquad/InviteSquad"
 import LoadingScreen from "@/components/Messages/LoadingScreen/LoadingScreen";
 import { useSquadPageReadyState } from "@/hooks/useSquadPageReadyState";
 import { useSquadFounderContext } from "@/hooks/useSquadFounderContext";
-import { useSquadHostedLeagues } from "@/hooks/rtkQuery/queries/useLeagues";
+import { useSquadHostedLeagues } from "@/rtkQuery/hooks/queries/useLeagues";
 
 const Squad = () => {
   const { openPanel } = usePanel();

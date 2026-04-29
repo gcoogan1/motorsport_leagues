@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useModal } from "@/providers/modal/useModal";
 import { navigate } from "@/app/navigation/navigation";
 import { usePanel } from "@/providers/panel/usePanel";
-import { useProfileFollowers } from "@/hooks/rtkQuery/queries/useProfileFollowers";
+import { useProfileFollowers } from "@/rtkQuery/hooks/queries/useProfileFollowers";
 import { selectProfileViewType } from "@/store/profile/profile.selectors";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";

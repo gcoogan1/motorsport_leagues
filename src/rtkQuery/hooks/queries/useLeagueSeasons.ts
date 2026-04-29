@@ -1,4 +1,4 @@
-import { useGetLeagueSeasonsQuery } from "@/store/rtkQueryAPI/leagueApi";
+import { useGetLeagueSeasonsQuery } from "@/rtkQuery/API/leagueApi";
 
 export const useLeagueSeasons = (leagueId?: string) =>
   useGetLeagueSeasonsQuery(leagueId ?? "", {

@@ -5,14 +5,14 @@ import { useToast } from "@/providers/toast/useToast";
 import Dialog from '@/components/Dialog/Dialog'
 import SquadNoProfile from '../SquadNoProfile/SquadNoProfile';
 import AcceptJoinSquad from '@/features/squads/forms/Invite/AcceptJoinSquad/AcceptJoinSquad';
-import { useJoinSquadAsMember } from "@/hooks/rtkQuery/mutations/useSquadMutation";
-import { useCreateNotification, useDeleteNotification } from "@/hooks/rtkQuery/mutations/useNotificationMutation";
+import { useJoinSquadAsMember } from "@/rtkQuery/hooks/mutations/useSquadMutation";
+import { useCreateNotification, useDeleteNotification } from "@/rtkQuery/hooks/mutations/useNotificationMutation";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { navigate } from "@/app/navigation/navigation";
 import { removeSquadInviteByToken } from "@/services/squad.service";
 import type { RootState } from "@/store";
-import { useAllNotifications } from "@/hooks/rtkQuery/queries/useNotifications";
+import { useAllNotifications } from "@/rtkQuery/hooks/queries/useNotifications";
 
 /* FIRST component rendered when user clicks "Join Squad" from a squad invite notification or a direct squad invite link. 
     Paths:

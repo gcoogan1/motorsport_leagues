@@ -1,4 +1,4 @@
-import { useGetSquadFollowersQuery, useGetSquadFollowingQuery, useIsFollowingSquadQuery } from "@/store/rtkQueryAPI/squadApi";
+import { useGetSquadFollowersQuery, useGetSquadFollowingQuery, useIsFollowingSquadQuery } from "@/rtkQuery/API/squadApi";
 
 // --- Queries --- //
 // Used to fetch data //

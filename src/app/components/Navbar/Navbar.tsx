@@ -7,7 +7,7 @@ import AlphaNavbar from "./variants/alpha/AlphaNavbar";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { selectAllProfiles } from "@/store/profile/profile.selectors";
-import { useAllNotifications } from "@/hooks/rtkQuery/queries/useNotifications";
+import { useAllNotifications } from "@/rtkQuery/hooks/queries/useNotifications";
 
 //TODO:
 // Get user data from context or global state

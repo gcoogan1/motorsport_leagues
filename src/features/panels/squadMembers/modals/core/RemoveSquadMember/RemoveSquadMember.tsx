@@ -3,7 +3,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
-import { useRemoveMemberFromSquad } from "@/hooks/rtkQuery/mutations/useSquadMutation";
+import { useRemoveMemberFromSquad } from "@/rtkQuery/hooks/mutations/useSquadMutation";
 import Dialog from "@/components/Dialog/Dialog";
 
 type RemoveSquadMemberProps = {

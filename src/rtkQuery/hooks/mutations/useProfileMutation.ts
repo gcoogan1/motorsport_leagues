@@ -1,4 +1,4 @@
-import { useFollowProfileMutation, useRemoveFollowerMutation, useUnfollowProfileMutation } from "@/store/rtkQueryAPI/profileApi";
+import { useFollowProfileMutation, useRemoveFollowerMutation, useUnfollowProfileMutation } from "@/rtkQuery/API/profileApi";
 
 // --- Mutations --- //
 // Used to modify data //

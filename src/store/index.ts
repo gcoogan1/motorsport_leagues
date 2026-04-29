@@ -3,10 +3,10 @@ import accountReducer from "./account/account.slice";
 import leagueReducer from "./leagues/league.slice";
 import profileReducer from "./profile/profile.slice";
 import squadReducer from "./squads/squad.slice";
-import { leagueApi } from "./rtkQueryAPI/leagueApi";
-import { notificationApi } from "./rtkQueryAPI/notificationApi";
-import { profileApi } from "./rtkQueryAPI/profileApi";
-import { squadApi } from "./rtkQueryAPI/squadApi";
+import { leagueApi } from "../rtkQuery/API/leagueApi";
+import { notificationApi } from "../rtkQuery/API/notificationApi";
+import { profileApi } from "../rtkQuery/API/profileApi";
+import { squadApi } from "../rtkQuery/API/squadApi";
 
 export const store = configureStore({
   reducer: {

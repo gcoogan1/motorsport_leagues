@@ -17,9 +17,9 @@ import { getBannerVariants } from "@/components/Banner/Banner.variants";
 import {
   useIsFollowingProfile,
   useProfileFollowers,
-} from "@/hooks/rtkQuery/queries/useProfileFollowers";
-import { useSquadsByProfileId } from "@/hooks/rtkQuery/queries/useSquads";
-import { useProfileLeagues } from "@/hooks/rtkQuery/queries/useLeagues";
+} from "@/rtkQuery/hooks/queries/useProfileFollowers";
+import { useSquadsByProfileId } from "@/rtkQuery/hooks/queries/useSquads";
+import { useProfileLeagues } from "@/rtkQuery/hooks/queries/useLeagues";
 import ProfileHeader from "@/components/Headers/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/Structures/ProfileStats/ProfileStats";
 import SquadsListCard from "@/components/Cards/CardList/SquadsListCard/SquadsListCard";

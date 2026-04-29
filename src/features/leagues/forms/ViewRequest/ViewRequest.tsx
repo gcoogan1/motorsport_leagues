@@ -5,7 +5,7 @@ import ReadOnlyInput from "@/components/Inputs/ReadOnlyInput/ReadOnlyInput";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
-import { useJoinLeagueAsParticipant, useRemoveLeagueJoinRequest } from "@/hooks/rtkQuery/mutations/useLeagueMutation";
+import { useJoinLeagueAsParticipant, useRemoveLeagueJoinRequest } from "@/rtkQuery/hooks/mutations/useLeagueMutation";
 import { LEAGUE_PARTICIPANT_ROLES } from "@/types/league.types";
 import type { Tag } from "@/components/Tags/Tags.variants";
 

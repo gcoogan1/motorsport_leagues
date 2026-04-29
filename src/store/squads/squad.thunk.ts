@@ -1,5 +1,5 @@
 import { createSquadWithBanner, getSquadsByAccountId, getSquadById, editSquadBanner, editSquadName, deleteSquadById } from "@/services/squad.service";
-import { squadApi } from "@/store/rtkQueryAPI/squadApi";
+import { squadApi } from "@/rtkQuery/API/squadApi";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { SquadTable, CreateSquadPayload, EditBannerPayload, EditSquadNamePayload } from "@/types/squad.types";
 

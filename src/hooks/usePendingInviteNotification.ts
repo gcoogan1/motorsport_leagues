@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentProfile, selectHasProfiles } from "@/store/profile/profile.selectors";
-import { useCreateNotification } from "@/hooks/rtkQuery/mutations/useNotificationMutation";
+import { useCreateNotification } from "@/rtkQuery/hooks/mutations/useNotificationMutation";
 import { getInviteTablesByToken } from "@/services/squad.service";
 import { getNotificationsByRecipientId } from "@/services/notification.service";
 import type { RootState } from "@/store";

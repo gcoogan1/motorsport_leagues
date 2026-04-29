@@ -1,5 +1,5 @@
 import type { SquadViewType } from "@/types/squad.types";
-import { squadApi } from "@/store/rtkQueryAPI/squadApi";
+import { squadApi } from "@/rtkQuery/API/squadApi";
 import type { RootState } from "..";
 import { createSelector } from "@reduxjs/toolkit";
 

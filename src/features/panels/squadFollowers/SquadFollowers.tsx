@@ -2,7 +2,7 @@ import { useAuth } from "@/providers/auth/useAuth";
 import { useModal } from "@/providers/modal/useModal";
 import { navigate } from "@/app/navigation/navigation";
 import { usePanel } from "@/providers/panel/usePanel";
-import { useSquadFollowers } from "@/hooks/rtkQuery/queries/useSquadFollowers";
+import { useSquadFollowers } from "@/rtkQuery/hooks/queries/useSquadFollowers";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
 import { useSelector } from "react-redux";
 import { selectCurrentSquad, selectSquadViewType } from "@/store/squads/squad.selectors";

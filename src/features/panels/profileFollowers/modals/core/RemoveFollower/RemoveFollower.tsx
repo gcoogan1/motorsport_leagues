@@ -3,7 +3,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
-import { useRemoveFollowerMutation } from "@/store/rtkQueryAPI/profileApi";
+import { useRemoveFollowerMutation } from "@/rtkQuery/API/profileApi";
 import Dialog from "@/components/Dialog/Dialog";
 
 type RemoveFollowerProps = {

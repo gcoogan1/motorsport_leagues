@@ -14,8 +14,8 @@ import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import SquadCard from "@/components/Cards/SquadCard/SquadCard";
 import SearchForm from "@/features/search/forms/SearchForm";
 import type { SquadTable } from "@/types/squad.types";
-import { useSquadFollowing } from "@/hooks/rtkQuery/queries/useSquadFollowers";
-import { useMemberSquads } from "@/hooks/rtkQuery/queries/useSquads";
+import { useSquadFollowing } from "@/rtkQuery/hooks/queries/useSquadFollowers";
+import { useMemberSquads } from "@/rtkQuery/hooks/queries/useSquads";
 
 
 const SQUAD_TABS = [

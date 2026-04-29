@@ -1,7 +1,7 @@
 // --- Mutations --- //
 // Used to modify data //
 
-import { useAddSquadMemberMutation, useFollowSquadMutation, useRemoveSquadFollowerMutation, useRemoveSquadMemberMutation, useUnfollowSquadMutation, useUpdateSquadMemberRoleMutation } from "@/store/rtkQueryAPI/squadApi";
+import { useAddSquadMemberMutation, useFollowSquadMutation, useRemoveSquadFollowerMutation, useRemoveSquadMemberMutation, useUnfollowSquadMutation, useUpdateSquadMemberRoleMutation } from "@/rtkQuery/API/squadApi";
 
 
 // Mutation for following a squad.

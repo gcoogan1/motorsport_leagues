@@ -3,7 +3,7 @@ import {
   useGetSquadsByFounderProfileIdQuery,
   useGetSquadsByProfileIdQuery,
   useGetSquadsQuery,
-} from "@/store/rtkQueryAPI/squadApi";
+} from "@/rtkQuery/API/squadApi";
 
 // --- Queries --- //
 // Used to fetch data //

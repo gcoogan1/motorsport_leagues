@@ -7,7 +7,7 @@ import {
 	useGetLeaguesBySquadIdQuery,
 	useGetLeagueSeasonsQuery,
   useGetParticipantLeaguesQuery,
-} from "@/store/rtkQueryAPI/leagueApi";
+} from "@/rtkQuery/API/leagueApi";
 
 // --- Queries --- //
 // Used to fetch data //

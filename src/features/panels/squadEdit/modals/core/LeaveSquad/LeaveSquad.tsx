@@ -1,5 +1,5 @@
 import Dialog from '@/components/Dialog/Dialog'
-import { useRemoveMemberFromSquad } from '@/hooks/rtkQuery/mutations/useSquadMutation';
+import { useRemoveMemberFromSquad } from '@/rtkQuery/hooks/mutations/useSquadMutation';
 import { useModal } from '@/providers/modal/useModal';
 import { useToast } from '@/providers/toast/useToast';
 import { handleSupabaseError } from '@/utils/handleSupabaseErrors';

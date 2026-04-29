@@ -8,13 +8,13 @@ import {
   useLeagueApplicationOptions,
   useLeagueJoinRequests,
   useLeagueParticipants,
-} from "@/hooks/rtkQuery/queries/useLeagues";
+} from "@/rtkQuery/hooks/queries/useLeagues";
 import {
   useAddLeagueApplicationOptions,
   useAddLeagueParticipantRole,
   useRemoveLeagueParticipantRole,
   useUpdateLeagueApplicationOptions,
-} from "@/hooks/rtkQuery/mutations/useLeagueMutation";
+} from "@/rtkQuery/hooks/mutations/useLeagueMutation";
 import { ParticipantTable } from "@/components/Tables/InputTable/InputTable";
 import ProfileIcon from "@assets/Icon/Profile.svg?react";
 import ContactIcon from "@assets/Icon/Contact.svg?react";

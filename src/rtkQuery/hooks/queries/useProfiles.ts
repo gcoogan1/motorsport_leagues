@@ -1,4 +1,4 @@
-import { useGetProfilesQuery } from "@/store/rtkQueryAPI/profileApi";
+import { useGetProfilesQuery } from "@/rtkQuery/API/profileApi";
 
 // --- Queries --- //
 // Used to fetch data //

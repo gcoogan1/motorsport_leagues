@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { AppDispatch, RootState } from "@/store";
 import { updateLeagueDraft } from "@/store/leagues/league.slice";
 import { useModal } from "@/providers/modal/useModal";
-import { useSquadsByProfileId } from "@/hooks/rtkQuery/queries/useSquads";
+import { useSquadsByProfileId } from "@/rtkQuery/hooks/queries/useSquads";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import LeagueIcon from "@assets/Icon/League.svg?react";

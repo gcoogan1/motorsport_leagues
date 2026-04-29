@@ -3,7 +3,7 @@ import {
   useDeleteNotificationMutation,
   // useMarkAllNotificationsReadMutation,
   // useMarkNotificationReadMutation,
-} from "@/store/rtkQueryAPI/notificationApi";
+} from "@/rtkQuery/API/notificationApi";
 
 // --- Mutations --- //
 // Used to modify data //

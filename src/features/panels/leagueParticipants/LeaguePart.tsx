@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 // import { useModal } from "@/providers/modal/useModal";
 import { usePanel } from "@/providers/panel/usePanel";
-import { useLeagueParticipants } from "@/hooks/rtkQuery/queries/useLeagues";
+import { useLeagueParticipants } from "@/rtkQuery/hooks/queries/useLeagues";
 import { selectCurrentLeague, selectIsCurrentLeagueParticipantDirector, selectLeagueViewType } from "@/store/leagues/league.selectors";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import ParticipantsIcon from "@assets/Icon/Participants.svg?react";

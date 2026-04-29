@@ -2,7 +2,7 @@ import {
   useGetFollowersQuery,
   useGetFollowingQuery,
   useIsFollowingQuery,
-} from "@/store/rtkQueryAPI/profileApi";
+} from "@/rtkQuery/API/profileApi";
 
 
 // --- Queries --- //

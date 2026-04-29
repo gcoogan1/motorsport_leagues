@@ -5,7 +5,7 @@ import {
   useCreateLeagueSeasonMutation,
   useRemoveLeagueSeasonMutation,
   useUpdateLeagueSeasonMutation,
-} from "@/store/rtkQueryAPI/leagueApi";
+} from "@/rtkQuery/API/leagueApi";
 
 export const useCreateLeagueSeason = () => {
   return useCreateLeagueSeasonMutation();

@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { leagueApi } from "@/store/rtkQueryAPI/leagueApi";
+import { leagueApi } from "@/rtkQuery/API/leagueApi";
 import type { LeagueViewType } from "@/types/league.types";
 import type { RootState } from "..";
 

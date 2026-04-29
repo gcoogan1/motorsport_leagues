@@ -2,7 +2,7 @@ import { useAuth } from "@/providers/auth/useAuth";
 import { useModal } from "@/providers/modal/useModal";
 import { navigate } from "@/app/navigation/navigation";
 import { usePanel } from "@/providers/panel/usePanel";
-import { useLeagueFollowers } from "@/hooks/rtkQuery/queries/useLeagueFollowers";
+import { useLeagueFollowers } from "@/rtkQuery/hooks/queries/useLeagueFollowers";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
 import { useSelector } from "react-redux";
 import { selectCurrentLeague, selectLeagueViewType, selectIsCurrentLeagueParticipantDirector } from "@/store/leagues/league.selectors";

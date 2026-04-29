@@ -4,7 +4,7 @@ import { useToast } from "@/providers/toast/useToast";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import Dialog from "@/components/Dialog/Dialog";
-import { useRemoveLeagueJoinRequest } from "@/hooks/rtkQuery/mutations/useLeagueMutation";
+import { useRemoveLeagueJoinRequest } from "@/rtkQuery/hooks/mutations/useLeagueMutation";
 
 type RejectRequestProps = {
   requestId: string;

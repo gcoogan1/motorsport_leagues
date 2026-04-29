@@ -4,7 +4,7 @@ import { useToast } from "@/providers/toast/useToast";
 import { navigate } from "@/app/navigation/navigation";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
-import { useRemoveMemberFromSquad } from "@/hooks/rtkQuery/mutations/useSquadMutation";
+import { useRemoveMemberFromSquad } from "@/rtkQuery/hooks/mutations/useSquadMutation";
 import Dialog from "@/components/Dialog/Dialog";
 
 type LeaveSquadProps = {

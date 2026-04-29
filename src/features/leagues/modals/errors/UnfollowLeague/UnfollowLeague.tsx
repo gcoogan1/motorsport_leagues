@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { withMinDelay } from "@/utils/withMinDelay";
-import { useUnfollowLeague } from "@/hooks/rtkQuery/mutations/useLeagueMutation";
+import { useUnfollowLeague } from "@/rtkQuery/hooks/mutations/useLeagueMutation";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import Dialog from "@/components/Dialog/Dialog";
 

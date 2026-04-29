@@ -7,15 +7,15 @@ import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { getAccountEmailById } from "@/services/account.service";
 import { inviteToSquad } from "@/services/squad.service";
-import { useGetProfilesQuery } from "@/store/rtkQueryAPI/profileApi";
-import { useSquadMembers } from "@/hooks/rtkQuery/queries/useSquadMembers";
-import { useSquadInvites } from "@/hooks/rtkQuery/queries/useSquadInvites";
+import { useGetProfilesQuery } from "@/rtkQuery/API/profileApi";
+import { useSquadMembers } from "@/rtkQuery/hooks/queries/useSquadMembers";
+import { useSquadInvites } from "@/rtkQuery/hooks/queries/useSquadInvites";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { type EmailInvite, type SquadInviteTable } from "@/types/squad.types";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import MultiUserInput from "@/components/Inputs/MultiUserInput/MultiUserInput";
 import { inviteSchema } from "./inviteSquadSchema";
-import { useCreateNotification } from "@/hooks/rtkQuery/mutations/useNotificationMutation";
+import { useCreateNotification } from "@/rtkQuery/hooks/mutations/useNotificationMutation";
 
 type InviteSquadProps = {
   squadId: string;

@@ -2,7 +2,7 @@ import {
   useGetLeagueFollowersQuery,
   useGetLeagueFollowingQuery,
   useIsFollowingLeagueQuery,
-} from "@/store/rtkQueryAPI/leagueApi";
+} from "@/rtkQuery/API/leagueApi";
 
 // --- Queries --- //
 // Used to fetch data //

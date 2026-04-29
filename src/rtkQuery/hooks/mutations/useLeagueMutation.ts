@@ -19,7 +19,7 @@ import {
   // useUpdateLeagueParticipantRoleMutation,
   useUpdateLeagueApplicationOptionsMutation,
   useUpdateLeagueSeasonMutation,
-} from "@/store/rtkQueryAPI/leagueApi";
+} from "@/rtkQuery/API/leagueApi";
 
 // Mutation for adding league application options.
 export const useAddLeagueApplicationOptions = () => {

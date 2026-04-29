@@ -6,7 +6,7 @@ import { getLeagueByIdThunk } from "@/store/leagues/league.thunk";
 import { useModal } from "@/providers/modal/useModal";
 import { usePanel } from "@/providers/panel/usePanel";
 import { useAppTheme } from "@/providers/theme/useTheme";
-import { useLeagueParticipants } from "@/hooks/rtkQuery/queries/useLeagues";
+import { useLeagueParticipants } from "@/rtkQuery/hooks/queries/useLeagues";
 import { useLeaguePageReadyState } from "@/hooks/useLeaguePageReadyState";
 import Cover from "@/components/Structures/Cover/Cover";
 import LoadingScreen from "@/components/Messages/LoadingScreen/LoadingScreen";
@@ -22,7 +22,7 @@ import FollowLeague from "@/features/leagues/forms/Follow/FollowLeague";
 import {
   useIsFollowingLeague,
   useLeagueFollowers,
-} from "@/hooks/rtkQuery/queries/useLeagueFollowers";
+} from "@/rtkQuery/hooks/queries/useLeagueFollowers";
 import UnfollowLeague from "@/features/leagues/modals/errors/UnfollowLeague/UnfollowLeague";
 import LeaveLeague from "@/features/leagues/modals/core/LeaveLeague/LeaveLeague";
 import InviteLeague from "@/features/leagues/forms/Invite/InviteLeague";

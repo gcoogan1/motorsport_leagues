@@ -12,7 +12,7 @@ import {
   type ChangeMemberRoleSchema,
   changeMemberRoleSchema,
 } from "./changeMemberRole.schema";
-import { useUpdateSquadMemberRole } from "@/hooks/rtkQuery/mutations/useSquadMutation";
+import { useUpdateSquadMemberRole } from "@/rtkQuery/hooks/mutations/useSquadMutation";
 
 type ChangeMemberRoleProps = {
   currentSquadId: string;

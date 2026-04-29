@@ -3,7 +3,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
-import { useUnfollowProfileMutation } from "@/store/rtkQueryAPI/profileApi";
+import { useUnfollowProfileMutation } from "@/rtkQuery/API/profileApi";
 import Dialog from "@/components/Dialog/Dialog";
 
 type UnfollowProps = {

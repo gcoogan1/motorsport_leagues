@@ -1,7 +1,7 @@
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import NotificationCard from "@/components/Cards/NotificationCard/NotificationCard";
-import { useAllNotifications } from "@/hooks/rtkQuery/queries/useNotifications";
+import { useAllNotifications } from "@/rtkQuery/hooks/queries/useNotifications";
 import { selectAllProfiles } from "@/store/profile/profile.selectors";
 import Notifications from "@assets/Icon/Notifications.svg?react";
 import { useSelector } from "react-redux";
@@ -20,7 +20,7 @@ import {
 } from "@/services/squad.service";
 import { deleteNotification } from "@/services/notification.service";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
-import { useOtherProfiles } from "@/hooks/rtkQuery/queries/useProfiles";
+import { useOtherProfiles } from "@/rtkQuery/hooks/queries/useProfiles";
 import type { RootState } from "@/store";
 
 type NotificationCardButtons = NonNullable<

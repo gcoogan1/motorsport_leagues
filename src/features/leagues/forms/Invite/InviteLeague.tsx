@@ -7,7 +7,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { getAccountEmailById } from "@/services/account.service";
 import { inviteToLeague } from "@/services/league.service";
-import { useGetProfilesQuery } from "@/store/rtkQueryAPI/profileApi";
+import { useGetProfilesQuery } from "@/rtkQuery/API/profileApi";
 
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import {
@@ -18,9 +18,9 @@ import {
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import MultiUserInput from "@/components/Inputs/MultiUserInput/MultiUserInput";
 import { inviteSchema } from "./inviteLeagueSchema";
-import { useCreateNotification } from "@/hooks/rtkQuery/mutations/useNotificationMutation";
-import { useLeagueParticipants } from "@/hooks/rtkQuery/queries/useLeagues";
-import { useLeagueInvites } from "@/hooks/rtkQuery/queries/useLeagueInvites";
+import { useCreateNotification } from "@/rtkQuery/hooks/mutations/useNotificationMutation";
+import { useLeagueParticipants } from "@/rtkQuery/hooks/queries/useLeagues";
+import { useLeagueInvites } from "@/rtkQuery/hooks/queries/useLeagueInvites";
 import type { Tag } from "@/components/Tags/Tags.variants";
 import SelectInput from "@/components/Inputs/SelectInput/SelectInput";
 

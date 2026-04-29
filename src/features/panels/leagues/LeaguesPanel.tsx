@@ -12,8 +12,8 @@ import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout"
 import League from "@assets/Icon/League.svg?react";
 import CreateIcon from "@assets/Icon/Create.svg?react";
 import SearchIcon from "@assets/Icon/Search.svg?react";
-import { useParticipantLeagues } from "@/hooks/rtkQuery/queries/useLeagues";
-import { useLeagueFollowing } from "@/hooks/rtkQuery/queries/useLeagueFollowers";
+import { useParticipantLeagues } from "@/rtkQuery/hooks/queries/useLeagues";
+import { useLeagueFollowing } from "@/rtkQuery/hooks/queries/useLeagueFollowers";
 import LeagueCard from "@/components/Cards/LeagueCard/LeagueCard";
 import { getCoverVariants } from "@/components/Structures/Cover/Cover.variants";
 
