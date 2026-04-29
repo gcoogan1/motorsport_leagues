@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm, FormProvider } from "react-hook-form";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
-import { isSquadNameAvailable } from "@/services/squad.service";
+import { isSquadNameAvailable } from "@/services/squad/squad.service";
 import type { AppDispatch, RootState } from "@/store";
 import { editSquadNameThunk } from "@/store/squads/squad.thunk";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";

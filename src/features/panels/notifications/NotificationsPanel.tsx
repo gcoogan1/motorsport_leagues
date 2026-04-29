@@ -17,7 +17,7 @@ import { withMinDelay } from "@/utils/withMinDelay";
 import {
   getInviteTablesByToken,
   removeSquadInviteByToken,
-} from "@/services/squad.service";
+} from "@/services/squad/squadInvite.service";
 import { deleteNotification } from "@/services/notification.service";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { useOtherProfiles } from "@/rtkQuery/hooks/queries/useProfiles";

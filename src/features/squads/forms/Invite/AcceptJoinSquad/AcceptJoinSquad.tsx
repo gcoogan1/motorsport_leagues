@@ -15,7 +15,7 @@ import { navigate } from "@/app/navigation/navigation";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import ProfileSelectInput from "@/components/Inputs/ProfileSelectInput/ProfileSelectInput";
 import { joinSquadSchema, type JoinSquadFormValues } from "./acceptJoinSquad.schema";
-import { removeSquadInviteByToken } from "@/services/squad.service";
+import { removeSquadInviteByToken } from "@/services/squad/squadInvite.service";
 
 /*
   This component is rendered when a user clicks "Join Squad" from a squad invite notification but doesn't have a profile selected yet (edge case of the main JoinSquad flow). 

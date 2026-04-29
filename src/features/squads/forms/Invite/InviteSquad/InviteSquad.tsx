@@ -6,7 +6,7 @@ import { type RootState } from "@/store";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { getAccountEmailById } from "@/services/account.service";
-import { inviteToSquad } from "@/services/squad.service";
+import { inviteToSquad } from "@/services/squad/squadInvite.service";
 import { useGetProfilesQuery } from "@/rtkQuery/API/profileApi";
 import { useSquadMembers } from "@/rtkQuery/hooks/queries/useSquadMembers";
 import { useSquadInvites } from "@/rtkQuery/hooks/queries/useSquadInvites";

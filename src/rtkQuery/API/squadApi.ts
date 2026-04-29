@@ -1,20 +1,4 @@
-import {
-  addMemberToSquad,
-  followSquadService,
-  getAllSquads,
-  getMemberSquadsByAccountId,
-  getPendingSquadInvitesBySquadId,
-  getSquadsByFounderProfileId,
-  getFollowingSquads,
-  getSquadFollowersService,
-  getSquadMembersBySquadId,
-  isFollowingSquadService,
-  removeSquadFollowerService,
-  unfollowSquadService,
-  removeMemberFromSquad,
-  updateSquadMemberRole,
-  getSquadsByProfileId,
-} from "@/services/squad.service";
+
 import type {
   AddSquadMemberPayload,
   AddSquadMemberResult,
@@ -38,6 +22,10 @@ import type {
 } from "@/types/squad.types";
 import type { GetFollowersResult, ProfileTable } from "@/types/profile.types";
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getAllSquads, getSquadsByFounderProfileId, getSquadsByProfileId } from "@/services/squad/squad.service";
+import { followSquadService, getSquadFollowersService, getFollowingSquads, isFollowingSquadService, unfollowSquadService, removeSquadFollowerService } from "@/services/squad/squadFollower.service";
+import { getPendingSquadInvitesBySquadId } from "@/services/squad/squadInvite.service";
+import { getMemberSquadsByAccountId, getSquadMembersBySquadId, addMemberToSquad, updateSquadMemberRole, removeMemberFromSquad } from "@/services/squad/squadMember.service";
 
 
 export type SquadQueryArgs = {

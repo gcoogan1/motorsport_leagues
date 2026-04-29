@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { getInviteTablesByToken } from "@/services/squad.service";
+import { getLeagueInviteTablesByToken } from "@/services/league.service";
 import { getNotificationsByRecipientIds } from "@/services/notification.service";
 import { useModal } from "@/providers/modal/useModal";
 import { useSelector } from "react-redux";
@@ -47,7 +47,7 @@ useEffect(() => {
 
     if (!leagueId) return;
 
-    const inviteTableResult = await getInviteTablesByToken(token);
+    const inviteTableResult = await getLeagueInviteTablesByToken(token);
     if (!inviteTableResult.success) return;
 
     let existingNotificationId: string | undefined;
@@ -61,7 +61,7 @@ useEffect(() => {
         const existingInviteNotification = notificationsResult.data.find(
           (notification) =>
             notification.type === "INVITE_RECEIVED" &&
-            notification.entity_type === "squad_invite" &&
+            notification.entity_type === "league_invite" &&
             "invite_token" in notification.metadata &&
             notification.metadata.invite_token === token,
         );

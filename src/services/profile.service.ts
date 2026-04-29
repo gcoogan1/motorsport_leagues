@@ -13,7 +13,7 @@ import type {
   UpdateAvatarPayload,
   UpdateUsernamePayload,
 } from "@/types/profile.types";
-import { deleteSquadsByFounderService } from "./squad.service";
+import { deleteSquadsByFounderService } from "./squad/squad.service";
 
 // TODO: Make sure delete cascades are set up correctly in the database
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { getInviteTablesByToken } from "@/services/squad.service";
+import { getInviteTablesByToken } from "@/services/squad/squadInvite.service";
 import { getNotificationsByRecipientIds } from "@/services/notification.service";
 import type { SquadViewType } from "@/types/squad.types";
 import { useModal } from "@/providers/modal/useModal";

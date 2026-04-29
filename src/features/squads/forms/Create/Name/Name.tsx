@@ -11,7 +11,7 @@ import SquadIcon from "@assets/Icon/Squad.svg?react";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import { createNameSchema, type CreateNameSchema } from "./nameSchema";
-import { isSquadNameAvailable } from "@/services/squad.service";
+import { isSquadNameAvailable } from "@/services/squad/squad.service";
 
 type NameProps = {
   onSuccess: () => void;

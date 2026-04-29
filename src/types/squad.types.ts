@@ -1,32 +1,24 @@
-// -- Squad Types -- //
+// --- Squad Types -- //
 
 import type { GameType, ProfileTable } from "./profile.types";
 
-// Constants //
+// -- CONSTANTS -- //
 
 export const SQUAD_MEMBER_ROLES = ["member", "founder"] as const;
 
 export const SQUAD_BANNER_VARIANTS = ["badge1", "badge2", "badge3"] as const;
 export type SquadBanner = typeof SQUAD_BANNER_VARIANTS[number];
 
+export type SquadViewType = "founder" | "member" | "user" | "guest";
 
-// Banner Image Value --> discriminated union for draft/form stage
-export type BannerImageValue =
-  | { type: "preset"; variant: SquadBanner }
-  | { type: "upload"; file: File; previewUrl?: string };
+// -- HELPER TYPES -- //
 
-
-// Squad Draft --> used in Redux draft before squad is created/saved
-export type SquadDraft = {
-  founder_profile_id?: string;
-  squad_name?: string;
-  banner_image?: BannerImageValue;
+export type EmailInvite = {
+  email: string;
+  profileId?: string; // invitee's profile ID if they have an account, used to link the invite to a profile for notifications and tracking purposes
 };
 
-
-// Supabase Service Types //
-
-// Squad Table --> matches Supabase "squads" table but with camelCase keys
+// -- SUPABASE TABLES -- //
 export type SquadTable = {
   id: string;
   created_at: string;
@@ -55,14 +47,45 @@ export type SquadMemberProfile = {
   role: typeof SQUAD_MEMBER_ROLES[number];
 };
 
-// Squad Follows Table --> represents the "squad_follows" table in Supabase, which tracks which profiles are following which squads
 export type SquadFollowsTable = {
   follower_id: string;
   follower_account_id: string;
   squad_id: string;
 };
 
-export type SquadViewType = "founder" | "member" | "user" | "guest";
+export type SquadInviteTable = {
+  id: string;
+  created_at: string;
+  clicked_at?: string;
+  token?: string;
+  squad_id: string;
+  email: string;
+  squad_name: string;
+  sender_username: string;
+  sender_account_id?: string;
+  sender_profile_id?: string;
+  status: "pending" | "accepted" | "clicked";
+  profile_id?: string; // invitee's profile ID if they have an account, used to link the invite to a profile for notifications and tracking purposes
+};
+
+// -- DRAFT TYPES -- //
+// (used in Redux state before saving to DB)
+
+// Banner Image Value --> discriminated union for draft/form stage
+export type BannerImageValue =
+  | { type: "preset"; variant: SquadBanner }
+  | { type: "upload"; file: File; previewUrl?: string };
+
+
+// Squad Draft --> used in Redux draft before squad is created/saved
+export type SquadDraft = {
+  founder_profile_id?: string;
+  squad_name?: string;
+  banner_image?: BannerImageValue;
+};
+
+
+// -- SUPABASE SERVICE TYPES -- //
 
 // Supabase Error Type --> used in squad service results
 type SupabaseError = {
@@ -74,6 +97,9 @@ type SupabaseError = {
   };
 };
 
+
+// -- GET -- //
+
 // Get Squads --> Success type
 export type GetSquadsSuccess = {
   success: true;
@@ -83,19 +109,49 @@ export type GetSquadsSuccess = {
 // Get Squads --> Result type
 export type GetSquadsResult = GetSquadsSuccess | SupabaseError;
 
+// Get Squad Members --> Success type
 export type GetSquadMembersSuccess = {
   success: true;
   data: SquadMemberProfile[];
 };
 
+// Get Squad Members --> Result type
 export type GetSquadMembersResult = GetSquadMembersSuccess | SupabaseError;
 
+// Get Squad Followers --> Success type
+export type GetSquadFollowersSuccess = {
+  success: true;
+  data: ProfileTable[];
+};
+
+// Get Squad Followers --> Result type
+export type GetSquadFollowersResult = GetSquadFollowersSuccess | SupabaseError;
+
+// Get Squad Following --> Success type
+export type GetSquadFollowingSuccess = {
+  success: true;
+  data: SquadTable[];
+};
+
+// Get Squad Following --> Result type
+export type GetSquadFollowingResult = GetSquadFollowingSuccess | SupabaseError;
+
+// Get Squad Invites --> Success type
 export type GetSquadInvitesSuccess = {
   success: true;
   data: SquadInviteTable[];
 };
 
+// Get Squad Invites --> Result type
 export type GetSquadInvitesResult = GetSquadInvitesSuccess | SupabaseError;
+
+// Get Invite Tables --> Result type
+export type GetInviteTablesResult =
+  | { success: true; data: SquadInviteTable }
+  | SupabaseError;
+
+
+// -- CREATE/ADD -- //
 
 // Create Squad --> Payload type
 export type CreateSquadPayload = {
@@ -103,7 +159,7 @@ export type CreateSquadPayload = {
   founderProfileId: string;
   squadName: string;
   banner: BannerImageValue;
-};;
+};
 
 // Create Squad --> Success type
 export type CreateSquadSuccess = {
@@ -113,6 +169,60 @@ export type CreateSquadSuccess = {
 
 // Create Squad --> Result type
 export type CreateSquadResult = CreateSquadSuccess | SupabaseError;
+
+// Add Squad Member --> Payload type
+export type AddSquadMemberPayload = {
+  squadId: string;
+  profileId: string;
+  role: typeof SQUAD_MEMBER_ROLES[number];
+};
+
+// Add Squad Member --> Result type
+export type AddSquadMemberResult = 
+  | { success: true; data: SquadMemberTable }
+  | SupabaseError;
+
+// Follow Squad --> Payload type
+export type FollowSquadPayload = {
+  squadId: string;
+  profileId: string;
+  accountId: string;
+};
+
+// Follow Squad --> Result type
+export type FollowSquadResult = 
+  | { success: true }
+  | SupabaseError;
+
+// Invite Squad --> Payload type
+export type InviteSquadPayload = {
+  emails: EmailInvite[];
+  squadId: string;
+  squadName: string;
+  senderUsername: string;
+  senderAccountId: string;
+  senderProfileId: string;
+};
+
+// Invite Squad --> Result type
+export type InviteSquadResult = 
+  | { success: true, data: SquadInviteTable[] }
+  | SupabaseError;
+
+// Mark Squad Invite as Clicked --> Payload type
+export type MarkSquadInviteClickedPayload = {
+  inviteId: string;
+  profileId: string;
+};
+
+// Mark Squad Invite as Clicked --> Result type
+export type MarkSquadInviteClickedResult =
+  | { success: true }
+  | SupabaseError;
+
+
+
+// -- EDIT/UPDATE -- //
 
 // Edit Banner --> Payload type
 export type EditBannerPayload = {
@@ -146,37 +256,6 @@ export type EditSquadNameSuccess = {
 // Edit Squad Name --> Result type
 export type EditSquadNameResult = EditSquadNameSuccess | SupabaseError;
 
-// Delete Squad --> Success type
-export type DeleteSquadSuccess = {
-  success: true;
-};
-
-// Delete Squad --> Result type
-export type DeleteSquadResult = DeleteSquadSuccess | SupabaseError;
-
-// Add Squad Member --> Payload type
-export type AddSquadMemberPayload = {
-  squadId: string;
-  profileId: string;
-  role: typeof SQUAD_MEMBER_ROLES[number];
-};
-
-// Add Squad Member --> Result type
-export type AddSquadMemberResult = 
-  | { success: true; data: SquadMemberTable }
-  | SupabaseError;
-
-// Remove Squad Member --> Payload type
-export type RemoveSquadMemberPayload = {
-  squadId: string;
-  profileId: string;
-};
-
-// Remove Squad Member --> Result type
-export type RemoveSquadMemberResult =
-  | { success: true }
-  | SupabaseError;
-
 // Update Squad Member Role --> Payload type
 export type UpdateSquadMemberRolePayload = {
   squadId: string;
@@ -190,17 +269,27 @@ export type UpdateSquadMemberRoleResult =
   | SupabaseError;
 
 
-// Follow Squad --> Payload type
-export type FollowSquadPayload = {
-  squadId: string;
-  profileId: string;
-  accountId: string;
+// -- DELETE/REMOVE -- //
+
+// Delete Squad --> Success type
+export type DeleteSquadSuccess = {
+  success: true;
 };
 
-// Follow Squad --> Result type
-export type FollowSquadResult = 
+// Delete Squad --> Result type
+export type DeleteSquadResult = DeleteSquadSuccess | SupabaseError;
+
+// Remove Squad Member --> Payload type
+export type RemoveSquadMemberPayload = {
+  squadId: string;
+  profileId: string;
+};
+
+// Remove Squad Member --> Result type
+export type RemoveSquadMemberResult =
   | { success: true }
   | SupabaseError;
+
 
 // Unfollow Squad --> Payload type
 export type UnfollowSquadPayload = {
@@ -224,78 +313,14 @@ export type RemoveSquadFollowerResult =
   | { success: true }
   | SupabaseError;
 
-// Get Squad Followers --> Success type
-export type GetSquadFollowersSuccess = {
-  success: true;
-  data: ProfileTable[];
-};
-
-// Get Squad Followers --> Result type
-export type GetSquadFollowersResult = GetSquadFollowersSuccess | SupabaseError;
-
-// Get Squad Following --> Success type
-export type GetSquadFollowingSuccess = {
-  success: true;
-  data: SquadTable[];
-};
-
-// Get Squad Following --> Result type
-export type GetSquadFollowingResult = GetSquadFollowingSuccess | SupabaseError;
-
-// Squad Invites 
-export type SquadInviteTable = {
-  id: string;
-  created_at: string;
-  clicked_at?: string;
-  token?: string;
-  squad_id: string;
-  email: string;
-  squad_name: string;
-  sender_username: string;
-  sender_account_id?: string;
-  sender_profile_id?: string;
-  status: "pending" | "accepted" | "clicked";
-  profile_id?: string; // invitee's profile ID if they have an account, used to link the invite to a profile for notifications and tracking purposes
-};
-
-export type EmailInvite = {
-  email: string;
-  profileId?: string; // invitee's profile ID if they have an account, used to link the invite to a profile for notifications and tracking purposes
-};
-
-// Invite Squad --> Payload type
-export type InviteSquadPayload = {
-  emails: EmailInvite[];
-  squadId: string;
-  squadName: string;
-  senderUsername: string;
-  senderAccountId: string;
-  senderProfileId: string;
-};
-
-// Invite Squad --> Result type
-export type InviteSquadResult = 
-  | { success: true, data: SquadInviteTable[] }
-  | SupabaseError;
-
+// Remove Squad Invite by Token --> Payload type
 export type RemoveSquadInviteByTokenResult =
   | { success: true }
   | SupabaseError;
 
-export type MarkSquadInviteClickedPayload = {
-  inviteId: string;
-  profileId: string;
-};
-
-export type MarkSquadInviteClickedResult =
-  | { success: true }
-  | SupabaseError;
-
-export type GetInviteTablesResult =
-  | { success: true; data: SquadInviteTable }
-  | SupabaseError;
 
 // Redux Types //
+
 // Squad State --> used in Redux slice for squads
 export type SquadState = {
   data: SquadTable[] | null;

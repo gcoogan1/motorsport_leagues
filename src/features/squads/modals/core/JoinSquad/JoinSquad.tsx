@@ -10,7 +10,7 @@ import { useCreateNotification, useDeleteNotification } from "@/rtkQuery/hooks/m
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { navigate } from "@/app/navigation/navigation";
-import { removeSquadInviteByToken } from "@/services/squad.service";
+import { removeSquadInviteByToken } from "@/services/squad/squadInvite.service";
 import type { RootState } from "@/store";
 import { useAllNotifications } from "@/rtkQuery/hooks/queries/useNotifications";
 
