@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { getLeagueInviteTablesByToken } from "@/services/league.service";
+import { getLeagueInviteTablesByToken } from "@/services/league/leagueInvite.service";
 import { getNotificationsByRecipientIds } from "@/services/notification.service";
 import { useModal } from "@/providers/modal/useModal";
 import { useSelector } from "react-redux";

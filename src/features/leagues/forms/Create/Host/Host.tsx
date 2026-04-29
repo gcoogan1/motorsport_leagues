@@ -13,7 +13,7 @@ import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import SquadSelectInput from "@/components/Inputs/SquadSelectInput/SquadSelectInput";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import { createHostSchema, type CreateHostSchema } from "./hostSchema";
-import { isLeagueNameAvailable } from "@/services/league.service";
+import { isLeagueNameAvailable } from "@/services/league/league.service";
 
 type HostProps = {
   onSuccess: () => void;

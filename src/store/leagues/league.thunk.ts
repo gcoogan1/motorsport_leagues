@@ -4,7 +4,7 @@ import {
 	deleteLeagueById,
 	getLeagueById,
 	updateLeagueSettings,
-} from "@/services/league.service";
+} from "@/services/league/league.service";
 import type {
 	CreateLeaguePayload,
 	LeagueTable,

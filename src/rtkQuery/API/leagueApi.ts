@@ -1,35 +1,4 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import {
-  addLeagueApplicationOptions,
-  addLeagueParticipant,
-  addLeagueParticipantRole,
-  createLeagueJoinRequestService,
-  createLeagueSeason,
-  followLeagueService,
-  getLeagueApplicationOptionsByLeagueId,
-  getLeagueJoinRequestsByLeagueId,
-  getAllLeaguesWithInfo,
-  getFollowingLeagues,
-  getLeagueFollowersService,
-  getLeaguesWithInfoByAccountId,
-  getLeaguesWithInfoByProfileId,
-  getLeaguesWithInfoBySquadId,
-  getLeagueParticipantsByLeagueId,
-  getLeagueSeasonsByLeagueId,
-  isFollowingLeagueService,
-  joinLeagueWithRolesService,
-  removeLeagueJoinRequestService,
-  removeLeagueApplicationOptions,
-  removeLeagueParticipant,
-  removeLeagueParticipantRole,
-  removeLeagueFollowerService,
-  removeLeagueSeason,
-  unfollowLeagueService,
-  updateLeagueApplicationOptions,
-  // updateLeagueParticipantRole,
-  updateLeagueSeason,
-  getPendingLeagueInvitesByLeagueId,
-} from "@/services/league.service";
 import type {
   AddLeagueApplicationOptionsPayload,
   AddLeagueApplicationOptionsResult,
@@ -82,6 +51,13 @@ import type {
   GetLeagueInvitesResult,
 } from "@/types/league.types";
 import type { ProfileTable } from "@/types/profile.types";
+import { getAllLeaguesWithInfo, getLeaguesWithInfoByAccountId, getLeaguesWithInfoByProfileId, getLeaguesWithInfoBySquadId } from "@/services/league/league.service";
+import { getLeagueApplicationOptionsByLeagueId, addLeagueApplicationOptions, updateLeagueApplicationOptions, removeLeagueApplicationOptions } from "@/services/league/leagueApplication.service";
+import { followLeagueService, getLeagueFollowersService, getFollowingLeagues, isFollowingLeagueService, unfollowLeagueService, removeLeagueFollowerService } from "@/services/league/leagueFollower";
+import { getPendingLeagueInvitesByLeagueId } from "@/services/league/leagueInvite.service";
+import { getLeagueJoinRequestsByLeagueId, createLeagueJoinRequestService, removeLeagueJoinRequestService } from "@/services/league/leagueJoinRequest.service";
+import { getLeagueParticipantsByLeagueId, addLeagueParticipant, joinLeagueWithRolesService, addLeagueParticipantRole, removeLeagueParticipantRole, removeLeagueParticipant } from "@/services/league/leagueParticipant.service";
+import { getLeagueSeasonsByLeagueId, createLeagueSeason, updateLeagueSeason, removeLeagueSeason } from "@/services/league/leagueSeason.service";
 
 export type LeaguesQueryArgs = {
   accountId?: string;

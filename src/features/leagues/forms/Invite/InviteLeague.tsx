@@ -6,7 +6,7 @@ import { type RootState } from "@/store";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { getAccountEmailById } from "@/services/account.service";
-import { inviteToLeague } from "@/services/league.service";
+import { inviteToLeague } from "@/services/league/leagueInvite.service";
 import { useGetProfilesQuery } from "@/rtkQuery/API/profileApi";
 
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
