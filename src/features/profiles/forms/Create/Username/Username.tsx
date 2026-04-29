@@ -8,7 +8,7 @@ import { withMinDelay } from "@/utils/withMinDelay";
 import { type AppDispatch, type RootState } from "@/store";
 import { useModal } from "@/providers/modal/useModal";
 import { updateProfileDraft } from "@/store/profile/profile.slice";
-import { isProfileUsernameAvailable } from "@/services/profile.service";
+import { isProfileUsernameAvailable } from "@/services/profile/profile.service";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import ProfileIcon from "@assets/Icon/Profile.svg?react";

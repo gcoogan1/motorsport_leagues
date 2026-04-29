@@ -11,6 +11,9 @@ import type {
   Notification,
 } from "@/types/notification.types";
 
+// --- Notification Service --- //
+
+// -- Get Notifications by Recipient Profile ID -- //
 export const getNotificationsByRecipientId = async (
   recipientId: string,
 ): Promise<GetNotificationsResult> => {
@@ -37,6 +40,7 @@ export const getNotificationsByRecipientId = async (
   };
 };
 
+// -- Get Notifications by Recipient Profile IDs -- //
 export const getNotificationsByRecipientIds = async (
   recipientIds: string[],
 ): Promise<GetNotificationsResult> => {
@@ -70,6 +74,7 @@ export const getNotificationsByRecipientIds = async (
   };
 };
 
+// -- Get Notification by ID -- //
 export const getNotificationById = async (notificationId: string) => {
   const { data, error } = await supabase
     .from("notifications")
@@ -94,6 +99,7 @@ export const getNotificationById = async (notificationId: string) => {
   };
 };
 
+// -- Get Unread Notifications Count -- //
 export const getUnreadNotificationsCount = async (
   recipientId: string,
 ): Promise<GetUnreadNotificationsCountResult> => {
@@ -120,6 +126,7 @@ export const getUnreadNotificationsCount = async (
   };
 };
 
+// -- Create Notification -- //
 export const createNotification = async (
   notificationData: CreateNotificationPayload,
 ): Promise<CreateNotificationResult> => {
@@ -173,6 +180,7 @@ export const createNotification = async (
   };
 };
 
+// -- Delete Notification by ID -- //
 export const deleteNotification = async (notificationId: string) => {
   const { error } = await supabase
     .from("notifications")

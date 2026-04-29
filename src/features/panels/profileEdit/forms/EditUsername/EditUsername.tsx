@@ -7,7 +7,7 @@ import { selectCurrentProfile } from "@/store/profile/profile.selectors";
 import { updateProfileUsernameThunk } from "@/store/profile/profile.thunk";
 import { useToast } from "@/providers/toast/useToast";
 import { useModal } from "@/providers/modal/useModal";
-import { isProfileUsernameAvailable } from "@/services/profile.service";
+import { isProfileUsernameAvailable } from "@/services/profile/profile.service";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import FormModal from "@/components/Forms/FormModal/FormModal";

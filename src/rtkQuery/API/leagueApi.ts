@@ -53,7 +53,7 @@ import type {
 import type { ProfileTable } from "@/types/profile.types";
 import { getAllLeaguesWithInfo, getLeaguesWithInfoByAccountId, getLeaguesWithInfoByProfileId, getLeaguesWithInfoBySquadId } from "@/services/league/league.service";
 import { getLeagueApplicationOptionsByLeagueId, addLeagueApplicationOptions, updateLeagueApplicationOptions, removeLeagueApplicationOptions } from "@/services/league/leagueApplication.service";
-import { followLeagueService, getLeagueFollowersService, getFollowingLeagues, isFollowingLeagueService, unfollowLeagueService, removeLeagueFollowerService } from "@/services/league/leagueFollower";
+import { followLeagueService, getLeagueFollowersService, getFollowingLeagues, isFollowingLeagueService, unfollowLeagueService, removeLeagueFollowerService } from "@/services/league/leagueFollow";
 import { getPendingLeagueInvitesByLeagueId } from "@/services/league/leagueInvite.service";
 import { getLeagueJoinRequestsByLeagueId, createLeagueJoinRequestService, removeLeagueJoinRequestService } from "@/services/league/leagueJoinRequest.service";
 import { getLeagueParticipantsByLeagueId, addLeagueParticipant, joinLeagueWithRolesService, addLeagueParticipantRole, removeLeagueParticipantRole, removeLeagueParticipant } from "@/services/league/leagueParticipant.service";

@@ -38,6 +38,9 @@ export const resolveCoverValue = (
   return data.publicUrl;
 };
 
+
+// -- League Service --- //
+
 // -- Get All Leagues with Seasons + Participants + Roles (with optional search) -- //
 export const getAllLeaguesWithInfo = async (
   accountId?: string,

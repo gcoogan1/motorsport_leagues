@@ -10,10 +10,10 @@ import type {
   UnfollowLeaguePayload,
   UnfollowLeagueResult,
 } from "@/types/league.types";
-import { resolveAvatarValue } from "../profile.service";
+import { resolveAvatarValue } from "../profile/profile.service";
 import { resolveCoverValue } from "./league.service";
 
-// --- League Follower Service --- //
+// --- League Follow Service --- //
 
 // -- Follow a League -- //
 export const followLeagueService = async (

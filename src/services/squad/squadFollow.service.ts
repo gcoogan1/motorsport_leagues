@@ -1,10 +1,10 @@
 import { supabase } from "@/lib/supabase";
 import type { GetFollowersResult } from "@/types/profile.types";
 import type { FollowSquadPayload, FollowSquadResult, UnfollowSquadPayload, UnfollowSquadResult, RemoveSquadFollowerPayload, RemoveSquadFollowerResult, GetSquadFollowingResult } from "@/types/squad.types";
-import { resolveAvatarValue } from "../profile.service";
+import { resolveAvatarValue } from "../profile/profile.service";
 import { resolveBannerValue } from "./squad.service";
 
-// --- Squad Follower Service --- //
+// --- Squad Follow Service --- //
 
 // -- Follow a Squad -- //
 export const followSquadService = async (

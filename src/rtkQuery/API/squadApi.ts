@@ -23,7 +23,7 @@ import type {
 import type { GetFollowersResult, ProfileTable } from "@/types/profile.types";
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getAllSquads, getSquadsByFounderProfileId, getSquadsByProfileId } from "@/services/squad/squad.service";
-import { followSquadService, getSquadFollowersService, getFollowingSquads, isFollowingSquadService, unfollowSquadService, removeSquadFollowerService } from "@/services/squad/squadFollower.service";
+import { followSquadService, getSquadFollowersService, getFollowingSquads, isFollowingSquadService, unfollowSquadService, removeSquadFollowerService } from "@/services/squad/squadFollow.service";
 import { getPendingSquadInvitesBySquadId } from "@/services/squad/squadInvite.service";
 import { getMemberSquadsByAccountId, getSquadMembersBySquadId, addMemberToSquad, updateSquadMemberRole, removeMemberFromSquad } from "@/services/squad/squadMember.service";
 

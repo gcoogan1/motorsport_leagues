@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import type { CreateLeagueJoinRequestPayload, CreateLeagueJoinRequestResult, GetLeagueJoinRequestsResult, RemoveLeagueJoinRequestPayload, RemoveLeagueJoinRequestResult } from "@/types/league.types";
-import { resolveAvatarValue } from "../profile.service";
+import { resolveAvatarValue } from "../profile/profile.service";
 
 // --- League Join Request Service --- //
 

@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import type { AddSquadMemberPayload, AddSquadMemberResult, GetSquadMembersResult, UpdateSquadMemberRolePayload, UpdateSquadMemberRoleResult, RemoveSquadMemberPayload, RemoveSquadMemberResult, GetSquadsResult } from "@/types/squad.types";
-import { resolveAvatarValue } from "../profile.service";
+import { resolveAvatarValue } from "../profile/profile.service";
 import { resolveBannerValue } from "./squad.service";
 
 // --- Squad Member Service --- //

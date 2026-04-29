@@ -5,7 +5,7 @@ import {
   getProfilesByUserId,
   updateProfileAvatar,
   updateProfileUsername,
-} from "@/services/profile.service";
+} from "@/services/profile/profile.service";
 import { squadApi } from "@/rtkQuery/API/squadApi";
 import type {  CreateProfilePayload, UpdateAvatarPayload, UpdateUsernamePayload } from "@/types/profile.types";
 import { createAsyncThunk } from "@reduxjs/toolkit";

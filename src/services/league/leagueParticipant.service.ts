@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import type { AddLeagueParticipantPayload, AddLeagueParticipantResult, AddLeagueParticipantRolePayload, AddLeagueParticipantRoleResult, RemoveLeagueParticipantRolePayload, RemoveLeagueParticipantRoleResult, RemoveLeagueParticipantPayload, RemoveLeagueParticipantResult, GetLeagueParticipantsResult, LEAGUE_PARTICIPANT_ROLES, JoinLeagueWithRolesPayload, JoinLeagueWithRolesResult } from "@/types/league.types";
-import { resolveAvatarValue } from "../profile.service";
-import { isFollowingLeagueService, unfollowLeagueService } from "./leagueFollower";
+import { resolveAvatarValue } from "../profile/profile.service";
+import { isFollowingLeagueService, unfollowLeagueService } from "./leagueFollow";
 
 // --- League Participant and Participant Role Service --- //
 

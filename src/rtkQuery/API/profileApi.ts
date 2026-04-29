@@ -6,15 +6,9 @@ import type {
   RemoveFollowerVariables,
   UnfollowProfileVariables,
 } from "@/types/profile.types";
-import {
-  followProfileService,
-  getAllProfiles,
-  getFollowersService,
-  getFollowingService,
-  isFollowingService,
-  removeFollowerService,
-  unfollowProfileService,
-} from "@/services/profile.service";
+import { getAllProfiles } from "@/services/profile/profile.service";
+import { getFollowersService, getFollowingService, isFollowingService, followProfileService, unfollowProfileService, removeFollowerService } from "@/services/profile/profileFollow.service";
+
 
 // -- Profile API -- //
 
