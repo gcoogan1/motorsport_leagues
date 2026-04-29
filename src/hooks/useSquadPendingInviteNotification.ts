@@ -2,12 +2,12 @@ import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentProfile, selectHasProfiles } from "@/store/profile/profile.selectors";
 import { useCreateNotification } from "@/rtkQuery/hooks/mutations/useNotificationMutation";
-import { getInviteTablesByToken } from "@/services/squad/squadInvite.service";
+import { getInviteTableByToken } from "@/services/squad/squadInvite.service";
 import { getNotificationsByRecipientId } from "@/services/notification.service";
 import type { RootState } from "@/store";
 
 /**
- * PENDING INVITE NOTIFICATION HOOK
+ * PENDING INVITE NOTIFICATION HOOK - SQUAD
  * 
  * FLOW:
     1. When a user clicks on a squad invite link, the invite token and related info are stored in localStorage under "squad_invite".
@@ -18,7 +18,7 @@ import type { RootState } from "@/store";
 
     This ensures that users receive notifications for squad invites that were sent while they were logged out, improving engagement and ensuring they don't miss important invites.
  */
-export const usePendingInviteNotification = () => {
+export const useSquadPendingInviteNotification = () => {
   const accountId = useSelector((state: RootState) => state.account.data?.id);
   const currentProfile = useSelector(selectCurrentProfile);
   const firstProfile = useSelector(
@@ -56,7 +56,7 @@ export const usePendingInviteNotification = () => {
         };
 
         // Fetch full invite details from database
-        const inviteTableResult = await getInviteTablesByToken(inviteData.token);
+        const inviteTableResult = await getInviteTableByToken(inviteData.token);
 
 
         // Invite no longer exists or expired
@@ -108,7 +108,7 @@ export const usePendingInviteNotification = () => {
 
       } catch (error) {
         // Log error but don't throw—failure to notify shouldn't break the app
-        console.error("[usePendingInviteNotification] Failed to process pending invite:", error);
+        console.error("[useSquadPendingInviteNotification] Failed to process pending invite:", error);
       }
     };
 

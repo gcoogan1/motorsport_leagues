@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { InviteSquadPayload, InviteSquadResult, GetInviteTablesResult, RemoveSquadInviteByTokenResult, MarkSquadInviteClickedPayload, MarkSquadInviteClickedResult, GetSquadInvitesResult } from "@/types/squad.types";
+import type { InviteSquadPayload, InviteSquadResult, GetInviteTableResult, RemoveSquadInviteByTokenResult, MarkSquadInviteClickedPayload, MarkSquadInviteClickedResult, GetSquadInvitesResult } from "@/types/squad.types";
 
 // --- Squad Invite Service --- //
 
@@ -39,10 +39,10 @@ export const inviteToSquad = async (
   return { success: true, data: data.data };
 };
 
-// -- Get Invite Tables by Token -- //
-export const getInviteTablesByToken = async (
+// -- Get Invite Table by Token -- //
+export const getInviteTableByToken = async (
   inviteToken: string,
-): Promise<GetInviteTablesResult> => {
+): Promise<GetInviteTableResult> => {
   const { data, error } = await supabase
     .from("squad_invites")
     .select("*")

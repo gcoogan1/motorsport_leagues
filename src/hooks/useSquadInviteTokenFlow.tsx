@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { getInviteTablesByToken } from "@/services/squad/squadInvite.service";
+import { getInviteTableByToken } from "@/services/squad/squadInvite.service";
 import { getNotificationsByRecipientIds } from "@/services/notification.service";
 import type { SquadViewType } from "@/types/squad.types";
 import { useModal } from "@/providers/modal/useModal";
@@ -48,7 +48,7 @@ useEffect(() => {
 
     if (!squadId) return;
 
-    const inviteTableResult = await getInviteTablesByToken(token);
+    const inviteTableResult = await getInviteTableByToken(token);
     if (!inviteTableResult.success) return;
 
     let existingNotificationId: string | undefined;

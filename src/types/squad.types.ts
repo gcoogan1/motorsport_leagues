@@ -145,8 +145,8 @@ export type GetSquadInvitesSuccess = {
 // Get Squad Invites --> Result type
 export type GetSquadInvitesResult = GetSquadInvitesSuccess | SupabaseError;
 
-// Get Invite Tables --> Result type
-export type GetInviteTablesResult =
+// Get Invite Table --> Result type
+export type GetInviteTableResult =
   | { success: true; data: SquadInviteTable }
   | SupabaseError;
 

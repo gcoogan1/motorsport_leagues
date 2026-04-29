@@ -15,7 +15,7 @@ import { useModal } from "@/providers/modal/useModal";
 import JoinSquad from "@/features/squads/modals/core/JoinSquad/JoinSquad";
 import { withMinDelay } from "@/utils/withMinDelay";
 import {
-  getInviteTablesByToken,
+  getInviteTableByToken,
   removeSquadInviteByToken,
 } from "@/services/squad/squadInvite.service";
 import { deleteNotification } from "@/services/notification.service";
@@ -69,7 +69,7 @@ const NotificationsPanel = () => {
           ? notification.metadata.invite_token
           : "";
       // Retieve the profile attached to the invite table
-      const inviteTableResult = await getInviteTablesByToken(inviteToken);
+      const inviteTableResult = await getInviteTableByToken(inviteToken);
 
       openModal(
         <JoinSquad
