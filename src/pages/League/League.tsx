@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
@@ -27,6 +27,8 @@ import UnfollowLeague from "@/features/leagues/modals/errors/UnfollowLeague/Unfo
 import LeaveLeague from "@/features/leagues/modals/core/LeaveLeague/LeaveLeague";
 import InviteLeague from "@/features/leagues/forms/Invite/InviteLeague";
 import { useLeagueDirectorContext } from "@/hooks/useLeagueDirectorContext";
+import { useLeagueInviteTokenFlow } from "@/hooks/useLeagueInviteToken";
+// import LeagueParticipants from "@/features/panels/leagueParticipants/LeaguePart";
 
 // TODO: Update the League page to pull real data and implement actions
 
@@ -35,9 +37,12 @@ const League = () => {
   const { openPanel } = usePanel();
   const { setOverrideThemeName, clearOverrideThemeName } = useAppTheme();
   const navigate = useNavigate();
+
+  const { leagueId, token } = useParams<{ leagueId: string; token?: string }>();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const currentUserProfiles = useSelector((state: RootState) => state.profile.data ?? []);
+
   const hasProfile = useSelector(selectHasProfiles);
-  const { leagueId } = useParams<{ leagueId: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const { data: followers = [] } = useLeagueFollowers(leagueId ?? "");
   const { data: isFollowing = false } = useIsFollowingLeague(
@@ -49,10 +54,49 @@ const League = () => {
   const currentLeague = useSelector(
     (state: RootState) => state.league.currentLeague,
   );
+  const userHasActiveProfile = useSelector(selectHasProfiles);
 
   const { data: participants = [] } = useLeagueParticipants(currentLeague?.id);
 
   const { viewType, isDirector } = useLeaguePageReadyState();
+
+   // Build a quick lookup of the logged-in account's profile ids.
+  const currentUserProfileIds = new Set(currentUserProfiles.map((profile) => profile.id));
+
+  // Profile ids (owned by this account) that are participants in the current league.
+  const participantProfileIdsInLeague = participants
+    .filter((participant) => currentUserProfileIds.has(participant.profile_id))
+    .map((participant) => participant.profile_id);
+
+  // Set used to map those member ids back to full profile objects.
+  const userAlreadyInLeague = participantProfileIdsInLeague.length > 0;
+
+  const isParticipantView = viewType === "participant";
+  const isViewTypeLoading = viewType === "loading";
+  const participantsCount = participants.length;
+  const currentParticipant = participants.find(
+    (participant) => participant.account_id === accountId,
+  );
+
+  // Use league director context (must be before any early return)
+  const {
+    inviterDirectorUsername,
+    inviterDirectorProfileId,
+    inviterDirectorAccountId,
+  } = useLeagueDirectorContext({
+    leagueParticipants: participants,
+    currentUserProfiles,
+    currentProfileId: currentParticipant?.profile_id,
+  });
+
+    // Invite flow
+    useLeagueInviteTokenFlow({
+      leagueId,
+      token,
+      viewType,
+      userHasActiveProfile,
+      leagueStatus,
+    });
 
   // Load league data
   useEffect(() => {
@@ -90,32 +134,37 @@ const League = () => {
     clearOverrideThemeName,
   ]);
 
+
+    const hasStoredInvite = useRef(false);
+  
+    useEffect(() => {
+      if (!token || hasStoredInvite.current) return;
+  
+      const shouldStore =
+        viewType === "guest" ||
+        (viewType === "user" && userHasActiveProfile === false) ||
+        (viewType === "user" && !userAlreadyInLeague);
+  
+      if (shouldStore) {
+        localStorage.setItem(
+          "league_invite",
+          JSON.stringify({
+            token,
+            timestamp: Date.now(),
+            leagueId,
+          })
+        );
+      }
+  
+      hasStoredInvite.current = true;
+    }, [token, viewType, userAlreadyInLeague, leagueId, userHasActiveProfile]);
+
   const isLeagueLoading =
     !leagueId ||
     leagueStatus === "loading" ||
     !currentLeague ||
     currentLeague.id !== leagueId;
 
-  // Get all user profiles from Redux (must be before any early return)
-  const currentUserProfiles = useSelector((state: RootState) => state.profile.data ?? []);
-
-  const isParticipantView = viewType === "participant";
-  const isViewTypeLoading = viewType === "loading";
-  const participantsCount = participants.length;
-  const currentParticipant = participants.find(
-    (participant) => participant.account_id === accountId,
-  );
-
-  // Use league director context (must be before any early return)
-  const {
-    inviterDirectorUsername,
-    inviterDirectorProfileId,
-    inviterDirectorAccountId,
-  } = useLeagueDirectorContext({
-    leagueParticipants: participants,
-    currentUserProfiles,
-    currentProfileId: currentParticipant?.profile_id,
-  });
 
   if (isLeagueLoading) {
     return <LoadingScreen />;
