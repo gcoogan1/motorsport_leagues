@@ -43,7 +43,8 @@ export const CoverTop = styled.div`
   align-items: flex-start;
   gap: ${layout.space.xLarge};
   align-self: stretch;
-  background: linear-gradient(180deg, var(--Color-Base-2, #151515) 0%, rgba(21, 21, 21, 0.00) 100%);
+  background: linear-gradient(180deg, var(--Color-Base-2, #151515) 0%, rgba(21, 21, 21, 0.80) 50%, rgba(21, 21, 21, 0.00) 100%);
+
 
   ${layout.mediaQueries.mobile} {
     align-items: center;
@@ -99,6 +100,8 @@ export const CoverBottom = styled.div`
   gap: ${layout.space.xSmall};
   align-self: stretch;
   background: linear-gradient(180deg, rgba(21, 21, 21, 0.00) 0%, var(--Color-Base-2, #151515) 80.29%);
+  
+  
 
   ${layout.mediaQueries.mobile} {
     padding: ${layout.space.xxLarge} ${layout.space.medium} 0 ${layout.space.medium};

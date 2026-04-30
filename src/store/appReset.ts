@@ -5,6 +5,7 @@ import { clearSquads } from "@/store/squads/squad.slice";
 import { notificationApi } from "@/rtkQuery/API/notificationApi";
 import { profileApi } from "@/rtkQuery/API/profileApi";
 import { squadApi } from "@/rtkQuery/API/squadApi";
+import { leagueApi } from "@/rtkQuery/API/leagueApi";
 
 export const resetAppState = () => (dispatch: AppDispatch) => {
   dispatch(clearAccount());
@@ -13,4 +14,5 @@ export const resetAppState = () => (dispatch: AppDispatch) => {
   dispatch(notificationApi.util.resetApiState());
   dispatch(profileApi.util.resetApiState());
   dispatch(squadApi.util.resetApiState());
+  dispatch(leagueApi.util.resetApiState());
 };

@@ -93,6 +93,10 @@ const DEV_ROUTES: Route[] = [
     path: "/league/:leagueId",
     element: <League />,
   },
+    { 
+    path: "/league/:leagueId/invite/:token", 
+    element: <League />,
+  },
   {
     path: "/league/:leagueId/management",
     element: <LeagueManagement />,

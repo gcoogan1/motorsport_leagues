@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { navigate } from "@/app/navigation/navigation";
+import { leagueApi } from "@/rtkQuery/API/leagueApi";
 import { withMinDelay } from "@/utils/withMinDelay";
-import { type AppDispatch } from "@/store";
+import { type AppDispatch, type RootState } from "@/store";
 import { deleteLeagueThunk } from "@/store/leagues/league.thunk";
 import { selectCurrentLeague } from "@/store/leagues/league.selectors";
 import TextInput from "@/components/Inputs/TextInput/TextInput.tsx";
@@ -21,6 +22,7 @@ type DeleteLeagueProps = {
 
 const DeleteLeague = ({ currentLeague }: DeleteLeagueProps) => {
   const { openModal, closeModal } = useModal();
+  const accountId = useSelector((state: RootState) => state.account.data?.id);
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
   const dispatch = useDispatch<AppDispatch>();
@@ -47,6 +49,15 @@ const DeleteLeague = ({ currentLeague }: DeleteLeagueProps) => {
       await withMinDelay(
         dispatch(deleteLeagueThunk(currentLeague.id)).unwrap(),
         1000,
+      );
+
+      // Force RTK Query to refetch league data so image and info are fresh
+      dispatch(
+        leagueApi.util.invalidateTags([
+          { type: "Leagues", id: `leagues-all--exclude-own` },
+          { type: "Leagues", id: `participant-leagues-${accountId}` },
+          { type: "Leagues", id: `profile-${accountId}` },
+        ])
       );
 
       navigate("/");

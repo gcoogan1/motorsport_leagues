@@ -1,5 +1,6 @@
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import type { FC } from "react";
+import type { ThemeName } from "@/app/design/tokens/theme";
 import CreateIcon from "@assets/Icon/Create.svg?react";
 import SearchIcon from "@assets/Icon/Search.svg?react";
 import LeagueIcon from "@assets/Icon/League.svg?react";
@@ -86,6 +87,7 @@ const LeaguesListCard: FC<LeaguesListCardProps> = ({
                 numOfParticipants={league.participants.length}
                 tags={isParticipant ? roleTags : undefined}
                 onClick={() => handleLeagueClick(league.id)}
+                themeColor={league.theme_color as ThemeName}
               />
             );
           })

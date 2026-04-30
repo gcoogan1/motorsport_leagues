@@ -752,10 +752,9 @@ export const updateLeagueSettings = async (
   }
 
   // Resolve cover value if it was uploaded
-  if (coverImage !== undefined && coverImage.type === "upload") {
+  if (data.cover_type === "upload") {
     data.cover_value = resolveCoverValue(data.cover_type, data.cover_value);
   }
-
   return {
     success: true,
     data,

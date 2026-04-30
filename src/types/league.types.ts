@@ -234,9 +234,9 @@ export type GetLeagueJoinRequestsResult =
   | GetLeagueJoinRequestsSuccess
   | SupabaseError;
 
-// Get League Invites --> Result type
-export type GetLeagueInviteTablesResult =
-  | { success: true; data: LeagueInviteTable[] }
+// Get League Invite --> Result type
+export type GetLeagueInviteTableResult =
+  | { success: true; data: LeagueInviteTable }
   | SupabaseError;
 
 // Get League Invites --> Success type
