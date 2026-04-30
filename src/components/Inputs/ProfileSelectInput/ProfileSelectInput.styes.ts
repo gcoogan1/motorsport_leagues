@@ -74,7 +74,7 @@ export const StyledTrigger = styled(SelectPrimitive.Trigger)<{
   $hasError?: boolean
 }>`
   width: 100%;
-  height: 52px;
+  /* height: 52px; */
   box-sizing: border-box;
   border-radius: ${borders.radius.medium};
   padding: ${layout.space.medium};

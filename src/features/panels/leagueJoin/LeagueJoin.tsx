@@ -18,6 +18,13 @@ import JoinForm from "@/components/Forms/JoinForm/JoinForm";
 import { joinFormSchema, type JoinFormValues } from "./leagueJoinSchema";
 import RequestSent from "./modals/success/RequestSent/RequestSent";
 
+const RoleHelperMessages: Record<Exclude<typeof LEAGUE_PARTICIPANT_ROLES[number], "director">, string> = {
+	driver: "I want to race!",
+	steward: "I want to officiate.",
+	broadcaster: "I want to help production.",
+	staff: "I want to help organize."
+};
+
 type LeagueJoinProps = {
 	leagueId?: string;
 };
@@ -65,6 +72,7 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 			availableJoinRoles.map((role, index) => ({
 				id: role,
 				name: role,
+				helperMessage: RoleHelperMessages[role],
 				label: role.charAt(0).toUpperCase() + role.slice(1),
 				defaultChecked: role === "driver" || (index === 0 && !availableJoinRoles.includes("driver")),
 			})),

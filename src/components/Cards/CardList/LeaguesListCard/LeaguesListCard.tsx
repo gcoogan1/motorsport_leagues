@@ -55,7 +55,7 @@ const LeaguesListCard: FC<LeaguesListCardProps> = ({
   return (
     <CardListWrapper>
       <HeaderContainer>
-        <Title>{squadPageView ? "Hosted Leagues" : "List of Leagues"}</Title>
+        <Title>{squadPageView ? "Hosted Leagues" : "My Leagues"}</Title>
       </HeaderContainer>
       <ListContainer>
         {leagues && leagues.length > 0 ? (
