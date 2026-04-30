@@ -137,6 +137,7 @@ const LeaguesPanel = () => {
                 numOfParticipants={league.participants.length}
                 onClick={() => handleGoToLeague(league.id)}
                 tags={roleTags}
+                themeColor={league.theme_color}
               />
             );
           })

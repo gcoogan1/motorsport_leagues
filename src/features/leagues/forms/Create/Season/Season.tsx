@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { AppDispatch, RootState } from "@/store";
 import { updateLeagueDraft } from "@/store/leagues/league.slice";
 import { createLeagueThunk } from "@/store/leagues/league.thunk";
+import { leagueApi } from "@/rtkQuery/API/leagueApi";
 import { useModal } from "@/providers/modal/useModal";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
@@ -95,7 +96,7 @@ const Season = ({ onBack }: SeasonProps) => {
             }),
           );
 
-          return await dispatch(
+          const result = await dispatch(
             createLeagueThunk({
               accountId: resolvedAccountId,
               leagueName,
@@ -110,6 +111,17 @@ const Season = ({ onBack }: SeasonProps) => {
               isTeamChampionship: data.isTeamChampionship,
             }),
           ).unwrap();
+
+          // Invalidate participant leagues cache so the panel refetches
+          if (accountId) {
+            dispatch(
+              leagueApi.util.invalidateTags([
+                { type: "Leagues", id: `participant-leagues-${accountId}` },
+              ])
+            );
+          }
+
+          return result;
         })(),
         1000,
       );

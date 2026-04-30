@@ -9,6 +9,7 @@ import { useLeagues } from "@/rtkQuery/hooks/queries/useLeagues";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
+import type { ThemeName } from "@/app/design/tokens/theme";
 import Search from "@/components/Search/Search";
 import ProfileCard from "@/components/Cards/ProfileCard/ProfileCard";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
@@ -184,6 +185,7 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
                 hostingSquad={league.hosting_squad_name}
                 numOfParticipants={league.participants.length}
                 onClick={() => handleNavigateToLeague(league.id)}
+                themeColor={league.theme_color as ThemeName}
               />
             ))
           ) : (
