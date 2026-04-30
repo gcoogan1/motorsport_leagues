@@ -35,19 +35,19 @@ export const ClickableWrapper = styled.button<{ $cardSize: "small" | "medium" }>
 
   /* Interactive States */
   &:hover {
-    border-radius: ${borders.radius.xxLarge};
+    border-radius: ${({ $cardSize }) => $cardSize === "medium" ? borders.radius.xxLarge : borders.radius.medium};
     ${({ theme }) => gradientBorder({ gradient: theme.theme.primary30, width: borders.width.medium })};
   }
 
   &:focus-visible {
-    border-radius: ${borders.radius.xxLarge};
+    border-radius: ${({ $cardSize }) => $cardSize === "medium" ? borders.radius.xxLarge : borders.radius.medium};
     ${({ theme }) => gradientBorder({ gradient: theme.theme.primary30, width: borders.width.medium })};
     outline: 2px solid ${colors.utility.focus};
     outline-offset: 2px;
   }
 
   &:active {
-    border-radius: ${borders.radius.xxLarge};
+    border-radius: ${({ $cardSize }) => $cardSize === "medium" ? borders.radius.xxLarge : borders.radius.medium};
     background: ${colors.base.translucent10};
     ${({ theme }) => gradientBorder({ gradient: theme.theme.primaryA, width: borders.width.medium })};
   } 
