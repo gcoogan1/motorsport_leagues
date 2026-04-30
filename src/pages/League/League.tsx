@@ -28,9 +28,6 @@ import LeaveLeague from "@/features/leagues/modals/core/LeaveLeague/LeaveLeague"
 import InviteLeague from "@/features/leagues/forms/Invite/InviteLeague";
 import { useLeagueDirectorContext } from "@/hooks/useLeagueDirectorContext";
 import { useLeagueInviteTokenFlow } from "@/hooks/useLeagueInviteToken";
-// import LeagueParticipants from "@/features/panels/leagueParticipants/LeaguePart";
-
-// TODO: Update the League page to pull real data and implement actions
 
 const League = () => {
   const { openModal, closeModal } = useModal();
@@ -40,7 +37,9 @@ const League = () => {
 
   const { leagueId, token } = useParams<{ leagueId: string; token?: string }>();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
-  const currentUserProfiles = useSelector((state: RootState) => state.profile.data ?? []);
+  const currentUserProfiles = useSelector(
+    (state: RootState) => state.profile.data ?? [],
+  );
 
   const hasProfile = useSelector(selectHasProfiles);
   const dispatch = useDispatch<AppDispatch>();
@@ -54,14 +53,17 @@ const League = () => {
   const currentLeague = useSelector(
     (state: RootState) => state.league.currentLeague,
   );
+
   const userHasActiveProfile = useSelector(selectHasProfiles);
 
   const { data: participants = [] } = useLeagueParticipants(currentLeague?.id);
 
   const { viewType, isDirector } = useLeaguePageReadyState();
 
-   // Build a quick lookup of the logged-in account's profile ids.
-  const currentUserProfileIds = new Set(currentUserProfiles.map((profile) => profile.id));
+  // Build a quick lookup of the logged-in account's profile ids.
+  const currentUserProfileIds = new Set(
+    currentUserProfiles.map((profile) => profile.id),
+  );
 
   // Profile ids (owned by this account) that are participants in the current league.
   const participantProfileIdsInLeague = participants
@@ -89,14 +91,14 @@ const League = () => {
     currentProfileId: currentParticipant?.profile_id,
   });
 
-    // Invite flow
-    useLeagueInviteTokenFlow({
-      leagueId,
-      token,
-      viewType,
-      userHasActiveProfile,
-      leagueStatus,
-    });
+  // Invite flow
+  useLeagueInviteTokenFlow({
+    leagueId,
+    token,
+    viewType,
+    userHasActiveProfile,
+    leagueStatus,
+  });
 
   // Load league data
   useEffect(() => {
@@ -134,37 +136,35 @@ const League = () => {
     clearOverrideThemeName,
   ]);
 
+  const hasStoredInvite = useRef(false);
 
-    const hasStoredInvite = useRef(false);
-  
-    useEffect(() => {
-      if (!token || hasStoredInvite.current) return;
-  
-      const shouldStore =
-        viewType === "guest" ||
-        (viewType === "user" && userHasActiveProfile === false) ||
-        (viewType === "user" && !userAlreadyInLeague);
-  
-      if (shouldStore) {
-        localStorage.setItem(
-          "league_invite",
-          JSON.stringify({
-            token,
-            timestamp: Date.now(),
-            leagueId,
-          })
-        );
-      }
-  
-      hasStoredInvite.current = true;
-    }, [token, viewType, userAlreadyInLeague, leagueId, userHasActiveProfile]);
+  useEffect(() => {
+    if (!token || hasStoredInvite.current) return;
+
+    const shouldStore =
+      viewType === "guest" ||
+      (viewType === "user" && userHasActiveProfile === false) ||
+      (viewType === "user" && !userAlreadyInLeague);
+
+    if (shouldStore) {
+      localStorage.setItem(
+        "league_invite",
+        JSON.stringify({
+          token,
+          timestamp: Date.now(),
+          leagueId,
+        }),
+      );
+    }
+
+    hasStoredInvite.current = true;
+  }, [token, viewType, userAlreadyInLeague, leagueId, userHasActiveProfile]);
 
   const isLeagueLoading =
     !leagueId ||
     leagueStatus === "loading" ||
     !currentLeague ||
     currentLeague.id !== leagueId;
-
 
   if (isLeagueLoading) {
     return <LoadingScreen />;

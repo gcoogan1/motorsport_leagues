@@ -7,6 +7,7 @@ import {
   getLeagueByIdThunk,
   updateLeagueThunk,
 } from "@/store/leagues/league.thunk";
+import { leagueApi } from "@/rtkQuery/API/leagueApi";
 import type { UpdateLeaguePayload } from "@/types/league.types";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
@@ -176,6 +177,15 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
       await withMinDelay(
         dispatch(updateLeagueThunk(payload)).unwrap(),
         1000,
+      );
+
+      // Force RTK Query to refetch league data so image and info are fresh
+      dispatch(
+        leagueApi.util.invalidateTags([
+          { type: "Leagues", id: `leagues-all--exclude-own` },
+          { type: "Leagues", id: `participant-leagues-${accountId}` },
+          { type: "Leagues", id: `profile-${accountId}` },
+        ])
       );
 
       reset(data);
