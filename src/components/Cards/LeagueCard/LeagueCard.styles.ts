@@ -121,13 +121,22 @@ export const TextContainer = styled.div<{ $cardSize: "small" | "medium" }>`
   `}
 `
 
-export const LeagueName = styled.h3`
+export const LeagueName = styled.h3<{ $cardSize: "small" | "medium" }>`
   ${typography.title.xSmall};
   color: ${colors.text.text1};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
+  
+  ${({ $cardSize }) => $cardSize === "small" && css`
+    max-width: 120px;
+    ${typography.body.mediumBold};
+  `}
 
+  ${layout.mediaQueries.mobile} {
+    max-width: 100%;
+  }
 `
 
 /* Details Section for Medium Size */

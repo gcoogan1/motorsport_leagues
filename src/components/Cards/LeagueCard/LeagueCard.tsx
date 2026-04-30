@@ -87,7 +87,7 @@ const LeagueCard = ({
           </IndicatorsContainer>
         </ImageContainer>
         <TextContainer $cardSize={size}>
-          <LeagueName>{name}</LeagueName>
+          <LeagueName $cardSize={size}>{name}</LeagueName>
           {size === "medium" ? (
             <LeagueInfoContainer>
                 {numOfParticipants !== undefined && (
