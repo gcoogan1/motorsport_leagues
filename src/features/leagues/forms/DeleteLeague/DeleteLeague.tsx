@@ -7,6 +7,7 @@ import { useToast } from "@/providers/toast/useToast";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { navigate } from "@/app/navigation/navigation";
 import { leagueApi } from "@/rtkQuery/API/leagueApi";
+import { getLeagueInvalidationTags } from "@/rtkQuery/API/leagueInvalidation";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { type AppDispatch, type RootState } from "@/store";
 import { deleteLeagueThunk } from "@/store/leagues/league.thunk";
@@ -23,6 +24,9 @@ type DeleteLeagueProps = {
 const DeleteLeague = ({ currentLeague }: DeleteLeagueProps) => {
   const { openModal, closeModal } = useModal();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const profileIds = useSelector((state: RootState) =>
+    (state.profile.data ?? []).map((profile) => profile.id),
+  );
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
   const dispatch = useDispatch<AppDispatch>();
@@ -53,11 +57,9 @@ const DeleteLeague = ({ currentLeague }: DeleteLeagueProps) => {
 
       // Force RTK Query to refetch league data so image and info are fresh
       dispatch(
-        leagueApi.util.invalidateTags([
-          { type: "Leagues", id: `leagues-all--exclude-own` },
-          { type: "Leagues", id: `participant-leagues-${accountId}` },
-          { type: "Leagues", id: `profile-${accountId}` },
-        ])
+        leagueApi.util.invalidateTags(
+          getLeagueInvalidationTags({ accountId, profileIds }),
+        )
       );
 
       navigate("/");

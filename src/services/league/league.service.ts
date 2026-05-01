@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import type {
+  CoverImageValue,
   CreateLeaguePayload,
   CreateLeagueResult,
   DeleteLeagueResult,
@@ -23,6 +24,91 @@ const DEFAULT_LEAGUE_APPLICATION_OPEN_ROLES:
     "broadcaster",
     "staff",
   ];
+
+const COVER_BUCKET = "covers";
+const COVER_PUBLIC_PATH_SEGMENT = `/storage/v1/object/public/${COVER_BUCKET}/`;
+
+const uploadLeagueCoverFile = async (accountId: string, file: File) => {
+  const fileExt = file.name.split(".").pop();
+  const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
+
+  const { error } = await supabase.storage
+    .from(COVER_BUCKET)
+    .upload(filePath, file, {
+      upsert: true,
+      contentType: file.type,
+    });
+
+  if (error) {
+    return {
+      success: false as const,
+      error: {
+        message: error.message,
+        code: "UPLOAD_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true as const,
+    filePath,
+  };
+};
+
+const getStoredCoverValue = (coverValue: string) => {
+  const publicPathIndex = coverValue.indexOf(COVER_PUBLIC_PATH_SEGMENT);
+
+  if (publicPathIndex === -1) {
+    return coverValue;
+  }
+
+  return coverValue.slice(publicPathIndex + COVER_PUBLIC_PATH_SEGMENT.length);
+};
+
+const resolveCoverPersistence = async (
+  accountId: string,
+  coverImage: CoverImageValue,
+) => {
+  if (coverImage.type === "preset") {
+    return {
+      success: true as const,
+      coverType: "preset" as const,
+      coverValue: coverImage.variant,
+    };
+  }
+
+  if (coverImage.file instanceof File) {
+    const uploadResult = await uploadLeagueCoverFile(accountId, coverImage.file);
+
+    if (!uploadResult.success) {
+      return uploadResult;
+    }
+
+    return {
+      success: true as const,
+      coverType: "upload" as const,
+      coverValue: uploadResult.filePath,
+    };
+  }
+
+  if (!coverImage.previewUrl) {
+    return {
+      success: false as const,
+      error: {
+        message: "Please upload an image.",
+        code: "UPLOAD_FAILED",
+        status: 400,
+      },
+    };
+  }
+
+  return {
+    success: true as const,
+    coverType: "upload" as const,
+    coverValue: getStoredCoverValue(coverImage.previewUrl),
+  };
+};
 
 export const resolveCoverValue = (
   coverType: "preset" | "upload",
@@ -507,45 +593,18 @@ export const createLeagueWithCover = async (
     isTeamChampionship,
   }: CreateLeaguePayload,
 ): Promise<CreateLeagueResult> => {
-  let coverType: "preset" | "upload";
-  let coverValue: string;
   const currentTimezone = getCurrentTimezone();
   const defaultDescription = `This is ${hostingSquadName}'s League for ${
     convertGameTypeToFullName(gameType)
   }.`;
 
-  // --- Handle cover ---
-  if (coverImage.type === "preset") {
-    coverType = "preset";
-    coverValue = coverImage.variant;
-  } else {
-    coverType = "upload";
+  const coverResult = await resolveCoverPersistence(accountId, coverImage);
 
-    // Generate a unique file path for the cover upload
-    const fileExt = coverImage.file.name.split(".").pop();
-    const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
-
-    // Upload the cover file to Supabase Storage
-    const { error } = await supabase.storage
-      .from("covers")
-      .upload(filePath, coverImage.file, {
-        upsert: true,
-        contentType: coverImage.file.type,
-      });
-    if (error) {
-      return {
-        success: false,
-        error: {
-          message: error.message,
-          code: "UPLOAD_FAILED",
-          status: 500,
-        },
-      };
-    }
-
-    // If upload is successful, set the coverValue to the file path in storage
-    coverValue = filePath;
+  if (!coverResult.success) {
+    return coverResult;
   }
+
+  const { coverType, coverValue } = coverResult;
 
   // --- Insert league ---
   const { data, error } = await supabase
@@ -693,43 +752,14 @@ export const updateLeagueSettings = async (
 
   // Handle cover image upload if provided
   if (coverImage !== undefined) {
-    let coverType: "preset" | "upload";
-    let coverValue: string;
+    const coverResult = await resolveCoverPersistence(accountId, coverImage);
 
-    if (coverImage.type === "preset") {
-      coverType = "preset";
-      coverValue = coverImage.variant;
-    } else {
-      coverType = "upload";
-
-      // Generate a unique file path for the cover upload
-      const fileExt = coverImage.file.name.split(".").pop();
-      const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
-
-      // Upload the cover file to Supabase Storage
-      const { error } = await supabase.storage
-        .from("covers")
-        .upload(filePath, coverImage.file, {
-          upsert: true,
-          contentType: coverImage.file.type,
-        });
-
-      if (error) {
-        return {
-          success: false,
-          error: {
-            message: error.message,
-            code: "UPLOAD_FAILED",
-            status: 500,
-          },
-        };
-      }
-
-      coverValue = filePath;
+    if (!coverResult.success) {
+      return coverResult;
     }
 
-    updateData.cover_type = coverType;
-    updateData.cover_value = coverValue;
+    updateData.cover_type = coverResult.coverType;
+    updateData.cover_value = coverResult.coverValue;
   }
 
   // Update the league in the database

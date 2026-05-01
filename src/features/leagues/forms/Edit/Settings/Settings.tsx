@@ -8,6 +8,7 @@ import {
   updateLeagueThunk,
 } from "@/store/leagues/league.thunk";
 import { leagueApi } from "@/rtkQuery/API/leagueApi";
+import { getLeagueInvalidationTags } from "@/rtkQuery/API/leagueInvalidation";
 import type { UpdateLeaguePayload } from "@/types/league.types";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
@@ -42,6 +43,9 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
   const { openModal } = useModal();
   const { showToast } = useToast();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const profileIds = useSelector((state: RootState) =>
+    (state.profile.data ?? []).map((profile) => profile.id),
+  );
   const currentLeague = useSelector(
     (state: RootState) => state.league.currentLeague,
   );
@@ -181,11 +185,9 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
 
       // Force RTK Query to refetch league data so image and info are fresh
       dispatch(
-        leagueApi.util.invalidateTags([
-          { type: "Leagues", id: `leagues-all--exclude-own` },
-          { type: "Leagues", id: `participant-leagues-${accountId}` },
-          { type: "Leagues", id: `profile-${accountId}` },
-        ])
+        leagueApi.util.invalidateTags(
+          getLeagueInvalidationTags({ accountId, profileIds }),
+        )
       );
 
       reset(data);

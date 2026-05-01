@@ -36,6 +36,7 @@ const League = () => {
   const navigate = useNavigate();
 
   const { leagueId, token } = useParams<{ leagueId: string; token?: string }>();
+  const resolvedLeagueId = leagueId ?? "";
   const accountId = useSelector((state: RootState) => state.account.data?.id);
   const currentUserProfiles = useSelector(
     (state: RootState) => state.profile.data ?? [],
@@ -43,9 +44,9 @@ const League = () => {
 
   const hasProfile = useSelector(selectHasProfiles);
   const dispatch = useDispatch<AppDispatch>();
-  const { data: followers = [] } = useLeagueFollowers(leagueId ?? "");
+  const { data: followers = [] } = useLeagueFollowers(resolvedLeagueId);
   const { data: isFollowing = false } = useIsFollowingLeague(
-    leagueId ?? "",
+    resolvedLeagueId,
     accountId ?? "",
   );
   const leagueStatus = useSelector((state: RootState) => state.league.status);
@@ -53,8 +54,6 @@ const League = () => {
   const currentLeague = useSelector(
     (state: RootState) => state.league.currentLeague,
   );
-
-  const userHasActiveProfile = useSelector(selectHasProfiles);
 
   const { data: participants = [] } = useLeagueParticipants(currentLeague?.id);
 
@@ -96,7 +95,7 @@ const League = () => {
     leagueId,
     token,
     viewType,
-    userHasActiveProfile,
+    userHasActiveProfile: hasProfile,
     leagueStatus,
   });
 
@@ -143,7 +142,7 @@ const League = () => {
 
     const shouldStore =
       viewType === "guest" ||
-      (viewType === "user" && userHasActiveProfile === false) ||
+      (viewType === "user" && hasProfile === false) ||
       (viewType === "user" && !userAlreadyInLeague);
 
     if (shouldStore) {
@@ -158,7 +157,7 @@ const League = () => {
     }
 
     hasStoredInvite.current = true;
-  }, [token, viewType, userAlreadyInLeague, leagueId, userHasActiveProfile]);
+  }, [token, viewType, userAlreadyInLeague, leagueId, hasProfile]);
 
   const isLeagueLoading =
     !leagueId ||

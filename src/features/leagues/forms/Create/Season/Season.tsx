@@ -7,6 +7,7 @@ import type { AppDispatch, RootState } from "@/store";
 import { updateLeagueDraft } from "@/store/leagues/league.slice";
 import { createLeagueThunk } from "@/store/leagues/league.thunk";
 import { leagueApi } from "@/rtkQuery/API/leagueApi";
+import { getLeagueInvalidationTags } from "@/rtkQuery/API/leagueInvalidation";
 import { useModal } from "@/providers/modal/useModal";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
@@ -35,6 +36,9 @@ const Season = ({ onBack }: SeasonProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const profileIds = useSelector((state: RootState) =>
+    (state.profile.data ?? []).map((profile) => profile.id),
+  );
   const draft = useSelector((state: RootState) => state.league.draft);
   const [numberOfDivisions, setNumberOfDivisions] = useState(
     draft.num_of_divisions ?? 1,
@@ -113,11 +117,11 @@ const Season = ({ onBack }: SeasonProps) => {
           ).unwrap();
 
           // Invalidate participant leagues cache so the panel refetches
-          if (accountId) {
+          if (accountId || profileIds.length > 0) {
             dispatch(
-              leagueApi.util.invalidateTags([
-                { type: "Leagues", id: `participant-leagues-${accountId}` },
-              ])
+              leagueApi.util.invalidateTags(
+                getLeagueInvalidationTags({ accountId, profileIds }),
+              )
             );
           }
 
