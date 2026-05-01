@@ -128,12 +128,13 @@ export const HelperText = styled.span`
   ${typography.body.smallRegular};
   color: ${colors.text.text2};
   display: flex;
-  margin-top: 3px;
+  margin-top: 4px;
 `;
 
 export const ErrorText = styled.span`
   ${typography.body.smallBold};
   color: ${colors.alert.alertA};
   display: flex;
+  margin-top: 4px;
   gap: ${layout.space.xxxSmall};
 `;

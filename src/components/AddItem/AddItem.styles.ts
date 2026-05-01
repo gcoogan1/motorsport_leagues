@@ -7,7 +7,7 @@ const { gradients, layout, borders } = designTokens;
 export const ItemContainer = styled.div`
   ${gradientBorder({ gradient: gradients.base.fadeTop10, width: borders.width.thin })};
   display: flex;
-  width: 320px;
+  width: 100%;
   padding: ${layout.space.small} ${layout.space.medium};
   flex-direction: column;
   align-items: center;

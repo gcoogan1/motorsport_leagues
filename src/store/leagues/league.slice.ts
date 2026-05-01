@@ -15,6 +15,18 @@ const initialState: LeagueState = {
   draft: {},
 };
 
+const updateLeagueInState = (state: LeagueState, updatedLeague: LeagueState["currentLeague"]) => {
+  if (!updatedLeague || !state.data) {
+    return;
+  }
+
+  const index = state.data.findIndex((league) => league.id === updatedLeague.id);
+
+  if (index !== -1) {
+    state.data[index] = updatedLeague;
+  }
+};
+
 const leagueSlice = createSlice({
   name: "league",
   initialState,
@@ -71,6 +83,7 @@ const leagueSlice = createSlice({
       .addCase(getLeagueByIdThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
         state.currentLeague = action.payload;
+        updateLeagueInState(state, action.payload);
       })
       .addCase(getLeagueByIdThunk.rejected, (state, action) => {
         state.status = "rejected";
@@ -87,14 +100,7 @@ const leagueSlice = createSlice({
 
         // Update the current league with the new data
         state.currentLeague = updatedLeague;
-
-        // Update the league in the data array if it exists
-        if (state.data) {
-          const index = state.data.findIndex((league) => league.id === updatedLeague.id);
-          if (index !== -1) {
-            state.data[index] = updatedLeague;
-          }
-        }
+        updateLeagueInState(state, updatedLeague);
       })
       .addCase(updateLeagueThunk.rejected, (state, action) => {
         state.status = "rejected";

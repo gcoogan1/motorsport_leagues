@@ -47,7 +47,7 @@ export const OptionsContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: ${layout.space.medium};
+  gap: ${layout.space.xSmall};
   align-self: stretch;
 `;
 

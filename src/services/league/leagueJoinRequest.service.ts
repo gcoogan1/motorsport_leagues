@@ -27,6 +27,35 @@ export const createLeagueJoinRequestService = async (
     };
   }
 
+  const { data: existingParticipant, error: participantError } = await supabase
+    .from("league_participants")
+    .select("id")
+    .eq("league_id", leagueId)
+    .eq("profile_id", profileId)
+    .maybeSingle();
+
+  if (participantError) {
+    return {
+      success: false,
+      error: {
+        message: participantError.message,
+        code: participantError.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  if (existingParticipant) {
+    return {
+      success: false,
+      error: {
+        message: "This profile is already a participant in the League.",
+        code: "VALIDATION_ERROR",
+        status: 409,
+      },
+    };
+  }
+
   // Check for existing requests for this profile+league with the same roles
   const { data: existing, error: fetchError } = await supabase
     .from("league_join_request")

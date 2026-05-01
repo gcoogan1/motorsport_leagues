@@ -190,6 +190,7 @@ const MultiInput = ({
                 ClearIndicator: () => null,
                 DropdownIndicator,
                 IndicatorSeparator: () => null,
+                MultiValueRemove: () => null,
                 Option: (optionProps) => (
                   <Option
                     {...optionProps}

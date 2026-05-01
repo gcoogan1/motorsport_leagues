@@ -66,8 +66,8 @@ const JoinForm = ({
   return (
     <FormWrapper onSubmit={onSubmit}>
       <FormHeader>
-        <HeaderTitle>Join Form</HeaderTitle>
-        <HeaderSubtitle>Please fill out the form below</HeaderSubtitle>
+        <HeaderTitle>Select Role</HeaderTitle>
+        <HeaderSubtitle>Participants can select one or more roles to join the League with.</HeaderSubtitle>
       </FormHeader>
       <FormInputs>
         <OptionsContainer>
@@ -95,7 +95,7 @@ const JoinForm = ({
         <ProfileSelectInput
           name="profile_joining"
           type="profile"
-          fieldLabel="Select Your Profile"
+          fieldLabel="Select Profile"
           isLarge
           profiles={profiles}
           hasError={!!profileError}

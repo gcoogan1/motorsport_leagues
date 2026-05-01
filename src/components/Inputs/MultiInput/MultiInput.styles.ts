@@ -66,19 +66,36 @@ export const FieldWrapper = styled.div`
 
 	.select__value-container {
 		display: flex;
-		flex: 1 1 auto;
+		flex: 1 1 0;
 		height: 100%;
 		min-width: 0;
 		min-height: 0;
     gap: ${layout.space.xxSmall};
     padding: 0;
-    overflow-x: auto;
+    overflow: hidden;
     overflow-y: hidden;
     word-break: break-word;
     white-space: normal;
     ${layout.mediaQueries.mobile} {
       gap: ${layout.space.xxxSmall};
     }
+	}
+
+	.select__indicators {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+		align-self: stretch;
+		margin-left: auto;
+	}
+
+	.select__dropdown-indicator {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+		padding: 0;
 	}
 
 	.select__placeholder {
@@ -89,13 +106,13 @@ export const FieldWrapper = styled.div`
 
 	.select__multi-value {
 		margin: 0;
+		flex: 0 1 auto;
 		flex-shrink: 1;
 		background: ${colors.base.translucent10};
 		border-radius: ${borders.radius.round};
 		padding: ${layout.space.xxSmall} ${layout.space.xSmall};
 		display: inline-flex;
 		align-items: center;
-		gap: ${layout.space.xxxSmall};
 		min-width: 0;
 		max-width: 100%;
 		${layout.mediaQueries.mobile} {
@@ -105,22 +122,14 @@ export const FieldWrapper = styled.div`
 
 	.select__multi-value__label {
 		${typography.body.smallBold};
+		display: block;
+		flex: 1 1 auto;
+		max-width: 100%;
 		color: ${colors.text.text1};
 		padding: 0;
-	}
-
-	.select__multi-value__remove {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: ${borders.radius.round};
-		color: ${colors.text.text1};
-		padding: 0;
-
-		&:hover {
-			background: ${colors.base.translucent20};
-			color: ${colors.text.text1};
-		}
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.select__input-container {

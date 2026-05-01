@@ -7,6 +7,7 @@ import {
   Name,
   RightContent,
   SubNavbarContainer,
+  SubNavbarWrapper,
 } from "./SubNavbar.styles";
 
 type SubNavbarProps = {
@@ -24,40 +25,42 @@ type SubNavbarProps = {
 
 const SubNavbar = ({ name, onBack, optionalAction }: SubNavbarProps) => {
   return (
-    <SubNavbarContainer>
-      <ContentContainer>
-        <LeftContent>
-          <Button
-            size="medium"
-            variant="filled"
-            color="base"
-            onClick={onBack}
-            icon={{ left: <BackIcon /> }}
-            aria-label="Go back"
-            rounded
-          >
-            Back
-          </Button>
-          <Name>{name}</Name>
-        </LeftContent>
-          {optionalAction && (
-        <RightContent>
+    <SubNavbarWrapper>
+      <SubNavbarContainer>
+        <ContentContainer>
+          <LeftContent>
             <Button
               size="medium"
-              variant={optionalAction.variant || "filled"}
-              color={optionalAction.color || "base"}
-              onClick={optionalAction.onClick}
-              icon={{
-                left: optionalAction.leftIcon,
-                right: optionalAction.rightIcon,
-              }}
+              variant="filled"
+              color="base"
+              onClick={onBack}
+              icon={{ left: <BackIcon /> }}
+              aria-label="Go back"
+              rounded
             >
-              {optionalAction.label}
+              Back
             </Button>
-        </RightContent>
-          )}
-      </ContentContainer>
-    </SubNavbarContainer>
+            <Name>{name}</Name>
+          </LeftContent>
+            {optionalAction && (
+          <RightContent>
+              <Button
+                size="medium"
+                variant={optionalAction.variant || "filled"}
+                color={optionalAction.color || "base"}
+                onClick={optionalAction.onClick}
+                icon={{
+                  left: optionalAction.leftIcon,
+                  right: optionalAction.rightIcon,
+                }}
+              >
+                {optionalAction.label}
+              </Button>
+          </RightContent>
+            )}
+        </ContentContainer>
+      </SubNavbarContainer>
+    </SubNavbarWrapper>
   );
 };
 

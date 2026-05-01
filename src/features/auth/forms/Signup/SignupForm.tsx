@@ -92,7 +92,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
     <FormProvider {...formMethods}>
       <FormBlock
         title={"Create Account"}
-        question={"Let's get started"}
+        question={"Let's Get Started"}
         buttons={{
           onCancel: { label: "Go to Log in", action: handleGoToLogin },
           onContinue: {

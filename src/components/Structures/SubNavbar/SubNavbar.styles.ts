@@ -1,8 +1,15 @@
 import styled from "styled-components";
 import { designTokens } from "@/app/design/tokens";
-import { bottomFadeBorder } from "@/app/design/mixens/edgeFadeBorder";
 
 const { colors, gradients, layout, borders, typography } = designTokens;
+
+export const SubNavbarWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  background: ${gradients.base};
+  border-bottom: ${borders.width.thin} solid ${colors.base.translucent10};
+`;
 
 export const SubNavbarContainer = styled.div`
   display: flex;
@@ -11,13 +18,6 @@ export const SubNavbarContainer = styled.div`
   align-items: flex-start;
   justify-content: center;
   padding: ${layout.space.medium} ${layout.space.large};
-
-    /* Gradient Border Bottom */
-  ${bottomFadeBorder({
-    gradient: gradients.base.translucent10,
-    width: borders.width.thin,
-  })}
-
 `;
 
 export const ContentContainer = styled.div`

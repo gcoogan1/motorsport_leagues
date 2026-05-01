@@ -153,7 +153,7 @@ export type EmailInvite = {
 // Cover Image Value --> discriminated union for draft/form stage
 export type CoverImageValue =
   | { type: "preset"; variant: LeagueCover }
-  | { type: "upload"; file: File; previewUrl?: string };
+  | { type: "upload"; file?: File; previewUrl?: string };
 
 // League Draft --> used in Redux draft before league is created/saved
 export type LeagueDraft = {

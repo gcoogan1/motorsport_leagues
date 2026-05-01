@@ -1,12 +1,14 @@
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import ReadOnlyInput from "@/components/Inputs/ReadOnlyInput/ReadOnlyInput";
 import { useModal } from "@/providers/modal/useModal";
+import type { GameType } from "@/types/profile.types";
+import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 
 type ContactInfoProps = {
   profile: {
     username: string;
     avatarType: "preset" | "upload";
-    gameType: string;
+    gameType: GameType;
     avatarValue: string;
   };
   contactInfo: string;
@@ -14,6 +16,7 @@ type ContactInfoProps = {
 
 const ContactInfo = ({ profile, contactInfo }: ContactInfoProps) => {
   const { closeModal } = useModal();
+  const gameType = convertGameTypeToFullName(profile.gameType);
 
   return (
     <FormModal
@@ -30,7 +33,7 @@ const ContactInfo = ({ profile, contactInfo }: ContactInfoProps) => {
         label="Profile"
         profile={{
           username: profile.username,
-          information: profile.gameType,
+          information: gameType,
           avatarType: profile.avatarType,
           avatarValue: profile.avatarValue,
           size: "medium",

@@ -73,6 +73,7 @@ export const BlockContainer = styled.div`
 
   ${layout.mediaQueries.mobile} {
     padding: ${layout.space.large};
+    max-width: 400px;
   }
 `;
 
@@ -134,6 +135,10 @@ export const FormList = styled.div`
   flex-direction: column;
   gap: ${layout.space.medium};
   align-self: center;
+
+  ${layout.mediaQueries.mobile} {
+    max-width: 400px;
+  }
 `;
 
 export const ButtonContainer = styled.div`
