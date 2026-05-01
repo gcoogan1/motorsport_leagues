@@ -43,6 +43,7 @@ import {
 import AddItem from "@/components/AddItem/AddItem";
 import InviteLeague from "../Invite/InviteLeague";
 import type { RootState } from "@/store";
+import type { GameType } from "@/types/profile.types";
 import { useSelector } from "react-redux";
 import { useLeagueDirectorContext } from "@/hooks/useLeagueDirectorContext";
 
@@ -189,6 +190,24 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
     [],
   );
 
+  const savedRolesByParticipantId = useMemo(
+    () =>
+      new Map<string, Set<LeagueRole>>(
+        participants.map((participant) => [
+          participant.id,
+          toRoleSet(participant.roles),
+        ]),
+      ),
+    [participants],
+  );
+
+  const savedDirectorCount = useMemo(
+    () =>
+      participants.filter((participant) => participant.roles.includes("director"))
+        .length,
+    [participants],
+  );
+
   // Use league director context (must be before any early return)
   const {
     inviterDirectorUsername,
@@ -310,14 +329,6 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
 
   const handleSave = handleSubmit(async (data) => {
     try {
-      // Snapshot the current roles from query data.
-      const originalRolesByParticipantId = new Map<string, Set<LeagueRole>>(
-        participants.map((participant) => [
-          participant.id,
-          toRoleSet(participant.roles),
-        ]),
-      );
-
       clearErrors("participants");
 
       // UNASSIGNED PARTICIPANT CHECK
@@ -335,7 +346,7 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
       // NO DIRECTOR CHECK
       const noDirectorErrorIndexes = getNoDirectorErrorIndexes({
         rows: data.participants,
-        originalRolesByParticipantId,
+        originalRolesByParticipantId: savedRolesByParticipantId,
       });
 
       if (noDirectorErrorIndexes.length > 0) {
@@ -353,7 +364,7 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
         },
         participantRoleChanges: data.participants.map((row) => {
           const previousRoles =
-            originalRolesByParticipantId.get(row.participantId) ?? new Set();
+            savedRolesByParticipantId.get(row.participantId) ?? new Set();
           const nextRoles = toRoleSet(row.selectedRoles);
           const { rolesToAdd, rolesToRemove } = getRoleChanges({
             previousRoles,
@@ -367,6 +378,12 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
           };
         }),
       };
+      const removedDirectorFromSelf = savePayload.participantRoleChanges.some(
+        (row) =>
+          row.participantId === currentParticipant?.id &&
+          row.rolesToRemove.includes("director"),
+      );
+
       // Control Panel changes //
 
       // Check if application options have changed and need to be updated/added before participant role changes.
@@ -469,6 +486,10 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
 
       // Update form defaults to latest saved values to clear dirty state.
       reset(data);
+
+      if (removedDirectorFromSelf) {
+        navigate(`/league/${leagueId}`);
+      }
     } catch {
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     }
@@ -586,9 +607,6 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
                 : participantFormRows;
             const row = rowsForActions[rowIndex];
             const participantCount = rowsForActions.length;
-            const directorCount = rowsForActions.filter((participantRow) =>
-              toRoleSet(participantRow.selectedRoles).has("director"),
-            ).length;
 
             const baseActions = [
               {
@@ -610,12 +628,16 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
                 value: "contact-info",
                 icon: <ContactIcon />,
                 onSelect: () => {
+                  if (!row.gameType) {
+                    return;
+                  }
+
                   openModal(
                     <ContactInfo
                       profile={{
                         username: row.participant.username,
                         avatarType: row.participant.avatarType,
-                        gameType: row.gameType || "",
+                        gameType: row.gameType as GameType,
                         avatarValue: row.participant.avatarValue,
                       }}
                       contactInfo={row.contactInfo!}
@@ -636,8 +658,8 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
                   }
 
                   const isOnlyDirectorBeingRemoved =
-                    toRoleSet(row.selectedRoles).has("director") &&
-                    directorCount === 1;
+                    (savedRolesByParticipantId.get(row.participantId)?.has("director") ?? false) &&
+                    savedDirectorCount === 1;
 
                   if (isOnlyDirectorBeingRemoved) {
                     openModal(<NoDirector removeAttempt={true} />);
@@ -652,6 +674,11 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
                     <RemoveParticipant
                       leagueId={leagueId}
                       profileId={row.profileId}
+                      onSuccess={
+                        row.profileId === currentParticipant?.profile_id
+                          ? () => navigate(`/league/${leagueId}`)
+                          : undefined
+                      }
                     />,
                   );
                 },

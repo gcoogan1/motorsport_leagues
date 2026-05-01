@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
+import { LEAGUE_PARTICIPANT_ROLES } from "@/types/league.types";
 import { getLeagueByIdThunk } from "@/store/leagues/league.thunk";
 import { useModal } from "@/providers/modal/useModal";
 import { usePanel } from "@/providers/panel/usePanel";
@@ -9,6 +10,7 @@ import { useAppTheme } from "@/providers/theme/useTheme";
 import { useLeagueParticipants } from "@/rtkQuery/hooks/queries/useLeagues";
 import { useLeaguePageReadyState } from "@/hooks/useLeaguePageReadyState";
 import Cover from "@/components/Structures/Cover/Cover";
+import type { Tag } from "@/components/Tags/Tags.variants";
 import LoadingScreen from "@/components/Messages/LoadingScreen/LoadingScreen";
 import { Wrapper } from "./League.styles";
 import { selectHasProfiles } from "@/store/profile/profile.selectors";
@@ -26,6 +28,7 @@ import {
 import UnfollowLeague from "@/features/leagues/modals/errors/UnfollowLeague/UnfollowLeague";
 import LeaveLeague from "@/features/leagues/modals/core/LeaveLeague/LeaveLeague";
 import InviteLeague from "@/features/leagues/forms/Invite/InviteLeague";
+import NoDirector from "@/features/leagues/modals/errors/NoDirector/NoDirector";
 import { useLeagueDirectorContext } from "@/hooks/useLeagueDirectorContext";
 import { useLeagueInviteTokenFlow } from "@/hooks/useLeagueInviteToken";
 
@@ -66,15 +69,26 @@ const League = () => {
   const participantProfileIdsInLeague = participants
     .filter((participant) => currentUserProfileIds.has(participant.profile_id))
     .map((participant) => participant.profile_id);
+  const currentUserLeagueParticipants = participants.filter((participant) =>
+    currentUserProfileIds.has(participant.profile_id),
+  );
   const participantsCount = participants.length;
   const currentParticipant = participants.find(
     (participant) => participant.account_id === accountId,
   );
   const userAlreadyInLeague = participantProfileIdsInLeague.length > 0;
+  const directorCount = participants.filter((participant) =>
+    participant.roles.includes("director"),
+  ).length;
 
   const { viewType, isDirector } = useLeaguePageReadyState();
   const isParticipantView = viewType === "participant";
   const isViewTypeLoading = viewType === "loading";
+  const viewerRoleTags = LEAGUE_PARTICIPANT_ROLES.filter((role) =>
+    currentUserLeagueParticipants.some((participant) =>
+      participant.roles.includes(role),
+    ),
+  ) as Tag[];
 
   // -- Director info used by invite actions -- //
   // Invite actions need the director tied to this league.
@@ -239,6 +253,14 @@ const League = () => {
       return;
     }
 
+    const isOnlyDirectorLeaving =
+      currentParticipant.roles.includes("director") && directorCount === 1;
+
+    if (isOnlyDirectorLeaving) {
+      openModal(<NoDirector removeAttempt={true} />);
+      return;
+    }
+
     openModal(
       <LeaveLeague
         leagueId={currentLeague.id}
@@ -295,7 +317,7 @@ const League = () => {
         onSquadNameClick={handleHostingSquadClick}
         backgroundImageUrl={currentLeague.cover_value}
         status={currentLeague.league_status}
-        tags={isDirector ? ["director"] : []}
+        tags={viewerRoleTags}
         optionalActions={
           isViewTypeLoading
             ? undefined

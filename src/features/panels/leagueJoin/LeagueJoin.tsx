@@ -9,7 +9,11 @@ import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { useCreateLeagueJoinRequest } from "@/rtkQuery/hooks/mutations/useLeagueMutation";
-import { useLeagueApplicationOptions } from "@/rtkQuery/hooks/queries/useLeagues";
+import {
+	useLeagueApplicationOptions,
+	useLeagueJoinRequests,
+	useLeagueParticipants,
+} from "@/rtkQuery/hooks/queries/useLeagues";
 import { LEAGUE_PARTICIPANT_ROLES } from "@/types/league.types";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
@@ -48,7 +52,27 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 		data: leagueApplicationOptions,
 		isLoading: isApplicationOptionsLoading,
 	} = useLeagueApplicationOptions(resolvedLeagueId);
-	const profileOptions = convertProfilesToSelectOptions(profiles ?? []);
+	const { data: participants = [] } = useLeagueParticipants(resolvedLeagueId);
+	const { data: joinRequests = [] } = useLeagueJoinRequests(resolvedLeagueId);
+	const participantProfileIds = useMemo(
+		() => new Set(participants.map((participant) => participant.profile_id)),
+		[participants],
+	);
+	const requestedProfileIds = useMemo(
+		() => new Set(joinRequests.map((request) => request.profile_id)),
+		[joinRequests],
+	);
+	const profileOptions = useMemo(
+		() =>
+			convertProfilesToSelectOptions(
+				(profiles ?? []).filter(
+					(profile) =>
+						!participantProfileIds.has(profile.id) &&
+						!requestedProfileIds.has(profile.id),
+				),
+			),
+		[participantProfileIds, profiles, requestedProfileIds],
+	);
 
   // Determine which participant roles are available for joining based on league application options.
 	const availableJoinRoles = useMemo(() => {
@@ -119,6 +143,22 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 	}, [resolvedLeagueId, setValue]);
 
 	useEffect(() => {
+		const selectedProfileId = getValues("profile_joining");
+		const isSelectedProfileAvailable = profileOptions.some(
+			(option) => option.value === selectedProfileId,
+		);
+
+		if (isSelectedProfileAvailable) {
+			return;
+		}
+
+		setValue("profile_joining", profileOptions[0]?.value ?? "", {
+			shouldDirty: false,
+			shouldValidate: false,
+		});
+	}, [getValues, profileOptions, setValue]);
+
+	useEffect(() => {
 		setValue("options", defaultOptions, {
 			shouldDirty: false,
 			shouldValidate: false,
@@ -164,6 +204,22 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 
 	const handleJoinSubmit = async (data: JoinFormValues) => {
 		if (!resolvedLeagueId || !data.profile_joining || !accountId) {
+			return;
+		}
+
+		if (participantProfileIds.has(data.profile_joining)) {
+			setError("profile_joining", {
+				type: "manual",
+				message: "This profile is already a participant in the League.",
+			});
+			return;
+		}
+
+		if (requestedProfileIds.has(data.profile_joining)) {
+			setError("profile_joining", {
+				type: "manual",
+				message: "This profile already has a join request pending.",
+			});
 			return;
 		}
 
@@ -226,6 +282,7 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 		return null;
 	}
 
+	const hasEligibleProfiles = profileOptions.length > 0;
 	const isLeagueClosedForApplications =
 		availableJoinRoles.length === 0;
 
@@ -236,6 +293,12 @@ const LeagueJoin = ({ leagueId }: LeagueJoinProps) => {
 					title="Applications Closed"
 					icon={<LeagueIcon />}
 					subtitle="This League is not currently accepting participants at this time."
+				/>
+			) : !hasEligibleProfiles ? (
+				<EmptyMessage
+					title="No Eligible Profiles"
+					icon={<LeagueIcon />}
+					subtitle="Your profiles are already participating in this League or already have a join request pending."
 				/>
 			) : (
 				<FormProvider {...formMethods}>
