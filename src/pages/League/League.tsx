@@ -27,6 +27,7 @@ import {
 } from "@/rtkQuery/hooks/queries/useLeagueFollowers";
 import UnfollowLeague from "@/features/leagues/modals/errors/UnfollowLeague/UnfollowLeague";
 import LeaveLeague from "@/features/leagues/modals/core/LeaveLeague/LeaveLeague";
+import LeaveLeagueProfilePicker from "@/features/leagues/modals/core/LeaveLeague/LeaveLeaguePicker";
 import InviteLeague from "@/features/leagues/forms/Invite/InviteLeague";
 import NoDirector from "@/features/leagues/modals/errors/NoDirector/NoDirector";
 import { useLeagueDirectorContext } from "@/hooks/useLeagueDirectorContext";
@@ -71,6 +72,9 @@ const League = () => {
     .map((participant) => participant.profile_id);
   const currentUserLeagueParticipants = participants.filter((participant) =>
     currentUserProfileIds.has(participant.profile_id),
+  );
+  const currentUserParticipantProfiles = currentUserProfiles.filter((profile) =>
+    participantProfileIdsInLeague.includes(profile.id),
   );
   const participantsCount = participants.length;
   const currentParticipant = participants.find(
@@ -249,6 +253,25 @@ const League = () => {
   };
 
   const handleLeaveLeague = () => {
+    if (currentUserLeagueParticipants.length === 0) {
+      return;
+    }
+
+    if (currentUserLeagueParticipants.length > 1) {
+      openModal(
+        <LeaveLeagueProfilePicker
+          leagueId={currentLeague.id}
+          profiles={currentUserParticipantProfiles}
+          participants={currentUserLeagueParticipants.map((participant) => ({
+            profileId: participant.profile_id,
+            roles: participant.roles,
+          }))}
+          activeProfileId={currentParticipant?.profile_id}
+        />,
+      );
+      return;
+    }
+
     if (!currentParticipant) {
       return;
     }
