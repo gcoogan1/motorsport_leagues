@@ -30,56 +30,54 @@ import { useLeagueDirectorContext } from "@/hooks/useLeagueDirectorContext";
 import { useLeagueInviteTokenFlow } from "@/hooks/useLeagueInviteToken";
 
 const League = () => {
+  // -- Providers and hooks -- //
   const { openModal, closeModal } = useModal();
   const { openPanel } = usePanel();
-  const { setOverrideThemeName, clearOverrideThemeName } = useAppTheme();
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const { setOverrideThemeName, clearOverrideThemeName } = useAppTheme();
 
+  //  -- Route and account context -- //
   const { leagueId, token } = useParams<{ leagueId: string; token?: string }>();
   const resolvedLeagueId = leagueId ?? "";
   const accountId = useSelector((state: RootState) => state.account.data?.id);
   const currentUserProfiles = useSelector(
     (state: RootState) => state.profile.data ?? [],
   );
-
   const hasProfile = useSelector(selectHasProfiles);
-  const dispatch = useDispatch<AppDispatch>();
+
+  //  -- League page query state -- //
   const { data: followers = [] } = useLeagueFollowers(resolvedLeagueId);
   const { data: isFollowing = false } = useIsFollowingLeague(
     resolvedLeagueId,
     accountId ?? "",
   );
-  const leagueStatus = useSelector((state: RootState) => state.league.status);
 
+  const leagueStatus = useSelector((state: RootState) => state.league.status);
   const currentLeague = useSelector(
     (state: RootState) => state.league.currentLeague,
   );
 
+  // -- League participants and permissions -- //
   const { data: participants = [] } = useLeagueParticipants(currentLeague?.id);
-
-  const { viewType, isDirector } = useLeaguePageReadyState();
-
-  // Build a quick lookup of the logged-in account's profile ids.
   const currentUserProfileIds = new Set(
     currentUserProfiles.map((profile) => profile.id),
   );
-
-  // Profile ids (owned by this account) that are participants in the current league.
   const participantProfileIdsInLeague = participants
     .filter((participant) => currentUserProfileIds.has(participant.profile_id))
     .map((participant) => participant.profile_id);
-
-  // Set used to map those member ids back to full profile objects.
-  const userAlreadyInLeague = participantProfileIdsInLeague.length > 0;
-
-  const isParticipantView = viewType === "participant";
-  const isViewTypeLoading = viewType === "loading";
   const participantsCount = participants.length;
   const currentParticipant = participants.find(
     (participant) => participant.account_id === accountId,
   );
+  const userAlreadyInLeague = participantProfileIdsInLeague.length > 0;
 
-  // Use league director context (must be before any early return)
+  const { viewType, isDirector } = useLeaguePageReadyState();
+  const isParticipantView = viewType === "participant";
+  const isViewTypeLoading = viewType === "loading";
+
+  // -- Director info used by invite actions -- //
+  // Invite actions need the director tied to this league.
   const {
     inviterDirectorUsername,
     inviterDirectorProfileId,
@@ -90,7 +88,6 @@ const League = () => {
     currentProfileId: currentParticipant?.profile_id,
   });
 
-  // Invite flow
   useLeagueInviteTokenFlow({
     leagueId,
     token,
@@ -98,15 +95,17 @@ const League = () => {
     userHasActiveProfile: hasProfile,
     leagueStatus,
   });
+  const hasStoredInvite = useRef(false);
 
-  // Load league data
+  // -- Effects -- //
+  // Fetch the active league when the route changes.
   useEffect(() => {
     if (leagueId && currentLeague?.id !== leagueId) {
       dispatch(getLeagueByIdThunk(leagueId));
     }
   }, [leagueId, currentLeague?.id, dispatch]);
 
-  // Keep behavior consistent with other entity pages: redirect invalid/unavailable routes.
+  // Invalid league routes should fail closed.
   useEffect(() => {
     if (!leagueId) {
       navigate("/unavailable", { replace: true });
@@ -118,7 +117,7 @@ const League = () => {
     }
   }, [leagueId, leagueStatus, navigate]);
 
-  // Set theme color based on league settings
+  // League pages temporarily override the app theme.
   useEffect(() => {
     if (!currentLeague?.theme_color) {
       return;
@@ -135,10 +134,11 @@ const League = () => {
     clearOverrideThemeName,
   ]);
 
-  const hasStoredInvite = useRef(false);
-
+  // Persist invite links until the user can complete the flow.
   useEffect(() => {
-    if (!token || hasStoredInvite.current) return;
+    if (!token || hasStoredInvite.current) {
+      return;
+    }
 
     const shouldStore =
       viewType === "guest" ||
@@ -170,6 +170,7 @@ const League = () => {
   }
 
   // -- HANDLERS -- //
+
   const handleGameTypeClick = () => {
     openModal(<Game gameType={currentLeague.game_type} />);
   };
@@ -250,7 +251,8 @@ const League = () => {
     openPanel("LEAGUE_PARTICIPANTS", { leagueId: currentLeague.id });
   };
 
-  // -- Action buttons based on view type -- //
+    // -- Action buttons based on view type -- //
+
   const participantActions = getParticipantActions({
     isDirector,
     onManageLeague: () => {

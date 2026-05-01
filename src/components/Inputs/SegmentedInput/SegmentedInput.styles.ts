@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { designTokens } from "@/app/design/tokens";
 
-const { colors, layout, typography } = designTokens;
+const { colors, layout, typography, borders} = designTokens;
 
 export const SegmentedInputContainer = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ export const Label = styled.p`
 export const OptionsContainer = styled.div`
   display: flex;
   width: 100%;
-  border-radius: ${layout.space.medium};
+  border-radius: ${borders.radius.medium};
   background: ${colors.base.translucent10};
   padding: ${layout.space.xSmall};
   gap: ${layout.space.xxxSmall};
