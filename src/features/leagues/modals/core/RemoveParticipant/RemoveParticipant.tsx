@@ -9,9 +9,14 @@ import Dialog from "@/components/Dialog/Dialog";
 type RemoveParticipantProps = {
   profileId: string;
   leagueId: string;
+  onSuccess?: () => void;
 };
 
-const RemoveParticipant = ({ leagueId, profileId }: RemoveParticipantProps) => {
+const RemoveParticipant = ({
+  leagueId,
+  profileId,
+  onSuccess,
+}: RemoveParticipantProps) => {
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +41,8 @@ const RemoveParticipant = ({ leagueId, profileId }: RemoveParticipantProps) => {
         usage: "success",
         message: "Participant removed from League.",
       });
+
+      onSuccess?.();
     } catch {
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     } finally {

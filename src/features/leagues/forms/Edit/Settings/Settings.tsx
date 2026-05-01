@@ -31,6 +31,7 @@ import DeleteLeague from "../../DeleteLeague/DeleteLeague";
 import { ContentContainer, FormList, ListContainer, LoadingContainer } from "./Settings.styles";
 import { settingsFormSchema, type SettingsFormValues } from "./settingsSchema";
 import { baseTimezoneOptions, getLeagueSettingsValues, getDefaultSettingsValues } from "./Settings.util";
+import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 
 type SettingsProps = {
   leagueId: string;
@@ -230,7 +231,7 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
       <FormList>
         <TextInput
           name="leagueName"
-          label="League Name"
+          label="Name of League"
           placeholder="Enter league name"
           hasError={!!errors.leagueName}
           errorMessage={errors.leagueName?.message}
@@ -239,8 +240,8 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
         />
         <TextAreaInput
           name="description"
-          label="Description"
-          placeholder="Add a short description for your league"
+          label="League Description"
+          placeholder={`This is ${currentLeague.hosting_squad_name}'s League for ${convertGameTypeToFullName(currentLeague.game_type)}.`}
           hasError={!!errors.description}
           errorMessage={errors.description?.message}
           maxLength={280}
@@ -249,7 +250,7 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
         />
         <SelectInput
           name="timezone"
-          label="Timezone"
+          label="Time Zone"
           options={timezoneOptions}
           placeholder="Search timezone"
           helperText="All Events in this League will be created in this time zone."

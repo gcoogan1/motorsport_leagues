@@ -17,14 +17,16 @@ export const ListContainer = styled.div`
   align-items: center;
   gap: ${layout.space.xxLarge};
   align-self: stretch;
+  justify-content: center;
+  width: 100%;
 `
 
 export const FormList = styled.div`
+  max-width: 360px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.medium};
-  align-self: stretch;
 `
 
 export const LoadingContainer = styled.div`

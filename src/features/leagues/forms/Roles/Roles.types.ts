@@ -1,4 +1,5 @@
 import type { LEAGUE_PARTICIPANT_ROLES } from "@/types/league.types";
+import type { GameType } from "@/types/profile.types";
 import type { Tag } from "storybook/internal/csf";
 
 export type LeagueRole = typeof LEAGUE_PARTICIPANT_ROLES[number];
@@ -28,7 +29,7 @@ export type ParticipantRoleRow = {
   selectedRoles: LeagueRoleTag[];
   contactInfo?: string;
   profileId?: string;
-  gameType?: string;
+  gameType?: GameType;
 };
 
 export type RolesFormValues = {

@@ -29,7 +29,7 @@ export const ProfileContainer = styled.div`
 
 export const UserProfileWrapper = styled.div`
   overflow: hidden;
-  max-width: 248px;
+  /* max-width: 248px; */
 `
 
 export const DropdownContainer = styled.div`

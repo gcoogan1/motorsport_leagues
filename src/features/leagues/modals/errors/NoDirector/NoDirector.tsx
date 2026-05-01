@@ -10,7 +10,7 @@ const NoDirector = ({ removeAttempt }: NoDirectorProps) => {
 
   const subtitle = removeAttempt
     ? "Please assign another participant as a League Director before removing this participant."
-    : "Please ensure there is at least one Director role assigned..";
+    : "Please ensure there is at least one Director role assigned.";
 
   return (
     <Dialog
