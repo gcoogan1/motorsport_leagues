@@ -3,6 +3,10 @@ import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
+import { navigate } from "@/app/navigation/navigation";
+import { useAppTheme } from "@/providers/theme/useTheme";
+import { useModal } from "@/providers/modal/useModal";
+import { usePanel } from "@/providers/panel/usePanel";
 import type { AppDispatch, RootState } from "@/store";
 import { getLeagueByIdThunk } from "@/store/leagues/league.thunk";
 import ManageIcon from "@assets/Icon/Manage.svg?react";
@@ -21,9 +25,6 @@ import {
 } from "./LeagueManagment.styles";
 import Settings from "@/features/leagues/forms/Edit/Settings/Settings";
 import Roles from "@/features/leagues/forms/Roles/Roles";
-import { navigate } from "@/app/navigation/navigation";
-import { useAppTheme } from "@/providers/theme/useTheme";
-import { useModal } from "@/providers/modal/useModal";
 import UnsavedChanges from "@/features/leagues/modals/errors/UnsavedChanges/UnsavedChanges";
 
 //TODO: Replace panelContent with SheetForms for each section once they are developed, and implement logic to fetch and display actual data for each section.
@@ -31,6 +32,7 @@ import UnsavedChanges from "@/features/leagues/modals/errors/UnsavedChanges/Unsa
 const LeagueManagment = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { openModal } = useModal();
+  const { closePanel } = usePanel();
   const { setOverrideThemeName, clearOverrideThemeName } = useAppTheme();
   const { leagueId } = useParams<{ leagueId: string }>();
   const [activeSection, setActiveSection] =
@@ -80,7 +82,12 @@ const LeagueManagment = () => {
       <>Coming Soon</>
     );
 
-  const handlePendingNavigation = (action: () => void) => {
+  const handlePendingNavigation = (
+    action: () => void,
+    options?: {
+      onCancel?: () => void;
+    },
+  ) => {
     const isGuardedSection =
       activeSection === "league-settings" || activeSection === "participant-roles";
 
@@ -93,7 +100,12 @@ const LeagueManagment = () => {
       <UnsavedChanges
         onDiscard={() => {
           setHasUnsavedChanges(false);
+          closePanel();
           action();
+        }}
+        onCancel={() => {
+          closePanel();
+          options?.onCancel?.();
         }}
       />,
     );
@@ -106,6 +118,14 @@ const LeagueManagment = () => {
   }
 
   const handleSectionChange = (section: ManageMenuSection) => {
+    if (section === activeSection) {
+      if (!isLargeScreen) {
+        setOpenManageMenu(false);
+      }
+
+      return;
+    }
+
     handlePendingNavigation(() => {
       setActiveSection(section);
     });
@@ -139,10 +159,22 @@ const LeagueManagment = () => {
               <ManageMenu
                 activeSection={activeSection}
                 onSectionChange={(section) => {
-                  handlePendingNavigation(() => {
-                    setActiveSection(section);
+                  if (section === activeSection) {
                     setOpenManageMenu(false);
-                  });
+                    return;
+                  }
+
+                  handlePendingNavigation(
+                    () => {
+                      setActiveSection(section);
+                      setOpenManageMenu(false);
+                    },
+                    {
+                      onCancel: () => {
+                        setOpenManageMenu(false);
+                      },
+                    },
+                  );
                 }}
               />
             </ManageMenuMobileWrapper>

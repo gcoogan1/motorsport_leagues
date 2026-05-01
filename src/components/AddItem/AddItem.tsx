@@ -3,13 +3,14 @@ import Button from "@/components/Button/Button";
 import { ItemContainer } from './AddItem.styles'
 
 type AddItemProps = {
+  label?: string;
   onClick?: () => void;
 }
 
-const AddItem = ({ onClick }: AddItemProps) => {
+const AddItem = ({ label = "Add Item", onClick }: AddItemProps) => {
   return (
     <ItemContainer>
-      <Button color="base" variant="ghost" ariaLabel="Add Item" icon={{ left: <AddIcon />}} onClick={onClick}>Add Item</Button>
+      <Button color="base" variant="ghost" ariaLabel={label} icon={{ left: <AddIcon />}} onClick={onClick}>{label}</Button>
     </ItemContainer>
   )
 }

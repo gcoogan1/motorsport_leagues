@@ -33,6 +33,6 @@ export type ParticipantRoleRow = {
 
 export type RolesFormValues = {
   options: string[];
-  openApplications: boolean;
+  contactInfo: boolean;
   participants: ParticipantRoleRow[];
 };

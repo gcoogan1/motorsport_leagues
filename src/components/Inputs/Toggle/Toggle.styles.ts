@@ -9,9 +9,6 @@ export const ToggleContainer = styled.div`
   min-width: 0;
   align-items: flex-start;
   gap: ${layout.space.xSmall};
-  ${layout.mediaQueries.mobile} {
-    gap: ${layout.space.xxxSmall};
-  }
 `;
 
 export const TextContainer = styled.div`
