@@ -10,6 +10,7 @@ export const TabsContainer = styled.div`
   justify-content: center;
   align-items: flex-start;
   width: 100%;
+  flex: 1;
   gap: ${layout.space.xxxSmall};
 
   ${bottomFadeBorder({
