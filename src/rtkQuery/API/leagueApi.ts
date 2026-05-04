@@ -34,7 +34,6 @@ import type {
   RemoveLeagueJoinRequestPayload,
   RemoveLeagueJoinRequestResult,
   RemoveLeagueInvitePayload,
-  RemoveLeagueInviteByTokenResult,
   RemoveLeagueFollowerPayload,
   RemoveLeagueFollowerResult,
   RemoveLeagueParticipantRolePayload,
@@ -51,6 +50,7 @@ import type {
   UpdateLeagueSeasonResult,
   LeagueInviteTable,
   GetLeagueInvitesResult,
+  RemoveLeagueInviteResult,
 } from "@/types/league.types";
 import type { ProfileTable } from "@/types/profile.types";
 import { getAllLeaguesWithInfo, getLeaguesWithInfoByAccountId, getLeaguesWithInfoByProfileId, getLeaguesWithInfoBySquadId } from "@/services/league/league.service";
@@ -511,7 +511,7 @@ export const leagueApi = createApi({
       ],
     }),
     removeLeagueInvite: builder.mutation<
-      RemoveLeagueInviteByTokenResult,
+      RemoveLeagueInviteResult,
       RemoveLeagueInvitePayload
     >({
       queryFn: async ({ inviteId }) => {
