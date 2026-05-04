@@ -94,6 +94,29 @@ export const removeLeagueInviteByToken = async (
   return { success: true };
 };
 
+// -- Remove League Invite by ID -- //
+export const removeLeagueInviteById = async (
+  inviteId: string,
+): Promise<RemoveLeagueInviteByTokenResult> => {
+  const { error } = await supabase
+    .from("league_invites")
+    .delete()
+    .eq("id", inviteId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
+};
+
 // -- Mark League Invite as Clicked -- //
 export const markLeagueInviteClicked = async (
   { inviteId, profileId }: MarkLeagueInviteClickedPayload,

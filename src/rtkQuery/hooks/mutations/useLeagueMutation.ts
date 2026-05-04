@@ -10,6 +10,7 @@ import {
   useFollowLeagueMutation,
   useJoinLeagueWithRolesMutation,
   useRemoveLeagueApplicationOptionsMutation,
+  useRemoveLeagueInviteMutation,
   useRemoveLeagueJoinRequestMutation,
   useRemoveLeagueFollowerMutation,
   useRemoveLeagueParticipantMutation,
@@ -47,6 +48,11 @@ export const useCreateLeagueJoinRequest = () => {
 // Mutation for removing a join request from a league.
 export const useRemoveLeagueJoinRequest = () => {
   return useRemoveLeagueJoinRequestMutation();
+};
+
+// Mutation for removing a pending invite from a league.
+export const useRemoveLeagueInvite = () => {
+  return useRemoveLeagueInviteMutation();
 };
 
 // Mutation for removing league application options.

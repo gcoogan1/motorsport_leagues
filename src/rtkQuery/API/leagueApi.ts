@@ -33,6 +33,8 @@ import type {
   RemoveLeagueParticipantResult,
   RemoveLeagueJoinRequestPayload,
   RemoveLeagueJoinRequestResult,
+  RemoveLeagueInvitePayload,
+  RemoveLeagueInviteByTokenResult,
   RemoveLeagueFollowerPayload,
   RemoveLeagueFollowerResult,
   RemoveLeagueParticipantRolePayload,
@@ -54,7 +56,7 @@ import type { ProfileTable } from "@/types/profile.types";
 import { getAllLeaguesWithInfo, getLeaguesWithInfoByAccountId, getLeaguesWithInfoByProfileId, getLeaguesWithInfoBySquadId } from "@/services/league/league.service";
 import { getLeagueApplicationOptionsByLeagueId, addLeagueApplicationOptions, updateLeagueApplicationOptions, removeLeagueApplicationOptions } from "@/services/league/leagueApplication.service";
 import { followLeagueService, getLeagueFollowersService, getFollowingLeagues, isFollowingLeagueService, unfollowLeagueService, removeLeagueFollowerService } from "@/services/league/leagueFollow";
-import { getPendingLeagueInvitesByLeagueId } from "@/services/league/leagueInvite.service";
+import { getPendingLeagueInvitesByLeagueId, removeLeagueInviteById } from "@/services/league/leagueInvite.service";
 import { getLeagueJoinRequestsByLeagueId, createLeagueJoinRequestService, removeLeagueJoinRequestService } from "@/services/league/leagueJoinRequest.service";
 import { getLeagueParticipantsByLeagueId, addLeagueParticipant, joinLeagueWithRolesService, addLeagueParticipantRole, removeLeagueParticipantRole, removeLeagueParticipant } from "@/services/league/leagueParticipant.service";
 import { getLeagueSeasonsByLeagueId, createLeagueSeason, updateLeagueSeason, removeLeagueSeason } from "@/services/league/leagueSeason.service";
@@ -508,6 +510,32 @@ export const leagueApi = createApi({
         { type: "LeagueJoinRequests", id: payload.leagueId },
       ],
     }),
+    removeLeagueInvite: builder.mutation<
+      RemoveLeagueInviteByTokenResult,
+      RemoveLeagueInvitePayload
+    >({
+      queryFn: async ({ inviteId }) => {
+        try {
+          const result = await removeLeagueInviteById(inviteId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueInvites", id: payload.leagueId },
+      ],
+    }),
     joinLeagueWithRoles: builder.mutation<
       JoinLeagueWithRolesResult,
       JoinLeagueWithRolesPayload
@@ -798,6 +826,7 @@ export const {
   useAddLeagueParticipantMutation,
   useCreateLeagueJoinRequestMutation,
   useRemoveLeagueJoinRequestMutation,
+  useRemoveLeagueInviteMutation,
   useJoinLeagueWithRolesMutation,
   useAddLeagueParticipantRoleMutation,
   useCreateLeagueSeasonMutation,

@@ -557,8 +557,14 @@ export type RemoveLeagueJoinRequestResult =
   | { success: true }
   | SupabaseError;
 
-// Remove League Invite by Token --> Payload type
-export type RemoveLeagueInviteByTokenResult =
+// Remove League Invite by Id --> Payload type
+export type RemoveLeagueInvitePayload = {
+  inviteId: string;
+  leagueId: string;
+};
+
+// Remove League Invite by Id --> Result type
+export type RemoveLeagueInviteResult =
   | { success: true }
   | SupabaseError;
 
