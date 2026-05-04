@@ -41,7 +41,7 @@ import {
   getNoDirectorErrorIndexes,
 } from "./Roles.utils";
 import AddItem from "@/components/AddItem/AddItem";
-import InviteLeague from "../Invite/InviteLeague";
+import InviteLeague from "../Invite/InviteLeague/InviteLeague";
 import type { RootState } from "@/store";
 import type { GameType } from "@/types/profile.types";
 import { useSelector } from "react-redux";

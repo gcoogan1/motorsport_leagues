@@ -18,7 +18,7 @@ import {
 } from "./MultiUserInput.renderers";
 import type { GameType } from "@/types/profile.types";
 import type { Profile, SelectOption } from "./MultiUserInput.types";
-import { isValidEmail } from "./MultiUserInput.utils";
+import { isValidEmail, MAX_SELECTIONS } from "./MultiUserInput.utils";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 
 type MultiUserInputProps = {
@@ -41,7 +41,7 @@ const MultiUserInput = ({
   onBlockedEmailAttempt,
 }: MultiUserInputProps) => {
   const inputId = useId(); // Generate a unique ID for the input field
-  const { control, trigger } = useFormContext();
+  const { clearErrors, control, setError, trigger } = useFormContext();
   const [inputValue, setInputValue] = useState("");
 
   // Transform the provided profiles into the format expected by react-select
@@ -66,7 +66,26 @@ const MultiUserInput = ({
       render={({ field: { onChange, value, ref }, fieldState: { error } }) => {
         // Determine if the current input value is a valid email and not already selected
         const selectedValues = (value as MultiValue<SelectOption>) ?? [];
+        const isAtLimit = selectedValues.length >= MAX_SELECTIONS;
         const resolvedPlaceholder = placeholder ?? "";
+
+        const setLimitError = () => {
+          setError(name, {
+            type: "manual",
+            message: `You can only invite ${MAX_SELECTIONS} people at once.`,
+          });
+        };
+
+        const syncLimitError = (nextValues: MultiValue<SelectOption>) => {
+          if (nextValues.length >= MAX_SELECTIONS) {
+            setLimitError();
+            return;
+          }
+
+          if (error?.type === "manual") {
+            clearErrors(name);
+          }
+        };
 
         const MenuList = (props: MenuListProps<SelectOption, true>) => (
           <CustomMenuList
@@ -80,6 +99,12 @@ const MultiUserInput = ({
         const addEmailOption = (rawEmail: string) => {
           const email = rawEmail.trim();
           const normalizedEmail = email.toLowerCase();
+
+          if (selectedValues.length >= MAX_SELECTIONS) {
+            setLimitError();
+            setInputValue("");
+            return;
+          }
 
           if (!isValidEmail(email)) return;
 
@@ -100,6 +125,7 @@ const MultiUserInput = ({
 
           const nextValues = [...selectedValues, newOption];
           onChange(nextValues);
+          syncLimitError(nextValues);
           void trigger(name);
           if (isBlocked) {
             onBlockedEmailAttempt?.(email);
@@ -122,6 +148,15 @@ const MultiUserInput = ({
               onInputChange={(newValue, meta) => {
                 // Update local input state to control the input value
                 if (meta.action === "input-change") {
+                  if (isAtLimit && newValue.trim().length > 0) {
+                    setLimitError();
+                    return "";
+                  }
+
+                  if (!newValue.trim().length) {
+                    syncLimitError(selectedValues);
+                  }
+
                   setInputValue(newValue);
                 }
 
@@ -157,7 +192,13 @@ const MultiUserInput = ({
                   return true;
                 });
 
+                if (filteredValues.length > MAX_SELECTIONS) {
+                  setLimitError();
+                  return;
+                }
+
                 onChange(filteredValues);
+                syncLimitError(filteredValues);
                 void trigger(name);
                 setInputValue("");
               }}
@@ -191,10 +232,11 @@ const MultiUserInput = ({
               }}
               placeholder={resolvedPlaceholder}
               hideSelectedOptions
+              isSearchable={!isAtLimit}
               menuPlacement="bottom"
               menuShouldScrollIntoView={false}
               captureMenuScroll={false}
-              menuIsOpen={inputValue.length > 0}
+              menuIsOpen={!isAtLimit && inputValue.length > 0}
               menuPortalTarget={document.body}
               menuPosition="fixed"
             />

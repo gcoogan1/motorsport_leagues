@@ -28,7 +28,7 @@ import {
 import UnfollowLeague from "@/features/leagues/modals/errors/UnfollowLeague/UnfollowLeague";
 import LeaveLeague from "@/features/leagues/modals/core/LeaveLeague/LeaveLeague";
 import LeaveLeagueProfilePicker from "@/features/leagues/modals/core/LeaveLeague/LeaveLeaguePicker";
-import InviteLeague from "@/features/leagues/forms/Invite/InviteLeague";
+import InviteLeague from "@/features/leagues/forms/Invite/InviteLeague/InviteLeague";
 import NoDirector from "@/features/leagues/modals/errors/NoDirector/NoDirector";
 import { useLeagueDirectorContext } from "@/hooks/useLeagueDirectorContext";
 import { useLeagueInviteTokenFlow } from "@/hooks/useLeagueInviteToken";
@@ -154,7 +154,12 @@ const League = () => {
 
   // Persist invite links until the user can complete the flow.
   useEffect(() => {
-    if (!token || hasStoredInvite.current) {
+    if (
+      !token ||
+      hasStoredInvite.current ||
+      viewType === "loading" ||
+      hasProfile === null
+    ) {
       return;
     }
 

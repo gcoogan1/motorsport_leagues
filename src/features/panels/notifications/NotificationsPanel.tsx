@@ -13,11 +13,16 @@ import {
 } from "./content/getNotificationContent";
 import { useModal } from "@/providers/modal/useModal";
 import JoinSquad from "@/features/squads/modals/core/JoinSquad/JoinSquad";
+import JoinLeague from "@/features/leagues/modals/core/LeagueInvite/LeagueInvite";
 import { withMinDelay } from "@/utils/withMinDelay";
 import {
   getInviteTableByToken,
   removeSquadInviteByToken,
 } from "@/services/squad/squadInvite.service";
+import {
+  getLeagueInviteTableByToken,
+  removeLeagueInviteByToken,
+} from "@/services/league/leagueInvite.service";
 import { deleteNotification } from "@/services/notification.service";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { useOtherProfiles } from "@/rtkQuery/hooks/queries/useProfiles";
@@ -122,6 +127,76 @@ const NotificationsPanel = () => {
             }
 
             // REFETCH NOTIFICATIONS TO UPDATE UI
+            await refetchNotifications();
+          })(),
+          1000,
+        );
+        return;
+      } catch {
+        handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
+        return;
+      }
+    },
+    onJoinLeague: async (notification) => {
+      const inviteToken =
+        "invite_token" in notification.metadata
+          ? notification.metadata.invite_token
+          : "";
+      const inviteTableResult = await getLeagueInviteTableByToken(inviteToken);
+
+      openModal(
+        <JoinLeague
+          leagueId={notification.entity_id}
+          token={inviteToken}
+          hasProfile={true}
+          profileId={
+            inviteTableResult.success
+              ? inviteTableResult.data.profile_id
+              : undefined
+          }
+          notificationId={notification.id}
+          senderProfileId={notification.sender_profile_id}
+          leagueName={
+            "league_name" in notification.metadata
+              ? notification.metadata.league_name
+              : undefined
+          }
+          leagueRole={
+            "league_role" in notification.metadata
+              ? notification.metadata.league_role
+              : undefined
+          }
+          onSuccess={() => {
+            void refetchNotifications();
+          }}
+        />,
+      );
+      return;
+    },
+    onRejectLeague: async (notification) => {
+      const inviteToken =
+        "invite_token" in notification.metadata
+          ? notification.metadata.invite_token
+          : "";
+      if (!inviteToken) return;
+
+      try {
+        await withMinDelay(
+          (async () => {
+            const inviteRemovalResult =
+              await removeLeagueInviteByToken(inviteToken);
+            if (!inviteRemovalResult.success) {
+              throw inviteRemovalResult.error;
+            }
+
+            const removeNotificationResult = await deleteNotification(
+              notification.id,
+            );
+
+            if (!removeNotificationResult.success) {
+              throw removeNotificationResult.error;
+            }
+
             await refetchNotifications();
           })(),
           1000,

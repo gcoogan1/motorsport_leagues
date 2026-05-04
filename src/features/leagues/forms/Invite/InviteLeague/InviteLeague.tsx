@@ -46,7 +46,7 @@ const InviteLeague = ({
 
   const userId = useSelector((state: RootState) => state.account.data?.id);
   const { data: profilesData } = useGetProfilesQuery({ userId });
-  const { data: leagueMembers } = useLeagueParticipants(leagueId);
+  const { data: leagueParticipants } = useLeagueParticipants(leagueId);
   const { refetch: refetchPendingInvites } = useLeagueInvites(leagueId);
 
   const profiles =
@@ -59,10 +59,10 @@ const InviteLeague = ({
       accountId: profile.account_id,
     })) ?? [];
 
-  // Filter out profiles that are already league members or already invited
+  // Filter out profiles that are already league participants or already invited
   const availableProfiles = profiles.filter(
     (profile) =>
-      !leagueMembers?.some((member) => member.profile_id === profile.id),
+      !leagueParticipants?.some((participant) => participant.profile_id === profile.id),
   );
 
   const roleOptions = LEAGUE_PARTICIPANT_ROLES.map((role) => ({
@@ -101,7 +101,7 @@ const InviteLeague = ({
         emails,
         leagueId,
         leagueName,
-        role: "driver",
+        role: data.role as (typeof LEAGUE_PARTICIPANT_ROLES)[number],
         senderUsername: directorName,
         senderAccountId: directorAccountId,
         senderProfileId: directorProfileId,
@@ -143,6 +143,8 @@ const InviteLeague = ({
               entity_id: leagueId,
               metadata: {
                 league_name: leagueName,
+                league_role:
+                  data.role as (typeof LEAGUE_PARTICIPANT_ROLES)[number],
                 sender_username: directorName,
                 invite_token: matchingInvite.token,
                 receiver_profile_username: inviteeUsername,
@@ -170,7 +172,7 @@ const InviteLeague = ({
   return (
     <FormProvider {...formMethods}>
       <FormModal
-        question={"Invite Members"}
+        question={"Invite Participants"}
         helperMessage="Send an invite to join this League - to a user’s Profile or their email address."
         buttons={{
           onCancel: { label: "Cancel", action: handleOnCancel },

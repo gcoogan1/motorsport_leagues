@@ -14,7 +14,7 @@ type Option = {
 };
 
 export const gameOptions: Option[] = [
-  { label: "Gran Turismo 7", value: "gt7", helperMessage: "Playstation 5", icon: <Game_GT7 /> },
+  { label: "Gran Turismo 7", value: "gt7", helperMessage: "PlayStation 5", icon: <Game_GT7 /> },
   { label: "iRacing", value: "iRacing", helperMessage: "Coming Soon", icon: <Game_iRacing />, isDisabled: true },
   { label: "Assetto Corsa EVO", value: "assetoCorsaEvo", helperMessage: "Coming Soon", icon: <Game_ACEvo />, isDisabled: true },
   { label: "Le Mans Ultimate", value: "leMansUltimate", helperMessage: "Coming Soon", icon: <Game_LMU />, isDisabled: true },
