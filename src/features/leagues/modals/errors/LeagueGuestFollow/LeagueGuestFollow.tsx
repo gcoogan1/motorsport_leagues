@@ -7,11 +7,12 @@ type LeagueGuestFollowProps = {
 };
 
 const LeagueGuestFollow = ({ type = "follow" }: LeagueGuestFollowProps) => {
-  const { closeModal } = useModal();
+  const { closeAllModals } = useModal();
 
   const handleContinue = () => {
     navigate("/create-account");
-    closeModal();
+    closeAllModals();
+    return;
   };
 
   return (
@@ -30,7 +31,7 @@ const LeagueGuestFollow = ({ type = "follow" }: LeagueGuestFollowProps) => {
       buttons={{
         onCancel: {
           label: "Cancel",
-          action: () => closeModal(),
+          action: () => closeAllModals(),
         },
         onContinue: {
           label: "Create Account",
