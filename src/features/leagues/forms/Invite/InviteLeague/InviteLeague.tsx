@@ -17,13 +17,12 @@ import {
 } from "@/types/league.types";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import MultiUserInput from "@/components/Inputs/MultiUserInput/MultiUserInput";
-
+import { inviteSchema } from "./inviteLeagueSchema";
 import { useCreateNotification } from "@/rtkQuery/hooks/mutations/useNotificationMutation";
 import { useLeagueParticipants } from "@/rtkQuery/hooks/queries/useLeagues";
 import { useLeagueInvites } from "@/rtkQuery/hooks/queries/useLeagueInvites";
 import type { Tag } from "@/components/Tags/Tags.variants";
 import SelectInput from "@/components/Inputs/SelectInput/SelectInput";
-import { inviteSchema } from "./InviteLeague/inviteLeagueSchema";
 
 type InviteLeagueProps = {
   leagueId: string;
