@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useRef } from "react";
 import { navigate } from "@/app/navigation/navigation";
+import { useSelector } from "react-redux";
 import { useToast } from "@/providers/toast/useToast";
 import { useModal } from "@/providers/modal/useModal";
+import type { RootState } from "@/store";
+import type { GameType } from "@/types/profile.types";
+import { useLeagueDirectorContext } from "@/hooks/useLeagueDirectorContext";
+import { useLeagueInvites } from "@/rtkQuery/hooks/queries/useLeagueInvites";
+import { useOtherProfiles } from "@/rtkQuery/hooks/queries/useProfiles";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { LEAGUE_PARTICIPANT_ROLES } from "@/types/league.types";
 import {
@@ -19,6 +25,7 @@ import { ParticipantTable } from "@/components/Tables/InputTable/InputTable";
 import ProfileIcon from "@assets/Icon/Profile.svg?react";
 import ContactIcon from "@assets/Icon/Contact.svg?react";
 import KickIcon from "@assets/Icon/Kick.svg?react";
+import RemoveIcon from "@assets/Icon/Remove.svg?react";
 import SheetForm from "@/components/Sheets/SheetForm/SheetForm";
 import ControlPanel from "@/components/Inputs/ControlPanel/ControlPanel";
 import SpecialInputTable from "@/components/Tables/SpecialInputTable/SpecialInputTable";
@@ -27,9 +34,13 @@ import ViewRequest from "@/features/leagues/forms/ViewRequest/ViewRequest";
 import ContactInfo from "@/features/leagues/forms/ContactInfo/ContactInfo";
 import RemoveParticipant from "@/features/leagues/modals/core/RemoveParticipant/RemoveParticipant";
 import RejectRequest from "@/features/leagues/modals/core/RejectRequest/RejectRequest";
+import CancelInvite from "@/features/leagues/modals/core/CancelInvite/CancelInvite";
 import NoDirector from "@/features/leagues/modals/errors/NoDirector/NoDirector";
 import UnassignedParticipant from "@/features/leagues/modals/errors/UnassignedParticipant/UnassignedParticipant";
+import AddItem from "@/components/AddItem/AddItem";
+import InviteLeague from "../Invite/InviteLeague/InviteLeague";
 import type {
+  GroupedInvite,
   GroupedJoinRequest,
   LeagueRole,
   LeagueRoleTag,
@@ -40,12 +51,6 @@ import {
   getUnassignedParticipantIndexes,
   getNoDirectorErrorIndexes,
 } from "./Roles.utils";
-import AddItem from "@/components/AddItem/AddItem";
-import InviteLeague from "../Invite/InviteLeague/InviteLeague";
-import type { RootState } from "@/store";
-import type { GameType } from "@/types/profile.types";
-import { useSelector } from "react-redux";
-import { useLeagueDirectorContext } from "@/hooks/useLeagueDirectorContext";
 
 type RolesProps = {
   leagueId: string;
@@ -60,6 +65,7 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
   const currentUserProfiles = useSelector(
     (state: RootState) => state.profile.data ?? [],
   );
+  const { data: otherProfiles = [] } = useOtherProfiles(accountId);
   const [addLeagueApplicationOptions] = useAddLeagueApplicationOptions();
   const [addLeagueParticipantRole] = useAddLeagueParticipantRole();
   const [removeLeagueParticipantRole] = useRemoveLeagueParticipantRole();
@@ -74,6 +80,7 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
   const currentParticipant = participants.find(
     (participant) => participant.account_id === accountId,
   );
+  const { data: inviteRequests = [] } = useLeagueInvites(leagueId);
 
   // -- Form Setup -- //
   const formMethods = useForm<RolesFormValues>({
@@ -158,6 +165,23 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
 
     return Array.from(grouped.values());
   }, [joinRequests]);
+
+  // groupedInviteRequests
+  const groupedInviteRequests = useMemo<GroupedInvite[]>(() => {
+    return inviteRequests.map((invite) => ({
+      inviteId: invite.id,
+      email: invite.email,
+      leagueRole: invite.role,
+      leagueName: invite.league_name,
+      token: invite.token ?? "",
+      profileId: invite.profile_id,
+    }));
+  }, [inviteRequests]);
+
+  const inviteProfileById = useMemo(
+    () => new Map(otherProfiles.map((profile) => [profile.id, profile])),
+    [otherProfiles],
+  );
 
   // Map participants to form rows - for the participant table.
   // Memoize to avoid unnecessary recalculations and to keep reference equality for form state.
@@ -579,6 +603,64 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
               },
             ],
           }))}
+        />
+      )}
+      {groupedInviteRequests.length > 0 && (
+        <SpecialInputTable
+          header="Pending Invitations"
+          rows={groupedInviteRequests.map((invite) => {
+            const invitedProfile = invite.profileId
+              ? inviteProfileById.get(invite.profileId)
+              : undefined;
+
+            return {
+              id: invite.inviteId,
+              user: {
+                username: invitedProfile?.username ?? invite.email,
+                information: "",
+                size: "small",
+                avatarType: invitedProfile?.avatar_type ?? "preset",
+                avatarValue: invitedProfile?.avatar_value ?? "email",
+              },
+              actions: invite.profileId
+                ? [
+                    {
+                      label: "View Profile",
+                      value: "view-profile",
+                      icon: <ProfileIcon />,
+                      onSelect: () => navigate(`/profile/${invite.profileId}`),
+                    },
+                    {
+                      label: "Cancel Invite",
+                      value: "cancel-invite",
+                      icon: <RemoveIcon />,
+                      onSelect: () => {
+                        openModal(
+                          <CancelInvite
+                            leagueId={leagueId}
+                            inviteId={invite.inviteId}
+                          />,
+                        );
+                      },
+                    },
+                  ]
+                : [
+                    {
+                      label: "Cancel Invite",
+                      value: "cancel-invite",
+                      icon: <RemoveIcon />,
+                      onSelect: () => {
+                        openModal(
+                          <CancelInvite
+                            leagueId={leagueId}
+                            inviteId={invite.inviteId}
+                          />,
+                        );
+                      },
+                    },
+                  ],
+            };
+          })}
         />
       )}
       {participantFormRows.length > 0 && (
