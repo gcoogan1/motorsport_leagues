@@ -22,6 +22,7 @@ export const SecondaryContainer = styled.div`
   align-self: stretch;
   border-bottom-left-radius: ${borders.radius.xxLarge};
   border-bottom-right-radius: ${borders.radius.xxLarge};
+  cursor: pointer;
 
   ${gradientBorder({
     gradient: gradients.base.fadeTop10,

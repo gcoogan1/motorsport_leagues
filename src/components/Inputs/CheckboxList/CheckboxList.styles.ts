@@ -15,6 +15,7 @@ export const CheckboxListContainer = styled.div`
   gap: ${layout.space.large};
   border-radius: ${borders.radius.round};
   border: ${borders.width.thin} solid ${colors.base.translucent10};
+  cursor: pointer;
 
   ${layout.mediaQueries.mobile} {
     gap: ${layout.space.xSmall};

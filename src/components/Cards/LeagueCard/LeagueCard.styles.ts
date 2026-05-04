@@ -85,7 +85,7 @@ export const ImageContainer = styled.div<{ $cardSize: "small" | "medium", $image
     border-radius: ${borders.radius.small};
 
     ${layout.mediaQueries.mobile} {
-      align-self: flex-start;
+      align-self: center;
     }
   `}
 `;
@@ -118,15 +118,19 @@ export const TextContainer = styled.div<{ $cardSize: "small" | "medium" }>`
     min-width: 80px;
     padding: 0px;
     flex: 1 0 0;
+    
+    ${layout.mediaQueries.mobile} {
+      align-items: center;
+    }
   `}
 `
 
 export const LeagueName = styled.h3<{ $cardSize: "small" | "medium" }>`
   ${typography.title.xSmall};
   color: ${colors.text.text1};
-  white-space: nowrap;
+  /* white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; */
   max-width: 100%;
   
   ${({ $cardSize }) => $cardSize === "small" && css`
@@ -156,9 +160,9 @@ export const LeagueInfoContent = styled.div`
 export const LeagueInfoText = styled.p`
   ${typography.body.smallBold};
   color: ${colors.text.text2};
-  white-space: nowrap;
+  /* white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; */
 `
 
 export const Divider = styled.div`
@@ -172,10 +176,10 @@ export const Divider = styled.div`
 export const SquadInfoText = styled.p`
   ${typography.body.smallRegular};
   color: ${colors.text.text2};
-
+/* 
   ${layout.mediaQueries.mobile} {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
+  } */
 `

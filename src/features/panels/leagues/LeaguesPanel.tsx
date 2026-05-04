@@ -44,6 +44,7 @@ const LeagueListItem = ({ league, onClick, isSmall }: LeagueListItemProps) => {
       coverImageUrl={coverImage}
       size={isSmall ? "small" : "medium"}
       onClick={onClick}
+      themeColor={league.theme_color}
       seasonStatus={league.league_status}
     />
   );

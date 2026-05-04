@@ -125,6 +125,7 @@ const ParticipantTable = ({
                     name={`${name}.${i}.${columns.role.name}`}
                     options={columns.role.options}
                     useCheckboxOptions
+                    placeholder="Select Roles"
                     menuIsOpen={openDropdownIndex === i}
                     onMenuOpen={() => setOpenDropdownIndex(i)}
                     onMenuClose={() => setOpenDropdownIndex(null)}

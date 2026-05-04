@@ -29,7 +29,6 @@ export const ClickableWrapper = styled.button<{ $cardSize: "small" | "medium" }>
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
-  ${gradientBorder({ gradient: colors.base.translucent10, width: borders.width.thin })};
 
   /* Interactive States */
   &:hover {
@@ -53,6 +52,7 @@ export const ClickableWrapper = styled.button<{ $cardSize: "small" | "medium" }>
     border-radius: ${borders.radius.medium};
     flex-direction: row;
     gap: ${layout.space.small};
+    ${gradientBorder({ gradient: gradients.base.fadeTop10, width: borders.width.thin })};
   `}
 `;
 

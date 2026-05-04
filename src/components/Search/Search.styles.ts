@@ -74,7 +74,7 @@ export const ListContainer = styled.div`
   align-items: flex-start;
   gap: ${layout.space.xSmall};
   border-radius: ${borders.radius.large};
-  padding: ${layout.space.xLarge};
+  padding: ${layout.space.medium};
   flex: 1;
   min-height: 0;
 

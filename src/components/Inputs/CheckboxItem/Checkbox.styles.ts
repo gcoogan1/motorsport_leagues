@@ -11,6 +11,7 @@ export const CheckboxContainer = styled.div<{ $isChecked?: boolean }>`
   width: 100%;
   padding: ${layout.space.medium};
   border-radius: ${borders.radius.medium};
+  cursor: pointer;
 
    /* Gradient Border */
     ${gradientBorder({

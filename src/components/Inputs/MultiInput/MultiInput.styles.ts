@@ -33,6 +33,7 @@ export const FieldWrapper = styled.div`
 		color: ${colors.text.text1};
 		background: ${colors.base.translucent10};
 		overflow: hidden;
+		cursor: pointer;
 
 		&:hover {
 			background: ${colors.base.translucent20};

@@ -7,7 +7,7 @@ const { colors, layout, typography, borders } = designTokens;
 export const CheckboxContainer = styled.button`
   // Reset default button styles
   all: unset;
-  cursor: pointer;
+  cursor: pointer !important;
   position: relative;
 
   display: flex;
@@ -57,14 +57,17 @@ export const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-self: center;
+  cursor: pointer;
 `
 
 export const Label = styled.label`
   ${typography.body.mediumBold}
   color: ${colors.text.text1};
+  cursor: pointer;
 `
 
 export const HelperMessage = styled.p`
   ${typography.body.smallRegular}
   color: ${colors.text.text2};
+  cursor: pointer;
 `

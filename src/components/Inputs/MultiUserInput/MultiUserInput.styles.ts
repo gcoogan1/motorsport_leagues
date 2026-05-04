@@ -18,6 +18,7 @@ export const FieldWrapper = styled.div`
     color: ${colors.text.text1};
     box-shadow: inset 0 0 0 2px transparent;
     transition: background 120ms ease, box-shadow 120ms ease;
+    cursor: pointer;
 
     &:hover {
       background: ${colors.base.translucent20};
