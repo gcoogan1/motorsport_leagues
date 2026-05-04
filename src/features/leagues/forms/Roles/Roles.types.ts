@@ -37,3 +37,12 @@ export type RolesFormValues = {
   contactInfo: boolean;
   participants: ParticipantRoleRow[];
 };
+
+export type GroupedInvite = {
+  inviteId: string;
+  email: string;
+  leagueRole: LeagueRole;
+  leagueName: string;
+  token: string;
+  profileId?: string;
+};
