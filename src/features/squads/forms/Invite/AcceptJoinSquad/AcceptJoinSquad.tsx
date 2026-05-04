@@ -15,7 +15,10 @@ import { navigate } from "@/app/navigation/navigation";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import ProfileSelectInput from "@/components/Inputs/ProfileSelectInput/ProfileSelectInput";
 import { joinSquadSchema, type JoinSquadFormValues } from "./acceptJoinSquad.schema";
-import { removeSquadInviteByToken } from "@/services/squad/squadInvite.service";
+import {
+  getInviteTableByToken,
+  removeSquadInviteByToken,
+} from "@/services/squad/squadInvite.service";
 
 /*
   This component is rendered when a user clicks "Join Squad" from a squad invite notification but doesn't have a profile selected yet (edge case of the main JoinSquad flow). 
@@ -47,7 +50,6 @@ const AcceptJoinSquad = ({
   const [isLoading, setIsLoading] = useState(false);
   const [deleteNotification] = useDeleteNotification();
   const profiles = useSelector((state: RootState) => state.profile.data);
-  const account = useSelector((state: RootState) => state.account.data);
   const myProfileIds = profiles?.map((profile) => profile.id) ?? [];
   const { refetch: refetchNotifications } = useAllNotifications(myProfileIds);
   const formatedProfiles = convertProfilesToSelectOptions(profiles || []);
@@ -73,6 +75,14 @@ const AcceptJoinSquad = ({
 
         await withMinDelay(
           (async () => {
+            const inviteTableResult = await getInviteTableByToken(token);
+
+            if (!inviteTableResult.success) {
+              throw inviteTableResult.error;
+            }
+
+            const inviteEmail = inviteTableResult.data.email;
+
             // ACCEPT THE INVITE AND JOIN THE SQUAD AS A MEMBER WITH THE SELECTED PROFILE
             await joinSquadAsMember({
               squadId,
@@ -117,7 +127,7 @@ const AcceptJoinSquad = ({
                 metadata: {
                   squad_name: squadName,
                   recipient_username: acceptedProfile.username,
-                  recipient_email: account?.email,
+                  recipient_email: inviteEmail,
                 },
               }).unwrap();
             }

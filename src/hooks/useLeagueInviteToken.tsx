@@ -5,6 +5,8 @@ import { useModal } from "@/providers/modal/useModal";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import type { LeagueViewType } from "@/types/league.types";
+import LeagueInvite from "@/features/leagues/modals/core/LeagueInvite/LeagueInvite";
+import LeagueGuestFollow from "@/features/leagues/modals/errors/LeagueGuestFollow/LeagueGuestFollow";
 
 
 type UseLeagueInviteTokenFlowProps = {
@@ -52,6 +54,7 @@ useEffect(() => {
 
     let existingNotificationId: string | undefined;
 
+
     if (myProfileIds.length > 0) {
       const notificationsResult = await getNotificationsByRecipientIds(myProfileIds);
 
@@ -66,65 +69,56 @@ useEffect(() => {
             notification.metadata.invite_token === token,
         );
 
-        
         existingNotificationId = existingInviteNotification?.id;
-        console.log("Existing notification ID for invite token:", existingNotificationId);
       }
     }
 
-    if (viewType === "director") return;
 
-    
     if (viewType === "user" && (userHasActiveProfile === false)) {
       openedInviteTokensRef.current.add(token);
-      // openModal(
-      //   <JoinSquad
-      //     squadId={squadId}
-      //     hasProfile={false}
-      //     token={token}
-      //     onCancel={() => {
-      //       dismissedInviteTokensRef.current.add(token);
-      //       openedInviteTokensRef.current.delete(token);
-      //     }}
-      //     notificationId={existingNotificationId}
-      //     senderAccountId={inviteTableResult.data.sender_account_id}
-      //     senderProfileId={inviteTableResult.data.sender_profile_id}
-      //     squadName={inviteTableResult.data.squad_name}
-      //   />,
-      // );
+      openModal(
+        <LeagueInvite
+          leagueId={leagueId}
+          hasProfile={false}
+          token={token}
+          onCancel={() => {
+            dismissedInviteTokensRef.current.add(token);
+            openedInviteTokensRef.current.delete(token);
+          }}
+          notificationId={existingNotificationId}
+          senderProfileId={inviteTableResult.data.sender_profile_id}
+          leagueName={inviteTableResult.data.league_name}
+          leagueRole={inviteTableResult.data.role}
+        />,
+      );
       return;
     }
     
     if (viewType === "guest") {
       openedInviteTokensRef.current.add(token);
-      // openModal(
-      //   <GuestJoinSquad
-      //     onCancel={() => {
-      //       dismissedInviteTokensRef.current.add(token);
-      //       openedInviteTokensRef.current.delete(token);
-      //     }}
-      //   />,
-      // );
+      openModal(
+        <LeagueGuestFollow type="join" />,
+      );
       return;
     }
 
     openedInviteTokensRef.current.add(token);
-    // openModal(
-    //   <JoinSquad
-    //     squadId={squadId}
-    //     hasProfile={true}
-    //     token={token}
-    //     onCancel={() => {
-    //       dismissedInviteTokensRef.current.add(token);
-    //       openedInviteTokensRef.current.delete(token);
-    //     }}
-    //     notificationId={existingNotificationId}
-    //     profileId={inviteTableResult.data.profile_id}
-    //     senderAccountId={inviteTableResult.data.sender_account_id}
-    //     senderProfileId={inviteTableResult.data.sender_profile_id}
-    //     squadName={inviteTableResult.data.squad_name}
-    //   />,
-    // );
+    openModal(
+      <LeagueInvite
+        leagueId={leagueId}
+        hasProfile={true}
+        token={token}
+        onCancel={() => {
+          dismissedInviteTokensRef.current.add(token);
+          openedInviteTokensRef.current.delete(token);
+        }}
+        notificationId={existingNotificationId}
+        profileId={inviteTableResult.data.profile_id}
+        senderProfileId={inviteTableResult.data.sender_profile_id}
+        leagueName={inviteTableResult.data.league_name}
+        leagueRole={inviteTableResult.data.role}
+      />,
+    );
     return;
   };
 
