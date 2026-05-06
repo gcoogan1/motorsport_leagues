@@ -88,12 +88,11 @@ export const getLeagueSeasonsByLeagueId = async (
 };
 
 // -- Update League Season -- //
+// Note: Only season name and status can be updated. Number of divisions and team championship status are fixed upon season creation.
 export const updateLeagueSeason = async (
   {
     seasonId,
     seasonName,
-    numOfDivisions,
-    isTeamChampionship,
     seasonStatus,
   }: UpdateLeagueSeasonPayload,
 ): Promise<UpdateLeagueSeasonResult> => {
@@ -101,8 +100,6 @@ export const updateLeagueSeason = async (
     .from("league_season")
     .update({
       season_name: seasonName,
-      num_of_divisions: numOfDivisions,
-      is_team_championship: isTeamChampionship,
       season_status: seasonStatus,
     })
     .eq("id", seasonId)

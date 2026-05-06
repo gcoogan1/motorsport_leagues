@@ -453,6 +453,7 @@ export type UpdateLeaguePayload = {
   timezone?: string;
   coverImage?: CoverImageValue;
   themeColor?: Theme;
+  leagueStatus?: LeagueStatus;
 };
 
 // Update League --> Success type
@@ -493,8 +494,6 @@ export type UpdateLeagueApplicationOptionsResult =
 export type UpdateLeagueSeasonPayload = {
   seasonId: string;
   seasonName: string;
-  numOfDivisions: number;
-  isTeamChampionship: boolean;
   seasonStatus: LeagueStatus;
 };
 
