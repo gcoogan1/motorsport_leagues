@@ -1,3 +1,5 @@
+import { TextContainer, Title, Message } from "./ContentTextBlock.styles";
+
 type ContentTextBlockProps = {
   title: string;
   message: string;
@@ -5,10 +7,10 @@ type ContentTextBlockProps = {
 
 const ContentTextBlock = ({ title, message }: ContentTextBlockProps) => {
   return (
-    <div>
-      <h2>{title}</h2>
-      <p>{message}</p>
-    </div>
+    <TextContainer>
+      <Title>{title}</Title>
+      <Message>{message}</Message>
+    </TextContainer>
   )
 }
 

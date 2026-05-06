@@ -728,6 +728,7 @@ export const updateLeagueSettings = async (
     timezone,
     coverImage,
     themeColor,
+    leagueStatus,
   }: UpdateLeaguePayload,
 ): Promise<UpdateLeagueResult> => {
   // Build the update object with only provided fields
@@ -748,6 +749,10 @@ export const updateLeagueSettings = async (
 
   if (themeColor !== undefined) {
     updateData.theme_color = themeColor;
+  }
+
+  if (leagueStatus !== undefined) {
+    updateData.league_status = leagueStatus;
   }
 
   // Handle cover image upload if provided

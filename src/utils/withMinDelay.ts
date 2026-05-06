@@ -7,6 +7,13 @@ export const withMinDelay = async <T,>(
   minDelayMs = 1000
 ): Promise<T> => {
   const delay = new Promise((resolve) => setTimeout(resolve, minDelayMs));
-  const [result] = await Promise.all([promise, delay]);
-  return result;
+
+  try {
+    const result = await promise;
+    await delay;
+    return result;
+  } catch (error) {
+    await delay;
+    throw error;
+  }
 };

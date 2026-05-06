@@ -1,4 +1,3 @@
-import { useState } from "react";
 import ManageMenuLink from "./ManageMenuLink/ManageMenuLink";
 import SelectButton, { type SelectButtonOption } from "@/components/SelectButton/SelectButton";
 import {
@@ -11,8 +10,6 @@ import {
   SelectContainer,
 } from "./ManageMenu.styles";
 import { generalLinks, seasonLinks } from "./ManageMenu.constants";
-
-// TODO: Replace seasonOptions with actual season data once available, and implement season selection logic to update the menu based on the selected season.
 
 export type ManageMenuSection =
   | "participant-roles"
@@ -28,26 +25,18 @@ export type ManageMenuSection =
 type ManageMenuProps = {
   activeSection: ManageMenuSection;
   onSectionChange: (section: ManageMenuSection) => void;
+  seasonOptions: SelectButtonOption[];
+  selectedSeason: string;
+  onSeasonChange: (seasonId: string) => void;
 };
 
-
-const seasonOptions: SelectButtonOption[] = [
-  {
-    value: "season-1",
-    label: "Season 1",
-  },
-  {
-    value: "season-2",
-    label: "Season 2",
-  },
-  {
-    value: "season-3",
-    label: "Season 3",
-  },
-];
-
-const ManageMenu = ({ activeSection, onSectionChange }: ManageMenuProps) => {
-  const [selectedSeason, setSelectedSeason] = useState("");
+const ManageMenu = ({
+  activeSection,
+  onSectionChange,
+  seasonOptions,
+  selectedSeason,
+  onSeasonChange,
+}: ManageMenuProps) => {
 
   return (
     <ManageMenuContainer>
@@ -74,7 +63,7 @@ const ManageMenu = ({ activeSection, onSectionChange }: ManageMenuProps) => {
               label="Season Name"
               options={seasonOptions}
               value={selectedSeason}
-              onChange={setSelectedSeason}
+              onChange={onSeasonChange}
             />
           </SelectContainer>
           <Links role="tablist" aria-label="Season management sections">

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,6 +44,7 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
   const { openModal } = useModal();
   const { showToast } = useToast();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const [isSaving, setIsSaving] = useState(false);
   const profileIds = useSelector((state: RootState) =>
     (state.profile.data ?? []).map((profile) => profile.id),
   );
@@ -152,6 +153,7 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
   };
 
   const handleOnSubmit = async (data: SettingsFormValues) => {
+    setIsSaving(true);
     try {
       if (!accountId) {
         throw new Error("Missing account id");
@@ -202,6 +204,8 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
         { code:"SERVER_ERROR" },
         openModal,
       );
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -280,7 +284,7 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
         listChildren={listChildern}
         headerChildren={headerChildren}
         onSave={onSave}
-        isSaving={isSubmitting}
+        isSaving={isSaving || isSubmitting}
         saveLoadingText="Saving Changes..."
       />
     </FormProvider>
