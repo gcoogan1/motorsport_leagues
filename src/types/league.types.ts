@@ -110,6 +110,7 @@ export type LeagueSeasonTable = {
   season_name: string;
   num_of_divisions: number;
   is_team_championship: boolean;
+  season_status: LeagueStatus;
 };
 
 // -- HELPER TYPES -- //
@@ -494,6 +495,7 @@ export type UpdateLeagueSeasonPayload = {
   seasonName: string;
   numOfDivisions: number;
   isTeamChampionship: boolean;
+  seasonStatus: LeagueStatus;
 };
 
 // Update League Season --> Success type

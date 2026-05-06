@@ -9,6 +9,7 @@ export const TabsContainer = styled.div`
   max-width: 1200px;
   align-items: center;
   width: 100%;
+  position: relative;
 
   ${layout.mediaQueries.mobile} {
     max-width: 919px;
@@ -18,3 +19,15 @@ export const TabsContainer = styled.div`
     gap: ${layout.space.xSmall};
   }
 `
+
+export const SeasonSelectWrapper = styled.div`
+  position: absolute;
+  right: 0;
+  top: 8px;
+
+  ${layout.mediaQueries.mobile} {
+    position: static;
+    align-self: center;
+    top: 0;
+  }
+`;
