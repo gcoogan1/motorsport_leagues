@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { navigate } from "@/app/navigation/navigation";
 import { useSelector } from "react-redux";
 import { useToast } from "@/providers/toast/useToast";
@@ -38,6 +38,7 @@ import CancelInvite from "@/features/leagues/modals/core/CancelInvite/CancelInvi
 import NoDirector from "@/features/leagues/modals/errors/NoDirector/NoDirector";
 import UnassignedParticipant from "@/features/leagues/modals/errors/UnassignedParticipant/UnassignedParticipant";
 import AddItem from "@/components/AddItem/AddItem";
+import { withMinDelay } from "@/utils/withMinDelay";
 import InviteLeague from "../Invite/InviteLeague/InviteLeague";
 import type {
   GroupedInvite,
@@ -62,6 +63,7 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
   const { showToast } = useToast();
   const hasHydratedRef = useRef(false);
   const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const [isSaving, setIsSaving] = useState(false);
   const currentUserProfiles = useSelector(
     (state: RootState) => state.profile.data ?? [],
   );
@@ -351,173 +353,170 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
     );
   };
 
-  const handleSave = handleSubmit(async (data) => {
+  const handleOnSubmit = async (data: RolesFormValues) => {
+    setIsSaving(true);
+
     try {
-      clearErrors("participants");
+      await withMinDelay(
+        (async () => {
+          clearErrors("participants");
 
-      // UNASSIGNED PARTICIPANT CHECK
-      const unassignedParticipantIndexes = getUnassignedParticipantIndexes(
-        data.participants,
-      );
+          const unassignedParticipantIndexes = getUnassignedParticipantIndexes(
+            data.participants,
+          );
 
-      if (unassignedParticipantIndexes.length > 0) {
-        setParticipantRoleErrors(unassignedParticipantIndexes);
+          if (unassignedParticipantIndexes.length > 0) {
+            setParticipantRoleErrors(unassignedParticipantIndexes);
+            openModal(<UnassignedParticipant />);
+            return;
+          }
 
-        openModal(<UnassignedParticipant />);
-        return;
-      }
-
-      // NO DIRECTOR CHECK
-      const noDirectorErrorIndexes = getNoDirectorErrorIndexes({
-        rows: data.participants,
-        originalRolesByParticipantId: savedRolesByParticipantId,
-      });
-
-      if (noDirectorErrorIndexes.length > 0) {
-        setParticipantRoleErrors(noDirectorErrorIndexes);
-
-        openModal(<NoDirector />);
-        return;
-      }
-
-      // Payload for control-panel options and participant role changes
-      const savePayload = {
-        controlPanel: {
-          selectedRoles: data.options,
-          contactInfo: data.contactInfo,
-        },
-        participantRoleChanges: data.participants.map((row) => {
-          const previousRoles =
-            savedRolesByParticipantId.get(row.participantId) ?? new Set();
-          const nextRoles = toRoleSet(row.selectedRoles);
-          const { rolesToAdd, rolesToRemove } = getRoleChanges({
-            previousRoles,
-            nextRoles,
+          const noDirectorErrorIndexes = getNoDirectorErrorIndexes({
+            rows: data.participants,
+            originalRolesByParticipantId: savedRolesByParticipantId,
           });
 
-          return {
-            participantId: row.participantId,
-            rolesToAdd,
-            rolesToRemove,
+          if (noDirectorErrorIndexes.length > 0) {
+            setParticipantRoleErrors(noDirectorErrorIndexes);
+            openModal(<NoDirector />);
+            return;
+          }
+
+          const savePayload = {
+            controlPanel: {
+              selectedRoles: data.options,
+              contactInfo: data.contactInfo,
+            },
+            participantRoleChanges: data.participants.map((row) => {
+              const previousRoles =
+                savedRolesByParticipantId.get(row.participantId) ?? new Set();
+              const nextRoles = toRoleSet(row.selectedRoles);
+              const { rolesToAdd, rolesToRemove } = getRoleChanges({
+                previousRoles,
+                nextRoles,
+              });
+
+              return {
+                participantId: row.participantId,
+                rolesToAdd,
+                rolesToRemove,
+              };
+            }),
           };
-        }),
-      };
-      const removedDirectorFromSelf = savePayload.participantRoleChanges.some(
-        (row) =>
-          row.participantId === currentParticipant?.id &&
-          row.rolesToRemove.includes("director"),
-      );
 
-      // Control Panel changes //
-
-      // Check if application options have changed and need to be updated/added before participant role changes.
-      const nextOpenRoles = [
-        ...new Set(savePayload.controlPanel.selectedRoles),
-      ] as LeagueRole[];
-      const currentOpenRoles = [
-        ...new Set(leagueApplicationOptions?.open_roles ?? []),
-      ] as LeagueRole[];
-      const hasOpenRolesChanged =
-        nextOpenRoles.length !== currentOpenRoles.length ||
-        nextOpenRoles.some((role) => !currentOpenRoles.includes(role));
-
-      const nextContactInfo = savePayload.controlPanel.contactInfo;
-      const currentContactInfo = leagueApplicationOptions?.contact_info ?? true;
-
-      const nextIsClosed = nextOpenRoles.length === 0;
-      const currentIsClosed = leagueApplicationOptions?.is_closed ?? false;
-
-      const shouldUpdateApplicationOptions =
-        !leagueApplicationOptions ||
-        hasOpenRolesChanged ||
-        nextContactInfo !== currentContactInfo ||
-        nextIsClosed !== currentIsClosed;
-
-      if (shouldUpdateApplicationOptions) {
-        const applicationOptionsResult = leagueApplicationOptions
-          ? await updateLeagueApplicationOptions({
-              leagueId,
-              openRoles: nextOpenRoles,
-              contactInfo: nextContactInfo,
-              isClosed: nextIsClosed,
-            }).unwrap()
-          : await addLeagueApplicationOptions({
-              leagueId,
-              openRoles: nextOpenRoles,
-              contactInfo: nextContactInfo,
-              isClosed: nextIsClosed,
-            }).unwrap();
-
-        if (!applicationOptionsResult.success) {
-          handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
-          return;
-        }
-      }
-
-      // Participant role changes //
-
-      // Add/remove requests from the role-change portion of the payload.
-      const roleChangeRequests: Promise<{ success: boolean }>[] = [];
-
-      savePayload.participantRoleChanges.forEach((row) => {
-        row.rolesToAdd.forEach((role) => {
-          roleChangeRequests.push(
-            addLeagueParticipantRole({
-              participantId: row.participantId,
-              role,
-            }).unwrap(),
+          const removedDirectorFromSelf = savePayload.participantRoleChanges.some(
+            (row) =>
+              row.participantId === currentParticipant?.id &&
+              row.rolesToRemove.includes("director"),
           );
-        });
 
-        row.rolesToRemove.forEach((role) => {
-          roleChangeRequests.push(
-            removeLeagueParticipantRole({
-              participantId: row.participantId,
-              role,
-            }).unwrap(),
-          );
-        });
-      });
+          const nextOpenRoles = [
+            ...new Set(savePayload.controlPanel.selectedRoles),
+          ] as LeagueRole[];
+          const currentOpenRoles = [
+            ...new Set(leagueApplicationOptions?.open_roles ?? []),
+          ] as LeagueRole[];
+          const hasOpenRolesChanged =
+            nextOpenRoles.length !== currentOpenRoles.length ||
+            nextOpenRoles.some((role) => !currentOpenRoles.includes(role));
 
-      const hasParticipantRoleChanges = roleChangeRequests.length > 0;
+          const nextContactInfo = savePayload.controlPanel.contactInfo;
+          const currentContactInfo = leagueApplicationOptions?.contact_info ?? true;
 
-      if (!hasParticipantRoleChanges) {
-        if (shouldUpdateApplicationOptions) {
+          const nextIsClosed = nextOpenRoles.length === 0;
+          const currentIsClosed = leagueApplicationOptions?.is_closed ?? false;
+
+          const shouldUpdateApplicationOptions =
+            !leagueApplicationOptions ||
+            hasOpenRolesChanged ||
+            nextContactInfo !== currentContactInfo ||
+            nextIsClosed !== currentIsClosed;
+
+          if (shouldUpdateApplicationOptions) {
+            const applicationOptionsResult = leagueApplicationOptions
+              ? await updateLeagueApplicationOptions({
+                  leagueId,
+                  openRoles: nextOpenRoles,
+                  contactInfo: nextContactInfo,
+                  isClosed: nextIsClosed,
+                }).unwrap()
+              : await addLeagueApplicationOptions({
+                  leagueId,
+                  openRoles: nextOpenRoles,
+                  contactInfo: nextContactInfo,
+                  isClosed: nextIsClosed,
+                }).unwrap();
+
+            if (!applicationOptionsResult.success) {
+              handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
+              return;
+            }
+          }
+
+          const roleChangeRequests: Promise<{ success: boolean }>[] = [];
+
+          savePayload.participantRoleChanges.forEach((row) => {
+            row.rolesToAdd.forEach((role) => {
+              roleChangeRequests.push(
+                addLeagueParticipantRole({
+                  participantId: row.participantId,
+                  role,
+                }).unwrap(),
+              );
+            });
+
+            row.rolesToRemove.forEach((role) => {
+              roleChangeRequests.push(
+                removeLeagueParticipantRole({
+                  participantId: row.participantId,
+                  role,
+                }).unwrap(),
+              );
+            });
+          });
+
+          if (roleChangeRequests.length === 0) {
+            if (shouldUpdateApplicationOptions) {
+              showToast({
+                usage: "success",
+                message: "Roles have been updated.",
+              });
+            }
+
+            reset(data);
+            return;
+          }
+
+          const results = await Promise.all(roleChangeRequests);
+
+          if (!results.every((result) => result.success)) {
+            handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
+            return;
+          }
+
           showToast({
             usage: "success",
-            message: "Roles have been updated.",
+            message: shouldUpdateApplicationOptions
+              ? "Participant roles and application options updated."
+              : "Participant roles updated.",
           });
-        }
 
-        // Treat this as a save checkpoint so unsaved-changes guard does not linger.
-        reset(data);
-        return;
-      }
+          reset(data);
 
-      const results = await Promise.all(roleChangeRequests);
-
-      if (!results.every((result) => result.success)) {
-        handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
-        return;
-      }
-
-      showToast({
-        usage: "success",
-        message: shouldUpdateApplicationOptions
-          ? "Participant roles and application options updated."
-          : "Participant roles updated.",
-      });
-
-      // Update form defaults to latest saved values to clear dirty state.
-      reset(data);
-
-      if (removedDirectorFromSelf) {
-        navigate(`/league/${leagueId}`);
-      }
+          if (removedDirectorFromSelf) {
+            navigate(`/league/${leagueId}`);
+          }
+        })(),
+        1000,
+      );
     } catch {
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
+    } finally {
+      setIsSaving(false);
     }
-  });
+  };
+
+  const handleSave = handleSubmit(handleOnSubmit);
 
   // -- Form Contents -- //
   const headerChildren = (
@@ -786,7 +785,7 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
         blockDescription="Select which roles you want to allow users to apply for in this League. Unselect all to keep registration closed."
         listChildren={listChildren}
         onSave={handleSave}
-        isSaving={isSubmitting}
+        isSaving={isSaving || isSubmitting}
         saveLoadingText="Saving Changes..."
       />
     </FormProvider>
