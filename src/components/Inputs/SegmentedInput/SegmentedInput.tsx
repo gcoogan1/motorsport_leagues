@@ -14,7 +14,7 @@ type SegmentedOptionItem = {
 
 type SegmentedInputProps = {
   name?: string;
-  inputLabel: string;
+  inputLabel?: string;
   options: SegmentedOptionItem[];
   value?: string | number;
   defaultValue?: string | number;

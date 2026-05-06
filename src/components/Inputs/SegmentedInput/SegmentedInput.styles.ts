@@ -17,6 +17,7 @@ export const Label = styled.p`
 export const OptionsContainer = styled.div`
   display: flex;
   width: 100%;
+  min-height: 52px;
   border-radius: ${borders.radius.medium};
   background: ${colors.base.translucent10};
   padding: ${layout.space.xSmall};
