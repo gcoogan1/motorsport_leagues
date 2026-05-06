@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
+import type { SelectButtonOption } from "@/components/SelectButton/SelectButton";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { navigate } from "@/app/navigation/navigation";
@@ -9,6 +10,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { usePanel } from "@/providers/panel/usePanel";
 import type { AppDispatch, RootState } from "@/store";
 import { getLeagueByIdThunk } from "@/store/leagues/league.thunk";
+import { useLeagueSeasons } from "@/rtkQuery/hooks/queries/useLeagues";
 import ManageIcon from "@assets/Icon/Manage.svg?react";
 import DropdownIcon from "@assets/Icon/Dropdown.svg?react";
 import SubNavbar from "@/components/Structures/SubNavbar/SubNavbar";
@@ -26,6 +28,7 @@ import {
 import Settings from "@/features/leagues/forms/Edit/Settings/Settings";
 import Roles from "@/features/leagues/forms/Roles/Roles";
 import UnsavedChanges from "@/features/leagues/modals/errors/UnsavedChanges/UnsavedChanges";
+import SeasonSettings from "@/features/leagues/forms/Edit/SeasonSettings/SeasonSettings";
 
 //TODO: Replace panelContent with SheetForms for each section once they are developed, and implement logic to fetch and display actual data for each section.
 
@@ -36,14 +39,33 @@ const LeagueManagment = () => {
   const { setOverrideThemeName, clearOverrideThemeName } = useAppTheme();
   const { leagueId } = useParams<{ leagueId: string }>();
   const [activeSection, setActiveSection] =
-    useState<ManageMenuSection>("participant-roles");
+    useState<ManageMenuSection>("season-settings");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   // const activePanel = panelContent[activeSection];
   const [openManageMenu, setOpenManageMenu] = useState(false);
+  const [selectedSeason, setSelectedSeason] = useState("");
   const isLargeScreen = useMediaQuery("(min-width: 920px)");
   const currentLeague = useSelector(
     (state: RootState) => state.league.currentLeague,
   );
+  const { data: seasons = [] } = useLeagueSeasons(leagueId ?? "");
+
+  const seasonOptions = useMemo<SelectButtonOption[]>(
+    () =>
+      seasons.map((season) => ({
+        value: season.id,
+        label: season.season_name,
+      })),
+    [seasons],
+  );
+  const activeSeasonData = useMemo(() => {
+    if (seasons.length === 0) {
+      return undefined;
+    }
+
+    return seasons.find((season) => season.id === selectedSeason) ?? seasons[0];
+  }, [seasons, selectedSeason]);
+  const activeSeasonId = activeSeasonData?.id ?? "";
 
   useLockBodyScroll(openManageMenu && !isLargeScreen);
 
@@ -78,6 +100,18 @@ const LeagueManagment = () => {
       <Settings leagueId={leagueId} onDirtyChange={setHasUnsavedChanges} />
     ) : activeSection === "participant-roles" && leagueId ? (
       <Roles leagueId={leagueId} onDirtyChange={setHasUnsavedChanges} />
+    ) : activeSection === "season-settings" && activeSeasonData ? (
+      <SeasonSettings seasonData={activeSeasonData} onDirtyChange={setHasUnsavedChanges} />
+    ) : activeSection === "overview-page" && activeSeasonData ? (
+      <>{activeSeasonData.season_name}</>
+    ) : activeSection === "driver-assignments" && activeSeasonData ? (
+      <>{activeSeasonData.season_name}</>
+    ) : activeSection === "schedule-rounds" && activeSeasonData ? (
+      <>{activeSeasonData.season_name}</>
+    ) : activeSection === "enter-results" && activeSeasonData ? (
+      <>{activeSeasonData.season_name}</>
+    ) : activeSection === "rules-and-regulations" && activeSeasonData ? (
+      <>{activeSeasonData.season_name}</>
     ) : (
       <>Coming Soon</>
     );
@@ -89,7 +123,7 @@ const LeagueManagment = () => {
     },
   ) => {
     const isGuardedSection =
-      activeSection === "league-settings" || activeSection === "participant-roles";
+      activeSection === "league-settings" || activeSection === "participant-roles" || activeSection === "season-settings";
 
     if (!isGuardedSection || !hasUnsavedChanges) {
       action();
@@ -141,6 +175,9 @@ const LeagueManagment = () => {
               <ManageMenu
                 activeSection={activeSection}
                 onSectionChange={handleSectionChange}
+                seasonOptions={seasonOptions}
+                selectedSeason={activeSeasonId}
+                onSeasonChange={setSelectedSeason}
               />
             </ManageMenuWrapper>
           ) : (
@@ -176,6 +213,9 @@ const LeagueManagment = () => {
                     },
                   );
                 }}
+                seasonOptions={seasonOptions}
+                selectedSeason={activeSeasonId}
+                onSeasonChange={setSelectedSeason}
               />
             </ManageMenuMobileWrapper>
           )}
