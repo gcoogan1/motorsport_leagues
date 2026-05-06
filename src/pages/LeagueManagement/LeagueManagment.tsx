@@ -65,6 +65,7 @@ const LeagueManagment = () => {
 
     return seasons.find((season) => season.id === selectedSeason) ?? seasons[0];
   }, [seasons, selectedSeason]);
+  const mostRecentSeasonId = seasons.at(-1)?.id ?? "";
   const activeSeasonId = activeSeasonData?.id ?? "";
 
   useLockBodyScroll(openManageMenu && !isLargeScreen);
@@ -101,7 +102,11 @@ const LeagueManagment = () => {
     ) : activeSection === "participant-roles" && leagueId ? (
       <Roles leagueId={leagueId} onDirtyChange={setHasUnsavedChanges} />
     ) : activeSection === "season-settings" && activeSeasonData ? (
-      <SeasonSettings seasonData={activeSeasonData} onDirtyChange={setHasUnsavedChanges} />
+      <SeasonSettings
+        seasonData={activeSeasonData}
+        isMostRecentSeason={activeSeasonId === mostRecentSeasonId}
+        onDirtyChange={setHasUnsavedChanges}
+      />
     ) : activeSection === "overview-page" && activeSeasonData ? (
       <>{activeSeasonData.season_name}</>
     ) : activeSection === "driver-assignments" && activeSeasonData ? (

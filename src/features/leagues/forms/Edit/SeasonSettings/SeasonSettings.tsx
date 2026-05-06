@@ -28,10 +28,15 @@ const SeasonStatusOptions = [
 
 type SeasonSettingsProps = {
   seasonData: LeagueSeasonTable;
+  isMostRecentSeason?: boolean;
   onDirtyChange?: (isDirty: boolean) => void;
 };
 
-const SeasonSettings = ({ seasonData, onDirtyChange }: SeasonSettingsProps) => {
+const SeasonSettings = ({
+  seasonData,
+  isMostRecentSeason = false,
+  onDirtyChange,
+}: SeasonSettingsProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { openModal } = useModal();
   const { showToast } = useToast();
@@ -112,11 +117,7 @@ const SeasonSettings = ({ seasonData, onDirtyChange }: SeasonSettingsProps) => {
             throw new Error("Failed to update season.");
           }
 
-          const shouldSyncLeagueStatus =
-            seasonData.season_status !== "complete" ||
-            data.seasonStatus !== "complete";
-
-          if (shouldSyncLeagueStatus) {
+          if (isMostRecentSeason) {
             await dispatch(
               updateLeagueThunk({
                 accountId,
