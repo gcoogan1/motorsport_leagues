@@ -1,6 +1,6 @@
 import SelectButton from "@/components/SelectButton/SelectButton"
 import Tabs from "../Tabs/Tabs"
-import { TabsContainer } from "./LeagueTabs.styles"
+import { SeasonSelectWrapper, TabsContainer } from "./LeagueTabs.styles"
 
 export type Season = {
   value: string;
@@ -25,7 +25,9 @@ const LeagueTabs = ({ seasons, activeSeason, onSeasonChange, leagues, activeLeag
   return (
     <TabsContainer>
       <Tabs tabs={leagues} activeTab={activeLeague} onTabChange={onLeagueChange} />
-      <SelectButton options={seasons} value={activeSeason} onChange={onSeasonChange} />
+      <SeasonSelectWrapper>
+        <SelectButton options={seasons} value={activeSeason} onChange={onSeasonChange} />
+      </SeasonSelectWrapper>
     </TabsContainer>
   )
 }
