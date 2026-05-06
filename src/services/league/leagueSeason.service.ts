@@ -27,6 +27,7 @@ export const createLeagueSeason = async (
       season_name: seasonName,
       num_of_divisions: numOfDivisions,
       is_team_championship: isTeamChampionship,
+      season_status: "setup",
     })
     .select()
     .single();
@@ -93,6 +94,7 @@ export const updateLeagueSeason = async (
     seasonName,
     numOfDivisions,
     isTeamChampionship,
+    seasonStatus,
   }: UpdateLeagueSeasonPayload,
 ): Promise<UpdateLeagueSeasonResult> => {
   const { data, error } = await supabase
@@ -101,6 +103,7 @@ export const updateLeagueSeason = async (
       season_name: seasonName,
       num_of_divisions: numOfDivisions,
       is_team_championship: isTeamChampionship,
+      season_status: seasonStatus,
     })
     .eq("id", seasonId)
     .select()
