@@ -23,6 +23,7 @@ import Button from "@/components/Button/Button";
 import ChampionIcon from "@assets/Icon/Champion.svg?react";
 import CreateIcon from "@assets/Icon/Create.svg?react";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
+import CreateSeason from "@/features/leagues/modals/core/CreateSeason/CreateSeason";
 
 const SeasonStatusOptions = [
   { label: "Setup", value: "setup" },
@@ -44,7 +45,7 @@ const SeasonSettings = ({
   onDirtyChange,
 }: SeasonSettingsProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
   const [updateLeagueSeason] = useUpdateLeagueSeason();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
@@ -154,7 +155,7 @@ const SeasonSettings = ({
   const headerChildren =
     seasonData.season_status === "complete" ? (
       <>
-        {onlyOneSeason ? (
+        {onlyOneSeason || isMostRecentSeason ? (
           <>
             <SegmentedInput
               name="seasonStatus"
@@ -186,6 +187,14 @@ const SeasonSettings = ({
                 color="primary"
                 icon={{ left: <CreateIcon /> }}
                 fullWidth
+                onClick={() =>
+                  openModal(
+                    <CreateSeason
+                      leagueId={seasonData.league_id}
+                      onBack={() => closeModal()}
+                    />,
+                  )
+                }
               >
                 Create Season
               </Button>

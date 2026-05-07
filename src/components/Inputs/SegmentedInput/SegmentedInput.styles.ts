@@ -7,6 +7,7 @@ export const SegmentedInputContainer = styled.div`
   display: flex;
   gap: ${layout.space.xxxSmall};
   flex-direction: column;
+  width: 100%;
 `;
 
 export const Label = styled.p`
