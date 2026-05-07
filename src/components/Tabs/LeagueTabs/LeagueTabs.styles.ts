@@ -10,15 +10,15 @@ export const TabsContainer = styled.div`
   align-items: center;
   width: 100%;
   position: relative;
+  min-width: 0;
 
   ${layout.mediaQueries.mobile} {
-    max-width: 919px;
-    width: 100%;
-    min-width: 360px;
-    flex-direction: column-reverse;
+    display: grid;
+    grid-template-columns: 100%;
     gap: ${layout.space.xSmall};
+    justify-items: center;
   }
-`
+`;
 
 export const SeasonSelectWrapper = styled.div`
   position: absolute;
@@ -26,8 +26,8 @@ export const SeasonSelectWrapper = styled.div`
   top: 8px;
 
   ${layout.mediaQueries.mobile} {
-    position: static;
+    position: static; 
+    grid-row: 1;
     align-self: center;
-    top: 0;
   }
 `;

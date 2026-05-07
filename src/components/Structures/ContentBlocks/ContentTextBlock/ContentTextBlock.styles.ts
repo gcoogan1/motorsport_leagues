@@ -10,7 +10,10 @@ export const TextContainer = styled.div`
   width: 400px;
   gap: ${layout.space.xxSmall};
 
-  `;
+  ${layout.mediaQueries.mobile} {
+    width: 100%;
+  }
+`;
 
 export const Title = styled.h2`
   ${typography.title.small};
