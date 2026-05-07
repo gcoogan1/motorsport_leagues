@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateLeagueSeason } from "@/rtkQuery/hooks/mutations/useLeagueSeasonMutation";
+import { useCreateLeagueSeason } from "@/rtkQuery/hooks/mutations/useLeagueMutation";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { withMinDelay } from "@/utils/withMinDelay";
