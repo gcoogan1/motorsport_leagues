@@ -97,7 +97,7 @@ const League = () => {
     }
 
     return (
-      seasons.find((season) => season.id === selectedSeason) ?? seasons[0]
+      seasons.find((season) => season.id === selectedSeason) ?? seasons.at(-1)
     );
   }, [seasons, selectedSeason]);
   const activeSeason = activeSeasonData?.id ?? "";

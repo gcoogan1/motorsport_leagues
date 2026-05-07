@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useSelector } from "react-redux";
 // import { useModal } from "@/providers/modal/useModal";
 import { usePanel } from "@/providers/panel/usePanel";
@@ -25,7 +26,25 @@ const LeagueParticipants = ({ leagueId }: LeagueParticipantsProps) => {
     const resolvedLeagueId = leagueId ?? currentLeague?.id ?? "";
     const { data: participants = [] } = useLeagueParticipants(resolvedLeagueId);
 
-    const formatedProfiles = participants.map((participant) => ({
+    const orderedParticipants = useMemo(
+      () =>
+        participants
+          .map((participant, index) => ({ participant, index }))
+          .sort((left, right) => {
+            const leftIsDirector = left.participant.roles.includes("director");
+            const rightIsDirector = right.participant.roles.includes("director");
+
+            if (leftIsDirector === rightIsDirector) {
+              return left.index - right.index;
+            }
+
+            return leftIsDirector ? -1 : 1;
+          })
+          .map(({ participant }) => participant),
+      [participants],
+    );
+
+    const formatedProfiles = orderedParticipants.map((participant) => ({
       id: participant.profile_id,
       label: participant.username,
       avatar: {
@@ -36,7 +55,7 @@ const LeagueParticipants = ({ leagueId }: LeagueParticipantsProps) => {
       tags: participant.roles ? (participant.roles as Tag[]) : undefined,
     }));
   
-    const participantsCount = participants.length;
+    const participantsCount = orderedParticipants.length;
     const participantsPanelTitle = `${participantsCount} Participant${participantsCount !== 1 ? "s" : ""}`;
     const emptyPanelTitle = "Participants";
 
@@ -63,7 +82,7 @@ const LeagueParticipants = ({ leagueId }: LeagueParticipantsProps) => {
       panelTitleIcon={<ParticipantsIcon />}
     >
       <>
-          {participants && participants.length > 0 ? (
+          {orderedParticipants.length > 0 ? (
             <ProfileList
               key={resolvedLeagueId}
               items={formatedProfiles}

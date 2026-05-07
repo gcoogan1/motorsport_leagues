@@ -12,3 +12,16 @@ export const ListContainer = styled.div`
   width: 100%;
   gap: ${layout.space.medium};
 `;
+
+export const ButtonContainer = styled.div`
+  width: 100%;
+  display: flex;
+  gap: ${layout.space.xSmall};
+  align-items: flex-start;
+  align-content: flex-start;
+  align-self: stretch;
+  
+  ${layout.mediaQueries.mobile} {
+    flex-direction: column;
+  }
+`;

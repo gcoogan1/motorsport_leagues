@@ -66,6 +66,7 @@ const LeagueManagment = () => {
     return seasons.find((season) => season.id === selectedSeason) ?? seasons[0];
   }, [seasons, selectedSeason]);
   const mostRecentSeasonId = seasons.at(-1)?.id ?? "";
+  const onlyOneSeason = seasons.length === 1;
   const activeSeasonId = activeSeasonData?.id ?? "";
 
   useLockBodyScroll(openManageMenu && !isLargeScreen);
@@ -105,6 +106,7 @@ const LeagueManagment = () => {
       <SeasonSettings
         seasonData={activeSeasonData}
         isMostRecentSeason={activeSeasonId === mostRecentSeasonId}
+        onlyOneSeason={onlyOneSeason}
         onDirtyChange={setHasUnsavedChanges}
       />
     ) : activeSection === "overview-page" && activeSeasonData ? (

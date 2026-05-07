@@ -51,7 +51,8 @@ export const getLeagueParticipantsByLeagueId = async (
   let participantsQuery = supabase
     .from("league_participants")
     .select("id, profile_id, contact_info")
-    .eq("league_id", leagueId);
+    .eq("league_id", leagueId)
+    .order("created_at", { ascending: true });
 
   if (signal) {
     participantsQuery = participantsQuery.abortSignal(signal);
