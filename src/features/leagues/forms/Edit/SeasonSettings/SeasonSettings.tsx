@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import SheetForm from "@/components/Sheets/SheetForm/SheetForm";
 import type { LeagueSeasonTable } from "@/types/league.types";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
-import { ListContainer } from "./SeasonSettings.styles";
+import { ButtonContainer, ListContainer } from "./SeasonSettings.styles";
 import SegmentedInput from "@/components/Inputs/SegmentedInput/SegmentedInput";
 import { useEffect, useState } from "react";
 import CannotSave from "@/features/leagues/modals/errors/CannotSave/CannotSave";
@@ -19,6 +19,10 @@ import { useToast } from "@/providers/toast/useToast";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
 import { updateLeagueThunk } from "@/store/leagues/league.thunk";
+import Button from "@/components/Button/Button";
+import ChampionIcon from "@assets/Icon/Champion.svg?react";
+import CreateIcon from "@assets/Icon/Create.svg?react";
+import DeleteIcon from "@assets/Icon/Delete.svg?react";
 
 const SeasonStatusOptions = [
   { label: "Setup", value: "setup" },
@@ -29,12 +33,14 @@ const SeasonStatusOptions = [
 type SeasonSettingsProps = {
   seasonData: LeagueSeasonTable;
   isMostRecentSeason?: boolean;
+  onlyOneSeason?: boolean;
   onDirtyChange?: (isDirty: boolean) => void;
 };
 
 const SeasonSettings = ({
   seasonData,
   isMostRecentSeason = false,
+  onlyOneSeason = true,
   onDirtyChange,
 }: SeasonSettingsProps) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -43,8 +49,9 @@ const SeasonSettings = ({
   const [updateLeagueSeason] = useUpdateLeagueSeason();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
   const [isSaving, setIsSaving] = useState(false);
-  const [seasonStatus, setSeasonStatus] =
-    useState<SeasonSettingsSchema["seasonStatus"]>(seasonData.season_status);
+  const [seasonStatus, setSeasonStatus] = useState<
+    SeasonSettingsSchema["seasonStatus"]
+  >(seasonData.season_status);
 
   // -- Form setup -- //
   const formMethods = useForm<SeasonSettingsSchema>({
@@ -136,16 +143,101 @@ const SeasonSettings = ({
         message: "Season settings updated.",
       });
     } catch {
-      handleSupabaseError(
-        { code:"SERVER_ERROR" },
-        openModal,
-      );
+      handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     } finally {
       setIsSaving(false);
     }
   };
 
   const onSave = handleSubmit(handleOnSubmit, handleOnInvalidSubmit);
+
+  const headerChildren =
+    seasonData.season_status === "complete" ? (
+      <>
+        {onlyOneSeason ? (
+          <>
+            <SegmentedInput
+              name="seasonStatus"
+              options={SeasonStatusOptions}
+              value={seasonStatus}
+              onChange={(value) => {
+                const nextValue = value as SeasonSettingsSchema["seasonStatus"];
+                setSeasonStatus(nextValue);
+                setValue("seasonStatus", nextValue, {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                });
+              }}
+              helperMessage={
+                "The initial state of a Season is ‘Setup’, which hides the contents while the Directors modify it. The ‘Active’ state then makes those contents visible. Once the Season is finished, the ‘Complete’ states allows a new Season to be created."
+              }
+            />
+            <ButtonContainer>
+              <Button
+                variant="ghost"
+                color="primary"
+                icon={{ left: <ChampionIcon /> }}
+                fullWidth
+              >
+                Crown Champion
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                icon={{ left: <CreateIcon /> }}
+                fullWidth
+              >
+                Create Season
+              </Button>
+            </ButtonContainer>
+          </>
+        ) : (
+          <>
+            <SegmentedInput
+              name="seasonStatus"
+              options={[{ label: "Complete", value: "complete" }]}
+              value={"complete"}
+              onChange={() => {}}
+            />
+            <ButtonContainer>
+              <Button
+                variant="ghost"
+                color="primary"
+                icon={{ left: <ChampionIcon /> }}
+                fullWidth
+              >
+                Crown Champion
+              </Button>
+              <Button
+                variant="outlined"
+                color="danger"
+                icon={{ left: <DeleteIcon /> }}
+                fullWidth
+              >
+                Delete Season
+              </Button>
+            </ButtonContainer>
+          </>
+        )}
+      </>
+    ) : (
+      <SegmentedInput
+        name="seasonStatus"
+        options={SeasonStatusOptions}
+        value={seasonStatus}
+        onChange={(value) => {
+          const nextValue = value as SeasonSettingsSchema["seasonStatus"];
+          setSeasonStatus(nextValue);
+          setValue("seasonStatus", nextValue, {
+            shouldDirty: true,
+            shouldValidate: true,
+          });
+        }}
+        helperMessage={
+          "The initial state of a Season is ‘Setup’, which hides the contents while the Directors modify it. The ‘Active’ state then makes those contents visible. Once the Season is finished, the ‘Complete’ states allows a new Season to be created."
+        }
+      />
+    );
 
   return (
     <FormProvider {...formMethods}>
@@ -154,24 +246,7 @@ const SeasonSettings = ({
         seasonName={seasonData.season_name}
         header={"Season Settings"}
         blockHeader="Season Status"
-        headerChildren={
-          <SegmentedInput
-            name="seasonStatus"
-            options={SeasonStatusOptions}
-            value={seasonStatus}
-            onChange={(value) => {
-              const nextValue = value as SeasonSettingsSchema["seasonStatus"];
-              setSeasonStatus(nextValue);
-              setValue("seasonStatus", nextValue, {
-                shouldDirty: true,
-                shouldValidate: true,
-              });
-            }}
-            helperMessage={
-              "The initial state of a Season is ‘Setup’, which hides the contents while the Directors modify it. The ‘Active’ state then makes those contents visible. Once the Season is finished, the ‘Complete’ states allows a new Season to be created."
-            }
-          />
-        }
+        headerChildren={headerChildren}
         listChildren={
           <ListContainer>
             <TextInput
