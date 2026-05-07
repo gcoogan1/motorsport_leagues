@@ -81,10 +81,9 @@ const ProfileList = ({
     };
   }, [openDropdown]);
 
-  // For squad member lists, we want to show founders first, then by alphabetical order
-  const sortItemsByFounder = (items: ProfileListItem[]) => {
+  const sortItems = (items: ProfileListItem[]) => {
     if (listType === "squad") {
-      return items.sort((a, b) => {
+      return [...items].sort((a, b) => {
         const aIsFounder = a.tags?.includes("founder") ?? false;
         const bIsFounder = b.tags?.includes("founder") ?? false;
 
@@ -98,11 +97,14 @@ const ProfileList = ({
       });
     }
 
-    // For other lists, sort by alphabetical order
-    return items.sort((a, b) => a.label.localeCompare(b.label));
+    if (listType === "league") {
+      return items;
+    }
+
+    return [...items].sort((a, b) => a.label.localeCompare(b.label));
   };
 
-  const formatedItems = sortItemsByFounder(items);
+  const formatedItems = sortItems(items);
 
   const isYourProfile = (profileId: string) => {
     return profiles?.some((profile) => profile.id === profileId);
