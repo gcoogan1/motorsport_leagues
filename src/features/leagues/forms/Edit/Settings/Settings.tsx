@@ -27,7 +27,7 @@ import SelectInput from "@/components/Inputs/SelectInput/SelectInput";
 import Button from "@/components/Button/Button";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import CannotSave from "@/features/leagues/modals/errors/CannotSave/CannotSave";
-import DeleteLeague from "../../DeleteLeague/DeleteLeague";
+import DeleteLeague from "../../Delete/DeleteLeague/DeleteLeague";
 import { ContentContainer, FormList, ListContainer, LoadingContainer } from "./Settings.styles";
 import { settingsFormSchema, type SettingsFormValues } from "./settingsSchema";
 import { baseTimezoneOptions, getLeagueSettingsValues, getDefaultSettingsValues } from "./Settings.util";

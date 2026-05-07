@@ -23,7 +23,8 @@ import Button from "@/components/Button/Button";
 import ChampionIcon from "@assets/Icon/Champion.svg?react";
 import CreateIcon from "@assets/Icon/Create.svg?react";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
-import CreateSeason from "@/features/leagues/modals/core/CreateSeason/CreateSeason";
+import CreateSeason from "@/features/leagues/forms/Create/CreateSeason/CreateSeason";
+import DeleteSeason from "../../Delete/DeleteSeason/DeleteSeason";
 
 const SeasonStatusOptions = [
   { label: "Setup", value: "setup" },
@@ -222,6 +223,9 @@ const SeasonSettings = ({
                 color="danger"
                 icon={{ left: <DeleteIcon /> }}
                 fullWidth
+                onClick={() =>
+                  openModal(<DeleteSeason seasonId={seasonData.id} leagueId={seasonData.league_id} />)
+                }
               >
                 Delete Season
               </Button>
