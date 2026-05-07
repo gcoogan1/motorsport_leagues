@@ -7,10 +7,12 @@ export const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 400px;
+  flex: 0 0 400px;
+  min-width: 0;
   gap: ${layout.space.xxSmall};
 
   ${layout.mediaQueries.mobile} {
+    flex: 1 1 auto;
     width: 100%;
   }
 `;
