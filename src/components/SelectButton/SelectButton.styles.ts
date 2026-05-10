@@ -94,6 +94,16 @@ export const SelectMenuGlobalStyles = createGlobalStyle`
     ${effects.boxShadow.elevationModal};
   }
 
+  .select__menu.select__menu--placement-top {
+    margin-top: 0;
+    margin-bottom: 6px;
+  }
+
+  .select__menu.select__menu--placement-bottom {
+    margin-top: 6px;
+    margin-bottom: 0;
+  }
+
   .select__menu-list {
     display: flex;
     flex-direction: column;
