@@ -9,6 +9,10 @@ import CheckIcon from "@assets/Icon/Check.svg?react";
 import Icon from "@/components/Icon/Icon";
 import { OptionContent, OptionLabel, OptionMeta, OptionRow, SelectButtonWrapper, SelectMenuGlobalStyles } from "./SelectButton.styles";
 
+const MENU_MIN_WIDTH = 200;
+const MENU_MAX_WIDTH = 320;
+const VIEWPORT_GUTTER = 12;
+
 export type SelectButtonOption = {
   value: string;
   label: string;
@@ -98,6 +102,8 @@ function SelectButton({
         placeholder={label}
         openMenuOnFocus
         openMenuOnClick
+        menuPlacement="auto"
+        menuShouldScrollIntoView={false}
         tabSelectsValue={false}
         isSearchable={false}
         isDisabled={isDisabled}
@@ -114,8 +120,36 @@ function SelectButton({
             ...base,
             boxShadow: "none",
           }),
-          menu: (base) => ({ ...base, minWidth: "200px", width: "max-content" }),
-          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+          menu: (base) => ({
+            ...base,
+            minWidth: `${MENU_MIN_WIDTH}px`,
+            width: "100%",
+            maxWidth: `calc(100vw - ${VIEWPORT_GUTTER * 2}px)`,
+          }),
+          menuPortal: (base) => {
+            if (typeof window === "undefined") {
+              return { ...base, zIndex: 9999 };
+            }
+
+            const viewportWidth = window.innerWidth;
+            const baseWidth = typeof base.width === "number" ? base.width : MENU_MIN_WIDTH;
+            const resolvedWidth = Math.min(
+              Math.max(baseWidth, MENU_MIN_WIDTH),
+              Math.min(MENU_MAX_WIDTH, viewportWidth - VIEWPORT_GUTTER * 2),
+            );
+            const baseLeft = typeof base.left === "number" ? base.left : VIEWPORT_GUTTER;
+            const resolvedLeft = Math.min(
+              Math.max(baseLeft, VIEWPORT_GUTTER),
+              Math.max(VIEWPORT_GUTTER, viewportWidth - resolvedWidth - VIEWPORT_GUTTER),
+            );
+
+            return {
+              ...base,
+              left: resolvedLeft,
+              width: resolvedWidth,
+              zIndex: 9999,
+            };
+          },
         }}
         menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
         menuPosition="fixed"

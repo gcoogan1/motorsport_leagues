@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import type { SelectButtonOption } from "@/components/SelectButton/SelectButton";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -37,6 +37,7 @@ const LeagueManagment = () => {
   const { openModal } = useModal();
   const { closePanel } = usePanel();
   const { setOverrideThemeName, clearOverrideThemeName } = useAppTheme();
+  const location = useLocation();
   const { leagueId } = useParams<{ leagueId: string }>();
   const [activeSection, setActiveSection] =
     useState<ManageMenuSection>("season-settings");
@@ -49,6 +50,8 @@ const LeagueManagment = () => {
     (state: RootState) => state.league.currentLeague,
   );
   const { data: seasons = [] } = useLeagueSeasons(leagueId ?? "");
+  const requestedSeasonId =
+    (location.state as { selectedSeasonId?: string } | null)?.selectedSeasonId ?? "";
 
   const seasonOptions = useMemo<SelectButtonOption[]>(
     () =>
@@ -58,13 +61,37 @@ const LeagueManagment = () => {
       })),
     [seasons],
   );
+  // Set default selected season to the one specified in location state (from league page), 
+  // or the most recent season if the specified one doesn't exist or isn't provided.
+  const resolvedSelectedSeason = useMemo(() => {
+    if (seasons.length === 0) {
+      return "";
+    }
+
+    const selectedSeasonExists = seasons.some(
+      (season) => season.id === selectedSeason,
+    );
+
+    if (selectedSeasonExists) {
+      return selectedSeason;
+    }
+
+    const requestedSeason = seasons.find(
+      (season) => season.id === requestedSeasonId,
+    );
+
+    return requestedSeason?.id ?? seasons.at(-1)?.id ?? "";
+  }, [requestedSeasonId, seasons, selectedSeason]);
   const activeSeasonData = useMemo(() => {
     if (seasons.length === 0) {
       return undefined;
     }
 
-    return seasons.find((season) => season.id === selectedSeason) ?? seasons[0];
-  }, [seasons, selectedSeason]);
+    return (
+      seasons.find((season) => season.id === resolvedSelectedSeason) ??
+      seasons.at(-1)
+    );
+  }, [resolvedSelectedSeason, seasons]);
   const mostRecentSeasonId = seasons.at(-1)?.id ?? "";
   const onlyOneSeason = seasons.length === 1;
   const activeSeasonId = activeSeasonData?.id ?? "";

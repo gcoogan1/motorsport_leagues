@@ -46,12 +46,16 @@ export const SelectButtonWrapper = styled.div`
     display: flex;
     align-items: center;
     padding: 0;
+    margin: 0;
+    max-height: 20px;
+    align-items: self-start;
     gap: ${layout.space.xxSmall};
   }
 
   .select__single-value,
   .select__placeholder {
-    ${typography.body.mediumBold} margin: 0;
+    ${typography.body.mediumBold};
+    margin: 0;
     white-space: nowrap;
   }
 
@@ -92,6 +96,16 @@ export const SelectMenuGlobalStyles = createGlobalStyle`
     z-index: 9999;
     margin-top: 6px;
     ${effects.boxShadow.elevationModal};
+  }
+
+  .select__menu.select__menu--placement-top {
+    margin-top: 0;
+    margin-bottom: 6px;
+  }
+
+  .select__menu.select__menu--placement-bottom {
+    margin-top: 6px;
+    margin-bottom: 0;
   }
 
   .select__menu-list {

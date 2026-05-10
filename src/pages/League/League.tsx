@@ -348,13 +348,17 @@ const League = () => {
     openPanel("LEAGUE_PARTICIPANTS", { leagueId: currentLeague.id });
   };
 
+  const handleManageLeague = () => {
+    navigate(`/league/${currentLeague.id}/management`, {
+      state: { selectedSeasonId: activeSeason }, // Pass the active season to the management page so it can select the correct season in its own UI.
+    });
+  };
+
   // -- Action buttons based on view type -- //
 
   const participantActions = getParticipantActions({
     isDirector,
-    onManageLeague: () => {
-      navigate(`/league/${currentLeague.id}/management`);
-    },
+    onManageLeague: handleManageLeague,
     onShareLeague: handleShareLeague,
     onLeaveLeague: handleLeaveLeague,
     onInviteParticipants: () => {
