@@ -1,5 +1,5 @@
 import TabLink from "./TabLink/TabLink";
-import { TabsContainer } from "./Tabs.styles";
+import { TabsContainer, TabsViewport } from "./Tabs.styles";
 
 type TabLinkItem = {
   id: string
@@ -16,11 +16,13 @@ type TabMenuProps = {
 const Tabs = ({ tabs, activeTab, onTabChange }: TabMenuProps) => {
 
   return (
-    <TabsContainer>
-      {tabs.map((tab) => (
-        <TabLink key={tab.id} label={tab.label} active={tab.id === activeTab} onClick={() => onTabChange?.(tab.id)} />
-      ))}
-    </TabsContainer>
+    <TabsViewport>
+      <TabsContainer>
+        {tabs.map((tab) => (
+          <TabLink key={tab.id} label={tab.label} active={tab.id === activeTab} onClick={() => onTabChange?.(tab.id)} />
+        ))}
+      </TabsContainer>
+    </TabsViewport>
   )
 }
 

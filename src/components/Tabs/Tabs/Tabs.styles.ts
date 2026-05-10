@@ -5,6 +5,17 @@ import { bottomFadeBorder } from "@/app/design/mixens/edgeFadeBorder";
 
 const { gradients, layout, borders } = designTokens;
 
+export const TabsViewport = styled.div`
+  width: 100%;
+  min-width: 0;
+  overflow: visible;
+
+  ${bottomFadeBorder({
+    gradient: gradients.base.fadeOutHorizontal20,
+    width: borders.width.medium,
+  })}
+`;
+
 export const TabsContainer = styled.div`
   display: grid;
   grid-auto-flow: column;
@@ -16,16 +27,12 @@ export const TabsContainer = styled.div`
   justify-content: safe center; 
   
   overflow-x: auto;
+  overflow-y: visible;
   min-width: 0;
 
   /* Hide scrollbars */
   &::-webkit-scrollbar { display: none; }
   scrollbar-width: none;
-
-  ${bottomFadeBorder({
-    gradient: gradients.base.fadeOutHorizontal20,
-    width: borders.width.medium,
-  })}
 `;
 
 
