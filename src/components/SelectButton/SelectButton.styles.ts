@@ -46,12 +46,16 @@ export const SelectButtonWrapper = styled.div`
     display: flex;
     align-items: center;
     padding: 0;
+    margin: 0;
+    max-height: 20px;
+    align-items: self-start;
     gap: ${layout.space.xxSmall};
   }
 
   .select__single-value,
   .select__placeholder {
-    ${typography.body.mediumBold} margin: 0;
+    ${typography.body.mediumBold};
+    margin: 0;
     white-space: nowrap;
   }
 

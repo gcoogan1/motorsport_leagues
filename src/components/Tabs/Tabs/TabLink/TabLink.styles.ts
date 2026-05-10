@@ -34,6 +34,11 @@ export const ButtonContainer = styled.button`
     background: ${colors.base.translucent10};
     color: ${colors.text.text1};
   }
+
+  ${layout.mediaQueries.mobile} {
+    padding-left: ${layout.space.xSmall};
+    padding-right: ${layout.space.xSmall};
+  }
 `;
 
 export const ButtonTextContainer = styled.div<{ $active: boolean }>`
