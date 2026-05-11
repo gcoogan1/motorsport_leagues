@@ -25,9 +25,10 @@ export const ButtonContainer = styled.button`
   }
 
   &:focus-visible {
-    outline: 2px solid ${colors.utility.focus};
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: inset 0 0 0 2px ${colors.utility.focus};
     color: ${colors.text.text1};
+    border-radius: ${borders.radius.small};
   }
 
   &:active {
