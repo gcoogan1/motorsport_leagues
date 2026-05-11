@@ -17,7 +17,7 @@ type DriverLineupProps = {
   avatarValue: AvatarVariants | string;
   cardNumber: string;
   driverId: string;
-  themeColor?: ThemeName;
+  themeColor?: ThemeName; // ?? may not need
   onClick?: (id: string) => void;
 };
 
