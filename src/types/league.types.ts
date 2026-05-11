@@ -113,6 +113,14 @@ export type LeagueSeasonTable = {
   season_status: LeagueStatus;
 };
 
+export type LeagueSeasonDivisionTable = {
+  id: string;
+  created_at: string;
+  season_id: string;
+  division_number: number;
+  division_name?: string;
+};
+
 // -- HELPER TYPES -- //
 
 // League with Info --> combines league table with related info like seasons and participants for display purposes (not in Supabase, but used in service results)
@@ -271,7 +279,7 @@ export type GetLeagueFollowingResult =
   | GetLeagueFollowingSuccess
   | SupabaseError;
 
-// Get League Seasons --> Result type
+// Get League Seasons --> Success type
 export type GetLeagueSeasonsSuccess = {
   success: true;
   data: LeagueSeasonTable[];
@@ -279,6 +287,28 @@ export type GetLeagueSeasonsSuccess = {
 
 // Get League Seasons --> Result type
 export type GetLeagueSeasonsResult = GetLeagueSeasonsSuccess | SupabaseError;
+
+// Get League Season Divisions --> Success type
+export type GetLeagueSeasonDivisionsSuccess = {
+  success: true;
+  data: LeagueSeasonDivisionTable[];
+};
+
+// Get League Season Divisions --> Result type
+export type GetLeagueSeasonDivisionsResult =
+  | GetLeagueSeasonDivisionsSuccess
+  | SupabaseError;
+
+// Get League Season Division by Division ID --> Success type
+export type GetLeagueSeasonDivisionByIdSuccess = {
+  success: true;
+  data: LeagueSeasonDivisionTable;
+};
+
+// Get League Season Division by Division ID --> Result type
+export type GetLeagueSeasonDivisionByIdResult =
+  | GetLeagueSeasonDivisionByIdSuccess
+  | SupabaseError;
 
 
 // -- CREATE/ADD -- //
@@ -440,6 +470,24 @@ export type CreateLeagueSeasonSuccess = {
 export type CreateLeagueSeasonResult =
   | CreateLeagueSeasonSuccess
   | SupabaseError;
+
+// Create League Season Division --> Payload type
+export type CreateLeagueSeasonDivisionPayload = {
+  seasonId: string;
+  divisionNumber: number;
+  divisionName?: string;
+};
+
+// Create League Season Division --> Success type
+export type CreateLeagueSeasonDivisionSuccess = {
+  success: true;
+  data: LeagueSeasonDivisionTable;
+};
+
+// Create League Season Division --> Result type
+export type CreateLeagueSeasonDivisionResult =
+  | CreateLeagueSeasonDivisionSuccess
+  | SupabaseError;
   
 
 // -- EDIT/UPDATE -- //
@@ -598,6 +646,16 @@ export type RemoveLeagueSeasonPayload = {
 
 // Remove League Season --> Result type
 export type RemoveLeagueSeasonResult =
+  | { success: true }
+  | SupabaseError;
+
+// Remove League Season Division --> Payload type
+export type RemoveLeagueSeasonDivisionPayload = {
+  divisionId: string;
+};
+
+// Remove League Season Division --> Result type
+export type RemoveLeagueSeasonDivisionResult =
   | { success: true }
   | SupabaseError;
 

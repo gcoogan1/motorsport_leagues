@@ -8,19 +8,20 @@ import type {
   UpdateLeagueSeasonPayload,
   UpdateLeagueSeasonResult,
 } from "@/types/league.types";
+import { createLeagueSeasonDivision } from "./leagueSeasonDivision.service";
 
 // --- League Season Service --- //
 
 // -- Create League Season -- //
-export const createLeagueSeason = async (
-  {
-    leagueId,
-    seasonName,
-    numOfDivisions,
-    isTeamChampionship,
-  }: CreateLeagueSeasonPayload,
-): Promise<CreateLeagueSeasonResult> => {
-  const { data, error } = await supabase
+export const createLeagueSeason = async ({
+  leagueId,
+  seasonName,
+  numOfDivisions,
+  isTeamChampionship,
+}: CreateLeagueSeasonPayload): Promise<CreateLeagueSeasonResult> => {
+
+  // Create season 
+  const { data: season, error: seasonError } = await supabase
     .from("league_season")
     .insert({
       league_id: leagueId,
@@ -32,12 +33,47 @@ export const createLeagueSeason = async (
     .select()
     .single();
 
-  if (error) {
+  if (seasonError || !season) {
     return {
       success: false,
       error: {
-        message: error.message,
-        code: error.code || "SERVER_ERROR",
+        message: seasonError?.message || "Failed to create season.",
+        code: seasonError?.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  // Create divisions for the season
+  const divisionResults = await Promise.all(
+    Array.from({ length: numOfDivisions }, (_, index) =>
+      createLeagueSeasonDivision({
+        seasonId: season.id,
+        divisionNumber: index + 1,
+        divisionName: `Division ${index + 1}`,
+      }),
+    ),
+  );
+
+  //  Check for division creation failures 
+  const failedDivision = divisionResults.find(
+    (result) => !result.success,
+  );
+
+  // Rollback season if ANY division fails
+  if (failedDivision) {
+    await supabase
+      .from("league_season")
+      .delete()
+      .eq("id", season.id);
+
+    return {
+      success: false,
+      error: {
+        message:
+          failedDivision.error?.message ||
+          "Failed to create season divisions. Season creation rolled back.",
+        code: failedDivision.error?.code || "SERVER_ERROR",
         status: 500,
       },
     };
@@ -45,7 +81,7 @@ export const createLeagueSeason = async (
 
   return {
     success: true,
-    data,
+    data: season,
   };
 };
 

@@ -51,6 +51,9 @@ import type {
   LeagueInviteTable,
   GetLeagueInvitesResult,
   RemoveLeagueInviteResult,
+  GetLeagueSeasonDivisionsResult,
+  LeagueSeasonDivisionTable,
+  GetLeagueSeasonDivisionByIdResult,
 } from "@/types/league.types";
 import type { ProfileTable } from "@/types/profile.types";
 import { getAllLeaguesWithInfo, getLeaguesWithInfoByAccountId, getLeaguesWithInfoByProfileId, getLeaguesWithInfoBySquadId } from "@/services/league/league.service";
@@ -60,6 +63,7 @@ import { getPendingLeagueInvitesByLeagueId, removeLeagueInviteById } from "@/ser
 import { getLeagueJoinRequestsByLeagueId, createLeagueJoinRequestService, removeLeagueJoinRequestService } from "@/services/league/leagueJoinRequest.service";
 import { getLeagueParticipantsByLeagueId, addLeagueParticipant, joinLeagueWithRolesService, addLeagueParticipantRole, removeLeagueParticipantRole, removeLeagueParticipant } from "@/services/league/leagueParticipant.service";
 import { getLeagueSeasonsByLeagueId, createLeagueSeason, updateLeagueSeason, removeLeagueSeason } from "@/services/league/leagueSeason.service";
+import { getLeagueSeasonDivisionByDivisionId, getLeagueSeasonDivisionsBySeasonId } from "@/services/league/leagueSeasonDivision.service";
 
 export type LeaguesQueryArgs = {
   accountId?: string;
@@ -71,7 +75,7 @@ export type LeaguesQueryArgs = {
 export const leagueApi = createApi({
   reducerPath: "leagueApi",
   baseQuery: fakeBaseQuery(),
-  tagTypes: ["Leagues", "LeagueParticipants", "LeagueSeasons", "LeagueFollowers", "LeagueFollowing", "LeagueJoinRequests", "LeagueApplicationOptions", "LeagueInvites"],
+  tagTypes: ["Leagues", "LeagueParticipants", "LeagueSeasons", "LeagueFollowers", "LeagueFollowing", "LeagueJoinRequests", "LeagueApplicationOptions", "LeagueInvites", "LeagueSeasonDivisions"],
   endpoints: (builder) => ({
     getLeagues: builder.query<LeagueWithInfo[], LeaguesQueryArgs>({
       queryFn: async ({ accountId, search, includeOwnLeagues }, api) => {
@@ -280,6 +284,54 @@ export const leagueApi = createApi({
       },
       providesTags: (_result, _error, leagueId) => [
         { type: "LeagueApplicationOptions", id: leagueId },
+      ],
+    }),
+    getLeagueSeasonDivisions: builder.query<LeagueSeasonDivisionTable[], string>({
+      queryFn: async (seasonId, api) => {
+        try {
+          const result: GetLeagueSeasonDivisionsResult =
+            await getLeagueSeasonDivisionsBySeasonId(seasonId, api.signal);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, seasonId) => [
+        { type: "LeagueSeasonDivisions", id: seasonId },
+      ],
+    }),
+    getLeagueSeasonDivisionByDivisionId: builder.query<LeagueSeasonDivisionTable, string>({
+      queryFn: async (divisionId) => {
+        try {
+          const result: GetLeagueSeasonDivisionByIdResult =
+            await getLeagueSeasonDivisionByDivisionId(divisionId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, divisionId) => [
+        { type: "LeagueSeasonDivisions", id: divisionId },
       ],
     }),
     followLeague: builder.mutation<FollowLeagueResult, FollowLeaguePayload>({
@@ -842,6 +894,8 @@ export const {
   useGetLeagueApplicationOptionsQuery,
   useGetLeagueSeasonsQuery,
   useGetLeagueJoinRequestsQuery,
+  useGetLeagueSeasonDivisionsQuery,
+  useGetLeagueSeasonDivisionByDivisionIdQuery,
   useUnfollowLeagueMutation,
   useRemoveLeagueFollowerMutation,
   useRemoveLeagueApplicationOptionsMutation,
