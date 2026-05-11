@@ -1,69 +1,134 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import type {
-  AddLeagueApplicationOptionsPayload,
-  AddLeagueApplicationOptionsResult,
-  AddLeagueParticipantPayload,
-  AddLeagueParticipantResult,
-  AddLeagueParticipantRolePayload,
-  AddLeagueParticipantRoleResult,
-  CreateLeagueJoinRequestPayload,
-  CreateLeagueJoinRequestResult,
-  CreateLeagueSeasonPayload,
-  CreateLeagueSeasonResult,
-  FollowLeaguePayload,
-  FollowLeagueResult,
-  GetLeagueJoinRequestsResult,
-  GetLeagueApplicationOptionsResult,
-  JoinLeagueWithRolesPayload,
-  JoinLeagueWithRolesResult,
-  GetLeagueFollowersResult,
-  GetLeagueFollowingResult,
-  GetLeaguesWithInfoResult,
-  GetLeagueParticipantsResult,
-  GetLeagueSeasonsResult,
-  LeagueWithInfo,
-  LeagueApplicationOptionsTable,
-  LeagueTable,
-  LeagueParticipantProfile,
-  LeagueJoinRequestWithProfile,
-  LeagueSeasonTable,
-  RemoveLeagueApplicationOptionsPayload,
-  RemoveLeagueApplicationOptionsResult,
-  RemoveLeagueParticipantPayload,
-  RemoveLeagueParticipantResult,
-  RemoveLeagueJoinRequestPayload,
-  RemoveLeagueJoinRequestResult,
-  RemoveLeagueInvitePayload,
-  RemoveLeagueFollowerPayload,
-  RemoveLeagueFollowerResult,
-  RemoveLeagueParticipantRolePayload,
-  RemoveLeagueParticipantRoleResult,
-  RemoveLeagueSeasonPayload,
-  RemoveLeagueSeasonResult,
-  UnfollowLeaguePayload,
-  UnfollowLeagueResult,
-  // UpdateLeagueParticipantRolePayload,
-  // UpdateLeagueParticipantRoleResult,
-  UpdateLeagueApplicationOptionsPayload,
-  UpdateLeagueApplicationOptionsResult,
-  UpdateLeagueSeasonPayload,
-  UpdateLeagueSeasonResult,
-  LeagueInviteTable,
-  GetLeagueInvitesResult,
-  RemoveLeagueInviteResult,
-  GetLeagueSeasonDivisionsResult,
-  LeagueSeasonDivisionTable,
-  GetLeagueSeasonDivisionByIdResult,
+import {
+  type AddLeagueApplicationOptionsPayload,
+  type AddLeagueApplicationOptionsResult,
+  type AddLeagueParticipantPayload,
+  type AddLeagueParticipantResult,
+  type AddLeagueParticipantRolePayload,
+  type AddLeagueParticipantRoleResult,
+  type CreateLeagueJoinRequestPayload,
+  type CreateLeagueJoinRequestResult,
+  type CreateLeagueSeasonDriverPayload,
+  type CreateLeagueSeasonDriverResult,
+  type CreateLeagueSeasonPayload,
+  type CreateLeagueSeasonResult,
+  type CreateLeagueSeasonTeamResult,
+  type FollowLeaguePayload,
+  type FollowLeagueResult,
+  type GetLeagueApplicationOptionsResult,
+  type GetLeagueFollowersResult,
+  type GetLeagueFollowingResult,
+  type GetLeagueInvitesResult,
+  type GetLeagueJoinRequestsResult,
+  type GetLeagueParticipantsResult,
+  type GetLeagueSeasonDivisionByIdResult,
+  type GetLeagueSeasonDivisionsResult,
+  type GetLeagueSeasonDriversResult,
+  type GetLeagueSeasonsResult,
+  type GetLeagueSeasonTeamsResult,
+  type GetLeaguesWithInfoResult,
+  type JoinLeagueWithRolesPayload,
+  type JoinLeagueWithRolesResult,
+  type LeagueApplicationOptionsTable,
+  type LeagueInviteTable,
+  type LeagueJoinRequestWithProfile,
+  type LeagueParticipantProfile,
+  type LeagueSeasonDivisionTable,
+  type LeagueSeasonDriverTable,
+  type LeagueSeasonTable,
+  type LeagueSeasonTeamTable,
+  type LeagueTable,
+  type LeagueWithInfo,
+  type RemoveLeagueApplicationOptionsPayload,
+  type RemoveLeagueApplicationOptionsResult,
+  type RemoveLeagueFollowerPayload,
+  type RemoveLeagueFollowerResult,
+  type RemoveLeagueInvitePayload,
+  type RemoveLeagueInviteResult,
+  type RemoveLeagueJoinRequestPayload,
+  type RemoveLeagueJoinRequestResult,
+  type RemoveLeagueParticipantPayload,
+  type RemoveLeagueParticipantResult,
+  type RemoveLeagueParticipantRolePayload,
+  type RemoveLeagueParticipantRoleResult,
+  type RemoveLeagueSeasonDriverPayload,
+  type RemoveLeagueSeasonDriverResult,
+  type RemoveLeagueSeasonPayload,
+  type RemoveLeagueSeasonResult,
+  type RemoveLeagueSeasonTeamPayload,
+  type RemoveLeagueSeasonTeamResult,
+  type UnfollowLeaguePayload,
+  type UnfollowLeagueResult,
+  type UpdateLeagueApplicationOptionsPayload,
+  type UpdateLeagueApplicationOptionsResult,
+  type UpdateLeagueSeasonDriverResult,
+  type UpdateLeagueSeasonPayload,
+  type UpdateLeagueSeasonResult,
+  type UpdateLeagueSeasonTeamPayload,
+  type UpdateLeagueSeasonTeamResult,
 } from "@/types/league.types";
 import type { ProfileTable } from "@/types/profile.types";
-import { getAllLeaguesWithInfo, getLeaguesWithInfoByAccountId, getLeaguesWithInfoByProfileId, getLeaguesWithInfoBySquadId } from "@/services/league/league.service";
-import { getLeagueApplicationOptionsByLeagueId, addLeagueApplicationOptions, updateLeagueApplicationOptions, removeLeagueApplicationOptions } from "@/services/league/leagueApplication.service";
-import { followLeagueService, getLeagueFollowersService, getFollowingLeagues, isFollowingLeagueService, unfollowLeagueService, removeLeagueFollowerService } from "@/services/league/leagueFollow";
-import { getPendingLeagueInvitesByLeagueId, removeLeagueInviteById } from "@/services/league/leagueInvite.service";
-import { getLeagueJoinRequestsByLeagueId, createLeagueJoinRequestService, removeLeagueJoinRequestService } from "@/services/league/leagueJoinRequest.service";
-import { getLeagueParticipantsByLeagueId, addLeagueParticipant, joinLeagueWithRolesService, addLeagueParticipantRole, removeLeagueParticipantRole, removeLeagueParticipant } from "@/services/league/leagueParticipant.service";
-import { getLeagueSeasonsByLeagueId, createLeagueSeason, updateLeagueSeason, removeLeagueSeason } from "@/services/league/leagueSeason.service";
-import { getLeagueSeasonDivisionByDivisionId, getLeagueSeasonDivisionsBySeasonId } from "@/services/league/leagueSeasonDivision.service";
+import {
+  getAllLeaguesWithInfo,
+  getLeaguesWithInfoByAccountId,
+  getLeaguesWithInfoByProfileId,
+  getLeaguesWithInfoBySquadId,
+} from "@/services/league/league.service";
+import {
+  addLeagueApplicationOptions,
+  getLeagueApplicationOptionsByLeagueId,
+  removeLeagueApplicationOptions,
+  updateLeagueApplicationOptions,
+} from "@/services/league/leagueApplication.service";
+import {
+  followLeagueService,
+  getFollowingLeagues,
+  getLeagueFollowersService,
+  isFollowingLeagueService,
+  removeLeagueFollowerService,
+  unfollowLeagueService,
+} from "@/services/league/leagueFollow";
+import {
+  getPendingLeagueInvitesByLeagueId,
+  removeLeagueInviteById,
+} from "@/services/league/leagueInvite.service";
+import {
+  createLeagueJoinRequestService,
+  getLeagueJoinRequestsByLeagueId,
+  removeLeagueJoinRequestService,
+} from "@/services/league/leagueJoinRequest.service";
+import {
+  addLeagueParticipant,
+  addLeagueParticipantRole,
+  getLeagueParticipantsByLeagueId,
+  joinLeagueWithRolesService,
+  removeLeagueParticipant,
+  removeLeagueParticipantRole,
+} from "@/services/league/leagueParticipant.service";
+import {
+  createLeagueSeason,
+  getLeagueSeasonsByLeagueId,
+  removeLeagueSeason,
+  updateLeagueSeason,
+} from "@/services/league/leagueSeason.service";
+import {
+  createLeagueSeasonDriver,
+  getLeagueSeasonDriversByDivision,
+  getLeagueSeasonDriversBySeasonId,
+  removeLeagueSeasonDriver,
+  updateLeagueSeasonDriverTeam,
+} from "@/services/league/leagueSeasonDriver";
+import {
+  getLeagueSeasonDivisionByDivisionId,
+  getLeagueSeasonDivisionsBySeasonId,
+} from "@/services/league/leagueSeasonDivision.service";
+import {
+  createLeagueSeasonTeam,
+  getLeagueSeasonTeamsByDivision,
+  getLeagueSeasonTeamsBySeasonId,
+  removeLeagueSeasonTeam,
+  updateLeagueSeasonTeam,
+} from "@/services/league/useSeasonTeam";
 
 export type LeaguesQueryArgs = {
   accountId?: string;
@@ -75,8 +140,21 @@ export type LeaguesQueryArgs = {
 export const leagueApi = createApi({
   reducerPath: "leagueApi",
   baseQuery: fakeBaseQuery(),
-  tagTypes: ["Leagues", "LeagueParticipants", "LeagueSeasons", "LeagueFollowers", "LeagueFollowing", "LeagueJoinRequests", "LeagueApplicationOptions", "LeagueInvites", "LeagueSeasonDivisions"],
+  tagTypes: [
+    "Leagues",
+    "LeagueParticipants",
+    "LeagueSeasons",
+    "LeagueFollowers",
+    "LeagueFollowing",
+    "LeagueJoinRequests",
+    "LeagueApplicationOptions",
+    "LeagueInvites",
+    "LeagueSeasonDivisions",
+    "LeagueSeasonDrivers",
+    "LeagueSeasonTeams",
+  ],
   endpoints: (builder) => ({
+    // GET Requests
     getLeagues: builder.query<LeagueWithInfo[], LeaguesQueryArgs>({
       queryFn: async ({ accountId, search, includeOwnLeagues }, api) => {
         try {
@@ -104,17 +182,17 @@ export const leagueApi = createApi({
       providesTags: (_result, _error, args) => [
         {
           type: "Leagues",
-          id: `leagues-${args.activeTab ?? "all"}-${args.search ?? ""}-${args.includeOwnLeagues ? "include-own" : "exclude-own"}`,
+          id: `leagues-${args.activeTab ?? "all"}-${args.search ?? ""}-${
+            args.includeOwnLeagues ? "include-own" : "exclude-own"
+          }`,
         },
       ],
     }),
     getParticipantLeagues: builder.query<LeagueWithInfo[], string>({
       queryFn: async (accountId, api) => {
         try {
-          const result: GetLeaguesWithInfoResult = await getLeaguesWithInfoByAccountId(
-            accountId,
-            api.signal,
-          );
+          const result: GetLeaguesWithInfoResult =
+            await getLeaguesWithInfoByAccountId(accountId, api.signal);
 
           if (!result.success) {
             return {
@@ -137,10 +215,8 @@ export const leagueApi = createApi({
     getLeaguesByProfileId: builder.query<LeagueWithInfo[], string>({
       queryFn: async (profileId, api) => {
         try {
-          const result: GetLeaguesWithInfoResult = await getLeaguesWithInfoByProfileId(
-            profileId,
-            api.signal,
-          );
+          const result: GetLeaguesWithInfoResult =
+            await getLeaguesWithInfoByProfileId(profileId, api.signal);
 
           if (!result.success) {
             return {
@@ -165,10 +241,8 @@ export const leagueApi = createApi({
     getLeaguesBySquadId: builder.query<LeagueWithInfo[], string>({
       queryFn: async (squadId, api) => {
         try {
-          const result: GetLeaguesWithInfoResult = await getLeaguesWithInfoBySquadId(
-            squadId,
-            api.signal,
-          );
+          const result: GetLeaguesWithInfoResult =
+            await getLeaguesWithInfoBySquadId(squadId, api.signal);
 
           if (!result.success) {
             return {
@@ -238,7 +312,10 @@ export const leagueApi = createApi({
         { type: "LeagueSeasons", id: leagueId },
       ],
     }),
-    getLeagueJoinRequests: builder.query<LeagueJoinRequestWithProfile[], string>({
+    getLeagueJoinRequests: builder.query<
+      LeagueJoinRequestWithProfile[],
+      string
+    >({
       queryFn: async (leagueId, api) => {
         try {
           const result: GetLeagueJoinRequestsResult =
@@ -262,7 +339,10 @@ export const leagueApi = createApi({
         { type: "LeagueJoinRequests", id: leagueId },
       ],
     }),
-    getLeagueApplicationOptions: builder.query<LeagueApplicationOptionsTable, string>({
+    getLeagueApplicationOptions: builder.query<
+      LeagueApplicationOptionsTable,
+      string
+    >({
       queryFn: async (leagueId) => {
         try {
           const result: GetLeagueApplicationOptionsResult =
@@ -286,7 +366,10 @@ export const leagueApi = createApi({
         { type: "LeagueApplicationOptions", id: leagueId },
       ],
     }),
-    getLeagueSeasonDivisions: builder.query<LeagueSeasonDivisionTable[], string>({
+    getLeagueSeasonDivisions: builder.query<
+      LeagueSeasonDivisionTable[],
+      string
+    >({
       queryFn: async (seasonId, api) => {
         try {
           const result: GetLeagueSeasonDivisionsResult =
@@ -310,7 +393,10 @@ export const leagueApi = createApi({
         { type: "LeagueSeasonDivisions", id: seasonId },
       ],
     }),
-    getLeagueSeasonDivisionByDivisionId: builder.query<LeagueSeasonDivisionTable, string>({
+    getLeagueSeasonDivisionByDivisionId: builder.query<
+      LeagueSeasonDivisionTable,
+      string
+    >({
       queryFn: async (divisionId) => {
         try {
           const result: GetLeagueSeasonDivisionByIdResult =
@@ -332,6 +418,126 @@ export const leagueApi = createApi({
       },
       providesTags: (_result, _error, divisionId) => [
         { type: "LeagueSeasonDivisions", id: divisionId },
+      ],
+    }),
+    getLeagueSeasonDriversByDivision: builder.query<
+      LeagueSeasonDriverTable[],
+      string
+    >({
+      queryFn: async (divisionId, api) => {
+        try {
+          const result: GetLeagueSeasonDriversResult =
+            await getLeagueSeasonDriversByDivision({
+              divisionId,
+              signal: api.signal,
+            });
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, divisionId) => [
+        { type: "LeagueSeasonDrivers", id: divisionId },
+      ],
+    }),
+    getLeagueSeasonDriversBySeasonId: builder.query<
+      LeagueSeasonDriverTable[],
+      string
+    >({
+      queryFn: async (seasonId, api) => {
+        try {
+          const result: GetLeagueSeasonDriversResult =
+            await getLeagueSeasonDriversBySeasonId({
+              seasonId,
+              signal: api.signal,
+            });
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, seasonId) => [
+        { type: "LeagueSeasonDrivers", id: seasonId },
+      ],
+    }),
+    getLeagueSeasonTeamsByDivision: builder.query<
+      LeagueSeasonTeamTable[],
+      string
+    >({
+      queryFn: async (divisionId, api) => {
+        try {
+          const result: GetLeagueSeasonTeamsResult =
+            await getLeagueSeasonTeamsByDivision({
+              divisionId,
+              signal: api.signal,
+            });
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, divisionId) => [
+        { type: "LeagueSeasonTeams", id: divisionId },
+      ],
+    }),
+    getLeagueSeasonTeamsBySeasonId: builder.query<
+      LeagueSeasonTeamTable[],
+      string
+    >({
+      queryFn: async (seasonId, api) => {
+        try {
+          const result: GetLeagueSeasonTeamsResult =
+            await getLeagueSeasonTeamsBySeasonId({
+              seasonId,
+              signal: api.signal,
+            });
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, seasonId) => [
+        { type: "LeagueSeasonTeams", id: seasonId },
       ],
     }),
     followLeague: builder.mutation<FollowLeagueResult, FollowLeaguePayload>({
@@ -363,9 +569,8 @@ export const leagueApi = createApi({
     getLeagueFollowers: builder.query<ProfileTable[], string>({
       queryFn: async (leagueId) => {
         try {
-          const result: GetLeagueFollowersResult = await getLeagueFollowersService(
-            leagueId,
-          );
+          const result: GetLeagueFollowersResult =
+            await getLeagueFollowersService(leagueId);
 
           if (!result.success) {
             return {
@@ -390,9 +595,8 @@ export const leagueApi = createApi({
     getLeagueFollowing: builder.query<LeagueTable[], string>({
       queryFn: async (accountId) => {
         try {
-          const result: GetLeagueFollowingResult = await getFollowingLeagues(
-            accountId,
-          );
+          const result: GetLeagueFollowingResult =
+            await getFollowingLeagues(accountId);
 
           if (!result.success) {
             return {
@@ -414,7 +618,10 @@ export const leagueApi = createApi({
         { type: "LeagueFollowing", id: accountId },
       ],
     }),
-    isFollowingLeague: builder.query<boolean, { leagueId: string; accountId: string }>({
+    isFollowingLeague: builder.query<
+      boolean,
+      { leagueId: string; accountId: string }
+    >({
       queryFn: async ({ leagueId, accountId }) => {
         try {
           const data = await isFollowingLeagueService(leagueId, accountId);
@@ -430,32 +637,58 @@ export const leagueApi = createApi({
         { type: "LeagueFollowing", id: accountId },
       ],
     }),
-    unfollowLeague: builder.mutation<UnfollowLeagueResult, UnfollowLeaguePayload>({
-      queryFn: async (payload) => {
+    getPendingLeagueInvites: builder.query<LeagueInviteTable[], string>({
+      queryFn: async (leagueId, api) => {
         try {
-          const data = await unfollowLeagueService(payload);
-          return { data };
+          const result: GetLeagueInvitesResult =
+            await getPendingLeagueInvitesByLeagueId(leagueId, api.signal);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
         } catch (error) {
-          return { error };
+          return {
+            error,
+          };
         }
       },
-      invalidatesTags: (_result, _error, payload) => [
-        { type: "LeagueFollowers", id: payload.leagueId },
-        { type: "LeagueFollowing", id: payload.accountId },
+      providesTags: (_result, _error, leagueId) => [
+        { type: "LeagueInvites", id: leagueId },
       ],
     }),
-    removeLeagueFollower: builder.mutation<RemoveLeagueFollowerResult, RemoveLeagueFollowerPayload>({
+
+    // CREATE Requests
+    createLeagueSeason: builder.mutation<
+      CreateLeagueSeasonResult,
+      CreateLeagueSeasonPayload
+    >({
       queryFn: async (payload) => {
         try {
-          const data = await removeLeagueFollowerService(payload);
-          return { data };
+          const result = await createLeagueSeason(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
         } catch (error) {
           return { error };
         }
       },
       invalidatesTags: (_result, _error, payload) => [
-        { type: "LeagueFollowers", id: payload.leagueId },
-        "LeagueFollowing",
+        { type: "LeagueSeasons", id: payload.leagueId },
       ],
     }),
     addLeagueParticipant: builder.mutation<
@@ -536,58 +769,6 @@ export const leagueApi = createApi({
         { type: "LeagueJoinRequests", id: payload.leagueId },
       ],
     }),
-    removeLeagueJoinRequest: builder.mutation<
-      RemoveLeagueJoinRequestResult,
-      RemoveLeagueJoinRequestPayload & { leagueId: string }
-    >({
-      queryFn: async ({ requestId }) => {
-        try {
-          const result = await removeLeagueJoinRequestService({ requestId });
-
-          if (!result.success) {
-            return {
-              error: {
-                status: result.error.status,
-                data: result.error,
-              },
-            };
-          }
-
-          return { data: result };
-        } catch (error) {
-          return { error };
-        }
-      },
-      invalidatesTags: (_result, _error, payload) => [
-        { type: "LeagueJoinRequests", id: payload.leagueId },
-      ],
-    }),
-    removeLeagueInvite: builder.mutation<
-      RemoveLeagueInviteResult,
-      RemoveLeagueInvitePayload
-    >({
-      queryFn: async ({ inviteId }) => {
-        try {
-          const result = await removeLeagueInviteById(inviteId);
-
-          if (!result.success) {
-            return {
-              error: {
-                status: result.error.status,
-                data: result.error,
-              },
-            };
-          }
-
-          return { data: result };
-        } catch (error) {
-          return { error };
-        }
-      },
-      invalidatesTags: (_result, _error, payload) => [
-        { type: "LeagueInvites", id: payload.leagueId },
-      ],
-    }),
     joinLeagueWithRoles: builder.mutation<
       JoinLeagueWithRolesResult,
       JoinLeagueWithRolesPayload
@@ -640,37 +821,13 @@ export const leagueApi = createApi({
       },
       invalidatesTags: () => ["LeagueParticipants"],
     }),
-    removeLeagueParticipantRole: builder.mutation<
-      RemoveLeagueParticipantRoleResult,
-      RemoveLeagueParticipantRolePayload
+    createLeagueSeasonDriver: builder.mutation<
+      CreateLeagueSeasonDriverResult,
+      CreateLeagueSeasonDriverPayload
     >({
       queryFn: async (payload) => {
         try {
-          const result = await removeLeagueParticipantRole(payload);
-
-          if (!result.success) {
-            return {
-              error: {
-                status: result.error.status,
-                data: result.error,
-              },
-            };
-          }
-
-          return { data: result };
-        } catch (error) {
-          return { error };
-        }
-      },
-      invalidatesTags: () => ["LeagueParticipants"],
-    }),
-    createLeagueSeason: builder.mutation<
-      CreateLeagueSeasonResult,
-      CreateLeagueSeasonPayload
-    >({
-      queryFn: async (payload) => {
-        try {
-          const result = await createLeagueSeason(payload);
+          const result = await createLeagueSeasonDriver(payload);
 
           if (!result.success) {
             return {
@@ -687,35 +844,41 @@ export const leagueApi = createApi({
         }
       },
       invalidatesTags: (_result, _error, payload) => [
-        { type: "LeagueSeasons", id: payload.leagueId },
+        { type: "LeagueSeasonDrivers", id: payload.divisionId },
       ],
     }),
-    // updateLeagueParticipantRole: builder.mutation<
-    //   UpdateLeagueParticipantRoleResult,
-    //   UpdateLeagueParticipantRolePayload
-    // >({
-    //   queryFn: async (payload) => {
-    //     try {
-    //       const result = await updateLeagueParticipantRole(payload);
+    createLeagueSeasonTeam: builder.mutation<
+      CreateLeagueSeasonTeamResult,
+      {
+        seasonId: string;
+        divisionId: string;
+        teamName: string;
+      }
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await createLeagueSeasonTeam(payload);
 
-    //       if (!result.success) {
-    //         return {
-    //           error: {
-    //             status: result.error.status,
-    //             data: result.error,
-    //           },
-    //         };
-    //       }
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
 
-    //       return { data: result };
-    //     } catch (error) {
-    //       return { error };
-    //     }
-    //   },
-    //   invalidatesTags: (_result, _error, payload) => [
-    //     { type: "LeagueParticipants", id: payload.leagueId },
-    //   ],
-    // }),
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueSeasonTeams", id: payload.divisionId },
+      ],
+    }),
+
+    // UPDATE Requests
     updateLeagueSeason: builder.mutation<
       UpdateLeagueSeasonResult,
       UpdateLeagueSeasonPayload
@@ -765,6 +928,173 @@ export const leagueApi = createApi({
       invalidatesTags: (_result, _error, payload) => [
         { type: "LeagueApplicationOptions", id: payload.leagueId },
       ],
+    }),
+    updateLeagueSeasonDriverTeam: builder.mutation<
+      UpdateLeagueSeasonDriverResult,
+      {
+        driverId: string;
+        teamId: string;
+      }
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await updateLeagueSeasonDriverTeam(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueSeasonDrivers", id: payload.driverId },
+      ],
+    }),
+    updateLeagueSeasonTeam: builder.mutation<
+      UpdateLeagueSeasonTeamResult,
+      UpdateLeagueSeasonTeamPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await updateLeagueSeasonTeam(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueSeasonTeams", id: payload.teamId },
+      ],
+    }),
+
+    // DELETE Requests
+    unfollowLeague: builder.mutation<
+      UnfollowLeagueResult,
+      UnfollowLeaguePayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const data = await unfollowLeagueService(payload);
+          return { data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueFollowers", id: payload.leagueId },
+        { type: "LeagueFollowing", id: payload.accountId },
+      ],
+    }),
+    removeLeagueFollower: builder.mutation<
+      RemoveLeagueFollowerResult,
+      RemoveLeagueFollowerPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const data = await removeLeagueFollowerService(payload);
+          return { data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueFollowers", id: payload.leagueId },
+        "LeagueFollowing",
+      ],
+    }),
+    removeLeagueJoinRequest: builder.mutation<
+      RemoveLeagueJoinRequestResult,
+      RemoveLeagueJoinRequestPayload & { leagueId: string }
+    >({
+      queryFn: async ({ requestId }) => {
+        try {
+          const result = await removeLeagueJoinRequestService({ requestId });
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueJoinRequests", id: payload.leagueId },
+      ],
+    }),
+    removeLeagueInvite: builder.mutation<
+      RemoveLeagueInviteResult,
+      RemoveLeagueInvitePayload
+    >({
+      queryFn: async ({ inviteId }) => {
+        try {
+          const result = await removeLeagueInviteById(inviteId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueInvites", id: payload.leagueId },
+      ],
+    }),
+    removeLeagueParticipantRole: builder.mutation<
+      RemoveLeagueParticipantRoleResult,
+      RemoveLeagueParticipantRolePayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await removeLeagueParticipantRole(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: () => ["LeagueParticipants"],
     }),
     removeLeagueParticipant: builder.mutation<
       RemoveLeagueParticipantResult,
@@ -842,34 +1172,58 @@ export const leagueApi = createApi({
         { type: "LeagueApplicationOptions", id: payload.leagueId },
       ],
     }),
-        getPendingLeagueInvites: builder.query<LeagueInviteTable[], string>({
-          queryFn: async (leagueId, api) => {
-            try {
-              const result: GetLeagueInvitesResult = await getPendingLeagueInvitesByLeagueId(
-                leagueId,
-                api.signal,
-              );
-    
-              if (!result.success) {
-                return {
-                  error: {
-                    status: result.error.status,
-                    data: result.error,
-                  },
-                };
-              }
-    
-              return { data: result.data };
-            } catch (error) {
-              return {
-                error,
-              };
-            }
-          },
-          providesTags: (_result, _error, leagueId) => [
-            { type: "LeagueInvites", id: leagueId },
-          ],
-        }),
+    removeLeagueSeasonDriver: builder.mutation<
+      RemoveLeagueSeasonDriverResult,
+      RemoveLeagueSeasonDriverPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await removeLeagueSeasonDriver(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueSeasonDrivers", id: payload.driverId },
+      ],
+    }),
+    removeLeagueSeasonTeam: builder.mutation<
+      RemoveLeagueSeasonTeamResult,
+      RemoveLeagueSeasonTeamPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await removeLeagueSeasonTeam(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueSeasonTeams", id: payload.teamId },
+      ],
+    }),
   }),
 });
 
@@ -877,6 +1231,16 @@ export const {
   useAddLeagueApplicationOptionsMutation,
   useAddLeagueParticipantMutation,
   useCreateLeagueJoinRequestMutation,
+  useCreateLeagueSeasonDriverMutation,
+  useGetLeagueSeasonDriversByDivisionQuery,
+  useGetLeagueSeasonDriversBySeasonIdQuery,
+  useUpdateLeagueSeasonDriverTeamMutation,
+  useRemoveLeagueSeasonDriverMutation,
+  useCreateLeagueSeasonTeamMutation,
+  useGetLeagueSeasonTeamsByDivisionQuery,
+  useGetLeagueSeasonTeamsBySeasonIdQuery,
+  useUpdateLeagueSeasonTeamMutation,
+  useRemoveLeagueSeasonTeamMutation,
   useRemoveLeagueJoinRequestMutation,
   useRemoveLeagueInviteMutation,
   useJoinLeagueWithRolesMutation,
@@ -902,7 +1266,6 @@ export const {
   useRemoveLeagueParticipantMutation,
   useRemoveLeagueParticipantRoleMutation,
   useRemoveLeagueSeasonMutation,
-  // useUpdateLeagueParticipantRoleMutation,
   useUpdateLeagueApplicationOptionsMutation,
   useUpdateLeagueSeasonMutation,
   useGetPendingLeagueInvitesQuery,

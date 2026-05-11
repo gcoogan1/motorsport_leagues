@@ -20,6 +20,12 @@ import {
   // useUpdateLeagueParticipantRoleMutation,
   useUpdateLeagueApplicationOptionsMutation,
   useUpdateLeagueSeasonMutation,
+  useCreateLeagueSeasonDriverMutation,
+  useRemoveLeagueSeasonDriverMutation,
+  useUpdateLeagueSeasonDriverTeamMutation,
+  useCreateLeagueSeasonTeamMutation,
+  useUpdateLeagueSeasonTeamMutation,
+  useRemoveLeagueSeasonTeamMutation,
 } from "@/rtkQuery/API/leagueApi";
 
 // Mutation for adding league application options.
@@ -118,4 +124,34 @@ export const useUpdateLeagueApplicationOptions = () => {
 // Mutation for removing a SEASON from a league.
 export const useRemoveLeagueSeason = () => {
   return useRemoveLeagueSeasonMutation();
+};
+
+// Mutation for adding a driver to a SEASON in a league.
+export const useAddLeagueSeasonDriver = () => {
+  return useCreateLeagueSeasonDriverMutation();
+};
+
+// Mutation for updated a driver's team affiliation in a SEASON in a league.
+export const useUpdateLeagueSeasonDriverTeam = () => {
+  return useUpdateLeagueSeasonDriverTeamMutation();
+};
+
+// Mutation for removing a driver from a SEASON in a league.
+export const useRemoveLeagueSeasonDriver = () => {
+  return useRemoveLeagueSeasonDriverMutation();
+};
+
+// Mutation for adding a team to a SEASON in a league.
+export const useAddLeagueSeasonTeam = () => {
+  return useCreateLeagueSeasonTeamMutation();
+};
+
+// Mutation for updated a team's name in a SEASON in a league.
+export const useUpdateLeagueSeasonTeam = () => {
+  return useUpdateLeagueSeasonTeamMutation();
+};
+
+// Mutation for removing a team from a SEASON in a league.
+export const useRemoveLeagueSeasonTeam = () => {
+  return useRemoveLeagueSeasonTeamMutation();
 };
