@@ -29,6 +29,7 @@ import Settings from "@/features/leagues/forms/Edit/Settings/Settings";
 import Roles from "@/features/leagues/forms/Roles/Roles";
 import UnsavedChanges from "@/features/leagues/modals/errors/UnsavedChanges/UnsavedChanges";
 import SeasonSettings from "@/features/leagues/forms/Edit/SeasonSettings/SeasonSettings";
+import DriverAssignments from "@/features/leagues/forms/Assignments/DriverAssignments/DriverAssignments";
 
 //TODO: Replace panelContent with SheetForms for each section once they are developed, and implement logic to fetch and display actual data for each section.
 
@@ -40,7 +41,7 @@ const LeagueManagment = () => {
   const location = useLocation();
   const { leagueId } = useParams<{ leagueId: string }>();
   const [activeSection, setActiveSection] =
-    useState<ManageMenuSection>("season-settings");
+    useState<ManageMenuSection>("driver-assignments");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   // const activePanel = panelContent[activeSection];
   const [openManageMenu, setOpenManageMenu] = useState(false);
@@ -51,7 +52,8 @@ const LeagueManagment = () => {
   );
   const { data: seasons = [] } = useLeagueSeasons(leagueId ?? "");
   const requestedSeasonId =
-    (location.state as { selectedSeasonId?: string } | null)?.selectedSeasonId ?? "";
+    (location.state as { selectedSeasonId?: string } | null)
+      ?.selectedSeasonId ?? "";
 
   const seasonOptions = useMemo<SelectButtonOption[]>(
     () =>
@@ -61,7 +63,7 @@ const LeagueManagment = () => {
       })),
     [seasons],
   );
-  // Set default selected season to the one specified in location state (from league page), 
+  // Set default selected season to the one specified in location state (from league page),
   // or the most recent season if the specified one doesn't exist or isn't provided.
   const resolvedSelectedSeason = useMemo(() => {
     if (seasons.length === 0) {
@@ -139,7 +141,7 @@ const LeagueManagment = () => {
     ) : activeSection === "overview-page" && activeSeasonData ? (
       <>{activeSeasonData.season_name}</>
     ) : activeSection === "driver-assignments" && activeSeasonData ? (
-      <>{activeSeasonData.season_name}</>
+      <DriverAssignments seasonData={activeSeasonData} />
     ) : activeSection === "schedule-rounds" && activeSeasonData ? (
       <>{activeSeasonData.season_name}</>
     ) : activeSection === "enter-results" && activeSeasonData ? (
@@ -157,7 +159,10 @@ const LeagueManagment = () => {
     },
   ) => {
     const isGuardedSection =
-      activeSection === "league-settings" || activeSection === "participant-roles" || activeSection === "season-settings";
+      activeSection === "league-settings" ||
+      activeSection === "participant-roles" ||
+      activeSection === "season-settings" ||
+      activeSection === "driver-assignments";
 
     if (!isGuardedSection || !hasUnsavedChanges) {
       action();
@@ -183,7 +188,7 @@ const LeagueManagment = () => {
     handlePendingNavigation(() => {
       navigate(`/league/${leagueId}`);
     });
-  }
+  };
 
   const handleSectionChange = (section: ManageMenuSection) => {
     if (section === activeSection) {
@@ -201,7 +206,10 @@ const LeagueManagment = () => {
 
   return (
     <Wrapper>
-      <SubNavbar name={currentLeague?.league_name ?? "League"} onBack={handleGoBack} />
+      <SubNavbar
+        name={currentLeague?.league_name ?? "League"}
+        onBack={handleGoBack}
+      />
       <ContentContainer>
         <Content>
           {isLargeScreen ? (

@@ -20,7 +20,7 @@ export const createLeagueSeasonDivision = async ({
 }: {
   seasonId: string;
   divisionNumber: number;
-  divisionName?: string;
+  divisionName: string;
 }) => {
   const { data, error } = await supabase
     .from("league_season_division")

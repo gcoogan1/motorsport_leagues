@@ -118,7 +118,7 @@ export type LeagueSeasonDivisionTable = {
   created_at: string;
   season_id: string;
   division_number: number;
-  division_name?: string;
+  division_name: string;
 };
 
 // Driver is per division, but not necessarily on a team
