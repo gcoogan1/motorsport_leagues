@@ -11,14 +11,31 @@ type FilterBarProps = {
   rounds: FilterItem[];
   events: FilterItem[];
   sessions: FilterItem[];
+  selectedDivision?: string;
+  onDivisionChange?: (value: string) => void;
   text?: string;
 }
 
-const FilterBar = ({ divisions, rounds, events, sessions, text }: FilterBarProps) => {
+const FilterBar = ({
+  divisions,
+  rounds,
+  events,
+  sessions,
+  selectedDivision,
+  onDivisionChange,
+  text,
+}: FilterBarProps) => {
   return (
     <FilterBarContainer $hasText={!!text}>
       <FilterList>
-      {divisions.length > 0 && (<SelectButton label={divisions[0].label} options={divisions} />)}
+      {divisions.length > 0 && (
+        <SelectButton
+          label={divisions[0].label}
+          value={selectedDivision}
+          onChange={onDivisionChange}
+          options={divisions}
+        />
+      )}
       {rounds.length > 0 && (<SelectButton label={rounds[0].label} options={rounds} />)}
       {events.length > 0 && (<SelectButton label={events[0].label} options={events} />)}
       {sessions.length > 0 && (<SelectButton label={sessions[0].label} options={sessions} />)}
