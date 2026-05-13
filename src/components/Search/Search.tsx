@@ -64,6 +64,7 @@ const Search = ({
               tabs={tabs}
               activeTab={activeTab}
               onChange={onTabChange}
+              fullWidth
             />
             <ListContainer>
               <SearchInput name={name} placeholder={placeholder} />

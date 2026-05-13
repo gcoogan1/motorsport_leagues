@@ -3,15 +3,15 @@ import { designTokens } from "@/app/design/tokens";
 
 const { colors, borders, layout } = designTokens;
 
-export const SwitchContainer = styled.div`
+export const SwitchContainer = styled.div<{ fullWidth?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: ${borders.radius.round};
   background: ${colors.base.translucent10};
+  width: ${({ fullWidth }) => (fullWidth ? "100%" : "auto")};
   gap: ${layout.space.xSmall};
   padding: ${layout.space.xSmall};
-  width: 100%;
 
   ${layout.mediaQueries.mobile} {
     overflow-x: auto;

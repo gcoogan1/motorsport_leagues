@@ -30,6 +30,7 @@ import Roles from "@/features/leagues/forms/Roles/Roles";
 import UnsavedChanges from "@/features/leagues/modals/errors/UnsavedChanges/UnsavedChanges";
 import SeasonSettings from "@/features/leagues/forms/Edit/SeasonSettings/SeasonSettings";
 import DriverAssignments from "@/features/leagues/forms/Assignments/DriverAssignments/DriverAssignments";
+import TeamAssignments from "@/features/leagues/forms/Assignments/TeamAssignments/TeamAssignments";
 
 //TODO: Replace panelContent with SheetForms for each section once they are developed, and implement logic to fetch and display actual data for each section.
 
@@ -141,7 +142,9 @@ const LeagueManagment = () => {
     ) : activeSection === "overview-page" && activeSeasonData ? (
       <>{activeSeasonData.season_name}</>
     ) : activeSection === "driver-assignments" && activeSeasonData ? (
-      <DriverAssignments seasonData={activeSeasonData} />
+      <>
+        {activeSeasonData.is_team_championship ? <TeamAssignments seasonData={activeSeasonData} /> : <DriverAssignments seasonData={activeSeasonData} />}
+      </>
     ) : activeSection === "schedule-rounds" && activeSeasonData ? (
       <>{activeSeasonData.season_name}</>
     ) : activeSection === "enter-results" && activeSeasonData ? (
