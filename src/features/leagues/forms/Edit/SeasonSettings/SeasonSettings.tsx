@@ -49,7 +49,7 @@ const SeasonSettings = ({
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
   const [updateLeagueSeason] = useUpdateLeagueSeason();
-  const accountId = useSelector((state: RootState) => state.account.data?.id);
+  const accountId = useSelector((state: RootState) => state?.account.data?.id);
   const [isSaving, setIsSaving] = useState(false);
   const [seasonStatus, setSeasonStatus] = useState<
     SeasonSettingsSchema["seasonStatus"]

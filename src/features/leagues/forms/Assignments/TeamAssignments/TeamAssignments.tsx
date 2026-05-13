@@ -68,12 +68,17 @@ import {
   getTeamKey,
   TEAM_COLUMN_STYLE,
 } from "./TeamAssignments.util";
+import DriversAssigned from "@/features/leagues/modals/errors/DriversAssigned/DriversAssigned";
+import CannotSave from "@/features/leagues/modals/errors/CannotSave/CannotSave";
+import NoTeams from "@/features/leagues/modals/errors/NoTeams/NoTeams";
+import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
 
 type TeamAssignmentsProps = {
   seasonData: LeagueSeasonTable;
+  onDirtyChange?: (isDirty: boolean) => void;
 };
 
-const TeamAssignments = ({ seasonData }: TeamAssignmentsProps) => {
+const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) => {
   const { openModal } = useModal();
   const { showToast } = useToast();
   const [selectedDivisionId, setSelectedDivisionId] = useState("");
@@ -120,14 +125,17 @@ const TeamAssignments = ({ seasonData }: TeamAssignmentsProps) => {
   const {
     control,
     clearErrors,
-    setError,
+    getValues,
+    reset,
     formState: { errors },
+  } = formMethods;
+  const {
+    formState: { isDirty },
   } = formMethods;
   const {
     fields: teamFields,
     append: appendTeam,
     remove: removeTeamRow,
-    replace: replaceTeams,
   } = useFieldArray({
     control,
     name: "teams",
@@ -136,7 +144,6 @@ const TeamAssignments = ({ seasonData }: TeamAssignmentsProps) => {
     fields: assignmentFields,
     append: appendAssignment,
     remove: removeAssignment,
-    replace: replaceAssignments,
   } = useFieldArray({
     control,
     name: "assignments",
@@ -187,11 +194,13 @@ const TeamAssignments = ({ seasonData }: TeamAssignmentsProps) => {
       return;
     }
 
-    replaceTeams([]);
-    replaceAssignments([]);
+    reset(
+      { teams: [], assignments: [] },
+      { keepDirty: false, keepTouched: false },
+    );
     setLoadedTeamsKey("");
     setLoadedAssignmentsKey("");
-  }, [activeDivisionId, replaceAssignments, replaceTeams]);
+  }, [activeDivisionId, reset]);
 
   
   // -- Drivers -- //
@@ -246,9 +255,15 @@ const TeamAssignments = ({ seasonData }: TeamAssignmentsProps) => {
       return;
     }
 
-    replaceTeams(persistedTeams);
+    reset(
+      {
+        ...getValues(),
+        teams: persistedTeams,
+      },
+      { keepDirty: false, keepTouched: false },
+    );
     setLoadedTeamsKey(persistedTeamsKey);
-  }, [loadedTeamsKey, persistedTeams, persistedTeamsKey, replaceTeams]);
+  }, [getValues, loadedTeamsKey, persistedTeams, persistedTeamsKey, reset]);
 
   // Converts saved team assignments into driver rows for the active division.
   const persistedAssignments = useMemo(
@@ -271,14 +286,42 @@ const TeamAssignments = ({ seasonData }: TeamAssignmentsProps) => {
       return;
     }
 
-    replaceAssignments(persistedAssignments);
+    reset(
+      {
+        ...getValues(),
+        assignments: persistedAssignments,
+      },
+      { keepDirty: false, keepTouched: false },
+    );
     setLoadedAssignmentsKey(persistedAssignmentsKey);
   }, [
+    getValues,
     loadedAssignmentsKey,
     persistedAssignments,
     persistedAssignmentsKey,
-    replaceAssignments,
+    reset,
   ]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    if (!isDirty) {
+      return undefined;
+    }
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isDirty]);
 
   // Indexes persisted driver records by profile id for save-time updates.
   const persistedAssignmentMap = useMemo(
@@ -368,6 +411,7 @@ const TeamAssignments = ({ seasonData }: TeamAssignmentsProps) => {
   // Add driver row
   const appendNextDriver = () => {
     if (teamOptions.length === 0) {
+      openModal(<NoTeams />);
       return;
     }
 
@@ -383,6 +427,7 @@ const TeamAssignments = ({ seasonData }: TeamAssignmentsProps) => {
     );
 
     if (!nextDriver) {
+      openModal(<NoDrivers />);
       return;
     }
 
@@ -412,6 +457,7 @@ const TeamAssignments = ({ seasonData }: TeamAssignmentsProps) => {
         : false;
 
       setActiveTab(hasTeamErrors ? "Team" : "Driver");
+      openModal(<CannotSave />);
       return;
     }
 
@@ -573,14 +619,8 @@ const TeamAssignments = ({ seasonData }: TeamAssignmentsProps) => {
     );
 
     if (hasAssignedDrivers) {
-      setError(`teams.${index}.teamName`, {
-        type: "manual",
-        message: TEAM_DELETE_BLOCKED_MESSAGE,
-      });
-      showToast({
-        usage: "error",
-        message: TEAM_DELETE_BLOCKED_MESSAGE,
-      });
+      openModal(<DriversAssigned />);
+      
       return;
     }
 

@@ -143,7 +143,17 @@ const LeagueManagment = () => {
       <>{activeSeasonData.season_name}</>
     ) : activeSection === "driver-assignments" && activeSeasonData ? (
       <>
-        {activeSeasonData.is_team_championship ? <TeamAssignments seasonData={activeSeasonData} /> : <DriverAssignments seasonData={activeSeasonData} />}
+        {activeSeasonData.is_team_championship ? (
+          <TeamAssignments
+            seasonData={activeSeasonData}
+            onDirtyChange={setHasUnsavedChanges}
+          />
+        ) : (
+          <DriverAssignments
+            seasonData={activeSeasonData}
+            onDirtyChange={setHasUnsavedChanges}
+          />
+        )}
       </>
     ) : activeSection === "schedule-rounds" && activeSeasonData ? (
       <>{activeSeasonData.season_name}</>

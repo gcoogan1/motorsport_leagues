@@ -44,6 +44,7 @@ import {
   DRIVER_TABLE_STYLE,
   type DriverAssignmentRow,
 } from "./DriverAssignments.util";
+import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
 
 type DriverAssignmentsFormValues = {
   assignments: DriverAssignmentRow[];
@@ -51,9 +52,10 @@ type DriverAssignmentsFormValues = {
 
 type DriverAssignmentsProps = {
   seasonData: LeagueSeasonTable;
+  onDirtyChange?: (isDirty: boolean) => void;
 }
 
-const DriverAssignments = ({ seasonData }: DriverAssignmentsProps) => {
+const DriverAssignments = ({ seasonData, onDirtyChange }: DriverAssignmentsProps) => {
   const { openModal } = useModal();
   const { showToast } = useToast();
   const [selectedDivisionId, setSelectedDivisionId] = useState("");
@@ -69,8 +71,12 @@ const DriverAssignments = ({ seasonData }: DriverAssignmentsProps) => {
       assignments: [],
     },
   });
-  const { control } = formMethods;
-  const { fields, append, remove, replace } = useFieldArray({
+  const {
+    control,
+    reset,
+    formState: { isDirty },
+  } = formMethods;
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "assignments",
   });
@@ -102,9 +108,12 @@ const DriverAssignments = ({ seasonData }: DriverAssignmentsProps) => {
       return;
     }
 
-    replace([]);
+    reset(
+      { assignments: [] },
+      { keepDirty: false, keepTouched: false },
+    );
     setHydratedDivisionKey("");
-  }, [selectedDivisionId, replace]);
+  }, [reset, selectedDivisionId]);
 
   // -- Drivers -- //
   const driverParticipants = useMemo(
@@ -143,9 +152,33 @@ const DriverAssignments = ({ seasonData }: DriverAssignmentsProps) => {
       return;
     }
 
-    replace(persistedAssignments);
+    reset(
+      { assignments: persistedAssignments },
+      { keepDirty: false, keepTouched: false },
+    );
     setHydratedDivisionKey(persistedAssignmentsKey);
-  }, [hydratedDivisionKey, persistedAssignments, persistedAssignmentsKey, replace]);
+  }, [hydratedDivisionKey, persistedAssignments, persistedAssignmentsKey, reset]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    if (!isDirty) {
+      return undefined;
+    }
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isDirty]);
 
   const persistedAssignmentMap = useMemo(
     () => buildPersistedAssignmentMap(persistedAssignments),
@@ -204,6 +237,7 @@ const DriverAssignments = ({ seasonData }: DriverAssignmentsProps) => {
     );
 
     if (!nextDriver) {
+      openModal(<NoDrivers />);
       return;
     }
 
