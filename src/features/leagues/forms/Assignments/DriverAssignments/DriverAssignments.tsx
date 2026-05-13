@@ -16,8 +16,6 @@ import {
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import type {
-  LeagueParticipantProfile,
-  LeagueSeasonDriverTable,
   LeagueSeasonTable,
 } from "@/types/league.types";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
@@ -35,11 +33,17 @@ import {
   TableRow,
   TableWrapper,
 } from "@/components/Tables/InputTable/InputTable.styles";
-
-type DriverAssignmentRow = {
-  assignmentId?: string;
-  driver: string;
-};
+import {
+  buildDivisionOptions,
+  buildDriverOptions,
+  buildDriverParticipants,
+  buildDriversAssignedToOtherDivisions,
+  buildParticipantOptionsByProfileId,
+  buildPersistedAssignmentMap,
+  buildPersistedAssignments,
+  DRIVER_TABLE_STYLE,
+  type DriverAssignmentRow,
+} from "./DriverAssignments.util";
 
 type DriverAssignmentsFormValues = {
   assignments: DriverAssignmentRow[];
@@ -74,13 +78,7 @@ const DriverAssignments = ({ seasonData }: DriverAssignmentsProps) => {
 
   // -- Division -- //
   const divisionOptions = useMemo(
-    () =>
-      seasonDivisions.data
-        ? seasonDivisions.data.map((division) => ({
-            label: division.division_name,
-            value: division.id,
-          }))
-        : [],
+    () => buildDivisionOptions(seasonDivisions.data),
     [seasonDivisions.data],
   );
 
@@ -110,43 +108,17 @@ const DriverAssignments = ({ seasonData }: DriverAssignmentsProps) => {
 
   // -- Drivers -- //
   const driverParticipants = useMemo(
-    () =>
-      (leagueParticipants.data ?? []).filter((participant: LeagueParticipantProfile) =>
-        participant.roles.includes("driver"),
-      ),
+    () => buildDriverParticipants(leagueParticipants.data),
     [leagueParticipants.data],
   );
 
   const participantOptionsByProfileId = useMemo(
-    () =>
-      new Map(
-        (leagueParticipants.data ?? []).map((participant: LeagueParticipantProfile) => [
-          participant.profile_id,
-          {
-            label: participant.username,
-            value: participant.profile_id,
-            secondaryInfo: participant.game_type,
-            avatar: {
-              avatarType: participant.avatar_type,
-              avatarValue: participant.avatar_value,
-            },
-          },
-        ]),
-      ),
+    () => buildParticipantOptionsByProfileId(leagueParticipants.data),
     [leagueParticipants.data],
   );
 
   const driverOptions = useMemo(
-    () =>
-      driverParticipants.map((participant) => ({
-        label: participant.username,
-        value: participant.profile_id,
-        secondaryInfo: participant.game_type,
-        avatar: {
-          avatarType: participant.avatar_type,
-          avatarValue: participant.avatar_value,
-        },
-      })),
+    () => buildDriverOptions(driverParticipants),
     [driverParticipants],
   );
 
@@ -154,13 +126,7 @@ const DriverAssignments = ({ seasonData }: DriverAssignmentsProps) => {
 
 
   const persistedAssignments = useMemo(
-    () =>
-      (seasonDriversBySeason.data ?? [])
-        .filter((assignment: LeagueSeasonDriverTable) => assignment.division_id === selectedDivisionId)
-        .map((assignment: LeagueSeasonDriverTable) => ({
-        assignmentId: assignment.id,
-        driver: assignment.profile_id,
-        })),
+    () => buildPersistedAssignments(seasonDriversBySeason.data, selectedDivisionId),
     [seasonDriversBySeason.data, selectedDivisionId],
   );
 
@@ -182,22 +148,16 @@ const DriverAssignments = ({ seasonData }: DriverAssignmentsProps) => {
   }, [hydratedDivisionKey, persistedAssignments, persistedAssignmentsKey, replace]);
 
   const persistedAssignmentMap = useMemo(
-    () =>
-      new Map(
-        persistedAssignments
-          .filter((assignment) => assignment.assignmentId)
-          .map((assignment) => [assignment.assignmentId as string, assignment.driver]),
-      ),
+    () => buildPersistedAssignmentMap(persistedAssignments),
     [persistedAssignments],
   );
 
   // Drivers that are assigned to other divisions in the same season should not be available for selection in the current division, to prevent duplicate assignments across divisions.
   const driversAssignedToOtherDivisions = useMemo(
     () =>
-      new Set(
-        (seasonDriversBySeason.data ?? [])
-          .filter((assignment: LeagueSeasonDriverTable) => assignment.division_id !== selectedDivisionId)
-          .map((assignment: LeagueSeasonDriverTable) => assignment.profile_id),
+      buildDriversAssignedToOtherDivisions(
+        seasonDriversBySeason.data,
+        selectedDivisionId,
       ),
     [seasonDriversBySeason.data, selectedDivisionId],
   );
@@ -334,7 +294,7 @@ const DriverAssignments = ({ seasonData }: DriverAssignmentsProps) => {
   const listChildren = (
     <>
       {fields.length > 0 && (
-        <TableWrapper style={{ width: "min(100%, 360px)", marginInline: "auto" }}>
+        <TableWrapper style={DRIVER_TABLE_STYLE}>
           <ParticipantHeader>
             <TableRow>
               <NumberColumn>

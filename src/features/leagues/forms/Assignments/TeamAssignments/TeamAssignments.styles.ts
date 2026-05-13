@@ -36,12 +36,13 @@ export const TableRow = styled.tr`
   }
 `;
 
-export const ExtraCell = styled.td`
+export const ExtraCell = styled.td<{ $isError?: boolean }>`
   display: flex;
   width: 44px;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
+  padding-bottom: ${({ $isError }) => ($isError ? "24px" : "0px")}; // Keep center aligned with error message
 `;
 
 export const ParticipantHeader = styled.thead`
@@ -92,13 +93,14 @@ export const NumberColumn = styled.th`
   }
 `;
 
-export const NumberCell = styled.td`
+export const NumberCell = styled.td<{ $isError?: boolean }>`
   display: flex;
   width: 48px;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
   text-align: center;
+  padding-bottom: ${({ $isError }) => ($isError ? "24px" : "0px")}; // Keep center aligned with error message
   ${layout.mediaQueries.mobile} {
     width: 40px;
   }
