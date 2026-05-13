@@ -113,6 +113,33 @@ export type LeagueSeasonTable = {
   season_status: LeagueStatus;
 };
 
+export type LeagueSeasonDivisionTable = {
+  id: string;
+  created_at: string;
+  season_id: string;
+  division_number: number;
+  division_name: string;
+};
+
+// Driver is per division, but not necessarily on a team
+export type LeagueSeasonDriverTable = {
+  id: string;
+  created_at: string;
+  season_id: string;
+  profile_id: string;
+  division_id: string;
+  team_id?: string;
+};
+
+// Team is per division (if team championship)
+export type LeagueSeasonTeamTable = {
+  id: string;
+  created_at: string;
+  season_id: string;
+  division_id: string;
+  team_name: string;
+};
+
 // -- HELPER TYPES -- //
 
 // League with Info --> combines league table with related info like seasons and participants for display purposes (not in Supabase, but used in service results)
@@ -271,7 +298,7 @@ export type GetLeagueFollowingResult =
   | GetLeagueFollowingSuccess
   | SupabaseError;
 
-// Get League Seasons --> Result type
+// Get League Seasons --> Success type
 export type GetLeagueSeasonsSuccess = {
   success: true;
   data: LeagueSeasonTable[];
@@ -279,6 +306,50 @@ export type GetLeagueSeasonsSuccess = {
 
 // Get League Seasons --> Result type
 export type GetLeagueSeasonsResult = GetLeagueSeasonsSuccess | SupabaseError;
+
+// Get League Season Divisions --> Success type
+export type GetLeagueSeasonDivisionsSuccess = {
+  success: true;
+  data: LeagueSeasonDivisionTable[];
+};
+
+// Get League Season Divisions --> Result type
+export type GetLeagueSeasonDivisionsResult =
+  | GetLeagueSeasonDivisionsSuccess
+  | SupabaseError;
+
+// Get League Season Division by Division ID --> Success type
+export type GetLeagueSeasonDivisionByIdSuccess = {
+  success: true;
+  data: LeagueSeasonDivisionTable;
+};
+
+// Get League Season Division by Division ID --> Result type
+export type GetLeagueSeasonDivisionByIdResult =
+  | GetLeagueSeasonDivisionByIdSuccess
+  | SupabaseError;
+
+// Get League Season Drivers --> Success type
+export type GetLeagueSeasonDriversSuccess = {
+  success: true;
+  data: LeagueSeasonDriverTable[];
+};
+
+// Get League Season Drivers --> Result type
+export type GetLeagueSeasonDriversResult =
+  | GetLeagueSeasonDriversSuccess
+  | SupabaseError;
+
+// Get League Season Teams --> Success type
+export type GetLeagueSeasonTeamsSuccess = {
+  success: true;
+  data: LeagueSeasonTeamTable[];
+};
+
+// Get League Season Teams --> Result type
+export type GetLeagueSeasonTeamsResult =
+  | GetLeagueSeasonTeamsSuccess
+  | SupabaseError;
 
 
 // -- CREATE/ADD -- //
@@ -440,6 +511,61 @@ export type CreateLeagueSeasonSuccess = {
 export type CreateLeagueSeasonResult =
   | CreateLeagueSeasonSuccess
   | SupabaseError;
+
+// Create League Season Division --> Payload type
+export type CreateLeagueSeasonDivisionPayload = {
+  seasonId: string;
+  divisionNumber: number;
+  divisionName?: string;
+};
+
+// Create League Season Division --> Success type
+export type CreateLeagueSeasonDivisionSuccess = {
+  success: true;
+  data: LeagueSeasonDivisionTable;
+};
+
+// Create League Season Division --> Result type
+export type CreateLeagueSeasonDivisionResult =
+  | CreateLeagueSeasonDivisionSuccess
+  | SupabaseError;
+
+// Create League Season Driver --> Payload type
+export type CreateLeagueSeasonDriverPayload = {
+  seasonId: string;
+  profileId: string;
+  divisionId: string;
+  teamId?: string;
+};
+
+// Create League Season Driver --> Success type
+export type CreateLeagueSeasonDriverSuccess = {
+  success: true;
+  data: LeagueSeasonDriverTable;
+};
+
+// Create League Season Driver --> Result type
+export type CreateLeagueSeasonDriverResult =
+  | CreateLeagueSeasonDriverSuccess
+  | SupabaseError;
+
+// Create League Season Team --> Payload type
+export type CreateLeagueSeasonTeamPayload = {
+  seasonId: string;
+  divisionId: string;
+  teamName: string;
+};
+
+// Create League Season Team --> Success type
+export type CreateLeagueSeasonTeamSuccess = {
+  success: true;
+  data: LeagueSeasonTeamTable;
+};
+
+// Create League Season Team --> Result type
+export type CreateLeagueSeasonTeamResult =
+  | CreateLeagueSeasonTeamSuccess
+  | SupabaseError;
   
 
 // -- EDIT/UPDATE -- //
@@ -506,6 +632,42 @@ export type UpdateLeagueSeasonSuccess = {
 // Update League Season --> Result type
 export type UpdateLeagueSeasonResult =
   | UpdateLeagueSeasonSuccess
+  | SupabaseError;
+
+// Update League Season Driver Team --> Payload type
+export type UpdateLeagueSeasonDriverPayload = {
+  driverId: string;
+  divisionId: string;
+  teamId: string;
+};
+
+// Update League Season Driver Team --> Success type
+export type UpdateLeagueSeasonDriverSuccess = {
+  success: true;
+  data: LeagueSeasonDriverTable;
+};
+
+// Update League Season Driver Team --> Result type
+export type UpdateLeagueSeasonDriverResult =
+  | UpdateLeagueSeasonDriverSuccess
+  | SupabaseError;
+
+
+// Update League Season Team Name --> Payload type
+export type UpdateLeagueSeasonTeamPayload = {
+  teamId: string;
+  teamName: string;
+};
+
+// Update League Season Team Name --> Success type
+export type UpdateLeagueSeasonTeamSuccess = {
+  success: true;
+  data: LeagueSeasonTeamTable;
+};
+
+// Update League Season Team Name --> Result type
+export type UpdateLeagueSeasonTeamResult =
+  | UpdateLeagueSeasonTeamSuccess
   | SupabaseError;
 
 
@@ -598,6 +760,36 @@ export type RemoveLeagueSeasonPayload = {
 
 // Remove League Season --> Result type
 export type RemoveLeagueSeasonResult =
+  | { success: true }
+  | SupabaseError;
+
+// Remove League Season Division --> Payload type
+export type RemoveLeagueSeasonDivisionPayload = {
+  divisionId: string;
+};
+
+// Remove League Season Division --> Result type
+export type RemoveLeagueSeasonDivisionResult =
+  | { success: true }
+  | SupabaseError;
+
+// Remove League Season Driver --> Payload type
+export type RemoveLeagueSeasonDriverPayload = {
+  driverId: string;
+};
+
+// Remove League Season Driver --> Result type
+export type RemoveLeagueSeasonDriverResult =
+  | { success: true }
+  | SupabaseError;
+
+// Remove League Season Team --> Payload type
+export type RemoveLeagueSeasonTeamPayload = {
+  teamId: string;
+};
+
+// Remove League Season Team --> Result type
+export type RemoveLeagueSeasonTeamResult =
   | { success: true }
   | SupabaseError;
 

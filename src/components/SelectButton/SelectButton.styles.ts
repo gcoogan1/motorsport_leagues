@@ -10,8 +10,8 @@ export const SelectButtonWrapper = styled.div`
     background: ${colors.base.translucent10};
     color: ${colors.text.text1};
     cursor: pointer;
-    padding-top: ${layout.space.xxSmall};
-    padding-bottom: ${layout.space.xxSmall};
+    padding-top: ${layout.space.xSmall};
+    padding-bottom: ${layout.space.xSmall};
     padding-left: ${layout.space.medium};
     padding-right: ${layout.space.xSmall};
     border-radius: ${borders.radius.round};

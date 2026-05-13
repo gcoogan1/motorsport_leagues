@@ -182,6 +182,7 @@ export const NumberText = styled.p`
 export const ParticipantCell = styled.td`
   display: flex;
   min-width: 120px;
+  width: 100%;
   max-width: 240px;
   align-items: center;
   flex: 1 0 0;

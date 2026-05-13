@@ -74,6 +74,7 @@ const PanelLayout = ({
             tabs={tabs}
             activeTab={activeTab}
             onChange={handleTabChange}
+            fullWidth
           />
         </PanelTabs>
       )}

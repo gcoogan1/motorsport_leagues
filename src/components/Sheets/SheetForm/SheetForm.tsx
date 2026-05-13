@@ -52,7 +52,6 @@ const SheetForm = ({
   isSaving = false,
   saveLoadingText = "Saving...",
 }: SheetFormProps) => {
-
   const isMobile = useMediaQuery("(max-width: 919px)");
 
   return (
@@ -62,13 +61,15 @@ const SheetForm = ({
           <Name>{seasonName}</Name>
           <Header>{header}</Header>
         </TitleContainer>
-        <BlockContainer>
-          <BlockHeaderContainer>
-            <BlockHeader>{blockHeader}</BlockHeader>
-            <BlockDescription>{blockDescription}</BlockDescription>
-          </BlockHeaderContainer>
-          {headerChildren && <BlockContents>{headerChildren}</BlockContents>}
-        </BlockContainer>
+        {blockHeader && (
+          <BlockContainer>
+            <BlockHeaderContainer>
+              <BlockHeader>{blockHeader}</BlockHeader>
+              <BlockDescription>{blockDescription}</BlockDescription>
+            </BlockHeaderContainer>
+            {headerChildren && <BlockContents>{headerChildren}</BlockContents>}
+          </BlockContainer>
+        )}
         {tabs && tabs}
         {filters && filters}
         <DetailsContainer>

@@ -10,12 +10,13 @@ type SegmentedTabProps = {
   tabs: Tabs[];
   activeTab: string;
   onChange: (tab: string) => void;
+  fullWidth?: boolean;
 };
 
-const SegmentedTab = ({ tabs, activeTab, onChange }: SegmentedTabProps) => {
+const SegmentedTab = ({ tabs, activeTab, onChange, fullWidth }: SegmentedTabProps) => {
 
   return (
-    <SwitchContainer>
+    <SwitchContainer fullWidth={fullWidth}>
       {tabs.map(({ label, shouldExpand }) => (
         <TabLink
           key={label}
