@@ -130,8 +130,8 @@ const LeagueManagment = () => {
   const activeSheet =
     activeSection === "league-settings" && leagueId ? (
       <Settings leagueId={leagueId} onDirtyChange={setHasUnsavedChanges} />
-    ) : activeSection === "participant-roles" && leagueId ? (
-      <Roles leagueId={leagueId} onDirtyChange={setHasUnsavedChanges} />
+    ) : activeSection === "participant-roles" && leagueId && activeSeasonData ? (
+      <Roles leagueId={leagueId} onDirtyChange={setHasUnsavedChanges} seasonData={activeSeasonData} />
     ) : activeSection === "season-settings" && activeSeasonData ? (
       <SeasonSettings
         seasonData={activeSeasonData}
