@@ -844,6 +844,7 @@ export const leagueApi = createApi({
         }
       },
       invalidatesTags: (_result, _error, payload) => [
+        "LeagueSeasonDrivers",
         { type: "LeagueSeasonDrivers", id: payload.divisionId },
       ],
     }),
@@ -955,6 +956,7 @@ export const leagueApi = createApi({
         }
       },
       invalidatesTags: (_result, _error, payload) => [
+        "LeagueSeasonDrivers",
         { type: "LeagueSeasonDrivers", id: payload.driverId },
       ],
     }),
@@ -1195,6 +1197,7 @@ export const leagueApi = createApi({
         }
       },
       invalidatesTags: (_result, _error, payload) => [
+        "LeagueSeasonDrivers",
         { type: "LeagueSeasonDrivers", id: payload.driverId },
       ],
     }),

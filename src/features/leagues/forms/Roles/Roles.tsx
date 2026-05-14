@@ -9,7 +9,7 @@ import { useLeagueDirectorContext } from "@/hooks/useLeagueDirectorContext";
 import { useLeagueInvites } from "@/rtkQuery/hooks/queries/useLeagueInvites";
 import { useOtherProfiles } from "@/rtkQuery/hooks/queries/useProfiles";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
-import { LEAGUE_PARTICIPANT_ROLES } from "@/types/league.types";
+import { LEAGUE_PARTICIPANT_ROLES, type LeagueSeasonTable } from "@/types/league.types";
 import {
   useLeagueApplicationOptions,
   useLeagueJoinRequests,
@@ -21,6 +21,7 @@ import {
   useRemoveLeagueParticipantRole,
   useUpdateLeagueApplicationOptions,
 } from "@/rtkQuery/hooks/mutations/useLeagueMutation";
+import { useGetLeagueSeasonDriversBySeasonIdQuery } from "@/rtkQuery/API/leagueApi";
 import { ParticipantTable } from "@/components/Tables/InputTable/InputTable";
 import ProfileIcon from "@assets/Icon/Profile.svg?react";
 import ContactIcon from "@assets/Icon/Contact.svg?react";
@@ -36,6 +37,7 @@ import RemoveParticipant from "@/features/leagues/modals/core/RemoveParticipant/
 import RejectRequest from "@/features/leagues/modals/core/RejectRequest/RejectRequest";
 import CancelInvite from "@/features/leagues/modals/core/CancelInvite/CancelInvite";
 import NoDirector from "@/features/leagues/modals/errors/NoDirector/NoDirector";
+import DriverInLineup from "../../modals/errors/DriverInLineup/DriverInLineup";
 import UnassignedParticipant from "@/features/leagues/modals/errors/UnassignedParticipant/UnassignedParticipant";
 import AddItem from "@/components/AddItem/AddItem";
 import { withMinDelay } from "@/utils/withMinDelay";
@@ -55,10 +57,11 @@ import {
 
 type RolesProps = {
   leagueId: string;
+  seasonData: LeagueSeasonTable;
   onDirtyChange?: (isDirty: boolean) => void;
 };
 
-const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
+const Roles = ({ leagueId, seasonData, onDirtyChange }: RolesProps) => {
   const { openModal } = useModal();
   const { showToast } = useToast();
   const hasHydratedRef = useRef(false);
@@ -72,6 +75,7 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
   const [addLeagueParticipantRole] = useAddLeagueParticipantRole();
   const [removeLeagueParticipantRole] = useRemoveLeagueParticipantRole();
   const [updateLeagueApplicationOptions] = useUpdateLeagueApplicationOptions();
+  const seasonDriversBySeason = useGetLeagueSeasonDriversBySeasonIdQuery(seasonData.id);
   const { data: leagueApplicationOptions } =
     useLeagueApplicationOptions(leagueId);
   const { data: joinRequests = [] } = useLeagueJoinRequests(leagueId);
@@ -216,6 +220,7 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
     [],
   );
 
+  // Previously saved roles by participant id - for change detection on submit
   const savedRolesByParticipantId = useMemo(
     () =>
       new Map<string, Set<LeagueRole>>(
@@ -336,6 +341,29 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
     });
   };
 
+  // Check if drivers are being removed from participants who are assigned as drivers in the current season.
+  const getSeasonDriverRoleRemovalIndexes = (rows: RolesFormValues["participants"]) => {
+    const currentSeasonDriverProfileIds = new Set(
+      (seasonDriversBySeason.data ?? []).map((driver) => driver.profile_id),
+    );
+
+    return rows.reduce<number[]>((indexes, row, index) => {
+      const previousRoles = savedRolesByParticipantId.get(row.participantId) ?? new Set();
+      const nextRoles = toRoleSet(row.selectedRoles);
+      const isRemovingDriverRole =
+        previousRoles.has("driver") && !nextRoles.has("driver");
+      const isCurrentSeasonDriver =
+        !!row.profileId && currentSeasonDriverProfileIds.has(row.profileId);
+
+      if (isRemovingDriverRole && isCurrentSeasonDriver) {
+        indexes.push(index);
+      }
+
+      return indexes;
+    }, []);
+  };
+
+
   // -- Handlers -- //
 
   const handleAddParticipant = () => {
@@ -379,6 +407,16 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
           if (noDirectorErrorIndexes.length > 0) {
             setParticipantRoleErrors(noDirectorErrorIndexes);
             openModal(<NoDirector />);
+            return;
+          }
+
+          const seasonDriverRoleRemovalIndexes = getSeasonDriverRoleRemovalIndexes(
+            data.participants,
+          );
+
+          if (seasonDriverRoleRemovalIndexes.length > 0) {
+            setParticipantRoleErrors(seasonDriverRoleRemovalIndexes);
+            openModal(<DriverInLineup />);
             return;
           }
 
@@ -738,12 +776,28 @@ const Roles = ({ leagueId, onDirtyChange }: RolesProps) => {
                     return;
                   }
 
+                  // Check if ONLY director
                   const isOnlyDirectorBeingRemoved =
                     (savedRolesByParticipantId.get(row.participantId)?.has("director") ?? false) &&
                     savedDirectorCount === 1;
 
                   if (isOnlyDirectorBeingRemoved) {
                     openModal(<NoDirector removeAttempt={true} />);
+                    return;
+                  }
+
+                  // Check if driver is in LINEUP for current season 
+                  const isDriverRoleBeingRemoved =
+                    savedRolesByParticipantId.get(row.participantId)?.has("driver") ?? false;
+
+                  const isCurrentSeasonDriver =
+                    !!row.profileId &&
+                    seasonDriversBySeason.data?.some(
+                      (driver) => driver.profile_id === row.profileId,
+                    );
+
+                  if (isDriverRoleBeingRemoved && isCurrentSeasonDriver) {
+                    openModal(<DriverInLineup />);
                     return;
                   }
 
