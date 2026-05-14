@@ -776,12 +776,28 @@ const Roles = ({ leagueId, seasonData, onDirtyChange }: RolesProps) => {
                     return;
                   }
 
+                  // Check if ONLY director
                   const isOnlyDirectorBeingRemoved =
                     (savedRolesByParticipantId.get(row.participantId)?.has("director") ?? false) &&
                     savedDirectorCount === 1;
 
                   if (isOnlyDirectorBeingRemoved) {
                     openModal(<NoDirector removeAttempt={true} />);
+                    return;
+                  }
+
+                  // Check if driver is in LINEUP for current season 
+                  const isDriverRoleBeingRemoved =
+                    savedRolesByParticipantId.get(row.participantId)?.has("driver") ?? false;
+
+                  const isCurrentSeasonDriver =
+                    !!row.profileId &&
+                    seasonDriversBySeason.data?.some(
+                      (driver) => driver.profile_id === row.profileId,
+                    );
+
+                  if (isDriverRoleBeingRemoved && isCurrentSeasonDriver) {
+                    openModal(<DriverInLineup />);
                     return;
                   }
 

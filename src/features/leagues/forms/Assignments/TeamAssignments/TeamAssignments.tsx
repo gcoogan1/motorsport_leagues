@@ -554,11 +554,6 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
 
             if (currentTeamId) {
               await removeLeagueSeasonDriver({ driverId: driverRecord.id }).unwrap();
-              await createLeagueSeasonDriver({
-                seasonId: seasonData.id,
-                divisionId: activeDivisionId,
-                profileId: driverRecord.profile_id,
-              }).unwrap();
             }
           }
 
