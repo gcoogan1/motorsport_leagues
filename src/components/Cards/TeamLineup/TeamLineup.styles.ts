@@ -9,7 +9,6 @@ export const TeamLineupWrapper = styled.div`
   position: relative;
   flex-direction: column;
   align-items: center;
-  min-width: 396px;
   max-width: 568px;
   width: 100%;
   border-radius: ${borders.radius.xxLarge};

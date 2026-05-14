@@ -11,7 +11,7 @@ export type TeamRow = {
   teamName: string;
 };
 
-export const ASSIGNMENT_TABS = [{ label: "Team" }, { label: "Driver" }];
+export const ASSIGNMENT_TABS = [{ label: "Teams" }, { label: "Drivers" }];
 export const TEAM_COLUMN_STYLE = { maxWidth: "none", flex: "1 1 0" } as const;
 
 // Turns a participant into a select option.

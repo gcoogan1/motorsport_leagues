@@ -16,6 +16,7 @@ import UserProfile from "@/components/Users/Profile/UserProfile";
 type DriverInfo = {
   id: string;
   username: string;
+  driverNumber: string;
   avatarType: "preset" | "upload";
   avatarValue: AvatarVariants | string;
   tags?: Tag[];
@@ -47,7 +48,7 @@ const TeamLineup = ({
           <TeamTitle>{teamName}</TeamTitle>
           {drivers.map((driver) => (
             <DriverInfo key={driver.id}>
-              <DriverName>{driver.username}</DriverName>
+              <DriverName>{`Driver ${driver.driverNumber}`}</DriverName>
               <UserProfile
                 username={driver.username}
                 avatarType={driver.avatarType}

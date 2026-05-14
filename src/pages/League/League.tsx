@@ -415,7 +415,10 @@ const League = () => {
           onLeagueChange={setActiveLeagueTab}
         />
         <TabContainer>
-          <ActiveLeagueTabComponent seasonStatus={activeSeasonStatus} />
+          <ActiveLeagueTabComponent
+            seasonStatus={activeSeasonStatus}
+            seasonData={activeSeasonData}
+          />
         </TabContainer>
       </ContentContainer>
     </Wrapper>

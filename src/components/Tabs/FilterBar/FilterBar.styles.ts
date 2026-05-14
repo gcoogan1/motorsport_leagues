@@ -50,7 +50,7 @@ export const FilterList = styled.div`
   gap: ${layout.space.xSmall};
   flex: 1 0 0;
   flex-wrap: wrap;
-  justify-content: center;
+  /* justify-content: center; */
 
 `
 

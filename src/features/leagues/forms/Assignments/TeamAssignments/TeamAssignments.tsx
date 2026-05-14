@@ -169,6 +169,13 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
     [seasonDivisions.data],
   );
 
+  const defaultDivisionId = useMemo(
+    () =>
+      seasonDivisions.data?.find((division) => division.division_number === 1)
+        ?.id ?? divisionOptions[0]?.value ?? "",
+    [divisionOptions, seasonDivisions.data],
+  );
+
   // Keeps the selected DIVISION option valid, defaulting to the first DIVISION.
   useEffect(() => {
     if (!divisionOptions.length) {
@@ -184,9 +191,9 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
         return currentValue;
       }
 
-      return divisionOptions[0]?.value ?? "";
+      return defaultDivisionId;
     });
-  }, [divisionOptions]);
+  }, [divisionOptions, defaultDivisionId]);
 
   // Clears the form rows before loading data for a different DIVISION.
   useEffect(() => {
@@ -456,7 +463,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
         ? teamErrors.some((team) => !!team?.teamName)
         : false;
 
-      setActiveTab(hasTeamErrors ? "Team" : "Driver");
+      setActiveTab(hasTeamErrors ? "Teams" : "Drivers");
       openModal(<CannotSave />);
       return;
     }
@@ -759,7 +766,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
         seasonName={seasonData.season_name}
         header={"Team Assignments"}
         filters={divisionFilter}
-        listChildren={activeTab === "Driver" ? driverListChildren : teamListChildren}
+        listChildren={activeTab === "Drivers" ? driverListChildren : teamListChildren}
         tabs={assignmentTabs}
         onSave={handleSave}
         isSaving={isSaving}
