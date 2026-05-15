@@ -113,6 +113,7 @@
 16. **Validation Checks Before Save**
     - If any participant has no role assigned → `UnassignedParticipant` error modal
     - If no director role exists in the participant list → `NoDirector` error modal
+    - If participant has a role of "driver" that is being removed AND they are a driver in the current season lineup -> `DriverInLineup` error modal
     - Modals in [src/features/leagues/modals/errors/UnassignedParticipant/UnassignedParticipant.tsx](src/features/leagues/modals/errors/UnassignedParticipant/UnassignedParticipant.tsx) and [src/features/leagues/modals/errors/NoDirector/NoDirector.tsx](src/features/leagues/modals/errors/NoDirector/NoDirector.tsx)
 
 17. **Context-Aware Success Toasts**
@@ -136,6 +137,9 @@
 
 - **No Director Role Assigned**
   - `NoDirector` modal blocks save
+
+- **Driver in Lineup**
+  - `DriverInLineup` modal blocks save and removal
 
 ### Accept Request Errors
 
