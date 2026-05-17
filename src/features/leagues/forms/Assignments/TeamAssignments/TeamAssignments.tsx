@@ -224,6 +224,17 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
     [leagueParticipants.data],
   );
 
+  const participantDetailsByProfileId = useMemo(
+    () =>
+      new Map(
+        (leagueParticipants.data ?? []).map((participant) => [
+          participant.profile_id,
+          participant,
+        ]),
+      ),
+    [leagueParticipants.data],
+  );
+
   // Builds the full driver option list for the selected division.
   const driverOptions = useMemo(
     () => buildDriverOptions(driverParticipants),
@@ -502,15 +513,19 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
 
       await withMinDelay(
         (async () => {
-          const createdTeams = await Promise.all(
-            newTeams.map((team) =>
-              createLeagueSeasonTeam({
-                seasonId: seasonData.id,
-                divisionId: activeDivisionId,
-                teamName: team.teamName,
-              }).unwrap(),
-            ),
-          );
+          const assignmentTimestamp = new Date().toISOString();
+
+          const createdTeams = [];
+           // Needed to ensure teams are created in order
+          for (const team of newTeams) {
+            const result = await createLeagueSeasonTeam({
+              seasonId: seasonData.id,
+              divisionId: activeDivisionId,
+              teamName: team.teamName,
+            }).unwrap();
+
+            createdTeams.push(result);
+          }
 
           await Promise.all(
             changedTeams.map((team) =>
@@ -555,6 +570,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
               await updateLeagueSeasonDriverTeam({
                 driverId: driverRecord.id,
                 teamId: desiredTeamId,
+                addedToTeam: assignmentTimestamp,
               }).unwrap();
               continue;
             }
@@ -570,8 +586,9 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
             }
 
             const resolvedTeamId = resolvedTeamIds.get(assignment.teamKey);
+            const participant = participantDetailsByProfileId.get(assignment.driver);
 
-            if (!resolvedTeamId) {
+            if (!resolvedTeamId || !participant) {
               continue;
             }
 
@@ -579,7 +596,12 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
               seasonId: seasonData.id,
               divisionId: activeDivisionId,
               profileId: assignment.driver,
+              displayName: participant.username,
+              gameType: participant.game_type,
+              avatarType: participant.avatar_type,
+              avatarValue: participant.avatar_value,
               teamId: resolvedTeamId,
+              addedToTeam: assignmentTimestamp,
             }).unwrap();
           }
 

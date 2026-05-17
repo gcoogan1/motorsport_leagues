@@ -125,8 +125,13 @@ export type LeagueSeasonDivisionTable = {
 export type LeagueSeasonDriverTable = {
   id: string;
   created_at: string;
+  added_to_team?: string;
   season_id: string;
   profile_id: string;
+  display_name?: string;
+  game_type?: GameType;
+  avatar_type?: "preset" | "upload";
+  avatar_value?: string;
   division_id: string;
   team_id?: string;
 };
@@ -536,6 +541,11 @@ export type CreateLeagueSeasonDriverPayload = {
   profileId: string;
   divisionId: string;
   teamId?: string;
+  addedToTeam?: string;
+  displayName: string;
+  gameType: GameType;
+  avatarType: "preset" | "upload";
+  avatarValue: string;
 };
 
 // Create League Season Driver --> Success type
@@ -637,8 +647,8 @@ export type UpdateLeagueSeasonResult =
 // Update League Season Driver Team --> Payload type
 export type UpdateLeagueSeasonDriverPayload = {
   driverId: string;
-  divisionId: string;
   teamId: string;
+  addedToTeam?: string;
 };
 
 // Update League Season Driver Team --> Success type

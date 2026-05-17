@@ -35,25 +35,23 @@ type LineupProps = {
 type LineupDriver = {
   seasonDriverId: string;
   createdAt: string;
+  addedToTeam: string | null;
   profileId: string;
+  displayName: string;
+  gameType: string;
+  avatarType: "preset" | "upload";
+  avatarValue: string;
+  tags: Tag[];
   divisionId: string;
   divisionName: string;
   teamId: string | null;
   teamName: string | null;
   teamDriverNumber?: number;
-  profile: {
-    participantId: string;
-    accountId: string;
-    username: string;
-    avatarType: "preset" | "upload";
-    avatarValue: string;
-    gameType: string;
-    roles: string[];
-  } | null;
 };
 
 type LineupTeam = {
   teamId: string;
+  createdAt: string;
   teamName: string;
   divisionId: string;
   divisionName: string;
@@ -65,6 +63,7 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
   const leagueId = seasonData?.league_id ?? "";
   const [activeTab, setActiveTab] = useState<string>(ASSIGNMENT_TABS[0].label);
   const [selectedDivisionId, setSelectedDivisionId] = useState("");
+
 
   // -- Data fetching and memoization -- //
   const seasonDivisions = useGetLeagueSeasonDivisionsQuery(seasonId, {
@@ -94,37 +93,31 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
     const teamsById = new Map(
       (seasonTeamsBySeason.data ?? []).map((team) => [team.id, team]),
     );
-    const participantsByProfileId = new Map(
+    const participantTagsByProfileId = new Map(
       (leagueParticipants.data ?? []).map((participant) => [
         participant.profile_id,
-        participant,
+        participant.roles as Tag[],
       ]),
     );
 
     const drivers: LineupDriver[] = (seasonDriversBySeason.data ?? []).map((driver) => {
-      const participant = participantsByProfileId.get(driver.profile_id);
       const division = divisionsById.get(driver.division_id);
       const team = driver.team_id ? teamsById.get(driver.team_id) : undefined;
 
       return {
         seasonDriverId: driver.id,
         createdAt: driver.created_at,
+        addedToTeam: driver.added_to_team ?? null,
         profileId: driver.profile_id,
+        displayName: driver.display_name ?? "Unknown Driver",
+        gameType: driver.game_type ?? "gt7",
+        avatarType: driver.avatar_type ?? "preset",
+        avatarValue: driver.avatar_value ?? "profile1",
+        tags: participantTagsByProfileId.get(driver.profile_id) ?? [],
         divisionId: driver.division_id,
         divisionName: division?.division_name ?? "",
         teamId: driver.team_id ?? null,
         teamName: team?.team_name ?? null,
-        profile: participant
-          ? {
-              participantId: participant.id,
-              accountId: participant.account_id,
-              username: participant.username,
-              avatarType: participant.avatar_type,
-              avatarValue: participant.avatar_value,
-              gameType: participant.game_type,
-              roles: participant.roles,
-            }
-          : null,
       };
     });
 
@@ -133,9 +126,27 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
       const teamDrivers = drivers
         .filter((driver) => driver.teamId === team.id)
         .sort(
-          (left, right) =>
-            new Date(left.createdAt).getTime() -
-            new Date(right.createdAt).getTime(),
+          (left, right) => {
+            const leftTimestamp = left.addedToTeam ?? left.createdAt;
+            const rightTimestamp = right.addedToTeam ?? right.createdAt;
+            const addedToTeamDiff =
+              new Date(leftTimestamp).getTime() -
+              new Date(rightTimestamp).getTime();
+
+            if (addedToTeamDiff !== 0) {
+              return addedToTeamDiff;
+            }
+
+            const leftName = left.displayName;
+            const rightName = right.displayName;
+            const nameDiff = leftName.localeCompare(rightName);
+
+            if (nameDiff !== 0) {
+              return nameDiff;
+            }
+
+            return left.seasonDriverId.localeCompare(right.seasonDriverId);
+          },
         )
         .map((driver, index) => ({
           ...driver,
@@ -144,6 +155,7 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
 
       return {
         teamId: team.id,
+        createdAt: team.created_at,
         teamName: team.team_name,
         divisionId: team.division_id,
         divisionName: division?.division_name ?? "",
@@ -191,6 +203,7 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
     ? lineupData.divisions.length > 1
     : false;
 
+
   // -- Divisions -- //
   const buildDivisionOptions = (
     divisions: LeagueSeasonDivisionTable[] | undefined,
@@ -221,22 +234,59 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
 
   const selectedDivisionDrivers = useMemo(
     () =>
-      (lineupData?.drivers ?? []).filter(
-        (driver) => driver.divisionId === activeDivisionId,
-      )
+      (activeDivisionId
+        ? (lineupData?.drivers ?? []).filter(
+            (driver) => driver.divisionId === activeDivisionId,
+          )
+        : (lineupData?.drivers ?? []))
         .sort(
-          (left, right) =>
-            new Date(left.createdAt).getTime() -
-            new Date(right.createdAt).getTime(),
+          (left, right) => {
+            const createdAtDiff =
+              new Date(left.createdAt).getTime() -
+              new Date(right.createdAt).getTime();
+
+            if (createdAtDiff !== 0) {
+              return createdAtDiff;
+            }
+
+            const leftName = left.displayName;
+            const rightName = right.displayName;
+            const nameDiff = leftName.localeCompare(rightName);
+
+            if (nameDiff !== 0) {
+              return nameDiff;
+            }
+
+            return left.seasonDriverId.localeCompare(right.seasonDriverId);
+          },
         ),
     [activeDivisionId, lineupData?.drivers],
   );
 
   const selectedDivisionTeams = useMemo(
     () =>
-      (lineupData?.teams ?? []).filter(
-        (team) => team.divisionId === activeDivisionId,
-      ),
+      (activeDivisionId
+        ? (lineupData?.teams ?? []).filter(
+            (team) => team.divisionId === activeDivisionId,
+          )
+        : (lineupData?.teams ?? []))
+        .sort((left, right) => {
+          const createdAtDiff =
+            new Date(left.createdAt).getTime() -
+            new Date(right.createdAt).getTime();
+
+          if (createdAtDiff !== 0) {
+            return createdAtDiff;
+          }
+
+          const nameDiff = left.teamName.localeCompare(right.teamName);
+
+          if (nameDiff !== 0) {
+            return nameDiff;
+          }
+
+          return left.teamId.localeCompare(right.teamId);
+        }),
     [activeDivisionId, lineupData?.teams],
   );
 
@@ -255,10 +305,12 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
       ? selectedDivisionTeams.length
       : selectedDivisionDrivers.length;
 
+  const totalCount = lineupData && activeView === "Teams" ? lineupData.teams.length : lineupData?.drivers.length ?? 0;
+
   const countLabel =
     isTeamChampionship && activeView === "Teams"
-      ? `Showing ${activeCount} of ${activeCount} Teams`
-      : `Showing ${activeCount} of ${activeCount} Drivers`;
+      ? `Showing ${activeCount} of ${totalCount} Teams`
+      : `Showing ${activeCount} of ${totalCount} Drivers`;
 
   // -- Handlers -- //
 
@@ -269,10 +321,11 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
   const renderDriverCard = (driver: LineupDriver, fallbackNumber: number) => (
     <DriverLineup
       key={driver.seasonDriverId}
-      username={driver.profile?.username ?? "Unknown Driver"}
+      username={driver.displayName}
       teamName={driver.teamName ?? ""}
-      avatarType={driver.profile?.avatarType ?? "preset"}
-      avatarValue={driver.profile?.avatarValue ?? "profile1"}
+      avatarType={driver.avatarType}
+      avatarValue={driver.avatarValue}
+      tags={driver.tags}
       cardNumber={String(fallbackNumber)}
       driverId={driver.profileId}
     />
@@ -322,11 +375,11 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
                         teamNumber={index + 1}
                         drivers={team.drivers.map((driver) => ({
                           id: driver.seasonDriverId,
-                          username: driver.profile?.username ?? "Unknown Driver",
-                          avatarType: driver.profile?.avatarType ?? "preset",
-                          avatarValue: driver.profile?.avatarValue ?? "profile1",
+                          username: driver.displayName,
+                          avatarType: driver.avatarType,
+                          avatarValue: driver.avatarValue,
                           driverNumber: String(driver.teamDriverNumber ?? 0),
-                          tags: driver.profile?.roles as Tag[] | undefined,
+                          tags: driver.tags,
                         }))}
                       />
                     ))

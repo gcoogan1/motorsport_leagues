@@ -875,6 +875,7 @@ export const leagueApi = createApi({
         }
       },
       invalidatesTags: (_result, _error, payload) => [
+        "LeagueSeasonTeams",
         { type: "LeagueSeasonTeams", id: payload.divisionId },
       ],
     }),
@@ -935,6 +936,7 @@ export const leagueApi = createApi({
       {
         driverId: string;
         teamId: string;
+        addedToTeam?: string;
       }
     >({
       queryFn: async (payload) => {
@@ -983,6 +985,7 @@ export const leagueApi = createApi({
         }
       },
       invalidatesTags: (_result, _error, payload) => [
+        "LeagueSeasonTeams",
         { type: "LeagueSeasonTeams", id: payload.teamId },
       ],
     }),
@@ -1224,6 +1227,7 @@ export const leagueApi = createApi({
         }
       },
       invalidatesTags: (_result, _error, payload) => [
+        "LeagueSeasonTeams",
         { type: "LeagueSeasonTeams", id: payload.teamId },
       ],
     }),

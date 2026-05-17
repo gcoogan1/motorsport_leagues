@@ -126,6 +126,17 @@ const DriverAssignments = ({ seasonData, onDirtyChange }: DriverAssignmentsProps
     [leagueParticipants.data],
   );
 
+  const participantDetailsByProfileId = useMemo(
+    () =>
+      new Map(
+        (leagueParticipants.data ?? []).map((participant) => [
+          participant.profile_id,
+          participant,
+        ]),
+      ),
+    [leagueParticipants.data],
+  );
+
   const driverOptions = useMemo(
     () => buildDriverOptions(driverParticipants),
     [driverParticipants],
@@ -275,12 +286,28 @@ const DriverAssignments = ({ seasonData, onDirtyChange }: DriverAssignmentsProps
       ...changedPersistedAssignments.map((assignment) => assignment.assignmentId as string),
     ]);
 
-    const profileIdsToCreate = [
+    const driversToCreate = [
       ...currentAssignments
         .filter((assignment) => !assignment.assignmentId)
         .map((assignment) => assignment.driver),
       ...changedPersistedAssignments.map((assignment) => assignment.driver),
-    ];
+    ]
+      .map((profileId) => {
+        const participant = participantDetailsByProfileId.get(profileId);
+
+        if (!participant) {
+          return null;
+        }
+
+        return {
+          profileId,
+          displayName: participant.username,
+          gameType: participant.game_type,
+          avatarType: participant.avatar_type,
+          avatarValue: participant.avatar_value,
+        };
+      })
+      .filter((driver) => driver !== null);
 
     try {
       setIsSaving(true);
@@ -290,11 +317,15 @@ const DriverAssignments = ({ seasonData, onDirtyChange }: DriverAssignmentsProps
           ...Array.from(assignmentIdsToRemove).map((assignmentId) =>
             removeLeagueSeasonDriver({ driverId: assignmentId }).unwrap(),
           ),
-          ...profileIdsToCreate.map((profileId) =>
+          ...driversToCreate.map((driver) =>
             createLeagueSeasonDriver({
               seasonId: seasonData.id,
               divisionId: selectedDivisionId,
-              profileId,
+              profileId: driver.profileId,
+              displayName: driver.displayName,
+              gameType: driver.gameType,
+              avatarType: driver.avatarType,
+              avatarValue: driver.avatarValue,
             }).unwrap(),
           ),
         ]),

@@ -15,14 +15,24 @@ export const createLeagueSeasonDriver = async ({
   profileId,
   divisionId,
   teamId,
+  addedToTeam,
+  displayName,
+  gameType,
+  avatarType,
+  avatarValue,
 }: CreateLeagueSeasonDriverPayload): Promise<CreateLeagueSeasonDriverResult> => {
   const { data, error } = await supabase
     .from("league_season_driver")
     .insert({
       season_id: seasonId,
       profile_id: profileId,
+      display_name: displayName,
+      game_type: gameType,
+      avatar_type: avatarType,
+      avatar_value: avatarValue,
       division_id: divisionId,
       team_id: teamId || null,
+      added_to_team: teamId ? (addedToTeam ?? new Date().toISOString()) : null,
     })
     .select()
     .single();
@@ -49,14 +59,17 @@ export const createLeagueSeasonDriver = async ({
 export const updateLeagueSeasonDriverTeam = async ({
   driverId,
   teamId,
+  addedToTeam,
 }: {
   driverId: string;
   teamId: string;
+  addedToTeam?: string;
 }): Promise<CreateLeagueSeasonDriverResult> => {
   const { data, error } = await supabase
     .from("league_season_driver")
     .update({
       team_id: teamId,
+      added_to_team: addedToTeam ?? new Date().toISOString(),
     })
     .eq("id", driverId)
     .select()
