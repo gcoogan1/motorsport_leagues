@@ -1,4 +1,5 @@
 import type { AvatarVariants } from "@/components/Avatar/Avatar.variants";
+import type { Tag } from "@/components/Tags/Tags.variants";
 import {
   CardTitle,
   DriverButton,
@@ -17,6 +18,7 @@ type DriverLineupProps = {
   avatarValue: AvatarVariants | string;
   cardNumber: string;
   driverId: string;
+  tags?: Tag[];
   themeColor?: ThemeName; // ?? may not need
   onClick?: (id: string) => void;
 };
@@ -44,6 +46,7 @@ const DriverLineup = ({
             avatarType={avatarType}
             avatarValue={avatarValue}
             size="large"
+            centerContent
           />
         </DriverButton>
       </DriverLineupWrapper>

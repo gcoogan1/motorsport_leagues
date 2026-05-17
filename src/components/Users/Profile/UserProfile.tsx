@@ -11,21 +11,22 @@ type UserProfileProps = {
   avatarType: "preset" | "upload";
   avatarValue: AvatarVariants | string;
   tags?: Tag[];
+  centerContent?: boolean;
 }
 
-const UserProfile = ({ username, information, size = "medium",  avatarType, avatarValue, tags }: UserProfileProps) => {
+const UserProfile = ({ username, information, size = "medium",  avatarType, avatarValue, tags, centerContent = false }: UserProfileProps) => {
 
   const avatarSize = size === "small" ? "tiny" : size;
 
   return (
-    <ProfileContainer size={size}>
+    <ProfileContainer size={size} $centerContent={centerContent}>
       <AvatarWrapper>
         <Avatar size={avatarSize} avatarType={avatarType} avatarValue={avatarValue} />
       </AvatarWrapper>
       <TextContainer $size={size}>
         {size === "large" ? (
           <>
-            <UsernameContainer isLarge={true}>
+            <UsernameContainer  isLarge={true}>
               <Username $size={size}>{username}</Username>
               {information && <Information $size={size}>{information}</Information>}
             </UsernameContainer>

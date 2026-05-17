@@ -3,9 +3,9 @@ import { designTokens } from "@/app/design/tokens";
 
 const { layout, colors, typography } = designTokens;
 
-export const ProfileContainer = styled.div<{ size: "small" | "medium" | "large" }>`
+export const ProfileContainer = styled.div<{ size: "small" | "medium" | "large", $centerContent: boolean }>`
   display: flex;
-  align-items: self-start;
+  align-items:  ${({ $centerContent }) => ($centerContent ? "center" : "flex-start")};
   gap: ${layout.space.small};
   width: 100%;
 
@@ -49,7 +49,7 @@ export const UsernameContainer = styled.div<{ isLarge: boolean }>`
 
   ${({ isLarge }) =>
     isLarge &&
-    `
+    css`
       flex-direction: column;
       gap: 0;
       align-items: flex-start;
