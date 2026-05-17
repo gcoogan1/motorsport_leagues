@@ -4,6 +4,7 @@ import type {
   LeagueSeasonDriverTable,
   LeagueSeasonTeamTable,
 } from "@/types/league.types";
+import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 
 export type TeamRow = {
   teamId?: string;
@@ -18,7 +19,7 @@ export const TEAM_COLUMN_STYLE = { maxWidth: "none", flex: "1 1 0" } as const;
 export const toProfileOption = (participant: LeagueParticipantProfile) => ({
   label: participant.username,
   value: participant.profile_id,
-  secondaryInfo: participant.game_type,
+  secondaryInfo: convertGameTypeToFullName(participant.game_type),
   avatar: {
     avatarType: participant.avatar_type,
     avatarValue: participant.avatar_value,

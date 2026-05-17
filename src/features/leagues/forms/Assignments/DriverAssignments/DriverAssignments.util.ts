@@ -3,6 +3,7 @@ import type {
 	LeagueSeasonDivisionTable,
 	LeagueSeasonDriverTable,
 } from "@/types/league.types";
+import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 
 export type DriverAssignmentRow = {
 	assignmentId?: string;
@@ -20,7 +21,7 @@ export const DRIVER_TABLE_STYLE = {
 export const toProfileOption = (participant: LeagueParticipantProfile) => ({
 	label: participant.username,
 	value: participant.profile_id,
-	secondaryInfo: participant.game_type,
+	secondaryInfo: convertGameTypeToFullName(participant.game_type),
 	avatar: {
 		avatarType: participant.avatar_type,
 		avatarValue: participant.avatar_value,
