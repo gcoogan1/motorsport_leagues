@@ -62,7 +62,7 @@ const TeamLineup = ({
       ) : (
         <EmptyTeamContent>
           <TeamTitle>{teamName}</TeamTitle>
-          <EmptyTeamSubtitle>No drivers assigned</EmptyTeamSubtitle>
+          <EmptyTeamSubtitle>No Drivers Assigned</EmptyTeamSubtitle>
         </EmptyTeamContent>
       )}
     </TeamLineupWrapper>

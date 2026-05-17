@@ -175,7 +175,7 @@
   - Team lineup shows `No Teams Assigned`
 
 - **Team Exists but Has No Drivers**
-  - `TeamLineup` shows `No drivers assigned`
+  - `TeamLineup` shows `No Drivers Assigned`
 
 ### Assignment Rules
 
