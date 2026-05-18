@@ -111,6 +111,7 @@ export type LeagueSeasonTable = {
   num_of_divisions: number;
   is_team_championship: boolean;
   season_status: LeagueStatus;
+  includes_pre_qual?: boolean;
 };
 
 export type LeagueSeasonDivisionTable = {
@@ -200,6 +201,7 @@ export type LeagueDraft = {
   season_name?: string;
   num_of_divisions?: number;
   is_team_championship?: boolean;
+  includes_pre_qual?: boolean;
 };
 
 
@@ -372,6 +374,7 @@ export type CreateLeaguePayload = {
   seasonName: string;
   numOfDivisions: number;
   isTeamChampionship: boolean;
+  includesPreQual?: boolean;
 };
 
 // Create League --> Success type
@@ -504,6 +507,7 @@ export type CreateLeagueSeasonPayload = {
   seasonName: string;
   numOfDivisions: number;
   isTeamChampionship: boolean;
+  includesPreQual?: boolean;
 };
 
 // Create League Season --> Success type

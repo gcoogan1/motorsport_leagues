@@ -18,6 +18,7 @@ export const createLeagueSeason = async ({
   seasonName,
   numOfDivisions,
   isTeamChampionship,
+  includesPreQual = false,
 }: CreateLeagueSeasonPayload): Promise<CreateLeagueSeasonResult> => {
 
   // Create season 
@@ -29,6 +30,7 @@ export const createLeagueSeason = async ({
       num_of_divisions: numOfDivisions,
       is_team_championship: isTeamChampionship,
       season_status: "setup",
+      includes_pre_qual: includesPreQual,
     })
     .select()
     .single();

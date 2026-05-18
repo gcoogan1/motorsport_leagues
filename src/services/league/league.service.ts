@@ -591,6 +591,7 @@ export const createLeagueWithCover = async (
     seasonName,
     numOfDivisions,
     isTeamChampionship,
+    includesPreQual = false,
   }: CreateLeaguePayload,
 ): Promise<CreateLeagueResult> => {
   const currentTimezone = getCurrentTimezone();
@@ -675,6 +676,7 @@ export const createLeagueWithCover = async (
     seasonName,
     numOfDivisions,
     isTeamChampionship,
+    includesPreQual,
   });
 
   if (!seasonResult.success) {

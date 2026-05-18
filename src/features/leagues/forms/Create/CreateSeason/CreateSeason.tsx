@@ -40,6 +40,7 @@ const Season = ({ leagueId, onBack }: SeasonProps) => {
   const [createLeagueSeason] = useCreateLeagueSeason();
   const [numberOfDivisions, setNumberOfDivisions] = useState(1);
   const [isTeamChampionship, setIsTeamChampionship] = useState(false);
+  const [includesPreQual, setIncludesPreQual] = useState(false);
 
   // -- Form setup -- //
   const formMethods = useForm<CreateNewSeasonSchema>({
@@ -48,6 +49,7 @@ const Season = ({ leagueId, onBack }: SeasonProps) => {
       seasonName: "Season 1",
       numOfDivisions: 1,
       isTeamChampionship: false,
+      includesPreQual: false,
     },
   });
 
@@ -74,6 +76,7 @@ const Season = ({ leagueId, onBack }: SeasonProps) => {
             seasonName: data.seasonName,
             numOfDivisions: data.numOfDivisions,
             isTeamChampionship: data.isTeamChampionship,
+            includesPreQual: data.includesPreQual,
           }).unwrap(),
           1000,
         );
@@ -159,6 +162,19 @@ const Season = ({ leagueId, onBack }: SeasonProps) => {
           onChange={(checked) => {
             setIsTeamChampionship(checked);
             setValue("isTeamChampionship", checked, {
+              shouldDirty: true,
+              shouldValidate: true,
+            });
+          }}
+        />
+        <CheckboxItem
+          name="includesPreQual"
+          label="Include Pre-Qualifying Division"
+          checked={includesPreQual}
+          helperMessage="Add a pre-requisite division where all drivers and teams start from, prior to being assigned to actual divisions."
+          onChange={(checked) => {
+            setIncludesPreQual(checked);
+            setValue("includesPreQual", checked, {
               shouldDirty: true,
               shouldValidate: true,
             });
