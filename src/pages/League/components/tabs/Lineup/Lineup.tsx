@@ -218,12 +218,7 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
     [lineupData?.divisions],
   );
 
-  const defaultDivisionId = useMemo(
-    () =>
-      lineupData?.divisions.find((division) => division.division_number === 1)
-        ?.id ?? divisionOptions[0]?.value ?? "",
-    [divisionOptions, lineupData?.divisions],
-  );
+  const defaultDivisionId = divisionOptions[0]?.value ?? "";
 
   const activeView = isTeamChampionship ? activeTab : "Drivers";
   const activeDivisionId = divisionOptions.some(
@@ -305,7 +300,17 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
       ? selectedDivisionTeams.length
       : selectedDivisionDrivers.length;
 
-  const totalCount = lineupData && activeView === "Teams" ? lineupData.teams.length : lineupData?.drivers.length ?? 0;
+  const totalCount = useMemo(() => {
+    if (!lineupData) {
+      return 0;
+    }
+
+    if (activeView === "Teams") {
+      return lineupData.teams.length;
+    }
+
+    return new Set(lineupData.drivers.map((driver) => driver.profileId)).size;
+  }, [activeView, lineupData]);
 
   const countLabel =
     isTeamChampionship && activeView === "Teams"

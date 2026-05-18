@@ -114,10 +114,12 @@ export const buildDriversAssignedToOtherDivisions = (
   );
 
 // Builds the team select options from named teams.
-export const buildTeamOptions = (teams: TeamRow[]) =>
+export const buildTeamOptions = (
+  teams: Array<TeamRow | undefined> | undefined,
+) =>
   teams
-    .filter((team) => team.teamName.trim())
+    ?.filter((team) => (team?.teamName?.trim() ?? ""))
     .map((team) => ({
-      value: getTeamKey(team),
-      label: team.teamName.trim(),
-    }));
+      value: getTeamKey(team as TeamRow),
+      label: team?.teamName?.trim() ?? "",
+    })) ?? [];

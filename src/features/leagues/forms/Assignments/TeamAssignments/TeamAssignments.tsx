@@ -12,6 +12,7 @@ import Button from "@/components/Button/Button";
 import ProfileSelectInput from "@/components/Inputs/ProfileSelectInput/ProfileSelectInput";
 import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
 import RemoveIcon from "@assets/Icon/Remove.svg?react";
+import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import {
   useCreateLeagueSeasonDriverMutation,
   useGetLeagueParticipantsQuery,
@@ -160,7 +161,6 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
     [watchedAssignmentsValue],
   );
 
-
   // -- Division -- //
 
   // Builds the division dropdown options for the assignment filter.
@@ -169,12 +169,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
     [seasonDivisions.data],
   );
 
-  const defaultDivisionId = useMemo(
-    () =>
-      seasonDivisions.data?.find((division) => division.division_number === 1)
-        ?.id ?? divisionOptions[0]?.value ?? "",
-    [divisionOptions, seasonDivisions.data],
-  );
+  const defaultDivisionId = divisionOptions[0]?.value ?? "";
 
   // Keeps the selected DIVISION option valid, defaulting to the first DIVISION.
   useEffect(() => {
@@ -193,7 +188,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
 
       return defaultDivisionId;
     });
-  }, [divisionOptions, defaultDivisionId]);
+  }, [defaultDivisionId, divisionOptions]);
 
   // Clears the form rows before loading data for a different DIVISION.
   useEffect(() => {
@@ -349,11 +344,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
 
   // Tracks drivers already assigned to other divisions so they can be EXCLUDED locally.
   const driversAssignedToOtherDivisions = useMemo(
-    () =>
-      buildDriversAssignedToOtherDivisions(
-        seasonDriversBySeason.data,
-        activeDivisionId,
-      ),
+    () => buildDriversAssignedToOtherDivisions(seasonDriversBySeason.data, activeDivisionId),
     [activeDivisionId, seasonDriversBySeason.data],
   );
 
@@ -482,7 +473,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
     const rawTeams = formMethods.getValues("teams") ?? [];
 
     const currentTeams = rawTeams
-      .map((team) => ({ ...team, teamName: team.teamName.trim() }))
+      .map((team) => ({ ...team, teamName: team?.teamName?.trim() ?? "" }))
       .filter((team) => team.teamName);
 
     const removedTeamIds = persistedTeams
@@ -768,7 +759,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
                     rounded
                     variant="ghost"
                     ariaLabel="remove row"
-                    icon={{ left: <RemoveIcon /> }}
+                    icon={{ left: <DeleteIcon /> }}
                     onClick={() => handleRemoveTeam(index)}
                   />
                 </ExtraCell>
@@ -777,7 +768,10 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
           </TableBody>
         </TableWrapper>
       )}
-      <AddItem label="Add Team" onClick={appendNextTeam} />
+      <AddItem
+        label="Create Team"
+        onClick={appendNextTeam}
+      />
     </>
   );
 

@@ -46,13 +46,29 @@ export const createLeagueSeason = async ({
     };
   }
 
-  // Create divisions for the season
-  const divisionResults = await Promise.all(
-    Array.from({ length: numOfDivisions }, (_, index) =>
-      createLeagueSeasonDivision({
-        seasonId: season.id,
+  const divisionsToCreate = includesPreQual
+    ? [
+        {
+          divisionNumber: 0,
+          divisionName: "Pre-Qualifying",
+        },
+        ...Array.from({ length: numOfDivisions }, (_, index) => ({
+          divisionNumber: index + 1,
+          divisionName: `Division ${index + 1}`,
+        })),
+      ]
+    : Array.from({ length: numOfDivisions }, (_, index) => ({
         divisionNumber: index + 1,
         divisionName: `Division ${index + 1}`,
+      }));
+
+  // Create divisions for the season
+  const divisionResults = await Promise.all(
+    divisionsToCreate.map((division) =>
+      createLeagueSeasonDivision({
+        seasonId: season.id,
+        divisionNumber: division.divisionNumber,
+        divisionName: division.divisionName,
       }),
     ),
   );

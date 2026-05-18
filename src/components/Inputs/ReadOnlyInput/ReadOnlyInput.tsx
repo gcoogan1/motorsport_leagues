@@ -23,13 +23,20 @@ type ReadOnlyInputProps = {
   helperText?: string;
   profile?: User;
   textValue?: string;
+  centerContent?: boolean;
 };
 
-const ReadOnlyInput = ({ label, helperText, profile, textValue }: ReadOnlyInputProps) => {
+const ReadOnlyInput = ({
+  label,
+  helperText,
+  profile,
+  textValue,
+  centerContent = false,
+}: ReadOnlyInputProps) => {
   return (
-    <InputWrapper>
+    <InputWrapper $centerContent={centerContent}>
       {label && <Label>{label}</Label>}
-      <InputField>
+      <InputField $centerContent={centerContent}>
         {profile ? (
           <UserProfile
             username={profile.username}
@@ -38,6 +45,7 @@ const ReadOnlyInput = ({ label, helperText, profile, textValue }: ReadOnlyInputP
             information={profile.information}
             size={profile.size ?? "medium"}
             tags={profile.tags}
+            centerContent={centerContent}
           />
         ) : (
           <TextValue>{textValue || "No profile available"}</TextValue>
