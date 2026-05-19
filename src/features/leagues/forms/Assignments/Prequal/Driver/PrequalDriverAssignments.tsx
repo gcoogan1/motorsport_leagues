@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form";
 import SheetForm from "@/components/Sheets/SheetForm/SheetForm";
 import AddItem from "@/components/AddItem/AddItem";
@@ -8,9 +8,6 @@ import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
 import RemoveIcon from "@assets/Icon/Remove.svg?react";
 import {
   useCreateLeagueSeasonDriverMutation,
-  useGetLeagueParticipantsQuery,
-  useGetLeagueSeasonDivisionsQuery,
-  useGetLeagueSeasonDriversBySeasonIdQuery,
   useRemoveLeagueSeasonDriverMutation,
 } from "@/rtkQuery/API/leagueApi";
 import { useModal } from "@/providers/modal/useModal";
@@ -31,23 +28,10 @@ import {
   TableRow,
   TableWrapper,
 } from "@/components/Tables/InputTable/InputTable.styles";
-import {
-  buildDivisionOptions,
-  buildDriverOptions,
-  buildDriverParticipants,
-  buildParticipantOptionsByProfileId,
-  buildPersistedAssignmentMap,
-  buildPersistedAssignments,
-  DRIVER_TABLE_STYLE,
-  type DriverAssignmentRow,
-} from "../../DriverAssignments/DriverAssignments.util";
-import {
-  buildDriversAssignedToOtherDivisions,
-  buildPreQualAssignedDriverIds,
-  getPreQualDivisionId,
-  isPreQualRestrictedDivision,
-} from "./prequalDriverAssignments.util";
+import { DRIVER_TABLE_STYLE, type DriverAssignmentRow } from "../../DriverAssignments/DriverAssignments.util";
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
+import DriversAssigned from "@/features/leagues/modals/errors/DriversAssigned/DriversAssigned";
+import { usePrequalDriverAssignments } from "./usePrequalDriverAssignments";
 
 type DriverAssignmentsFormValues = {
   assignments: DriverAssignmentRow[];
@@ -64,305 +48,159 @@ const PrequalDriverAssignments = ({
 }: PrequalDriverAssignmentsProps) => {
   const { openModal } = useModal();
   const { showToast } = useToast();
-  const [selectedDivisionId, setSelectedDivisionId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [hydratedDivisionKey, setHydratedDivisionKey] = useState("");
-  const seasonDivisions = useGetLeagueSeasonDivisionsQuery(seasonData.id);
-  const leagueParticipants = useGetLeagueParticipantsQuery(seasonData.league_id);
-  const seasonDriversBySeason = useGetLeagueSeasonDriversBySeasonIdQuery(seasonData.id);
+
+  // -- Mutations -- //
+
   const [createLeagueSeasonDriver] = useCreateLeagueSeasonDriverMutation();
   const [removeLeagueSeasonDriver] = useRemoveLeagueSeasonDriverMutation();
+
+  // -- Form setup -- //
+
   const formMethods = useForm<DriverAssignmentsFormValues>({
-    defaultValues: {
-      assignments: [],
-    },
+    defaultValues: { assignments: [] },
   });
+
   const {
     control,
     reset,
+    getValues,
     formState: { isDirty },
   } = formMethods;
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "assignments",
   });
+
   const watchedAssignments = useWatch({ control, name: "assignments" }) ?? [];
 
-  // Build the division filter from the season divisions.
-  const divisionOptions = useMemo(
-    () => buildDivisionOptions(seasonDivisions.data),
-    [seasonDivisions.data],
-  );
+  // -- Derived state, effects, and helpers --
 
-  // Division 0 is the pre-qual source list for the rest of the season.
-  const preQualDivisionId = useMemo(
-    () => getPreQualDivisionId(seasonData.includes_pre_qual, seasonDivisions.data),
-    [seasonData.includes_pre_qual, seasonDivisions.data],
-  );
-
-  useEffect(() => {
-    // Keep the selected division valid as the available division list changes.
-    if (!divisionOptions.length) {
-      setSelectedDivisionId("");
-      return;
-    }
-
-    setSelectedDivisionId((currentValue) => {
-      if (currentValue && divisionOptions.some((option) => option.value === currentValue)) {
-        return currentValue;
-      }
-
-      return divisionOptions[0]?.value ?? "";
-    });
-  }, [divisionOptions]);
-
-  useEffect(() => {
-    // Clear local rows before hydrating the newly selected division.
-    if (!selectedDivisionId) {
-      return;
-    }
-
-    reset(
-      { assignments: [] },
-      { keepDirty: false, keepTouched: false },
-    );
-    setHydratedDivisionKey("");
-  }, [reset, selectedDivisionId]);
-
-  const driverParticipants = useMemo(
-    () => buildDriverParticipants(leagueParticipants.data),
-    [leagueParticipants.data],
-  );
-
-  const participantOptionsByProfileId = useMemo(
-    () => buildParticipantOptionsByProfileId(leagueParticipants.data),
-    [leagueParticipants.data],
-  );
-
-  const participantDetailsByProfileId = useMemo(
-    () =>
-      new Map(
-        (leagueParticipants.data ?? []).map((participant) => [
-          participant.profile_id,
-          participant,
-        ]),
-      ),
-    [leagueParticipants.data],
-  );
-
-  const driverOptions = useMemo(
-    () => buildDriverOptions(driverParticipants),
-    [driverParticipants],
-  );
-
-  // These are the saved driver rows for the selected division only.
-  const persistedAssignments = useMemo(
-    () => buildPersistedAssignments(seasonDriversBySeason.data, selectedDivisionId),
-    [seasonDriversBySeason.data, selectedDivisionId],
-  );
-
-  const persistedAssignmentsKey = useMemo(
-    () =>
-      `${selectedDivisionId}:${persistedAssignments
-        .map((assignment) => `${assignment.assignmentId ?? "new"}:${assignment.driver}`)
-        .join("|")}`,
-    [persistedAssignments, selectedDivisionId],
-  );
-
-  useEffect(() => {
-    if (persistedAssignmentsKey === hydratedDivisionKey) {
-      return;
-    }
-
-    // Hydrate the field array once per saved snapshot for the current division.
-    reset(
-      { assignments: persistedAssignments },
-      { keepDirty: false, keepTouched: false },
-    );
-    setHydratedDivisionKey(persistedAssignmentsKey);
-  }, [hydratedDivisionKey, persistedAssignments, persistedAssignmentsKey, reset]);
-
-  useEffect(() => {
-    // Bubble unsaved state to the parent sheet guard.
-    onDirtyChange?.(isDirty);
-  }, [isDirty, onDirtyChange]);
-
-  useEffect(() => {
-    // Guard browser refresh/navigation when there are unsaved assignment edits.
-    if (!isDirty) {
-      return undefined;
-    }
-
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = "";
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [isDirty]);
-
-  const persistedAssignmentMap = useMemo(
-    () => buildPersistedAssignmentMap(persistedAssignments),
-    [persistedAssignments],
-  );
-
-  const driversAssignedToOtherDivisions = useMemo(
-    () =>
-      buildDriversAssignedToOtherDivisions(
-        seasonDriversBySeason.data,
-        selectedDivisionId,
-        preQualDivisionId,
-      ),
-    [preQualDivisionId, seasonDriversBySeason.data, selectedDivisionId],
-  );
-
-  const preQualAssignedDriverIds = useMemo(
-    () => buildPreQualAssignedDriverIds(seasonDriversBySeason.data, preQualDivisionId),
-    [preQualDivisionId, seasonDriversBySeason.data],
-  );
-
-  // Linked divisions may only use drivers that already exist in pre-qual.
-  const isRestrictedDivision = isPreQualRestrictedDivision(
-    selectedDivisionId,
+  const {
+    activeDivisionId,
+    divisionOptions,
+    setSelectedDivisionId,
     preQualDivisionId,
-  );
+    isRestrictedDivision,
+    persistedAssignments,
+    persistedAssignmentMap,
+    participantDetailsByProfileId,
+    preQualAssignedDriverIds,
+    driversAssignedToLinkedDivisions,
+    getDriverOptionsForRow,
+    findNextAvailableDriver,
+    refetchAfterSave,
+  } = usePrequalDriverAssignments({
+    seasonData,
+    reset,
+    getValues,
+    watchedAssignments,
+    isDirty,
+    onDirtyChange,
+  });
 
-  const getDriverOptionsForRow = (rowIndex: number) => {
-    // Preserve the current value while blocking duplicates and invalid cross-division picks.
-    const selectedDriverIds = new Set(
-      watchedAssignments
-        .map((assignment, index) => (index === rowIndex ? "" : assignment?.driver ?? ""))
-        .filter(Boolean),
-    );
-    const currentValue = watchedAssignments[rowIndex]?.driver;
+  // -- Handlers -- //
 
-    const filteredOptions = driverOptions.filter(
-      (option) =>
-        option.value === currentValue ||
-        (!selectedDriverIds.has(option.value) &&
-          !driversAssignedToOtherDivisions.has(option.value) &&
-          (!isRestrictedDivision || preQualAssignedDriverIds.has(option.value))),
-    );
+  // Prevents removing a driver from the pre-qual source pool while any restricted
+  // division still references that profile.
+  const handleRemoveDriver = (index: number) => {
+    const driver = watchedAssignments[index];
 
-    const currentAssignedOption = currentValue
-      ? participantOptionsByProfileId.get(currentValue)
-      : undefined;
+    if (!driver?.driver) return;
 
     if (
-      currentAssignedOption &&
-      !filteredOptions.some((option) => option.value === currentAssignedOption.value)
+      activeDivisionId === preQualDivisionId &&
+      driversAssignedToLinkedDivisions.has(driver.driver)
     ) {
-      return [currentAssignedOption, ...filteredOptions];
+      openModal(<DriversAssigned isPreQual />);
+      return;
     }
 
-    return filteredOptions;
+    remove(index);
   };
 
+  // Appends the next available driver for this division.
+  // For restricted divisions, only drivers in the pre-qual pool are eligible.
   const appendNextDriver = () => {
-    // Pick the next valid driver automatically to keep row creation fast.
-    const selectedDriverIds = new Set(
-      watchedAssignments.map((assignment) => assignment?.driver ?? "").filter(Boolean),
-    );
-    const nextDriver = driverOptions.find(
-      (option) =>
-        !selectedDriverIds.has(option.value) &&
-        !driversAssignedToOtherDivisions.has(option.value) &&
-        (!isRestrictedDivision || preQualAssignedDriverIds.has(option.value)),
-    );
+    const nextDriverId = findNextAvailableDriver();
 
-    if (!nextDriver) {
-      if (isRestrictedDivision) {
-        openModal(<NoDrivers preQual />);
-        return;
-      }
-
-      openModal(<NoDrivers />);
+    if (!nextDriverId) {
+      openModal(isRestrictedDivision ? <NoDrivers preQual /> : <NoDrivers />);
       return;
     }
 
-    append({ driver: nextDriver.value });
+    append({ driver: nextDriverId });
   };
 
+  // Validates current assignments, diffs against persisted state, then removes stale
+  // records and creates new ones. Replacing a changed row is modeled as remove + create.
   const handleSave = async () => {
-    if (!selectedDivisionId) {
-      return;
-    }
+    if (!activeDivisionId) return;
 
-    // Ignore empty rows before validating and diffing against persisted assignments.
-    const currentAssignments = (formMethods.getValues("assignments") ?? []).filter(
-      (assignment) => assignment.driver,
+    const currentAssignments = (getValues("assignments") ?? []).filter(
+      (a) => a.driver,
     );
 
+    // Guard against saving restricted-division rows that slipped outside the pre-qual pool.
     if (
       isRestrictedDivision &&
-      currentAssignments.some((assignment) => !preQualAssignedDriverIds.has(assignment.driver))
+      currentAssignments.some((a) => !preQualAssignedDriverIds.has(a.driver))
     ) {
       openModal(<NoDrivers preQual />);
       return;
     }
 
-    const removedPersistedIds = persistedAssignments
+    const removedIds = persistedAssignments
       .filter(
-        (persistedAssignment) =>
-          persistedAssignment.assignmentId &&
-          !currentAssignments.some(
-            (currentAssignment) => currentAssignment.assignmentId === persistedAssignment.assignmentId,
-          ),
+        (pa) =>
+          pa.assignmentId &&
+          !currentAssignments.some((ca) => ca.assignmentId === pa.assignmentId),
       )
-      .map((assignment) => assignment.assignmentId as string);
+      .map((a) => a.assignmentId as string);
 
-    const changedPersistedAssignments = currentAssignments.filter(
-      (assignment) =>
-        assignment.assignmentId &&
-        persistedAssignmentMap.get(assignment.assignmentId) !== assignment.driver,
+    const changedAssignments = currentAssignments.filter(
+      (a) =>
+        a.assignmentId &&
+        persistedAssignmentMap.get(a.assignmentId) !== a.driver,
     );
 
-    const assignmentIdsToRemove = new Set<string>([
-      ...removedPersistedIds,
-      ...changedPersistedAssignments.map((assignment) => assignment.assignmentId as string),
+    const idsToRemove = new Set<string>([
+      ...removedIds,
+      ...changedAssignments.map((a) => a.assignmentId as string),
     ]);
 
-    // Recreated rows need profile metadata so new season-driver records remain display-ready.
+    // Gather profile metadata for each new/changed driver row.
     const driversToCreate = [
-      ...currentAssignments
-        .filter((assignment) => !assignment.assignmentId)
-        .map((assignment) => assignment.driver),
-      ...changedPersistedAssignments.map((assignment) => assignment.driver),
+      ...currentAssignments.filter((a) => !a.assignmentId).map((a) => a.driver),
+      ...changedAssignments.map((a) => a.driver),
     ]
       .map((profileId) => {
-        const participant = participantDetailsByProfileId.get(profileId);
-
-        if (!participant) {
-          return null;
-        }
-
+        const p = participantDetailsByProfileId.get(profileId);
+        if (!p) return null;
         return {
           profileId,
-          displayName: participant.username,
-          gameType: participant.game_type,
-          avatarType: participant.avatar_type,
-          avatarValue: participant.avatar_value,
+          displayName: p.username,
+          gameType: p.game_type,
+          avatarType: p.avatar_type,
+          avatarValue: p.avatar_value,
         };
       })
-      .filter((driver) => driver !== null);
+      .filter((d) => d !== null);
 
     try {
       setIsSaving(true);
 
+      // Replacing a saved row is remove old record + create new record in one pass.
       await withMinDelay(
-        // Replacing a saved driver assignment is modeled as remove old row, then create new row.
         Promise.all([
-          ...Array.from(assignmentIdsToRemove).map((assignmentId) =>
-            removeLeagueSeasonDriver({ driverId: assignmentId }).unwrap(),
+          ...Array.from(idsToRemove).map((id) =>
+            removeLeagueSeasonDriver({ driverId: id }).unwrap(),
           ),
           ...driversToCreate.map((driver) =>
             createLeagueSeasonDriver({
               seasonId: seasonData.id,
-              divisionId: selectedDivisionId,
+              divisionId: activeDivisionId,
               profileId: driver.profileId,
               displayName: driver.displayName,
               gameType: driver.gameType,
@@ -374,11 +212,8 @@ const PrequalDriverAssignments = ({
         1000,
       );
 
-      await seasonDriversBySeason.refetch();
-      showToast({
-        usage: "success",
-        message: "Driver assignments updated.",
-      });
+      await refetchAfterSave();
+      showToast({ usage: "success", message: "Driver assignments updated." });
     } catch {
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     } finally {
@@ -386,18 +221,20 @@ const PrequalDriverAssignments = ({
     }
   };
 
-  const divisionFilter = divisionOptions.length > 1 ? (
-    <FilterBar
-      divisions={divisionOptions}
-      rounds={[]}
-      events={[]}
-      sessions={[]}
-      selectedDivision={selectedDivisionId}
-      onDivisionChange={setSelectedDivisionId}
-    />
-  ) : undefined;
+  // -- Render -- //
 
-  // Driver-only pre-qual seasons always render a single editable assignment table.
+  const divisionFilter =
+    divisionOptions.length > 1 ? (
+      <FilterBar
+        divisions={divisionOptions}
+        rounds={[]}
+        events={[]}
+        sessions={[]}
+        selectedDivision={activeDivisionId}
+        onDivisionChange={setSelectedDivisionId}
+      />
+    ) : undefined;
+
   const listChildren = (
     <>
       {fields.length > 0 && (
@@ -434,7 +271,7 @@ const PrequalDriverAssignments = ({
                     variant="ghost"
                     ariaLabel="remove row"
                     icon={{ left: <RemoveIcon /> }}
-                    onClick={() => remove(index)}
+                    onClick={() => handleRemoveDriver(index)}
                   />
                 </ExtraCell>
               </TableRow>
@@ -449,9 +286,9 @@ const PrequalDriverAssignments = ({
   return (
     <FormProvider {...formMethods}>
       <SheetForm
-        id={"driver-assignments-form"}
+        id="driver-assignments-form"
         seasonName={seasonData.season_name}
-        header={"Driver Assignments"}
+        header="Driver Assignments"
         filters={divisionFilter}
         listChildren={listChildren}
         onSave={handleSave}
