@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form";
 import SheetForm from "@/components/Sheets/SheetForm/SheetForm"
 import AddItem from "@/components/AddItem/AddItem";
@@ -32,19 +32,13 @@ import {
   TableBody,
   TableRow,
   TableWrapper,
-} from "@/components/Tables/InputTable/InputTable.styles";
+} from "./DriverAssignments.styles";
 import {
-  buildDivisionOptions,
-  buildDriverOptions,
-  buildDriverParticipants,
-  buildDriversAssignedToOtherDivisions,
-  buildParticipantOptionsByProfileId,
-  buildPersistedAssignmentMap,
-  buildPersistedAssignments,
   DRIVER_TABLE_STYLE,
   type DriverAssignmentRow,
 } from "./DriverAssignments.util";
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
+import { useDriverAssignments } from "./useDriverAssignments";
 
 type DriverAssignmentsFormValues = {
   assignments: DriverAssignmentRow[];
@@ -58,206 +52,69 @@ type DriverAssignmentsProps = {
 const DriverAssignments = ({ seasonData, onDirtyChange }: DriverAssignmentsProps) => {
   const { openModal } = useModal();
   const { showToast } = useToast();
-  const [selectedDivisionId, setSelectedDivisionId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [hydratedDivisionKey, setHydratedDivisionKey] = useState("");
   const seasonDivisions = useGetLeagueSeasonDivisionsQuery(seasonData.id);
   const leagueParticipants = useGetLeagueParticipantsQuery(seasonData.league_id);
   const seasonDriversBySeason = useGetLeagueSeasonDriversBySeasonIdQuery(seasonData.id);
   const [createLeagueSeasonDriver] = useCreateLeagueSeasonDriverMutation();
   const [removeLeagueSeasonDriver] = useRemoveLeagueSeasonDriverMutation();
+
+
+  // -- Form setup -- //
+
   const formMethods = useForm<DriverAssignmentsFormValues>({
     defaultValues: {
       assignments: [],
     },
   });
+
   const {
     control,
     reset,
     formState: { isDirty },
   } = formMethods;
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "assignments",
   });
+
   const watchedAssignments = useWatch({ control, name: "assignments" }) ?? [];
 
-  // -- Division -- //
-  const divisionOptions = useMemo(
-    () => buildDivisionOptions(seasonDivisions.data),
-    [seasonDivisions.data],
-  );
+  const {
+    setSelectedDivisionId,
+    effectiveDivisionId,
+    divisionOptions,
+    participantMap,
+    persistedAssignments,
+    persistedMap,
+    getDriverOptionsForRow,
+    findNextAvailableDriver,
+  } = useDriverAssignments({
+    reset,
+    watchedAssignments,
+    isDirty,
+    onDirtyChange,
+    seasonDivisions,
+    leagueParticipants,
+    seasonDriversBySeason,
+  });
 
-  useEffect(() => {
-    if (!divisionOptions.length) {
-      setSelectedDivisionId("");
-      return;
-    }
-
-    setSelectedDivisionId((currentValue) => {
-      if (currentValue && divisionOptions.some((option) => option.value === currentValue)) {
-        return currentValue;
-      }
-
-      return divisionOptions[0]?.value ?? "";
-    });
-  }, [divisionOptions]);
-
-  useEffect(() => {
-    if (!selectedDivisionId) {
-      return;
-    }
-
-    reset(
-      { assignments: [] },
-      { keepDirty: false, keepTouched: false },
-    );
-    setHydratedDivisionKey("");
-  }, [reset, selectedDivisionId]);
-
-  // -- Drivers -- //
-  const driverParticipants = useMemo(
-    () => buildDriverParticipants(leagueParticipants.data),
-    [leagueParticipants.data],
-  );
-
-  const participantOptionsByProfileId = useMemo(
-    () => buildParticipantOptionsByProfileId(leagueParticipants.data),
-    [leagueParticipants.data],
-  );
-
-  const participantDetailsByProfileId = useMemo(
-    () =>
-      new Map(
-        (leagueParticipants.data ?? []).map((participant) => [
-          participant.profile_id,
-          participant,
-        ]),
-      ),
-    [leagueParticipants.data],
-  );
-
-  const driverOptions = useMemo(
-    () => buildDriverOptions(driverParticipants),
-    [driverParticipants],
-  );
-
-  // -- Assignments -- //
-
-
-  const persistedAssignments = useMemo(
-    () => buildPersistedAssignments(seasonDriversBySeason.data, selectedDivisionId),
-    [seasonDriversBySeason.data, selectedDivisionId],
-  );
-
-  const persistedAssignmentsKey = useMemo(
-    () =>
-      `${selectedDivisionId}:${persistedAssignments
-        .map((assignment) => `${assignment.assignmentId ?? "new"}:${assignment.driver}`)
-        .join("|")}`,
-    [persistedAssignments, selectedDivisionId],
-  );
-
-  useEffect(() => {
-    if (persistedAssignmentsKey === hydratedDivisionKey) {
-      return;
-    }
-
-    reset(
-      { assignments: persistedAssignments },
-      { keepDirty: false, keepTouched: false },
-    );
-    setHydratedDivisionKey(persistedAssignmentsKey);
-  }, [hydratedDivisionKey, persistedAssignments, persistedAssignmentsKey, reset]);
-
-  useEffect(() => {
-    onDirtyChange?.(isDirty);
-  }, [isDirty, onDirtyChange]);
-
-  useEffect(() => {
-    if (!isDirty) {
-      return undefined;
-    }
-
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = "";
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [isDirty]);
-
-  const persistedAssignmentMap = useMemo(
-    () => buildPersistedAssignmentMap(persistedAssignments),
-    [persistedAssignments],
-  );
-
-  // Drivers that are assigned to other divisions in the same season should not be available for selection in the current division, to prevent duplicate assignments across divisions.
-  const driversAssignedToOtherDivisions = useMemo(
-    () =>
-      buildDriversAssignedToOtherDivisions(
-        seasonDriversBySeason.data,
-        selectedDivisionId,
-      ),
-    [seasonDriversBySeason.data, selectedDivisionId],
-  );
-
-  // Returns the available driver options for a given row index, 
-  // excluding drivers that are already assigned in other rows or other divisions, 
-  // while ensuring the currently selected driver for that row is included in the options.
-  const getDriverOptionsForRow = (rowIndex: number) => {
-    const selectedDriverIds = new Set(
-      watchedAssignments
-        .map((assignment, index) => (index === rowIndex ? "" : assignment?.driver ?? ""))
-        .filter(Boolean),
-    );
-    const currentValue = watchedAssignments[rowIndex]?.driver;
-
-    const filteredOptions = driverOptions.filter(
-      (option) =>
-        option.value === currentValue ||
-        (!selectedDriverIds.has(option.value) && !driversAssignedToOtherDivisions.has(option.value)),
-    );
-
-    const currentAssignedOption = currentValue
-      ? participantOptionsByProfileId.get(currentValue)
-      : undefined;
-
-    if (
-      currentAssignedOption &&
-      !filteredOptions.some((option) => option.value === currentAssignedOption.value)
-    ) {
-      return [currentAssignedOption, ...filteredOptions];
-    }
-
-    return filteredOptions;
-  };
-
-  // Appends the next available driver to the assignments list.  
+  // Appends the next available driver, or opens the NoDrivers modal if none remain.
   const appendNextDriver = () => {
-    const selectedDriverIds = new Set(
-      watchedAssignments.map((assignment) => assignment?.driver ?? "").filter(Boolean),
-    );
-    const nextDriver = driverOptions.find(
-      (option) =>
-        !selectedDriverIds.has(option.value) && !driversAssignedToOtherDivisions.has(option.value),
-    );
+    const nextDriverId = findNextAvailableDriver();
 
-    if (!nextDriver) {
+    if (!nextDriverId) {
       openModal(<NoDrivers />);
       return;
     }
 
-    append({ driver: nextDriver.value });
+    append({ driver: nextDriverId });
   };
 
   // -- Handlers -- //
   const handleSave = async () => {
-    if (!selectedDivisionId) {
+    if (!effectiveDivisionId) {
       return;
     }
 
@@ -278,7 +135,7 @@ const DriverAssignments = ({ seasonData, onDirtyChange }: DriverAssignmentsProps
     const changedPersistedAssignments = currentAssignments.filter(
       (assignment) =>
         assignment.assignmentId &&
-        persistedAssignmentMap.get(assignment.assignmentId) !== assignment.driver,
+        persistedMap.get(assignment.assignmentId) !== assignment.driver,
     );
 
     const assignmentIdsToRemove = new Set<string>([
@@ -293,7 +150,7 @@ const DriverAssignments = ({ seasonData, onDirtyChange }: DriverAssignmentsProps
       ...changedPersistedAssignments.map((assignment) => assignment.driver),
     ]
       .map((profileId) => {
-        const participant = participantDetailsByProfileId.get(profileId);
+        const participant = participantMap.get(profileId);
 
         if (!participant) {
           return null;
@@ -320,7 +177,7 @@ const DriverAssignments = ({ seasonData, onDirtyChange }: DriverAssignmentsProps
           ...driversToCreate.map((driver) =>
             createLeagueSeasonDriver({
               seasonId: seasonData.id,
-              divisionId: selectedDivisionId,
+              divisionId: effectiveDivisionId,
               profileId: driver.profileId,
               displayName: driver.displayName,
               gameType: driver.gameType,
@@ -351,7 +208,7 @@ const DriverAssignments = ({ seasonData, onDirtyChange }: DriverAssignmentsProps
       rounds={[]}
       events={[]}
       sessions={[]}
-      selectedDivision={selectedDivisionId}
+      selectedDivision={effectiveDivisionId}
       onDivisionChange={setSelectedDivisionId}
     />
   ) : undefined;

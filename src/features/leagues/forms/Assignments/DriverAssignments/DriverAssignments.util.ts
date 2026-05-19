@@ -5,88 +5,100 @@ import type {
 } from "@/types/league.types";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 
+// One form row: an optional server id (absent for unsaved rows) plus the profile id.
 export type DriverAssignmentRow = {
 	assignmentId?: string;
 	driver: string;
 };
 
+// Caps the table at a readable width on wide screens while staying full-width on mobile.
 export const DRIVER_TABLE_STYLE = {
 	width: "min(100%, 360px)",
 	marginInline: "auto",
 } as const;
 
-// -- Helper functions to build form values from API data -- //
+// Treats undefined query data the same as an empty array so callers never have to check for undefined.
+const coerceArray = <T>(data: T[] | undefined): T[] => data ?? [];
 
-// Turns a participant into a select option.
-export const toProfileOption = (participant: LeagueParticipantProfile) => ({
-	label: participant.username,
-	value: participant.profile_id,
-	secondaryInfo: convertGameTypeToFullName(participant.game_type),
+// -- Participant helpers -- //
+
+// Shapes a participant into the option format expected by ProfileSelectInput.
+export const toProfileOption = (p: LeagueParticipantProfile) => ({
+	label: p.username,
+	value: p.profile_id,
+	secondaryInfo: convertGameTypeToFullName(p.game_type),
 	avatar: {
-		avatarType: participant.avatar_type,
-		avatarValue: participant.avatar_value,
+		avatarType: p.avatar_type,
+		avatarValue: p.avatar_value,
 	},
 });
 
-// Builds the division select options.
-export const buildDivisionOptions = (
-	divisions: LeagueSeasonDivisionTable[] | undefined,
-) =>
-	(divisions ?? []).map((division) => ({
-		label: division.division_name,
-		value: division.id,
-	}));
-
-// Keeps only participants with the driver role.
+// Filters the full participant list down to those with the "driver" role.
 export const buildDriverParticipants = (
 	participants: LeagueParticipantProfile[] | undefined,
-) =>
-	(participants ?? []).filter((participant) => participant.roles.includes("driver"));
+) => coerceArray(participants).filter((p) => p.roles.includes("driver"));
 
-// Builds a lookup map for driver options by profile id.
+
+// Converts driver participants to the flat option list used in select inputs.
+export const buildDriverOptions = (
+	participants: LeagueParticipantProfile[] | undefined,
+) => coerceArray(participants).map(toProfileOption);
+
+// Indexes driver options by profile id so they can be quickly looked up and preserved in a row's option list.
 export const buildParticipantOptionsByProfileId = (
 	participants: LeagueParticipantProfile[] | undefined,
 ) =>
 	new Map(
-		(participants ?? []).map((participant) => [
-			participant.profile_id,
-			toProfileOption(participant),
-		]),
+		coerceArray(participants).map((p) => [p.profile_id, toProfileOption(p)]),
 	);
 
-// Builds the full driver option list.
-export const buildDriverOptions = (participants: LeagueParticipantProfile[]) =>
-	participants.map(toProfileOption);
+// -- Division helpers -- //
 
-// Maps saved assignments into form rows.
+// Converts division records to the label/value pairs used by FilterBar.
+export const buildDivisionOptions = (
+	divisions: LeagueSeasonDivisionTable[] | undefined,
+) =>
+	coerceArray(divisions).map((d) => ({
+		label: d.division_name,
+		value: d.id,
+	}));
+
+// -- Assignment helpers -- //
+
+// Returns the saved driver rows for the active division, shaped as form rows.
+// Only drivers whose division_id matches are included — other divisions are ignored here.
 export const buildPersistedAssignments = (
 	seasonDrivers: LeagueSeasonDriverTable[] | undefined,
 	selectedDivisionId: string,
 ): DriverAssignmentRow[] =>
-	(seasonDrivers ?? [])
-		.filter((assignment) => assignment.division_id === selectedDivisionId)
-		.map((assignment) => ({
-			assignmentId: assignment.id,
-			driver: assignment.profile_id,
+	coerceArray(seasonDrivers)
+		.filter((d) => d.division_id === selectedDivisionId)
+		.map((d) => ({
+			assignmentId: d.id,
+			driver: d.profile_id,
 		}));
 
-// Builds a lookup map for saved assignment ids.
+// Maps assignmentId → profileId so the save handler can detect which rows changed.
+// Rows without an assignmentId are new and not included.
 export const buildPersistedAssignmentMap = (
 	assignments: DriverAssignmentRow[],
 ) =>
 	new Map(
 		assignments
-			.filter((assignment) => assignment.assignmentId)
-			.map((assignment) => [assignment.assignmentId as string, assignment.driver]),
+			.filter((a): a is DriverAssignmentRow & { assignmentId: string } =>
+				Boolean(a.assignmentId),
+			)
+			.map((a) => [a.assignmentId, a.driver]),
 	);
 
-// Gets drivers already used in other divisions.
+// Returns the set of profile ids already assigned to any division other than
+// the active one. Used to block reusing a driver across divisions.
 export const buildDriversAssignedToOtherDivisions = (
 	seasonDrivers: LeagueSeasonDriverTable[] | undefined,
 	selectedDivisionId: string,
 ) =>
 	new Set(
-		(seasonDrivers ?? [])
-			.filter((assignment) => assignment.division_id !== selectedDivisionId)
-			.map((assignment) => assignment.profile_id),
+		coerceArray(seasonDrivers)
+			.filter((d) => d.division_id !== selectedDivisionId)
+			.map((d) => d.profile_id),
 	);
