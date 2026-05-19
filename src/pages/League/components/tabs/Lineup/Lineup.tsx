@@ -369,6 +369,7 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
                 <LineupContainer $isEmpty={selectedDivisionTeams.length === 0}>
                   {selectedDivisionTeams.length === 0 ? ( 
                     <EmptyMessage
+                      icon={<SetupIcon />}
                       title="No Teams Assigned"
                       subtitle="Teams have not been created yet."
                     />
@@ -395,6 +396,7 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
                 <LineupContainer $isEmpty={selectedDivisionDrivers.length === 0} isDriversTab={true}>
                   {selectedDivisionDrivers.length === 0 ? (
                     <EmptyMessage
+                      icon={<SetupIcon />}
                       title="No Drivers Assigned"
                       subtitle="Drivers have not been placed in the lineup yet."
                     />
