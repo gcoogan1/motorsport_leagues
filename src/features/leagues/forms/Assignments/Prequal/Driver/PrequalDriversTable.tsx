@@ -13,7 +13,7 @@ import {
   TableRow,
   TableWrapper,
 } from "../../TeamAssignments/TeamAssignments.styles";
-import type { ReadOnlyDivisionDriver } from "../Team/prequalTeamAssignments.util";
+import type { ReadOnlyDivisionDriver } from "../Team/util/prequalTeamAssignments.util";
 
 type PrequalDriversTableProps = {
   drivers: ReadOnlyDivisionDriver[];

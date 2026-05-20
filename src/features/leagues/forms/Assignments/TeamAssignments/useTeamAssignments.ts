@@ -155,10 +155,38 @@ export const useTeamAssignments = ({
   );
 
   // Hydrates saved teams into the form once per data snapshot.
+  // Also remaps assignment teamKey values from old draft localIds to new server ids so the
+  // schema superRefine never sees a mismatch between the teams and assignments arrays.
   useEffect(() => {
     if (persistedTeamsKey === loadedTeamsKey.current) return;
+
+    const oldTeams = getValues("teams");
+    const oldAssignments = getValues("assignments");
+
+    // Build oldKey → newKey by matching team names after a save gives teams real server ids.
+    const nameToNewKey = new Map(
+      persistedTeams.map((t) => [t.teamName?.trim() ?? "", getTeamKey(t)]),
+    );
+    const oldKeyToNewKey = new Map<string, string>(
+      oldTeams
+        .filter((t) => t?.teamName)
+        .map((t): [string, string] => [
+          getTeamKey(t as TeamRow),
+          nameToNewKey.get(t?.teamName?.trim() ?? "") ?? "",
+        ])
+        .filter(([, newKey]) => !!newKey),
+    );
+
+    const remappedAssignments =
+      oldKeyToNewKey.size > 0
+        ? oldAssignments.map((a) => ({
+            ...a,
+            teamKey: oldKeyToNewKey.get(a.teamKey ?? "") ?? (a.teamKey ?? ""),
+          }))
+        : oldAssignments;
+
     reset(
-      { ...getValues(), teams: persistedTeams },
+      { teams: persistedTeams, assignments: remappedAssignments },
       { keepDirty: false, keepTouched: false },
     );
     loadedTeamsKey.current = persistedTeamsKey;

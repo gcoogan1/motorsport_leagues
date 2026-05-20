@@ -10,7 +10,7 @@ const NoTeams = ({ isPreQual }: NoTeamsProps) => {
 
   const title = isPreQual ? 'No Teams Available' : 'No Teams Created';
   const subtitle = isPreQual
-    ? 'Teams Not Assigned to Division'
+    ? 'Please add new teams from the Pre-Qualifying division.'
     : 'Please create a team before assigning drivers.';
   
   return (

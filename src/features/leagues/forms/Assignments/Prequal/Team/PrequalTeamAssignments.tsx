@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   FormProvider,
+  type Resolver,
   useFieldArray,
   useForm,
   useWatch,
@@ -18,11 +19,6 @@ import RemoveIcon from "@assets/Icon/Remove.svg?react";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import {
   useCreateLeagueSeasonDriverMutation,
-  useGetLeagueParticipantsQuery,
-  useGetLeagueSeasonDivisionsQuery,
-  useGetLeagueSeasonDriversBySeasonIdQuery,
-  useGetLeagueSeasonTeamsByDivisionQuery,
-  useGetLeagueSeasonTeamsBySeasonIdQuery,
   useRemoveLeagueSeasonDriverMutation,
   useCreateLeagueSeasonTeamMutation,
   useRemoveLeagueSeasonTeamMutation,
@@ -32,6 +28,7 @@ import {
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import type { LeagueSeasonTable } from "@/types/league.types";
+import type { LeagueSeasonDriverTable } from "@/types/league.types";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { withMinDelay } from "@/utils/withMinDelay";
 import {
@@ -49,46 +46,35 @@ import {
 } from "../../TeamAssignments/TeamAssignments.styles";
 import {
   TEAM_NAME_MAX_LENGTH,
-  TEAM_DELETE_BLOCKED_MESSAGE,
+  createTeamAssignmentsFormSchema,
   teamAssignmentsFormSchema,
   type TeamAssignmentsFormValues,
-} from "../../TeamAssignments/teamAssignments.schema";
+} from "./prequalTeamAssignments.schema";
 import {
   ASSIGNMENT_TABS,
-  buildCurrentDivisionDrivers,
-  buildDivisionOptions,
-  buildDriverOptions,
-  buildDriverParticipants,
-  buildParticipantOptionsByProfileId,
-  buildPersistedAssignments,
-  buildPersistedTeams,
-  createEmptyTeamRow,
   getTeamKey,
   TEAM_COLUMN_STYLE,
 } from "../../TeamAssignments/TeamAssignments.util";
-import {
-  buildDriversAssignedToOtherDivisions,
-  buildPreQualDriverDetailsByProfileId,
-  buildPreQualDrivers,
-  buildPreQualDriversByTeamId,
-  buildPreQualTeamByName,
-  buildSelectedTeamOptions,
-  buildPreQualTeams,
-  buildPreQualTeamOptionsForRow,
-  buildReadOnlyDivisionDrivers,
-  buildTeamNamesAssignedToOtherDivisions,
-  findNextAvailablePreQualTeam,
-} from "./prequalTeamAssignments.util";
+import { normalizeTeamName, createEmptyTeamRow } from "./util/prequalTeamAssignments.util";
 import DriversAssigned from "@/features/leagues/modals/errors/DriversAssigned/DriversAssigned";
 import CannotSave from "@/features/leagues/modals/errors/CannotSave/CannotSave";
 import NoTeams from "@/features/leagues/modals/errors/NoTeams/NoTeams";
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
 import PrequalDriversTable from "../Driver/PrequalDriversTable";
-import PrequalTeamsTable from "./PrequalTeamsTable";
+import { usePrequalTeamAssignments } from "./hooks/usePrequalTeamAssignments";
+import LinkedDivisionTeamsTable from "./components/LinkedDivisionTeamsTable";
+import TeamAssigned from "@/features/leagues/modals/errors/TeamAssigned/TeamAssigned";
 
 type PrequalTeamAssignmentsProps = {
   seasonData: LeagueSeasonTable;
   onDirtyChange?: (isDirty: boolean) => void;
+};
+
+const isValidLinkedDivisionTeamRow = (
+  team?: TeamAssignmentsFormValues["teams"][number],
+) => {
+  const teamName = normalizeTeamName(team?.teamName);
+  return !!teamName && !!(team?.teamId ?? team?.localId);
 };
 
 const PrequalTeamAssignments = ({
@@ -97,20 +83,9 @@ const PrequalTeamAssignments = ({
 }: PrequalTeamAssignmentsProps) => {
   const { openModal } = useModal();
   const { showToast } = useToast();
-  const [selectedDivisionId, setSelectedDivisionId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [loadedTeamsKey, setLoadedTeamsKey] = useState("");
-  const [loadedAssignmentsKey, setLoadedAssignmentsKey] = useState("");
   const [activeTab, setActiveTab] = useState<string>(ASSIGNMENT_TABS[0].label);
-  const seasonDivisions = useGetLeagueSeasonDivisionsQuery(seasonData.id);
-  const firstDivisionId = seasonDivisions.data?.[0]?.id ?? "";
-  const activeDivisionId = selectedDivisionId || firstDivisionId;
-  const leagueParticipants = useGetLeagueParticipantsQuery(seasonData.league_id);
-  const seasonDriversBySeason = useGetLeagueSeasonDriversBySeasonIdQuery(seasonData.id);
-  const seasonTeamsByDivision = useGetLeagueSeasonTeamsByDivisionQuery(activeDivisionId, {
-    skip: !activeDivisionId,
-  });
-  const seasonTeamsBySeason = useGetLeagueSeasonTeamsBySeasonIdQuery(seasonData.id);
+
   const [createLeagueSeasonDriver] = useCreateLeagueSeasonDriverMutation();
   const [removeLeagueSeasonDriver] = useRemoveLeagueSeasonDriverMutation();
   const [updateLeagueSeasonDriverTeam] = useUpdateLeagueSeasonDriverTeamMutation();
@@ -118,8 +93,26 @@ const PrequalTeamAssignments = ({
   const [updateLeagueSeasonTeam] = useUpdateLeagueSeasonTeamMutation();
   const [removeLeagueSeasonTeam] = useRemoveLeagueSeasonTeamMutation();
 
+  const schemaStateRef = useState(() => ({
+    isLinkedDivision: false,
+    availableLinkedTeamNames: new Set<string>(),
+    blockedLinkedTeamNames: new Set<string>(),
+  }))[0];
+
+  const resolver: Resolver<TeamAssignmentsFormValues> = async (values, context, options) => {
+    const schema = schemaStateRef.isLinkedDivision
+      ? createTeamAssignmentsFormSchema({
+          isLinkedDivision: true,
+          availableLinkedTeamNames: schemaStateRef.availableLinkedTeamNames,
+          blockedLinkedTeamNames: schemaStateRef.blockedLinkedTeamNames,
+        })
+      : teamAssignmentsFormSchema;
+
+    return zodResolver(schema)(values, context, options);
+  };
+
   const formMethods = useForm<TeamAssignmentsFormValues>({
-    resolver: zodResolver(teamAssignmentsFormSchema),
+    resolver,
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
@@ -132,365 +125,110 @@ const PrequalTeamAssignments = ({
     control,
     clearErrors,
     reset,
-    setValue,
+    getValues,
+    trigger,
     formState: { errors, isDirty },
   } = formMethods;
+
 
   const {
     fields: teamFields,
     append: appendTeam,
     remove: removeTeamRow,
-    replace: replaceTeamRows,
-  } = useFieldArray({
-    control,
-    name: "teams",
-  });
+    replace: replaceTeams,
+  } = useFieldArray({ control, name: "teams" });
 
   const {
     fields: assignmentFields,
     append: appendAssignment,
     remove: removeAssignment,
-    replace: replaceAssignmentRows,
-  } = useFieldArray({
-    control,
-    name: "assignments",
-  });
+  } = useFieldArray({ control, name: "assignments" });
 
   const watchedTeamsValue = useWatch({ control, name: "teams" });
   const watchedAssignmentsValue = useWatch({ control, name: "assignments" });
-  const watchedTeams = useMemo(() => watchedTeamsValue ?? [], [watchedTeamsValue]);
+  const watchedTeams = useMemo(
+    () => watchedTeamsValue ?? [],
+    [watchedTeamsValue],
+  );
+
   const watchedAssignments = useMemo(
     () => watchedAssignmentsValue ?? [],
     [watchedAssignmentsValue],
   );
 
-  // Build the division filter options once the season divisions load.
-  const divisionOptions = useMemo(
-    () => buildDivisionOptions(seasonDivisions.data),
-    [seasonDivisions.data],
+  const {
+    activeDivisionId,
+    divisionOptions,
+    setSelectedDivisionId,
+    isPreQualDivision,
+    isLinkedDivision,
+    persistedTeams,
+    teamOptions,
+    preQualTeams,
+    preQualTeamByName,
+    teamNamesAssignedToOtherDivisions,
+    currentDivisionDrivers,
+    persistedAssignmentMap,
+    participantDetailsByProfileId,
+    preQualDriversByTeamId,
+    preQualDriverDetailsByProfileId,
+    readOnlyDivisionDrivers,
+    getDriverOptionsForRow,
+    getPreQualTeamOptionsForRow,
+    findNextAvailableDriver,
+    findNextAvailableTeam,
+    refetchAfterSave,
+  } = usePrequalTeamAssignments({
+    seasonData,
+    reset,
+    getValues,
+    clearErrors,
+    errors,
+    watchedTeams,
+    watchedAssignments,
+    isDirty,
+    onDirtyChange,
+  });
+
+  schemaStateRef.isLinkedDivision = isLinkedDivision;
+  schemaStateRef.availableLinkedTeamNames = new Set(
+    preQualTeams.map((team) => normalizeTeamName(team.team_name)),
   );
-
-  const defaultDivisionId = divisionOptions[0]?.value ?? "";
-
-  const preQualDivision = useMemo(
-    () => seasonDivisions.data?.find((division) => division.division_number === 0),
-    [seasonDivisions.data],
-  );
-
-  const currentDivision = useMemo(
-    () => seasonDivisions.data?.find((division) => division.id === activeDivisionId),
-    [activeDivisionId, seasonDivisions.data],
-  );
-
-  const preQualDivisionId = preQualDivision?.id ?? "";
-  // Division 0 is the source of truth. Other divisions only reference those teams.
-  const isPreQualDivision = currentDivision?.division_number === 0;
-  const isLinkedDivision = !!currentDivision && currentDivision.division_number !== 0;
+  schemaStateRef.blockedLinkedTeamNames = teamNamesAssignedToOtherDivisions;
 
   useEffect(() => {
-    // Keep the selected division valid as divisions load or change.
-    if (!divisionOptions.length) {
-      setSelectedDivisionId("");
+    if (!isLinkedDivision) {
       return;
     }
 
-    setSelectedDivisionId((currentValue) => {
-      if (
-        currentValue &&
-        divisionOptions.some((option) => option.value === currentValue)
-      ) {
-        return currentValue;
-      }
+    const currentTeams = watchedTeamsValue ?? [];
 
-      return defaultDivisionId;
-    });
-  }, [defaultDivisionId, divisionOptions]);
-
-  useEffect(() => {
-    // Switching divisions starts from a clean local form state before persisted rows hydrate.
-    if (!activeDivisionId) {
+    if (currentTeams.length === 0) {
       return;
     }
 
-    reset(
-      { teams: [], assignments: [] },
-      { keepDirty: false, keepTouched: false },
-    );
-    setLoadedTeamsKey("");
-    setLoadedAssignmentsKey("");
-  }, [activeDivisionId, reset]);
+    const validTeams = currentTeams.filter(isValidLinkedDivisionTeamRow);
 
-  const driverParticipants = useMemo(
-    () => buildDriverParticipants(leagueParticipants.data),
-    [leagueParticipants.data],
-  );
-
-  const participantOptionsByProfileId = useMemo(
-    () => buildParticipantOptionsByProfileId(leagueParticipants.data),
-    [leagueParticipants.data],
-  );
-
-  const participantDetailsByProfileId = useMemo(
-    () =>
-      new Map(
-        (leagueParticipants.data ?? []).map((participant) => [
-          participant.profile_id,
-          participant,
-        ]),
-      ),
-    [leagueParticipants.data],
-  );
-
-  const driverOptions = useMemo(
-    () => buildDriverOptions(driverParticipants),
-    [driverParticipants],
-  );
-
-  // Prefer the latest stable query payload while refetches are in flight.
-  const seasonTeams = seasonTeamsBySeason.currentData ?? seasonTeamsBySeason.data;
-  const seasonDrivers = seasonDriversBySeason.currentData ?? seasonDriversBySeason.data;
-
-  // These are the editable driver rows for the currently selected division only.
-  const currentDivisionDrivers = useMemo(
-    () => buildCurrentDivisionDrivers(seasonDrivers, activeDivisionId),
-    [activeDivisionId, seasonDrivers],
-  );
-
-  // Division-scoped teams back the editable Teams tab for the active division.
-  const divisionTeams = useMemo(
-    () => seasonTeamsByDivision.currentData ?? seasonTeamsByDivision.data ?? [],
-    [seasonTeamsByDivision.currentData, seasonTeamsByDivision.data],
-  );
-
-  const currentDivisionTeamsById = useMemo(
-    () => new Map(divisionTeams.map((team) => [team.id, team])),
-    [divisionTeams],
-  );
-
-  const readOnlyDivisionDrivers = useMemo(
-    () => buildReadOnlyDivisionDrivers(currentDivisionDrivers, currentDivisionTeamsById),
-    [currentDivisionDrivers, currentDivisionTeamsById],
-  );
-
-  // Pre-qual teams and drivers act as the source set for every linked division.
-  const preQualTeams = useMemo(
-    () => buildPreQualTeams(seasonTeams, preQualDivisionId),
-    [preQualDivisionId, seasonTeams],
-  );
-
-  const preQualTeamByName = useMemo(
-    () => buildPreQualTeamByName(preQualTeams),
-    [preQualTeams],
-  );
-
-  const preQualDrivers = useMemo(
-    () => buildPreQualDrivers(seasonDrivers, preQualDivisionId),
-    [preQualDivisionId, seasonDrivers],
-  );
-
-  const preQualDriversByTeamId = useMemo(
-    () => buildPreQualDriversByTeamId(preQualDrivers),
-    [preQualDrivers],
-  );
-
-  const preQualDriverDetailsByProfileId = useMemo(
-    () => buildPreQualDriverDetailsByProfileId(preQualDrivers),
-    [preQualDrivers],
-  );
-
-  // Once a linked division claims a pre-qual team, other linked divisions cannot reuse it.
-  const teamNamesAssignedToOtherDivisions = useMemo(
-    () =>
-      buildTeamNamesAssignedToOtherDivisions(
-        seasonTeams,
-        activeDivisionId,
-        preQualDivisionId,
-      ),
-    [activeDivisionId, preQualDivisionId, seasonTeams],
-  );
-
-  const persistedTeams = useMemo(
-    () => buildPersistedTeams(divisionTeams),
-    [divisionTeams],
-  );
-
-  const persistedTeamsKey = useMemo(
-    () =>
-      `${activeDivisionId}:${persistedTeams
-        .map((team) => `${team.teamId ?? team.localId}:${team.teamName}`)
-        .join("|")}`,
-    [activeDivisionId, persistedTeams],
-  );
-
-  useEffect(() => {
-    if (persistedTeamsKey === loadedTeamsKey) {
+    if (validTeams.length === currentTeams.length) {
       return;
     }
 
-    // Replace only the team rows so local appends are not wiped by a full form reset.
-    replaceTeamRows(persistedTeams);
-    setLoadedTeamsKey(persistedTeamsKey);
-  }, [loadedTeamsKey, persistedTeams, persistedTeamsKey, replaceTeamRows]);
-
-  const persistedAssignments = useMemo(
-    () => (isLinkedDivision ? [] : buildPersistedAssignments(currentDivisionDrivers)),
-    [currentDivisionDrivers, isLinkedDivision],
-  );
-
-  const persistedAssignmentsKey = useMemo(
-    () =>
-      `${activeDivisionId}:${persistedAssignments
-        .map((assignment) => `${assignment.driver}:${assignment.teamKey}`)
-        .join("|")}`,
-    [activeDivisionId, persistedAssignments],
-  );
-
-  useEffect(() => {
-    if (persistedAssignmentsKey === loadedAssignmentsKey) {
-      return;
-    }
-
-    // Linked divisions keep drivers read-only, so this only hydrates editable rows where needed.
-    replaceAssignmentRows(persistedAssignments);
-    setLoadedAssignmentsKey(persistedAssignmentsKey);
-  }, [
-    loadedAssignmentsKey,
-    persistedAssignments,
-    persistedAssignmentsKey,
-    replaceAssignmentRows,
-  ]);
-
-  useEffect(() => {
-    // Bubble unsaved state to the parent sheet guard.
-    onDirtyChange?.(isDirty);
-  }, [isDirty, onDirtyChange]);
-
-  useEffect(() => {
-    // Mirror the sheet-level unsaved changes guard on browser refresh/navigation.
-    if (!isDirty) {
-      return undefined;
-    }
-
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = "";
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [isDirty]);
-
-  const persistedAssignmentMap = useMemo(
-    () => new Map(currentDivisionDrivers.map((driver) => [driver.profile_id, driver])),
-    [currentDivisionDrivers],
-  );
-
-  const driversAssignedToOtherDivisions = useMemo(
-    () =>
-      buildDriversAssignedToOtherDivisions(
-        seasonDrivers,
-        activeDivisionId,
-        preQualDivisionId,
-      ),
-    [activeDivisionId, preQualDivisionId, seasonDrivers],
-  );
-
-  const teamOptions = useMemo(
-    () => buildSelectedTeamOptions(watchedTeams),
-    [watchedTeams],
-  );
-
-  useEffect(() => {
-    // Clear the delete guard once no current driver row points at the team anymore.
-    watchedTeams.forEach((team, index) => {
-      if (!team) {
-        return;
-      }
-
-      const fieldName = `teams.${index}.teamName` as const;
-      const teamKey = getTeamKey(team);
-      const hasAssignedDrivers = watchedAssignments.some(
-        (assignment) => assignment?.teamKey === teamKey,
-      );
-      const currentMessage = errors.teams?.[index]?.teamName?.message;
-
-      if (hasAssignedDrivers) {
-        return;
-      }
-
-      if (currentMessage === TEAM_DELETE_BLOCKED_MESSAGE) {
-        clearErrors(fieldName);
-      }
-    });
-  }, [clearErrors, errors.teams, watchedAssignments, watchedTeams]);
-
-  const getDriverOptionsForRow = (rowIndex: number) => {
-    // Keep the current row selection visible while preventing duplicate driver use.
-    const selectedDriverIds = new Set(
-      watchedAssignments
-        .map((assignment, index) =>
-          index === rowIndex ? "" : (assignment?.driver ?? ""),
-        )
-        .filter(Boolean),
-    );
-    const currentValue = watchedAssignments[rowIndex]?.driver;
-
-    const filteredOptions = driverOptions.filter(
-      (option) =>
-        option.value === currentValue ||
-        (!selectedDriverIds.has(option.value) &&
-          !driversAssignedToOtherDivisions.has(option.value)),
-    );
-
-    const currentAssignedOption = currentValue
-      ? participantOptionsByProfileId.get(currentValue)
-      : undefined;
-
-    if (
-      currentAssignedOption &&
-      !filteredOptions.some(
-        (option) => option.value === currentAssignedOption.value,
-      )
-    ) {
-      return [currentAssignedOption, ...filteredOptions];
-    }
-
-    return filteredOptions;
-  };
-
-  const getPreQualTeamOptionsForRow = (rowIndex: number) =>
-    // Keep the current selection visible while filtering out teams already used elsewhere.
-    buildPreQualTeamOptionsForRow(
-      watchedTeams.map((team) => team?.teamName ?? ""),
-      rowIndex,
-      preQualTeams,
-      teamNamesAssignedToOtherDivisions,
-    );
+    // Linked divisions should only contain rows that point at a real pre-qual team.
+    // Drop placeholder field-array rows before they affect the table or inherited drivers.
+    replaceTeams(validTeams);
+  }, [isLinkedDivision, replaceTeams, watchedTeamsValue]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
 
   const appendNextDriver = () => {
-    // Drivers cannot be added until the division has at least one team to assign them to.
     if (teamOptions.length === 0) {
       openModal(<NoTeams />);
       return;
     }
 
-    const selectedDriverIds = new Set(
-      watchedAssignments
-        .map((assignment) => assignment?.driver ?? "")
-        .filter(Boolean),
-    );
-    const nextDriver = driverOptions.find(
-      (option) =>
-        !selectedDriverIds.has(option.value) &&
-        !driversAssignedToOtherDivisions.has(option.value),
-    );
+    const nextDriver = findNextAvailableDriver();
 
     if (!nextDriver) {
       openModal(<NoDrivers />);
@@ -510,61 +248,52 @@ const PrequalTeamAssignments = ({
       return;
     }
 
-    // Linked divisions only select from the unused teams already created in pre-qual.
-    const currentTeams = formMethods.getValues("teams") ?? [];
-    const emptyRowIndex = currentTeams.findIndex(
-      (team) => !(team?.teamName?.trim() ?? ""),
-    );
-    const nextTeam = findNextAvailablePreQualTeam(
-      currentTeams.map((team) => team?.teamName ?? ""),
-      preQualTeams,
-      teamNamesAssignedToOtherDivisions,
-    );
+    // // Linked divisions only select from unused pre-qual teams.
+    // const currentTeams = getValues("teams") ?? [];
+    // const emptyRowIndex = currentTeams.findIndex(
+    //   (team) => !(team?.teamName?.trim() ?? ""),
+    // );
+    const nextTeam = findNextAvailableTeam();
+
 
     if (!nextTeam) {
       openModal(<NoTeams isPreQual />);
       return;
     }
 
-    if (emptyRowIndex >= 0) {
-      // Reuse a blank row before appending another select row.
-      setValue(`teams.${emptyRowIndex}.teamName`, nextTeam.team_name, {
-        shouldDirty: true,
-        shouldTouch: true,
-        shouldValidate: true,
-      });
-      return;
-    }
+    // if (emptyRowIndex >= 0) {
+    //   // Reuse a blank row before appending another select row.
+    //   setValue(`teams.${emptyRowIndex}.teamName`, nextTeam.team_name, {
+    //     shouldDirty: true,
+    //     shouldTouch: true,
+    //     shouldValidate: true,
+    //   });
+    //   return;
+    // }
 
     appendTeam(
-      {
-        ...createEmptyTeamRow(),
-        teamName: nextTeam.team_name,
-      },
+      { localId: nextTeam.id, teamName: nextTeam.team_name },
       { shouldFocus: false },
     );
   };
 
   const handleSave = async () => {
-    if (!activeDivisionId) {
-      return;
-    }
+    if (!activeDivisionId) return;
 
     // Validate first so the active tab can jump to the slice that needs attention.
-    const isValid = await formMethods.trigger();
+    const isValid = await trigger();
 
     if (!isValid) {
       const teamErrors = formMethods.formState.errors.teams;
       const hasTeamErrors = Array.isArray(teamErrors)
         ? teamErrors.some((team) => !!team?.teamName)
         : false;
-
       setActiveTab(hasTeamErrors ? "Teams" : "Drivers");
       openModal(<CannotSave />);
       return;
     }
 
-    const currentTeams = (formMethods.getValues("teams") ?? [])
+    const currentTeams = (getValues("teams") ?? [])
       .map((team) => ({ ...team, teamName: team?.teamName?.trim() ?? "" }))
       .filter((team) => team.teamName);
 
@@ -572,7 +301,7 @@ const PrequalTeamAssignments = ({
       .filter(
         (persistedTeam) =>
           persistedTeam.teamId &&
-          !currentTeams.some((currentTeam) => currentTeam.teamId === persistedTeam.teamId),
+          !currentTeams.some((t) => t.teamId === persistedTeam.teamId),
       )
       .map((team) => team.teamId as string);
 
@@ -580,23 +309,22 @@ const PrequalTeamAssignments = ({
       (team) =>
         team.teamId &&
         persistedTeams.some(
-          (persistedTeam) =>
-            persistedTeam.teamId === team.teamId && persistedTeam.teamName !== team.teamName,
+          (p) => p.teamId === team.teamId && p.teamName !== team.teamName,
         ),
     );
 
     const newTeams = currentTeams.filter((team) => !team.teamId);
 
-    const currentAssignments = (formMethods.getValues("assignments") ?? []).filter(
-      (assignment) => assignment.driver && assignment.teamKey,
+    const currentAssignments = (getValues("assignments") ?? []).filter(
+      (a) => a.driver && a.teamKey,
     );
 
     if (
       isLinkedDivision &&
       currentTeams.some(
         (team) =>
-          !preQualTeamByName.has(team.teamName) ||
-          teamNamesAssignedToOtherDivisions.has(team.teamName),
+          !preQualTeamByName.has(normalizeTeamName(team.teamName)) ||
+          teamNamesAssignedToOtherDivisions.has(normalizeTeamName(team.teamName)),
       )
     ) {
       setActiveTab("Teams");
@@ -609,7 +337,7 @@ const PrequalTeamAssignments = ({
 
       await withMinDelay(
         (async () => {
-          // All writes use the same timestamp so team ordering stays consistent in the UI.
+          // All writes share one timestamp so ordering stays consistent in the UI.
           const assignmentTimestamp = new Date().toISOString();
 
           const createdTeams = [];
@@ -619,7 +347,6 @@ const PrequalTeamAssignments = ({
               divisionId: activeDivisionId,
               teamName: team.teamName,
             }).unwrap();
-
             createdTeams.push(result);
           }
 
@@ -633,11 +360,9 @@ const PrequalTeamAssignments = ({
           );
 
           const resolvedTeamIds = new Map<string, string>();
-
           currentTeams.forEach((team) => {
             resolvedTeamIds.set(getTeamKey(team), team.teamId ?? "");
           });
-
           createdTeams.forEach((result, index) => {
             if (result.success) {
               resolvedTeamIds.set(newTeams[index].localId, result.data.id);
@@ -650,23 +375,16 @@ const PrequalTeamAssignments = ({
             // Linked divisions inherit their drivers from the selected pre-qual teams.
             currentTeams.forEach((team) => {
               const resolvedTeamId = resolvedTeamIds.get(getTeamKey(team));
-              const preQualTeam = preQualTeamByName.get(team.teamName);
-
-              if (!resolvedTeamId || !preQualTeam) {
-                return;
-              }
-
-              const preQualTeamDrivers = preQualDriversByTeamId.get(preQualTeam.id) ?? [];
-
-              preQualTeamDrivers.forEach((driver) => {
+              const preQualTeam = preQualTeamByName.get(normalizeTeamName(team.teamName));
+              if (!resolvedTeamId || !preQualTeam) return;
+              (preQualDriversByTeamId.get(preQualTeam.id) ?? []).forEach((driver: LeagueSeasonDriverTable) => {
                 desiredDriverTeams.set(driver.profile_id, resolvedTeamId);
               });
             });
           } else {
-            // The pre-qual division assigns drivers directly to the teams created here.
+            // The pre-qual division assigns drivers directly to teams created here.
             currentAssignments.forEach((assignment) => {
               const resolvedTeamId = resolvedTeamIds.get(assignment.teamKey);
-
               if (resolvedTeamId) {
                 desiredDriverTeams.set(assignment.driver, resolvedTeamId);
               }
@@ -674,13 +392,10 @@ const PrequalTeamAssignments = ({
           }
 
           for (const driverRecord of currentDivisionDrivers) {
-            // Remove stale links and update existing driver-team relationships in place.
+            // Update or remove existing driver-team relationships.
             const currentTeamId = driverRecord.team_id ?? "";
             const desiredTeamId = desiredDriverTeams.get(driverRecord.profile_id) ?? "";
-
-            if (currentTeamId === desiredTeamId) {
-              continue;
-            }
+            if (currentTeamId === desiredTeamId) continue;
 
             if (desiredTeamId) {
               await updateLeagueSeasonDriverTeam({
@@ -697,18 +412,13 @@ const PrequalTeamAssignments = ({
           }
 
           if (isLinkedDivision) {
-            // Create missing division driver rows from the pre-qual source records.
+            // Create missing division driver rows from pre-qual source records.
             for (const [profileId, resolvedTeamId] of desiredDriverTeams.entries()) {
-              if (persistedAssignmentMap.has(profileId)) {
-                continue;
-              }
+              if (persistedAssignmentMap.has(profileId)) continue;
 
               const preQualDriver = preQualDriverDetailsByProfileId.get(profileId);
               const participant = participantDetailsByProfileId.get(profileId);
-
-              if (!resolvedTeamId || (!preQualDriver && !participant)) {
-                continue;
-              }
+              if (!resolvedTeamId || (!preQualDriver && !participant)) continue;
 
               await createLeagueSeasonDriver({
                 seasonId: seasonData.id,
@@ -716,8 +426,7 @@ const PrequalTeamAssignments = ({
                 profileId,
                 displayName:
                   preQualDriver?.display_name ?? participant?.username ?? "Unknown Driver",
-                gameType:
-                  preQualDriver?.game_type ?? participant?.game_type ?? "gt7",
+                gameType: preQualDriver?.game_type ?? participant?.game_type ?? "gt7",
                 avatarType:
                   preQualDriver?.avatar_type ?? participant?.avatar_type ?? "preset",
                 avatarValue:
@@ -729,16 +438,11 @@ const PrequalTeamAssignments = ({
           } else {
             // Create missing pre-qual driver rows from participant profile data.
             for (const assignment of currentAssignments) {
-              if (persistedAssignmentMap.has(assignment.driver)) {
-                continue;
-              }
+              if (persistedAssignmentMap.has(assignment.driver)) continue;
 
               const resolvedTeamId = resolvedTeamIds.get(assignment.teamKey);
               const participant = participantDetailsByProfileId.get(assignment.driver);
-
-              if (!resolvedTeamId || !participant) {
-                continue;
-              }
+              if (!resolvedTeamId || !participant) continue;
 
               await createLeagueSeasonDriver({
                 seasonId: seasonData.id,
@@ -755,23 +459,14 @@ const PrequalTeamAssignments = ({
           }
 
           await Promise.all(
-            removedTeamIds.map((teamId) =>
-              removeLeagueSeasonTeam({ teamId }).unwrap(),
-            ),
+            removedTeamIds.map((teamId) => removeLeagueSeasonTeam({ teamId }).unwrap()),
           );
         })(),
         1000,
       );
 
-      await Promise.all([
-        seasonDriversBySeason.refetch(),
-        seasonTeamsByDivision.refetch(),
-        seasonTeamsBySeason.refetch(),
-      ]);
-      showToast({
-        usage: "success",
-        message: "Team assignments updated.",
-      });
+      await refetchAfterSave();
+      showToast({ usage: "success", message: "Team assignments updated." });
     } catch {
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     } finally {
@@ -780,20 +475,23 @@ const PrequalTeamAssignments = ({
   };
 
   const handleRemoveTeam = (index: number) => {
-    // Linked divisions can drop a referenced pre-qual team immediately.
     const team = watchedTeams[index];
+    if (!team) return;
 
-    if (!team) {
+    // Linked divisions can drop a referenced pre-qual team immediately.
+    if (isLinkedDivision) {
+      removeTeamRow(index);
       return;
     }
 
-    const teamKey = getTeamKey(team);
     const hasAssignedDrivers = watchedAssignments.some(
-      (assignment) => assignment?.teamKey === teamKey,
+      (a) => a?.teamKey === getTeamKey(team),
     );
 
-    if (isLinkedDivision) {
-      removeTeamRow(index);
+    const isAssignedToDifferentDivision = team.teamName && teamNamesAssignedToOtherDivisions.has(normalizeTeamName(team.teamName));
+
+    if (isAssignedToDifferentDivision) {
+      openModal(<TeamAssigned />);
       return;
     }
 
@@ -817,7 +515,6 @@ const PrequalTeamAssignments = ({
       />
     ) : undefined;
 
-  // Team championships always switch between team selection and driver assignment views.
   const assignmentTabs = (
     <SegmentedTab
       tabs={ASSIGNMENT_TABS}
@@ -829,7 +526,7 @@ const PrequalTeamAssignments = ({
   const driverListChildren =
     activeTab === "Drivers" ? (
       isLinkedDivision ? (
-        // Linked divisions inherit drivers from pre-qual team membership only.
+        // Linked divisions inherit drivers from pre-qual team membership — read-only.
         <PrequalDriversTable drivers={readOnlyDivisionDrivers} />
       ) : (
         <>
@@ -889,12 +586,13 @@ const PrequalTeamAssignments = ({
         </>
       )
     ) : isLinkedDivision ? (
-      <PrequalTeamsTable
+      <LinkedDivisionTeamsTable
         teamFields={teamFields}
         teamErrors={errors.teams}
         getOptionsForRow={getPreQualTeamOptionsForRow}
         onRemoveTeam={handleRemoveTeam}
         onAddTeam={appendNextTeam}
+        showEmptyState={preQualTeams.length === 0}
       />
     ) : (
       <>
@@ -962,3 +660,4 @@ const PrequalTeamAssignments = ({
 };
 
 export default PrequalTeamAssignments;
+
