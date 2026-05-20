@@ -148,21 +148,18 @@ export const useLineupData = ({
     const teams: LineupTeam[] = (seasonTeamsBySeason.data ?? []).map((team) => {
       const division = divisionsById.get(team.division_id);
 
-      // Try to find drivers directly assigned to this team record.
-      const directDrivers = drivers.filter(
-        (driver) => driver.teamId === team.id,
-      );
-      // For linked divisions (non-pre-qual), fall back to the matching pre-qual
-      // team's drivers when no direct records exist yet.
+      // For linked divisions (non-pre-qual), always use the matching pre-qual
+      // team's current drivers as the source of truth for display. This ensures
+      // that any changes to the pre-qual assignment are immediately reflected in
+      // all linked divisions without requiring a re-save of each division.
       const isLinkedDivision =
         !!preQualDivision && team.division_id !== preQualDivision.id;
-      const fallbackTeamId =
-        directDrivers.length === 0 && isLinkedDivision
-          ? (preQualTeamIdByName.get(team.team_name) ?? null)
-          : null;
+      const fallbackTeamId = isLinkedDivision
+        ? (preQualTeamIdByName.get(team.team_name) ?? null)
+        : null;
       const driverSource = fallbackTeamId
         ? drivers.filter((driver) => driver.teamId === fallbackTeamId)
-        : directDrivers;
+        : drivers.filter((driver) => driver.teamId === team.id);
 
       const teamDrivers = driverSource
         .sort((left, right) => {
@@ -255,60 +252,56 @@ export const useLineupData = ({
 
   // -- Selected Division Slices -- //
 
-  // Drivers visible in the active division. For linked divisions the filter
-  // extends beyond divisionId because pre-qual driver records carry the
-  // pre-qual divisionId; we resolve them via the team id set built from each
-  // team's already-resolved driver list (which includes fallback ids).
+  // Drivers visible in the active division.
+  //
+  // We seed the list from the already-resolved team rosters (the same source
+  // the Teams tab uses, including pre-qual fallback) to guarantee both tabs
+  // always agree on which drivers are assigned. profileId is used as the
+  // deduplication key so a person with both a pre-qual record and a linked-
+  // division record doesn't appear twice.
+  //
+  // After seeding from teams we do a second pass over all raw driver records
+  // to pick up anyone in the division who isn't on a team yet (e.g. newly
+  // added participants waiting for team assignment).
   const selectedDivisionDrivers = useMemo(() => {
     const allDrivers = lineupData?.drivers ?? [];
 
+    const sortFn = (left: LineupDriver, right: LineupDriver) => {
+      const createdAtDiff =
+        new Date(left.createdAt).getTime() - new Date(right.createdAt).getTime();
+      if (createdAtDiff !== 0) return createdAtDiff;
+      const nameDiff = left.displayName.localeCompare(right.displayName);
+      if (nameDiff !== 0) return nameDiff;
+      return left.seasonDriverId.localeCompare(right.seasonDriverId);
+    };
+
     if (!activeDivisionId) {
-      return allDrivers.slice().sort((left, right) => {
-        const createdAtDiff =
-          new Date(left.createdAt).getTime() -
-          new Date(right.createdAt).getTime();
-        if (createdAtDiff !== 0) return createdAtDiff;
-        const nameDiff = left.displayName.localeCompare(right.displayName);
-        if (nameDiff !== 0) return nameDiff;
-        return left.seasonDriverId.localeCompare(right.seasonDriverId);
-      });
+      return allDrivers.slice().sort(sortFn);
     }
 
-    // Collect the team ids (including pre-qual fallback ids inherited by linked
-    // division teams) so we can match pre-qual driver records to linked divisions.
-    const divisionTeamDriverIds = new Set(
-      (lineupData?.teams ?? [])
-        .filter((team) => team.divisionId === activeDivisionId)
-        .flatMap((team) =>
-          team.drivers
-            .map((d) => d.teamId)
-            .filter((id): id is string => id !== null),
-        ),
+    const teamsInDivision = (lineupData?.teams ?? []).filter(
+      (t) => t.divisionId === activeDivisionId,
     );
 
-    return allDrivers
-      .filter(
-        (driver) =>
-          driver.divisionId === activeDivisionId ||
-          (driver.teamId !== null && divisionTeamDriverIds.has(driver.teamId)),
-      )
-      .sort((left, right) => {
-        const createdAtDiff =
-          new Date(left.createdAt).getTime() -
-          new Date(right.createdAt).getTime();
+    // Seed from team rosters — this is the same data the Teams tab renders.
+    const driversByProfile = new Map<string, LineupDriver>();
+    for (const team of teamsInDivision) {
+      for (const driver of team.drivers) {
+        driversByProfile.set(driver.profileId, driver);
+      }
+    }
 
-        if (createdAtDiff !== 0) {
-          return createdAtDiff;
-        }
+    // Add division-assigned drivers not already covered by a team roster.
+    for (const driver of allDrivers) {
+      if (
+        driver.divisionId === activeDivisionId &&
+        !driversByProfile.has(driver.profileId)
+      ) {
+        driversByProfile.set(driver.profileId, driver);
+      }
+    }
 
-        const nameDiff = left.displayName.localeCompare(right.displayName);
-
-        if (nameDiff !== 0) {
-          return nameDiff;
-        }
-
-        return left.seasonDriverId.localeCompare(right.seasonDriverId);
-      });
+    return [...driversByProfile.values()].sort(sortFn);
   }, [activeDivisionId, lineupData?.drivers, lineupData?.teams]);
 
   const selectedDivisionTeams = useMemo(
