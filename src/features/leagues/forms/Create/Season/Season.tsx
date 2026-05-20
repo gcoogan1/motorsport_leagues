@@ -46,6 +46,9 @@ const Season = ({ onBack }: SeasonProps) => {
   const [isTeamChampionship, setIsTeamChampionship] = useState(
     draft.is_team_championship ?? false,
   );
+  const [includesPreQual, setIncludesPreQual] = useState(
+    draft.includes_pre_qual ?? false,
+  );
 
   // -- Form setup -- //
   const formMethods = useForm<CreateSeasonSchema>({
@@ -54,6 +57,7 @@ const Season = ({ onBack }: SeasonProps) => {
       seasonName: draft.season_name ?? "Season 1",
       numOfDivisions: draft.num_of_divisions ?? 1,
       isTeamChampionship: draft.is_team_championship ?? false,
+      includesPreQual: draft.includes_pre_qual ?? false,
     },
   });
 
@@ -97,6 +101,7 @@ const Season = ({ onBack }: SeasonProps) => {
               season_name: data.seasonName,
               num_of_divisions: data.numOfDivisions,
               is_team_championship: data.isTeamChampionship,
+              includes_pre_qual: data.includesPreQual,
             }),
           );
 
@@ -113,6 +118,7 @@ const Season = ({ onBack }: SeasonProps) => {
               seasonName: data.seasonName,
               numOfDivisions: data.numOfDivisions,
               isTeamChampionship: data.isTeamChampionship,
+              includesPreQual: data.includesPreQual,
             }),
           ).unwrap();
 
@@ -196,6 +202,19 @@ const Season = ({ onBack }: SeasonProps) => {
           onChange={(checked) => {
             setIsTeamChampionship(checked);
             setValue("isTeamChampionship", checked, {
+              shouldDirty: true,
+              shouldValidate: true,
+            });
+          }}
+        />
+        <CheckboxItem
+          name="includesPreQual"
+          label="Include Pre-Qualifying Division"
+          checked={includesPreQual}
+          helperMessage="Add a pre-requisite division where all drivers and teams start from, prior to being assigned to actual divisions."
+          onChange={(checked) => {
+            setIncludesPreQual(checked);
+            setValue("includesPreQual", checked, {
               shouldDirty: true,
               shouldValidate: true,
             });

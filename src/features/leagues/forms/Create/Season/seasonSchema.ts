@@ -12,4 +12,5 @@ export const createSeasonSchema = z.object({
     .min(1, "Please choose at least one division.")
     .max(5, "You can create up to 5 divisions."),
   isTeamChampionship: z.boolean(),
+  includesPreQual: z.boolean(),
 });

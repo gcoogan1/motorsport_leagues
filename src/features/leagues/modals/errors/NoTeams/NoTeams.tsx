@@ -1,15 +1,23 @@
 import Dialog from '@/components/Dialog/Dialog'
 import { useModal } from '@/providers/modal/useModal';
 
+type NoTeamsProps = {
+  isPreQual?: boolean;
+}
 
-const NoTeams = () => {
+const NoTeams = ({ isPreQual }: NoTeamsProps) => {
   const { closeModal } = useModal();
+
+  const title = isPreQual ? 'No Teams Available' : 'No Teams Created';
+  const subtitle = isPreQual
+    ? 'Please add new teams from the Pre-Qualifying division.'
+    : 'Please create a team before assigning drivers.';
   
   return (
     <Dialog 
       type='alert'
-      title='No Teams Created'
-      subtitle="Please create a team before assigning drivers."
+      title={title}
+      subtitle={subtitle}
       buttons={{
         onContinue: {
           label: "Okay",

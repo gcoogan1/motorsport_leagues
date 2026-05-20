@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   FormProvider,
@@ -12,12 +12,9 @@ import Button from "@/components/Button/Button";
 import ProfileSelectInput from "@/components/Inputs/ProfileSelectInput/ProfileSelectInput";
 import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
 import RemoveIcon from "@assets/Icon/Remove.svg?react";
+import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import {
   useCreateLeagueSeasonDriverMutation,
-  useGetLeagueParticipantsQuery,
-  useGetLeagueSeasonDivisionsQuery,
-  useGetLeagueSeasonDriversBySeasonIdQuery,
-  useGetLeagueSeasonTeamsByDivisionQuery,
   useRemoveLeagueSeasonDriverMutation,
   useCreateLeagueSeasonTeamMutation,
   useRemoveLeagueSeasonTeamMutation,
@@ -26,9 +23,7 @@ import {
 } from "@/rtkQuery/API/leagueApi";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
-import type {
-  LeagueSeasonTable,
-} from "@/types/league.types";
+import type { LeagueSeasonTable } from "@/types/league.types";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { withMinDelay } from "@/utils/withMinDelay";
 import {
@@ -48,30 +43,22 @@ import SegmentedTab from "@/components/Tabs/SegmentedTabs/SegmentedTab";
 import SelectInput from "@/components/Inputs/SelectInput/SelectInput";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import {
-  TEAM_DELETE_BLOCKED_MESSAGE,
   TEAM_NAME_MAX_LENGTH,
   teamAssignmentsFormSchema,
   type TeamAssignmentsFormValues,
 } from "./teamAssignments.schema";
 import {
   ASSIGNMENT_TABS,
-  buildCurrentDivisionDrivers,
-  buildDivisionOptions,
-  buildDriverOptions,
-  buildDriverParticipants,
-  buildDriversAssignedToOtherDivisions,
-  buildParticipantOptionsByProfileId,
-  buildPersistedAssignments,
-  buildPersistedTeams,
-  buildTeamOptions,
   createEmptyTeamRow,
   getTeamKey,
   TEAM_COLUMN_STYLE,
-} from "./TeamAssignments.util";
+} from "./util/TeamAssignments.util";
 import DriversAssigned from "@/features/leagues/modals/errors/DriversAssigned/DriversAssigned";
 import CannotSave from "@/features/leagues/modals/errors/CannotSave/CannotSave";
 import NoTeams from "@/features/leagues/modals/errors/NoTeams/NoTeams";
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
+import { useTeamAssignments } from "./hooks/useTeamAssignments";
+
 
 type TeamAssignmentsProps = {
   seasonData: LeagueSeasonTable;
@@ -81,26 +68,7 @@ type TeamAssignmentsProps = {
 const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) => {
   const { openModal } = useModal();
   const { showToast } = useToast();
-  const [selectedDivisionId, setSelectedDivisionId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  // This is a snapshot key to ensure teams only load into the form when the underlying data actually changes, preventing form reset on unrelated data updates.
-  const [loadedTeamsKey, setLoadedTeamsKey] = useState(""); 
-  // This is a snapshot key to ensure driver assignments only load into the form when the underlying data actually changes, preventing form reset on unrelated data updates.
-  const [loadedAssignmentsKey, setLoadedAssignmentsKey] = useState("");
-  const seasonDivisions = useGetLeagueSeasonDivisionsQuery(seasonData.id);
-  const firstDivisionId = seasonDivisions.data?.[0]?.id ?? "";
-  const activeDivisionId = selectedDivisionId || firstDivisionId;
-  const leagueParticipants = useGetLeagueParticipantsQuery(
-    seasonData.league_id,
-  );
-  const seasonDriversBySeason = useGetLeagueSeasonDriversBySeasonIdQuery(
-    seasonData.id,
-  );
-  const seasonTeamsByDivision = useGetLeagueSeasonTeamsByDivisionQuery(activeDivisionId, {
-    skip: !activeDivisionId,
-  });
-  const isTeamChampionship = seasonData.is_team_championship;
-  const [activeTab, setActiveTab] = useState<string>(ASSIGNMENT_TABS[0].label);
 
   // -- Mutations -- //
 
@@ -111,35 +79,28 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
   const [updateLeagueSeasonTeam] = useUpdateLeagueSeasonTeamMutation();
   const [removeLeagueSeasonTeam] = useRemoveLeagueSeasonTeamMutation();
 
-  // -- Form Methods -- //
+  // -- Form setup -- //
 
   const formMethods = useForm<TeamAssignmentsFormValues>({
     resolver: zodResolver(teamAssignmentsFormSchema),
     mode: "onChange",
     reValidateMode: "onChange",
-    defaultValues: {
-      teams: [],
-      assignments: [],
-    },
+    defaultValues: { teams: [], assignments: [] },
   });
+
   const {
     control,
     clearErrors,
     getValues,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = formMethods;
-  const {
-    formState: { isDirty },
-  } = formMethods;
-  const {
-    fields: teamFields,
-    append: appendTeam,
-    remove: removeTeamRow,
-  } = useFieldArray({
+
+  const { fields: teamFields, append: appendTeam, remove: removeTeamRow } = useFieldArray({
     control,
     name: "teams",
   });
+
   const {
     fields: assignmentFields,
     append: appendAssignment,
@@ -149,322 +110,88 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
     name: "assignments",
   });
 
+  const watchedTeams = useWatch({ control, name: "teams" }) ?? [];
+  const watchedAssignments = useWatch({ control, name: "assignments" }) ?? [];
 
-  // -- Watchers and Effects -- //
+  // -- Derived state, effects, and helpers -- //
 
-  const watchedTeamsValue = useWatch({ control, name: "teams" });
-  const watchedAssignmentsValue = useWatch({ control, name: "assignments" });
-  const watchedTeams = useMemo(() => watchedTeamsValue ?? [], [watchedTeamsValue]);
-  const watchedAssignments = useMemo(
-    () => watchedAssignmentsValue ?? [],
-    [watchedAssignmentsValue],
-  );
-
-
-  // -- Division -- //
-
-  // Builds the division dropdown options for the assignment filter.
-  const divisionOptions = useMemo(
-    () => buildDivisionOptions(seasonDivisions.data),
-    [seasonDivisions.data],
-  );
-
-  const defaultDivisionId = useMemo(
-    () =>
-      seasonDivisions.data?.find((division) => division.division_number === 1)
-        ?.id ?? divisionOptions[0]?.value ?? "",
-    [divisionOptions, seasonDivisions.data],
-  );
-
-  // Keeps the selected DIVISION option valid, defaulting to the first DIVISION.
-  useEffect(() => {
-    if (!divisionOptions.length) {
-      setSelectedDivisionId("");
-      return;
-    }
-
-    setSelectedDivisionId((currentValue) => {
-      if (
-        currentValue &&
-        divisionOptions.some((option) => option.value === currentValue)
-      ) {
-        return currentValue;
-      }
-
-      return defaultDivisionId;
-    });
-  }, [divisionOptions, defaultDivisionId]);
-
-  // Clears the form rows before loading data for a different DIVISION.
-  useEffect(() => {
-    if (!activeDivisionId) {
-      return;
-    }
-
-    reset(
-      { teams: [], assignments: [] },
-      { keepDirty: false, keepTouched: false },
-    );
-    setLoadedTeamsKey("");
-    setLoadedAssignmentsKey("");
-  }, [activeDivisionId, reset]);
-
-  
-  // -- Drivers -- //
-
-  // Narrows league participants down to driver profiles only.
-  const driverParticipants = useMemo(
-    () => buildDriverParticipants(leagueParticipants.data),
-    [leagueParticipants.data],
-  );
-
-  // Maps profile ids to the option shape used by the driver select input.
-  const participantOptionsByProfileId = useMemo(
-    () => buildParticipantOptionsByProfileId(leagueParticipants.data),
-    [leagueParticipants.data],
-  );
-
-  const participantDetailsByProfileId = useMemo(
-    () =>
-      new Map(
-        (leagueParticipants.data ?? []).map((participant) => [
-          participant.profile_id,
-          participant,
-        ]),
-      ),
-    [leagueParticipants.data],
-  );
-
-  // Builds the full driver option list for the selected division.
-  const driverOptions = useMemo(
-    () => buildDriverOptions(driverParticipants),
-    [driverParticipants],
-  );
-
-  // Filters the season driver records down to the active division.
-  const currentDivisionDrivers = useMemo(
-    () => buildCurrentDivisionDrivers(seasonDriversBySeason.data, activeDivisionId),
-    [activeDivisionId, seasonDriversBySeason.data],
-  );
-
-  // -- Assignments -- //
-
-  // Converts persisted teams into form rows for the active division.
-  const persistedTeams = useMemo(
-    () => buildPersistedTeams(seasonTeamsByDivision.currentData),
-    [seasonTeamsByDivision.currentData],
-  );
-
-  // Creates a snapshot key so team data only loads when the server state actually changes.
-  const persistedTeamsKey = useMemo(
-    () =>
-      `${activeDivisionId}:${persistedTeams
-        .map(
-          (team) =>
-            `${team.teamId ?? team.localId}:${team.teamName}`,
-        )
-        .join("|")}`,
-    [activeDivisionId, persistedTeams],
-  );
-
-  // Loads the active division's saved teams into the form once per data snapshot.
-  useEffect(() => {
-    if (persistedTeamsKey === loadedTeamsKey) {
-      return;
-    }
-
-    reset(
-      {
-        ...getValues(),
-        teams: persistedTeams,
-      },
-      { keepDirty: false, keepTouched: false },
-    );
-    setLoadedTeamsKey(persistedTeamsKey);
-  }, [getValues, loadedTeamsKey, persistedTeams, persistedTeamsKey, reset]);
-
-  // Converts saved team assignments into driver rows for the active division.
-  const persistedAssignments = useMemo(
-    () => buildPersistedAssignments(currentDivisionDrivers),
-    [currentDivisionDrivers],
-  );
-
-  // Creates a snapshot key so driver assignments only load when saved data changes.
-  const persistedAssignmentsKey = useMemo(
-    () =>
-      `${activeDivisionId}:${persistedAssignments
-        .map((assignment) => `${assignment.driver}:${assignment.teamKey}`)
-        .join("|")}`,
-    [activeDivisionId, persistedAssignments],
-  );
-
-  // Loads the active division's saved driver-team links into the form once per snapshot.
-  useEffect(() => {
-    if (persistedAssignmentsKey === loadedAssignmentsKey) {
-      return;
-    }
-
-    reset(
-      {
-        ...getValues(),
-        assignments: persistedAssignments,
-      },
-      { keepDirty: false, keepTouched: false },
-    );
-    setLoadedAssignmentsKey(persistedAssignmentsKey);
-  }, [
-    getValues,
-    loadedAssignmentsKey,
-    persistedAssignments,
-    persistedAssignmentsKey,
+  const {
+    activeDivisionId,
+    divisionOptions,
+    setSelectedDivisionId,
+    persistedTeams,
+    teamOptions,
+    currentDivisionDrivers,
+    persistedAssignmentMap,
+    participantDetailsByProfileId,
+    getDriverOptionsForRow,
+    findNextAvailableDriver,
+    refetchAfterSave,
+  } = useTeamAssignments({
+    seasonData,
     reset,
-  ]);
+    getValues,
+    clearErrors,
+    errors,
+    watchedTeams,
+    watchedAssignments,
+    isDirty,
+    onDirtyChange,
+  });
 
-  useEffect(() => {
-    onDirtyChange?.(isDirty);
-  }, [isDirty, onDirtyChange]);
-
-  useEffect(() => {
-    if (!isDirty) {
-      return undefined;
-    }
-
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = "";
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [isDirty]);
-
-  // Indexes persisted driver records by profile id for save-time updates.
-  const persistedAssignmentMap = useMemo(
-    () => new Map(currentDivisionDrivers.map((driver) => [driver.profile_id, driver])),
-    [currentDivisionDrivers],
-  );
-
-  // Tracks drivers already assigned to other divisions so they can be EXCLUDED locally.
-  const driversAssignedToOtherDivisions = useMemo(
-    () =>
-      buildDriversAssignedToOtherDivisions(
-        seasonDriversBySeason.data,
-        activeDivisionId,
-      ),
-    [activeDivisionId, seasonDriversBySeason.data],
-  );
-
-  // Teams
-  //  --> Builds the team select options from non-empty team rows. 
-  // Only teams with names are valid options for driver assignments.
-  const teamOptions = useMemo(
-    () => buildTeamOptions(watchedTeams),
-    [watchedTeams],
-  );
-
-  // Clears the delete-blocking error as soon as a team no longer has assigned drivers.
-  useEffect(() => {
-    watchedTeams.forEach((team, index) => {
-      const fieldName = `teams.${index}.teamName` as const;
-      const teamKey = getTeamKey(team);
-      const hasAssignedDrivers = watchedAssignments.some(
-        (assignment) => assignment?.teamKey === teamKey,
-      );
-      const currentMessage = errors.teams?.[index]?.teamName?.message;
-
-      if (hasAssignedDrivers) {
-        return;
-      }
-
-      if (currentMessage === TEAM_DELETE_BLOCKED_MESSAGE) {
-        clearErrors(fieldName);
-      }
-    });
-  }, [clearErrors, errors.teams, watchedAssignments, watchedTeams]);
-
-  // Driver Profiles
-  //  --> Returns the driver options for one row while preserving that row's current selection.
-  const getDriverOptionsForRow = (rowIndex: number) => {
-    const selectedDriverIds = new Set(
-      watchedAssignments
-        .map((assignment, index) =>
-          index === rowIndex ? "" : (assignment?.driver ?? ""),
-        )
-        .filter(Boolean),
-    );
-    const currentValue = watchedAssignments[rowIndex]?.driver;
-
-    const filteredOptions = driverOptions.filter(
-      (option) =>
-        option.value === currentValue ||
-        (!selectedDriverIds.has(option.value) &&
-          !driversAssignedToOtherDivisions.has(option.value)),
-    );
-
-    const currentAssignedOption = currentValue
-      ? participantOptionsByProfileId.get(currentValue)
-      : undefined;
-
-    if (
-      currentAssignedOption &&
-      !filteredOptions.some(
-        (option) => option.value === currentAssignedOption.value,
-      )
-    ) {
-      return [currentAssignedOption, ...filteredOptions];
-    }
-
-    return filteredOptions;
-  };
+  // activeTab drives the segmented tab display; also set in handleSave to surface errors.
+  const [activeTab, setActiveTab] = useState<string>(ASSIGNMENT_TABS[0].label);
 
   // -- Handlers -- //
 
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-  };
-
-  // Add driver row
+  // Appends the next available driver. Shows NoTeams if no teams exist,
+  // or NoDrivers when every eligible driver is already placed.
   const appendNextDriver = () => {
     if (teamOptions.length === 0) {
       openModal(<NoTeams />);
       return;
     }
 
-    const selectedDriverIds = new Set(
-      watchedAssignments
-        .map((assignment) => assignment?.driver ?? "")
-        .filter(Boolean),
-    );
-    const nextDriver = driverOptions.find(
-      (option) =>
-        !selectedDriverIds.has(option.value) &&
-        !driversAssignedToOtherDivisions.has(option.value),
-    );
+    const nextDriverId = findNextAvailableDriver();
 
-    if (!nextDriver) {
+    if (!nextDriverId) {
       openModal(<NoDrivers />);
       return;
     }
 
     appendAssignment(
-      { driver: nextDriver.value, teamKey: teamOptions[0]?.value ?? "" },
+      { driver: nextDriverId, teamKey: teamOptions[0]?.value ?? "" },
       { shouldFocus: false },
     );
   };
 
-// Add team row
+  // Appends a blank team row for the user to name.
   const appendNextTeam = () => {
     appendTeam(createEmptyTeamRow(), { shouldFocus: false });
   };
 
-  // Persists team rows first, then syncs driver-team assignments for the active division.
-  const handleSave = async () => {
-    if (!activeDivisionId) {
+  // Blocks removing a team while any driver row still references it.
+  const handleRemoveTeam = (index: number) => {
+    const team = watchedTeams[index];
+
+    if (!team) return;
+
+    const hasAssignedDrivers = watchedAssignments.some(
+      (a) => a?.teamKey === getTeamKey(team),
+    );
+
+    if (hasAssignedDrivers) {
+      openModal(<DriversAssigned />);
       return;
     }
+
+    removeTeamRow(index);
+  };
+
+  // Validates, then saves teams first and driver assignments second.
+  // New teams are created sequentially so each id is available before the next.
+  const handleSave = async () => {
+    if (!activeDivisionId) return;
 
     const isValid = await formMethods.trigger();
 
@@ -482,30 +209,27 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
     const rawTeams = formMethods.getValues("teams") ?? [];
 
     const currentTeams = rawTeams
-      .map((team) => ({ ...team, teamName: team.teamName.trim() }))
+      .map((team) => ({ ...team, teamName: team?.teamName?.trim() ?? "" }))
       .filter((team) => team.teamName);
 
     const removedTeamIds = persistedTeams
       .filter(
-        (persistedTeam) =>
-          persistedTeam.teamId &&
-          !currentTeams.some((currentTeam) => currentTeam.teamId === persistedTeam.teamId),
+        (pt) => pt.teamId && !currentTeams.some((ct) => ct.teamId === pt.teamId),
       )
-      .map((team) => team.teamId as string);
+      .map((t) => t.teamId as string);
 
     const changedTeams = currentTeams.filter(
       (team) =>
         team.teamId &&
         persistedTeams.some(
-          (persistedTeam) =>
-            persistedTeam.teamId === team.teamId && persistedTeam.teamName !== team.teamName,
+          (pt) => pt.teamId === team.teamId && pt.teamName !== team.teamName,
         ),
     );
 
     const newTeams = currentTeams.filter((team) => !team.teamId);
 
     const currentAssignments = (formMethods.getValues("assignments") ?? []).filter(
-      (assignment) => assignment.driver && assignment.teamKey,
+      (a) => a.driver && a.teamKey,
     );
 
     try {
@@ -515,8 +239,8 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
         (async () => {
           const assignmentTimestamp = new Date().toISOString();
 
+          // Teams must be created in order so each id is available before the next.
           const createdTeams = [];
-           // Needed to ensure teams are created in order
           for (const team of newTeams) {
             const result = await createLeagueSeasonTeam({
               seasonId: seasonData.id,
@@ -536,6 +260,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
             ),
           );
 
+          // Build a map from form team key → real server team id.
           const resolvedTeamIds = new Map<string, string>();
 
           currentTeams.forEach((team) => {
@@ -548,23 +273,20 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
             }
           });
 
+          // Desired profile → team id mapping from the current form state.
           const desiredDriverTeams = new Map<string, string>();
 
           currentAssignments.forEach((assignment) => {
             const resolvedTeamId = resolvedTeamIds.get(assignment.teamKey);
-
-            if (resolvedTeamId) {
-              desiredDriverTeams.set(assignment.driver, resolvedTeamId);
-            }
+            if (resolvedTeamId) desiredDriverTeams.set(assignment.driver, resolvedTeamId);
           });
 
+          // Update or remove existing division driver records to match desired state.
           for (const driverRecord of currentDivisionDrivers) {
             const currentTeamId = driverRecord.team_id ?? "";
             const desiredTeamId = desiredDriverTeams.get(driverRecord.profile_id) ?? "";
 
-            if (currentTeamId === desiredTeamId) {
-              continue;
-            }
+            if (currentTeamId === desiredTeamId) continue;
 
             if (desiredTeamId) {
               await updateLeagueSeasonDriverTeam({
@@ -580,17 +302,14 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
             }
           }
 
+          // Create driver records for profiles not yet in this division.
           for (const assignment of currentAssignments) {
-            if (persistedAssignmentMap.has(assignment.driver)) {
-              continue;
-            }
+            if (persistedAssignmentMap.has(assignment.driver)) continue;
 
             const resolvedTeamId = resolvedTeamIds.get(assignment.teamKey);
             const participant = participantDetailsByProfileId.get(assignment.driver);
 
-            if (!resolvedTeamId || !participant) {
-              continue;
-            }
+            if (!resolvedTeamId || !participant) continue;
 
             await createLeagueSeasonDriver({
               seasonId: seasonData.id,
@@ -605,6 +324,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
             }).unwrap();
           }
 
+          // Remove teams last so foreign-key constraints are not violated.
           await Promise.all(
             removedTeamIds.map((teamId) =>
               removeLeagueSeasonTeam({ teamId }).unwrap(),
@@ -614,14 +334,8 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
         1000,
       );
 
-      await Promise.all([
-        seasonDriversBySeason.refetch(),
-        seasonTeamsByDivision.refetch(),
-      ]);
-      showToast({
-        usage: "success",
-        message: "Team assignments updated.",
-      });
+      await refetchAfterSave();
+      showToast({ usage: "success", message: "Team assignments updated." });
     } catch {
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     } finally {
@@ -629,30 +343,8 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
     }
   };
 
-    // Blocks deleting a team while any current driver row still points at it.
-  const handleRemoveTeam = (index: number) => {
-    const team = watchedTeams[index];
+  // -- Render --
 
-    if (!team) {
-      return;
-    }
-
-    const teamKey = getTeamKey(team);
-    const hasAssignedDrivers = watchedAssignments.some(
-      (assignment) => assignment?.teamKey === teamKey,
-    );
-
-    if (hasAssignedDrivers) {
-      openModal(<DriversAssigned />);
-      
-      return;
-    }
-
-    removeTeamRow(index);
-  };
-
-  // -- Components -- //
-  // Renders the division filter when more than one division is available.
   const divisionFilter =
     divisionOptions.length > 1 ? (
       <FilterBar
@@ -665,20 +357,18 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
       />
     ) : undefined;
 
-  // Renders the segmented Team and Driver tabs for team championships.
-  const assignmentTabs = isTeamChampionship ? (
+  const assignmentTabs = seasonData.is_team_championship ? (
     <SegmentedTab
       tabs={ASSIGNMENT_TABS}
       activeTab={activeTab}
-      onChange={handleTabChange}
+      onChange={setActiveTab}
     />
   ) : null;
 
   const driverListChildren = (
     <>
       {assignmentFields.length > 0 && (
-        <TableWrapper
-        >
+        <TableWrapper>
           <ParticipantHeader>
             <TableRow>
               <NumberColumn>
@@ -736,7 +426,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
   const teamListChildren = (
     <>
       {teamFields.length > 0 && (
-      <TableWrapper>
+        <TableWrapper>
           <ParticipantHeader>
             <TableRow>
               <NumberColumn>
@@ -768,7 +458,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
                     rounded
                     variant="ghost"
                     ariaLabel="remove row"
-                    icon={{ left: <RemoveIcon /> }}
+                    icon={{ left: <DeleteIcon /> }}
                     onClick={() => handleRemoveTeam(index)}
                   />
                 </ExtraCell>
@@ -777,16 +467,16 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
           </TableBody>
         </TableWrapper>
       )}
-      <AddItem label="Add Team" onClick={appendNextTeam} />
+      <AddItem label="Create Team" onClick={appendNextTeam} />
     </>
   );
 
   return (
     <FormProvider {...formMethods}>
       <SheetForm
-        id={"team-assignments-form"}
+        id="team-assignments-form"
         seasonName={seasonData.season_name}
-        header={"Team Assignments"}
+        header="Team Assignments"
         filters={divisionFilter}
         listChildren={activeTab === "Drivers" ? driverListChildren : teamListChildren}
         tabs={assignmentTabs}

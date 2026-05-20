@@ -18,6 +18,7 @@ export const createLeagueSeason = async ({
   seasonName,
   numOfDivisions,
   isTeamChampionship,
+  includesPreQual = false,
 }: CreateLeagueSeasonPayload): Promise<CreateLeagueSeasonResult> => {
 
   // Create season 
@@ -29,6 +30,7 @@ export const createLeagueSeason = async ({
       num_of_divisions: numOfDivisions,
       is_team_championship: isTeamChampionship,
       season_status: "setup",
+      includes_pre_qual: includesPreQual,
     })
     .select()
     .single();
@@ -44,13 +46,29 @@ export const createLeagueSeason = async ({
     };
   }
 
-  // Create divisions for the season
-  const divisionResults = await Promise.all(
-    Array.from({ length: numOfDivisions }, (_, index) =>
-      createLeagueSeasonDivision({
-        seasonId: season.id,
+  const divisionsToCreate = includesPreQual
+    ? [
+        {
+          divisionNumber: 0,
+          divisionName: "Pre-Qualifying",
+        },
+        ...Array.from({ length: numOfDivisions }, (_, index) => ({
+          divisionNumber: index + 1,
+          divisionName: `Division ${index + 1}`,
+        })),
+      ]
+    : Array.from({ length: numOfDivisions }, (_, index) => ({
         divisionNumber: index + 1,
         divisionName: `Division ${index + 1}`,
+      }));
+
+  // Create divisions for the season
+  const divisionResults = await Promise.all(
+    divisionsToCreate.map((division) =>
+      createLeagueSeasonDivision({
+        seasonId: season.id,
+        divisionNumber: division.divisionNumber,
+        divisionName: division.divisionName,
       }),
     ),
   );

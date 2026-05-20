@@ -57,7 +57,8 @@ export const getLeagueSeasonDivisionsBySeasonId = async (
   let query = supabase
     .from("league_season_division")
     .select("*")
-    .eq("season_id", seasonId);
+    .eq("season_id", seasonId)
+    .order("division_number", { ascending: true });
 
   if (signal) {
     query = query.abortSignal(signal);

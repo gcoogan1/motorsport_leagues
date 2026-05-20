@@ -24,6 +24,7 @@ The **EmptyMessage** component is used to display a standardized message when a 
 | \`title\`          | \`string\`                | \`"No Data Available"\` | The main title text displayed in the empty message.          |
 | \`subtitle\`       | \`string\`                | \`"There is currently no data to display."\` | The subtitle text providing additional context.              |
 | \`icon\`          | \`React.ReactNode\`       | \`Default Empty Icon\` | The icon displayed above the title. If not provided, a default empty state icon is used. |
+| \`hideIcon\`      | \`boolean\`               | \`false\`      | If set to true, the icon will be hidden.                      |
 | \`actions\`       | \`object\`                | \`undefined\` | An object containing optional primary and secondary action buttons. |
 | \`actions.primary\`   | \`object\`                | \`undefined\` | Configuration for the primary action button.                 |
 | \`actions.primary.onClick\` | \`() => void\`      | \`undefined\` | Function to call when the primary button is clicked.         |
@@ -49,6 +50,7 @@ Supports primary and secondary action buttons.
 - If no icon is provided, a default empty state icon will be displayed.
 - Icons are automatically rendered at **48×48**
 - Primary and secondary buttons are always **full-width**
+- The hideIcon prop can be used to hide the icon if only text and actions are desired.
 
       `,
     },

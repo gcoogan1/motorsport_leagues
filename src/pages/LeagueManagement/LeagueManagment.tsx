@@ -31,6 +31,8 @@ import UnsavedChanges from "@/features/leagues/modals/errors/UnsavedChanges/Unsa
 import SeasonSettings from "@/features/leagues/forms/Edit/SeasonSettings/SeasonSettings";
 import DriverAssignments from "@/features/leagues/forms/Assignments/DriverAssignments/DriverAssignments";
 import TeamAssignments from "@/features/leagues/forms/Assignments/TeamAssignments/TeamAssignments";
+import PrequalDriverAssignments from "@/features/leagues/forms/Assignments/Prequal/Driver/PrequalDriverAssignments";
+import PrequalTeamAssignments from "@/features/leagues/forms/Assignments/Prequal/Team/PrequalTeamAssignments";
 
 //TODO: Replace panelContent with SheetForms for each section once they are developed, and implement logic to fetch and display actual data for each section.
 
@@ -144,15 +146,29 @@ const LeagueManagment = () => {
     ) : activeSection === "driver-assignments" && activeSeasonData ? (
       <>
         {activeSeasonData.is_team_championship ? (
-          <TeamAssignments
-            seasonData={activeSeasonData}
-            onDirtyChange={setHasUnsavedChanges}
-          />
+          activeSeasonData.includes_pre_qual ? (
+            <PrequalTeamAssignments
+              seasonData={activeSeasonData}
+              onDirtyChange={setHasUnsavedChanges}
+            />
+          ) : (
+            <TeamAssignments
+              seasonData={activeSeasonData}
+              onDirtyChange={setHasUnsavedChanges}
+            />
+          )
         ) : (
-          <DriverAssignments
-            seasonData={activeSeasonData}
-            onDirtyChange={setHasUnsavedChanges}
-          />
+          activeSeasonData.includes_pre_qual ? (
+            <PrequalDriverAssignments
+              seasonData={activeSeasonData}
+              onDirtyChange={setHasUnsavedChanges}
+            />
+          ) : (
+            <DriverAssignments
+              seasonData={activeSeasonData}
+              onDirtyChange={setHasUnsavedChanges}
+            />
+          )
         )}
       </>
     ) : activeSection === "schedule-rounds" && activeSeasonData ? (

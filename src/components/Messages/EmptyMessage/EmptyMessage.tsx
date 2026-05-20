@@ -14,6 +14,7 @@ type EmptyMessageProps = {
   title?: string;
   subtitle?: string;
   icon?: React.ReactNode;
+  hideIcon?: boolean;
   actions?: {
     primary?: {
       onClick: () => void;
@@ -35,15 +36,18 @@ function EmptyMessage({
   title = "Empty Section",
   subtitle = "This section is currently empty!",
   icon,
+  hideIcon = false,
   actions,
 }: EmptyMessageProps) {
   const bothActions = Boolean(actions?.primary && actions?.secondary);
 
   return (
     <MessageContainer>
-      <GraphicContainer>
-        <IconWrapper>{icon ?? <EmptyIcon />}</IconWrapper>
-      </GraphicContainer>
+      {!hideIcon && (
+        <GraphicContainer>
+          <IconWrapper>{icon ?? <EmptyIcon />}</IconWrapper>
+        </GraphicContainer>
+      )}
       <TextContainer>
         <Title>{title}</Title>
         <Subtitle>{subtitle}</Subtitle>
