@@ -52,7 +52,7 @@ import {
   createEmptyTeamRow,
   getTeamKey,
   TEAM_COLUMN_STYLE,
-} from "./TeamAssignments.util";
+} from "./util/TeamAssignments.util";
 import DriversAssigned from "@/features/leagues/modals/errors/DriversAssigned/DriversAssigned";
 import CannotSave from "@/features/leagues/modals/errors/CannotSave/CannotSave";
 import NoTeams from "@/features/leagues/modals/errors/NoTeams/NoTeams";

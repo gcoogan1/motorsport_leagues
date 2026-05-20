@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useGetLeagueSeasonTeamsByDivisionQuery } from "@/rtkQuery/API/leagueApi";
 import type { LeagueSeasonTeamTable } from "@/types/league.types";
-import { type TeamRow, buildPersistedTeams } from "../../../TeamAssignments/TeamAssignments.util";
+import { type TeamRow, buildPersistedTeams } from "../../../TeamAssignments/util/TeamAssignments.util";
 import {
   buildPreQualTeams,
   buildPreQualTeamByName,

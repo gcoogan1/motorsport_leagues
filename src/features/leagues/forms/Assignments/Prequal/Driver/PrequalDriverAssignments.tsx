@@ -28,10 +28,10 @@ import {
   TableRow,
   TableWrapper,
 } from "@/components/Tables/InputTable/InputTable.styles";
-import { DRIVER_TABLE_STYLE, type DriverAssignmentRow } from "../../DriverAssignments/DriverAssignments.util";
+import { DRIVER_TABLE_STYLE, type DriverAssignmentRow } from "../../DriverAssignments/util/DriverAssignments.util";
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
 import DriversAssigned from "@/features/leagues/modals/errors/DriversAssigned/DriversAssigned";
-import { usePrequalDriverAssignments } from "./usePrequalDriverAssignments";
+import { usePrequalDriverAssignments } from "./hooks/usePrequalDriverAssignments";
 
 type DriverAssignmentsFormValues = {
   assignments: DriverAssignmentRow[];

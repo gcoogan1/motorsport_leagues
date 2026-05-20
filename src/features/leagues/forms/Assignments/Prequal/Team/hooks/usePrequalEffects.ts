@@ -13,7 +13,7 @@ import {
 import {
   getTeamKey,
   type TeamRow,
-} from "../../../TeamAssignments/TeamAssignments.util";
+} from "../../../TeamAssignments/util/TeamAssignments.util";
 
 type AssignmentRow =
   TeamAssignmentsFormValues["assignments"][number];

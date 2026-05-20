@@ -36,7 +36,7 @@ import {
 import {
   DRIVER_TABLE_STYLE,
   type DriverAssignmentRow,
-} from "./DriverAssignments.util";
+} from "./util/DriverAssignments.util";
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
 import { useDriverAssignments } from "./useDriverAssignments";
 

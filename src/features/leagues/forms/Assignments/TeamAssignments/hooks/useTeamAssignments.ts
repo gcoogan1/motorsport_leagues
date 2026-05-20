@@ -24,7 +24,7 @@ import {
   buildTeamOptions,
   getTeamKey,
   type TeamRow,
-} from "./TeamAssignments.util";
+} from "./util/TeamAssignments.util";
 import {
   TEAM_DELETE_BLOCKED_MESSAGE,
   type TeamAssignmentsFormValues,

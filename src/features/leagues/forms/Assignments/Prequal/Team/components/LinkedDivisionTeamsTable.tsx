@@ -4,7 +4,7 @@ import Button from "@/components/Button/Button";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import SelectInput, { type SelectInputOption } from "@/components/Inputs/SelectInput/SelectInput";
 import RemoveIcon from "@assets/Icon/Remove.svg?react";
-import { TEAM_COLUMN_STYLE } from "../../../TeamAssignments/TeamAssignments.util";
+import { TEAM_COLUMN_STYLE } from "../../../TeamAssignments/util/TeamAssignments.util";
 import {
   ColumnText,
   ExtraCell,

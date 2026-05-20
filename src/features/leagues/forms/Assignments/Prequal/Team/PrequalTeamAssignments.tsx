@@ -54,7 +54,7 @@ import {
   ASSIGNMENT_TABS,
   getTeamKey,
   TEAM_COLUMN_STYLE,
-} from "../../TeamAssignments/TeamAssignments.util";
+} from "../../TeamAssignments/util/TeamAssignments.util";
 import { normalizeTeamName, createEmptyTeamRow } from "./util/prequalTeamAssignments.util";
 import DriversAssigned from "@/features/leagues/modals/errors/DriversAssigned/DriversAssigned";
 import CannotSave from "@/features/leagues/modals/errors/CannotSave/CannotSave";

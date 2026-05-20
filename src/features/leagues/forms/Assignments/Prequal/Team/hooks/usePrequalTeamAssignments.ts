@@ -14,7 +14,7 @@ import { usePrequalAssignments } from "./usePrequalAssignments";
 import { usePrequalHydration } from "./usePrequalHydration";
 import { usePrequalEffects } from "./usePrequalEffects";
 
-import type { TeamRow } from "../../../TeamAssignments/TeamAssignments.util";
+import type { TeamRow } from "../../../TeamAssignments/util/TeamAssignments.util";
 import type { TeamAssignmentsFormValues } from "../prequalTeamAssignments.schema";
 
 type AssignmentRow = TeamAssignmentsFormValues["assignments"][number];

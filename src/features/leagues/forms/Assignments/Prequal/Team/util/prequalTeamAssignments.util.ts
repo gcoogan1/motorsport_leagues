@@ -3,7 +3,7 @@ import type {
   LeagueSeasonDriverTable,
   LeagueSeasonTeamTable,
 } from "@/types/league.types";
-import type { TeamRow } from "../../../TeamAssignments/TeamAssignments.util";
+import type { TeamRow } from "../../../TeamAssignments/util/TeamAssignments.util";
 
 // Convenience helper — avoids repeating `?? []` at every call site.
 const coerceArray = <T>(data: T[] | undefined): T[] => data ?? [];

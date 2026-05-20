@@ -14,14 +14,14 @@ import {
   buildPersistedAssignmentMap,
   buildPersistedAssignments,
   type DriverAssignmentRow,
-} from "../../DriverAssignments/DriverAssignments.util";
+} from "../../../DriverAssignments/util/DriverAssignments.util";
 import {
   buildDriversAssignedToLinkedDivisions,
   buildDriversAssignedToOtherDivisions,
   buildPreQualAssignedDriverIds,
   getPreQualDivisionId,
   isPreQualRestrictedDivision,
-} from "./prequalDriverAssignments.util";
+} from "../util/prequalDriverAssignments.util";
  
 // -- Types -- //
 

@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { buildDivisionOptions } from "../../../DriverAssignments/DriverAssignments.util";
+import { buildDivisionOptions } from "../../../DriverAssignments/util/DriverAssignments.util";
 
 type Division = {
   id: string;

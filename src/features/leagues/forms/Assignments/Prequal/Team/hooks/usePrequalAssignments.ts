@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 
 import type { LeagueSeasonDriverTable, LeagueSeasonTeamTable } from "@/types/league.types";
-import type { toProfileOption } from "../../../DriverAssignments/DriverAssignments.util";
+import type { toProfileOption } from "../../../DriverAssignments/util/DriverAssignments.util";
 
-import type { TeamRow } from "../../../TeamAssignments/TeamAssignments.util";
+import type { TeamRow } from "../../../TeamAssignments/util/TeamAssignments.util";
 
 import {
   buildPersistedAssignments,
-} from "../../../TeamAssignments/TeamAssignments.util";
+} from "../../../TeamAssignments/util/TeamAssignments.util";
 
 import {
   buildCurrentDivisionDrivers,

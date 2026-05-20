@@ -14,7 +14,7 @@ import {
   buildPersistedAssignmentMap,
   buildDriversAssignedToOtherDivisions,
   type DriverAssignmentRow,
-} from "./DriverAssignments.util";
+} from "./util/DriverAssignments.util";
 import type { LeagueParticipantProfile } from "@/types/league.types";
 
 // --Types-- //

@@ -1,6 +1,6 @@
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import ReadOnlyInput from "@/components/Inputs/ReadOnlyInput/ReadOnlyInput";
-import { TEAM_COLUMN_STYLE } from "../../TeamAssignments/TeamAssignments.util";
+import { TEAM_COLUMN_STYLE } from "../../TeamAssignments/util/TeamAssignments.util";
 import {
   ColumnText,
   NumberCell,

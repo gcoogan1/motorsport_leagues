@@ -5,7 +5,7 @@ import {
   buildDriverOptions,
   buildDriverParticipants,
   buildParticipantOptionsByProfileId,
-} from "../../../DriverAssignments/DriverAssignments.util";
+} from "../../../DriverAssignments/util/DriverAssignments.util";
 
 /**
  * Derives participant-related data for the driver assignment selects.
