@@ -57,7 +57,8 @@ import DriversAssigned from "@/features/leagues/modals/errors/DriversAssigned/Dr
 import CannotSave from "@/features/leagues/modals/errors/CannotSave/CannotSave";
 import NoTeams from "@/features/leagues/modals/errors/NoTeams/NoTeams";
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
-import { useTeamAssignments } from "./useTeamAssignments";
+import { useTeamAssignments } from "./hooks/useTeamAssignments";
+
 
 type TeamAssignmentsProps = {
   seasonData: LeagueSeasonTable;

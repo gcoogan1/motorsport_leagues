@@ -38,7 +38,8 @@ import {
   type DriverAssignmentRow,
 } from "./util/DriverAssignments.util";
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
-import { useDriverAssignments } from "./useDriverAssignments";
+import { useDriverAssignments } from "./hooks/useDriverAssignments";
+
 
 type DriverAssignmentsFormValues = {
   assignments: DriverAssignmentRow[];

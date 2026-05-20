@@ -12,23 +12,9 @@ import {
   useGetLeagueSeasonTeamsByDivisionQuery,
 } from "@/rtkQuery/API/leagueApi";
 import type { LeagueSeasonTable } from "@/types/league.types";
-import {
-  buildCurrentDivisionDrivers,
-  buildDivisionOptions,
-  buildDriverOptions,
-  buildDriverParticipants,
-  buildDriversAssignedToOtherDivisions,
-  buildParticipantOptionsByProfileId,
-  buildPersistedAssignments,
-  buildPersistedTeams,
-  buildTeamOptions,
-  getTeamKey,
-  type TeamRow,
-} from "./util/TeamAssignments.util";
-import {
-  TEAM_DELETE_BLOCKED_MESSAGE,
-  type TeamAssignmentsFormValues,
-} from "./teamAssignments.schema";
+import { TEAM_DELETE_BLOCKED_MESSAGE, type TeamAssignmentsFormValues } from "../teamAssignments.schema";
+import { type TeamRow, buildDivisionOptions, buildDriverParticipants, buildDriverOptions, buildParticipantOptionsByProfileId, buildPersistedTeams, getTeamKey, buildCurrentDivisionDrivers, buildPersistedAssignments, buildDriversAssignedToOtherDivisions, buildTeamOptions } from "../util/TeamAssignments.util";
+
 
 
 // -- Types -- //

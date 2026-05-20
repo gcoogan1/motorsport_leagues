@@ -5,17 +5,9 @@ import {
   useGetLeagueSeasonDivisionsQuery,
   useGetLeagueSeasonDriversBySeasonIdQuery,
 } from "@/rtkQuery/API/leagueApi";
-import {
-  buildDivisionOptions,
-  buildDriverParticipants,
-  buildDriverOptions,
-  buildParticipantOptionsByProfileId,
-  buildPersistedAssignments,
-  buildPersistedAssignmentMap,
-  buildDriversAssignedToOtherDivisions,
-  type DriverAssignmentRow,
-} from "./util/DriverAssignments.util";
+
 import type { LeagueParticipantProfile } from "@/types/league.types";
+import { type DriverAssignmentRow, buildDriverParticipants, buildDriverOptions, buildParticipantOptionsByProfileId, buildDivisionOptions, buildPersistedAssignments, buildPersistedAssignmentMap, buildDriversAssignedToOtherDivisions } from "../util/DriverAssignments.util";
 
 // --Types-- //
 
