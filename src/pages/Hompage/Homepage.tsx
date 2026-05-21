@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import { useAppTheme } from "@/providers/theme/useTheme";
 import { LogoThemes } from "@/app/design/logoThemes";
 import {
@@ -6,76 +5,64 @@ import {
   SubTitle,
   Wrapper,
 } from "./Homepage.styles";
-// import LeagueTabs from "@/components/Tabs/LeagueTabs/LeagueTabs";
 
 
-//TODO: Remove this when the homepage is ready. This is just for testing the profile select input component.
-
-// const HomepageContent = () => {
-//   const { watch } = useFormContext();
-//   const selectedProfile = watch("profile");
-
-//   return (
-//     <div style={{ width: "416px" }}>
-//       <ProfileSelectInput
-//         fieldLabel="Select Profile"
-//         name="profile"
-//         isLarge
-//         profiles={[
-//           {
-//             label: "JohnDoe",
-//             value: "john_doe",
-//             avatar: {
-//               avatarType: "preset",
-//               avatarValue: "blue",
-//             },
-//             secondaryInfo: "Game",
-//           },
-//           {
-//             label: "JaneSmith",
-//             value: "jane_smidth",
-//             avatar: {
-//               avatarType: "preset",
-//               avatarValue: "red",
-//             },
-//             secondaryInfo: "Game",
-//           },
-//           {
-//             label: "TomJohnson",
-//             value: "tom_johnson",
-//             avatar: {
-//               avatarType: "preset",
-//               avatarValue: "green",
-//             },
-//             secondaryInfo: "Game",
-//           },
-//         ]}
-//       />
-//       {selectedProfile && <p>Selected: {selectedProfile}</p>}
-//     </div>
-//   );
-// };
+// import { useCarousel } from "@/hooks/useCarousel";
+// import CarouselControl from "@/components/CarouselControl/CarouselControl";
 
 const Homepage = () => {
   // Theme
   const { themeName } = useAppTheme();
   const LogoIcon = LogoThemes[themeName];
-  // const [activeLeagueTab, setActiveLeagueTab] = useState("overview");
-  // const [activeSeason, setActiveSeason] = useState("season-1");
 
-  // const formMethods = useForm({
-  //   defaultValues: {
-  //     profile: "",
-  //   },
-  // });
+  // Embla carousel hook
+  // const {
+  //   emblaRef,
+  //   selectedIndex,
+  //   scrollSnaps,
+  //   scrollPrev,
+  //   scrollNext,
+  //   scrollTo,
+  // } = useCarousel({ loop: true });
 
   return (
     <Wrapper>
       <Container>
         <LogoIcon />
         <SubTitle>Coming Soon</SubTitle>
-        {/* <div style={{ width: "1000px" }}>
 
+        {/* ----------------------------- */}
+        {/* EMBLA CAROUSEL */}
+        {/* ----------------------------- */}
+        {/* <div ref={emblaRef} style={{ overflow: "hidden" }}>
+          <div style={{ display: "flex" }}>
+            <div style={{ flex: "0 0 100%" }}>
+              Slide 1
+            </div>
+            <div style={{ flex: "0 0 100%" }}>
+              Slide 2
+            </div>
+            <div style={{ flex: "0 0 100%" }}>
+              Slide 3
+            </div>
+          </div>
+        </div> */}
+
+        {/* ----------------------------- */}
+        {/* CONTROLS */}
+        {/* ----------------------------- */}
+        {/* <CarouselControl
+          selectedIndex={selectedIndex}
+          scrollSnaps={scrollSnaps}
+          onPrevious={scrollPrev}
+          onNext={scrollNext}
+          onSelect={scrollTo}
+        /> */}
+
+        {/* ----------------------------- */}
+        {/* OLD TEST CODE (kept for later) */}
+        {/* ----------------------------- */}
+        {/*
         <LeagueTabs
           leagues={[
             { id: "overview", label: "Overview" },
@@ -93,7 +80,7 @@ const Homepage = () => {
           activeSeason={activeSeason}
           onSeasonChange={setActiveSeason}
         />
-        </div> */}
+        */}
       </Container>
     </Wrapper>
   );
