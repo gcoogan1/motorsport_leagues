@@ -108,8 +108,8 @@ export const StyledTrigger = styled(SelectPrimitive.Trigger)<{
 `;
 
 export const StyledContent = styled(SelectPrimitive.Content)`
-  width: var(--radix-select-trigger-width);
-  max-width: var(--radix-select-trigger-width);
+  min-width: var(--radix-select-trigger-width);
+  width: max-content;
   z-index: 3000;
 `;
 

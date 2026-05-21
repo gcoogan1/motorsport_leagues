@@ -60,7 +60,7 @@ import DriversAssigned from "@/features/leagues/modals/errors/DriversAssigned/Dr
 import CannotSave from "@/features/leagues/modals/errors/CannotSave/CannotSave";
 import NoTeams from "@/features/leagues/modals/errors/NoTeams/NoTeams";
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
-import PrequalDriversTable from "../Driver/PrequalDriversTable";
+import PrequalDriversTable from "../Driver/components/PrequalDriversTable";
 import { usePrequalTeamAssignments } from "./hooks/usePrequalTeamAssignments";
 import LinkedDivisionTeamsTable from "./components/LinkedDivisionTeamsTable";
 import TeamAssigned from "@/features/leagues/modals/errors/TeamAssigned/TeamAssigned";

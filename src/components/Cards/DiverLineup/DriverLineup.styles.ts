@@ -14,6 +14,10 @@ export const DriverLineupWrapper = styled.div`
   border-radius: ${borders.radius.xxLarge};
   padding: ${layout.space.medium};
   ${({ theme }) => gradientBorder({ gradient: theme.theme.primaryGradientFadeBottom30, width: borders.width.medium })};
+
+  ${layout.mediaQueries.mobile} {
+    max-width: 320px;
+  }
 `
 
 export const CardTitle = styled.div`

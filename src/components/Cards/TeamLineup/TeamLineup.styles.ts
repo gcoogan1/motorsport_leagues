@@ -15,6 +15,10 @@ export const TeamLineupWrapper = styled.div`
   padding: ${layout.space.small};
   gap: 10px;
   ${({ theme }) => gradientBorder({ gradient: theme.theme.primaryGradientFadeBottom30, width: borders.width.medium })};
+
+  ${layout.mediaQueries.mobile} {
+    max-width: 320px;
+  }
 `
 
 export const CardTitle = styled.div`
@@ -101,6 +105,13 @@ export const TeamTitle = styled.p`
   ${typography.title.small};
   color: ${colors.text.text1};
   margin: 0;
+    overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  ${layout.mediaQueries.mobile} {
+    max-width: 200px;
+  }
 `;
 
 export const EmptyTeamSubtitle = styled.p`

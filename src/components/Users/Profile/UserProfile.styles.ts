@@ -93,5 +93,8 @@ export const Information = styled.p<{ $size: "small" | "medium" | "large" }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 200px;
+  
+  ${layout.mediaQueries.mobile} {
+    max-width: 200px;
+  }
 `;
