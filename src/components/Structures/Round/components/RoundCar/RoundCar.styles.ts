@@ -21,6 +21,14 @@ export const CarContainer = styled.div<{ imageUrl: string }>`
   border-radius: ${borders.radius.xxLarge};
   border: ${borders.width.medium} solid ${gradients.base.fadeTop10};
   background: url(${props => props.imageUrl}) lightgray 50% / cover no-repeat;
+
+  ${layout.mediaQueries.mobile} {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    box-sizing: border-box;
+  }
 `;
 
 export const ActionsContainer = styled.div`
@@ -31,4 +39,9 @@ export const ActionsContainer = styled.div`
   row-gap: ${layout.space.xxxSmall};
   align-self: stretch;
   flex-wrap: wrap;
+
+  ${layout.mediaQueries.mobile} {
+    width: 100%;
+    justify-content: center;
+  }
 `
