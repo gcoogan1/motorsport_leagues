@@ -14,6 +14,7 @@ export const HeaderContainer = styled.div`
   align-content: center;
   row-gap: 8px;
   flex-wrap: wrap;
+  overflow: hidden;
   padding-top: ${layout.space.large};
   padding-bottom: ${layout.space.large};
   padding-left: ${layout.space.xLarge};
@@ -21,6 +22,7 @@ export const HeaderContainer = styled.div`
   background: ${({ theme }) => theme.theme.primaryGradientFadeRight};
   border-bottom: ${borders.width.medium} solid ${colors.base.base4};
   border-top-left-radius: ${borders.radius.xxLarge};
+  border-top-right-radius: ${borders.radius.xxLarge};
 `
 
 export const TextContainer = styled.div`
