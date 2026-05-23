@@ -41,6 +41,8 @@ type SelectInputProps = {
   isDisabled?: boolean;
   isClearable?: boolean;
   isSearchable?: boolean;
+  blurInputOnSelect?: boolean;
+  onValueChange?: (value: string) => void;
 };
 
 const DropdownIndicator = (
@@ -92,6 +94,8 @@ const SelectInput = ({
   isDisabled = false,
   isClearable = false,
   isSearchable = false,
+  blurInputOnSelect = false,
+  onValueChange,
 }: SelectInputProps) => {
   const inputId = useId();
   const { control } = useFormContext();
@@ -142,8 +146,14 @@ const SelectInput = ({
               isSearchable={isSearchable}
               isDisabled={isDisabled}
               isClearable={isClearable}
+              blurInputOnSelect={blurInputOnSelect}
               onBlur={field.onBlur}
-              onChange={(option) => field.onChange(option?.value ?? "")}
+              onChange={(option) => {
+                const nextValue = option?.value ?? "";
+
+                field.onChange(nextValue);
+                onValueChange?.(nextValue);
+              }}
               noOptionsMessage={() => noOptionsMessage}
               components={{
                 DropdownIndicator,
