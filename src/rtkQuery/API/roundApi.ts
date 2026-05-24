@@ -3,8 +3,10 @@ import {
 	createRound,
 	deleteRound,
 	deleteRoundsByDivisionId,
+	deleteRoundsBySeasonId,
 	getRoundById,
 	getRoundsByDivisionId,
+	getRoundsBySeasonId,
 	updateRound,
 } from "@/services/round/round.service";
 import type {
@@ -79,6 +81,34 @@ export const roundApi = createApi({
 				})) ?? []),
 			],
 		}),
+    getRoundsBySeasonId: builder.query<RoundTable[], string>({
+      queryFn: async (seasonId) => {
+        try {
+          const result: GetRoundsResponse =
+            await getRoundsBySeasonId(seasonId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (result, _error, seasonId) => [
+        { type: "Rounds", id: `season-${seasonId}` },
+        ...(result?.map((round) => ({
+          type: "Rounds" as const,
+          id: round.id,
+        })) ?? []),
+      ],
+    }),
 		createRound: builder.mutation<RoundTable, CreateRoundPayload>({
 			queryFn: async (payload) => {
 				try {
@@ -123,7 +153,7 @@ export const roundApi = createApi({
 				}
 			},
 			invalidatesTags: (result, _error, payload) => {
-				const divisionTags = [payload.divisionId, result?.division_id]
+				const divisionTags = [result?.division_id]
 					.filter(Boolean)
 					.map((divisionId) => ({
 						type: "Rounds" as const,
@@ -186,14 +216,40 @@ export const roundApi = createApi({
 				{ type: "Rounds", id: `division-${divisionId}` },
 			],
 		}),
+    deleteRoundsBySeasonId: builder.mutation<boolean, string>({
+      queryFn: async (seasonId) => {
+        try {
+          const result: DeleteRoundResponse =
+            await deleteRoundsBySeasonId(seasonId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: true };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, seasonId) => [
+        { type: "Rounds", id: `season-${seasonId}` },
+      ],
+    }),
 	}),
 });
 
 export const {
 	useGetRoundByIdQuery,
 	useGetRoundsByDivisionIdQuery,
+  useGetRoundsBySeasonIdQuery,
 	useCreateRoundMutation,
 	useUpdateRoundMutation,
 	useDeleteRoundMutation,
 	useDeleteRoundsByDivisionIdMutation,
+	useDeleteRoundsBySeasonIdMutation,
 } = roundApi;

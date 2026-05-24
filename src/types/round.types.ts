@@ -3,6 +3,7 @@ export type RoundTable = {
   created_at: string;
   round_name: string;
   division_id: string;
+  season_id: string;
   briefing?: string;
 }
 
@@ -13,6 +14,7 @@ export type RoundTableDraft = {
   created_at: string;
   round_name: string;
   division_id: string;
+  season_id: string;
 }
 
 // -- SUPABASE SERVICE TYPES -- //
@@ -31,6 +33,7 @@ type SupabaseError = {
 export type CreateRoundPayload = {
   roundName: string;
   divisionId: string;
+  seasonId: string;
 };
 
 export type CreateRoundSuccess = {
@@ -42,6 +45,8 @@ export type CreateRoundResponse = CreateRoundSuccess | SupabaseError;
 
 // -- GET -- //
 
+
+// Get all rounds for a specific division or season
 export type GetRoundsSuccess = {
   success: true;
   data: RoundTable[];
@@ -51,6 +56,7 @@ export type GetRoundsResponse = GetRoundsSuccess | SupabaseError;
 
 // -- GET BY ID -- //
 
+// Get a single round by its ID
 export type GetRoundByIdSuccess = {
   success: true;
   data: RoundTable;
@@ -63,7 +69,6 @@ export type GetRoundByIdResponse = GetRoundByIdSuccess | SupabaseError;
 export type UpdateRoundPayload = {
   roundId: string;
   roundName?: string;
-  divisionId?: string;
   briefing?: string;
 };
 

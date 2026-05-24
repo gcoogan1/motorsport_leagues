@@ -54,11 +54,35 @@ export const getRoundsByDivisionId = async (divisionId: string): Promise<GetRoun
   };
 };
 
-// Create a new round
-export const createRound = async ({ roundName, divisionId }: CreateRoundPayload): Promise<CreateRoundResponse> => {
+// Get all rounds for a specific season
+export const getRoundsBySeasonId = async (seasonId: string): Promise<GetRoundsResponse> => {
   const { data, error } = await supabase
     .from("rounds")
-    .insert([{ round_name: roundName, division_id: divisionId }])
+    .select("*")
+    .eq("season_id", seasonId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data,
+  };
+};
+
+// Create a new round
+export const createRound = async ({ roundName, divisionId, seasonId }: CreateRoundPayload): Promise<CreateRoundResponse> => {
+  const { data, error } = await supabase
+    .from("rounds")
+    .insert([{ round_name: roundName, division_id: divisionId, season_id: seasonId }])
     .single();
 
   if (error) {
@@ -79,10 +103,9 @@ export const createRound = async ({ roundName, divisionId }: CreateRoundPayload)
 };
 
 // Update an existing round
-export const updateRound = async ({ roundId, roundName, divisionId, briefing }: UpdateRoundPayload): Promise<UpdateRoundResponse> => {
+export const updateRound = async ({ roundId, roundName, briefing }: UpdateRoundPayload): Promise<UpdateRoundResponse> => {
   const updateData: Record<string, unknown> = {};
   if (roundName) updateData.round_name = roundName;
-  if (divisionId) updateData.division_id = divisionId;
   if (briefing) updateData.briefing = briefing;
 
   const { data, error } = await supabase
@@ -137,6 +160,29 @@ export const deleteRoundsByDivisionId = async (divisionId: string): Promise<Dele
     .from("rounds")
     .delete()
     .eq("division_id", divisionId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
+// Delete all rounds for a specific season
+export const deleteRoundsBySeasonId = async (seasonId: string): Promise<DeleteRoundResponse> => {
+  const { error } = await supabase
+    .from("rounds")
+    .delete()
+    .eq("season_id", seasonId);
 
   if (error) {
     return {

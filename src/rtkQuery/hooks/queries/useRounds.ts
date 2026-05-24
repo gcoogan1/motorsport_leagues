@@ -1,6 +1,7 @@
 import {
 	useGetRoundByIdQuery,
 	useGetRoundsByDivisionIdQuery,
+  useGetRoundsBySeasonIdQuery,
 } from "@/rtkQuery/API/roundApi";
 
 // --- Queries --- //
@@ -17,3 +18,9 @@ export const useRounds = (divisionId?: string) =>
 	useGetRoundsByDivisionIdQuery(divisionId ?? "", {
 		skip: !divisionId,
 	});
+
+// Query to fetch all rounds for a season
+export const useRoundsBySeason = (seasonId?: string) =>
+  useGetRoundsBySeasonIdQuery(seasonId ?? "", {
+    skip: !seasonId,
+  });
