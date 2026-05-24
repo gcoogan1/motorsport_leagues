@@ -6,6 +6,7 @@ import squadReducer from "./squads/squad.slice";
 import { leagueApi } from "../rtkQuery/API/leagueApi";
 import { notificationApi } from "../rtkQuery/API/notificationApi";
 import { profileApi } from "../rtkQuery/API/profileApi";
+import { roundApi } from "../rtkQuery/API/roundApi";
 import { squadApi } from "../rtkQuery/API/squadApi";
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
     [leagueApi.reducerPath]: leagueApi.reducer,
     [notificationApi.reducerPath]: notificationApi.reducer,
     [profileApi.reducerPath]: profileApi.reducer,
+    [roundApi.reducerPath]: roundApi.reducer,
     [squadApi.reducerPath]: squadApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -24,6 +26,7 @@ export const store = configureStore({
       leagueApi.middleware,
       notificationApi.middleware,
       profileApi.middleware,
+      roundApi.middleware,
       squadApi.middleware,
     ),
 });
