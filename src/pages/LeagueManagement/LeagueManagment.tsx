@@ -33,6 +33,7 @@ import DriverAssignments from "@/features/leagues/forms/Assignments/DriverAssign
 import TeamAssignments from "@/features/leagues/forms/Assignments/TeamAssignments/TeamAssignments";
 import PrequalDriverAssignments from "@/features/leagues/forms/Assignments/Prequal/Driver/PrequalDriverAssignments";
 import PrequalTeamAssignments from "@/features/leagues/forms/Assignments/Prequal/Team/PrequalTeamAssignments";
+import Schedule from "@/features/leagues/forms/Schedule/Schedule";
 
 //TODO: Replace panelContent with SheetForms for each section once they are developed, and implement logic to fetch and display actual data for each section.
 
@@ -44,7 +45,7 @@ const LeagueManagment = () => {
   const location = useLocation();
   const { leagueId } = useParams<{ leagueId: string }>();
   const [activeSection, setActiveSection] =
-    useState<ManageMenuSection>("driver-assignments");
+    useState<ManageMenuSection>("schedule-rounds");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   // const activePanel = panelContent[activeSection];
   const [openManageMenu, setOpenManageMenu] = useState(false);
@@ -172,7 +173,7 @@ const LeagueManagment = () => {
         )}
       </>
     ) : activeSection === "schedule-rounds" && activeSeasonData ? (
-      <>{activeSeasonData.season_name}</>
+      <Schedule seasonData={activeSeasonData} />
     ) : activeSection === "enter-results" && activeSeasonData ? (
       <>{activeSeasonData.season_name}</>
     ) : activeSection === "rules-and-regulations" && activeSeasonData ? (

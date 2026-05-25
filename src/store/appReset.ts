@@ -2,8 +2,10 @@ import type { AppDispatch } from "@/store";
 import { clearAccount } from "@/store/account/account.slice";
 import { clearProfiles } from "@/store/profile/profile.slice";
 import { clearSquads } from "@/store/squads/squad.slice";
+import { eventApi } from "@/rtkQuery/API/eventApi";
 import { notificationApi } from "@/rtkQuery/API/notificationApi";
 import { profileApi } from "@/rtkQuery/API/profileApi";
+import { roundApi } from "@/rtkQuery/API/roundApi";
 import { squadApi } from "@/rtkQuery/API/squadApi";
 import { leagueApi } from "@/rtkQuery/API/leagueApi";
 
@@ -11,8 +13,10 @@ export const resetAppState = () => (dispatch: AppDispatch) => {
   dispatch(clearAccount());
   dispatch(clearProfiles());
   dispatch(clearSquads());
+  dispatch(eventApi.util.resetApiState());
   dispatch(notificationApi.util.resetApiState());
   dispatch(profileApi.util.resetApiState());
+  dispatch(roundApi.util.resetApiState());
   dispatch(squadApi.util.resetApiState());
   dispatch(leagueApi.util.resetApiState());
 };

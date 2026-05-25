@@ -7,6 +7,7 @@ import {
   Title,
   Subtitle,
   ButtonsContainer,
+  MoreButtonContainer,
 } from "./EventSchedule.styles";
 
 type EventScheduleProps = {
@@ -15,6 +16,7 @@ type EventScheduleProps = {
   numOfDrivers: number;
   onProfileClick?: () => void;
   onMoreClick?: () => void;
+  moreMenu?: React.ReactNode;
 };
 
 const EventSchedule = ({
@@ -23,6 +25,7 @@ const EventSchedule = ({
   numOfDrivers,
   onProfileClick,
   onMoreClick,
+  moreMenu,
 }: EventScheduleProps) => {
   return (
     <Container>
@@ -34,13 +37,16 @@ const EventSchedule = ({
         <Button size="small" color="base" rounded icon={{ left: <ProfileIcon /> }} onClick={onProfileClick}>
           {numOfDrivers}
         </Button>
-        <Button
-          size="small"
-          color="base"
-          icon={{ left: <MoreVerticalIcon /> }}
-          onClick={onMoreClick}
-          rounded
-        ></Button>
+        <MoreButtonContainer>
+          <Button
+            size="small"
+            color="base"
+            icon={{ left: <MoreVerticalIcon /> }}
+            onClick={onMoreClick}
+            rounded
+          ></Button>
+          {moreMenu}
+        </MoreButtonContainer>
       </ButtonsContainer>
     </Container>
   );

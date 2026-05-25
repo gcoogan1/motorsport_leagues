@@ -37,3 +37,7 @@ export const ButtonsContainer = styled.div`
   align-items: flex-start;
   gap: ${layout.space.xSmall};
 `;
+
+export const MoreButtonContainer = styled.div`
+  position: relative;
+`;
