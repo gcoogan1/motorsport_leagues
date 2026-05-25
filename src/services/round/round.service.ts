@@ -83,6 +83,7 @@ export const createRound = async ({ roundName, divisionId, seasonId }: CreateRou
   const { data, error } = await supabase
     .from("rounds")
     .insert([{ round_name: roundName, division_id: divisionId, season_id: seasonId }])
+    .select()
     .single();
 
   if (error) {
