@@ -2,6 +2,7 @@ import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
 	createEvent,
 	deleteEvent,
+	deleteEventsByRoundId,
 	deleteEventsByDivisionId,
 	deleteEventsBySeasonId,
 	getEventById,
@@ -192,6 +193,28 @@ export const eventApi = createApi({
 					: ["Events" as const]),
 			],
 		}),
+		deleteEventsByRoundId: builder.mutation<boolean, string>({
+			queryFn: async (roundId) => {
+				try {
+					const result: DeleteEventResponse =
+						await deleteEventsByRoundId(roundId);
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: true };
+				} catch (error) {
+					return { error };
+				}
+			},
+			invalidatesTags: () => ["Events" as const],
+		}),
 		deleteEventsByDivisionId: builder.mutation<boolean, string>({
 			queryFn: async (divisionId) => {
 				try {
@@ -250,6 +273,7 @@ export const {
 	useCreateEventMutation,
 	useUpdateEventMutation,
 	useDeleteEventMutation,
+	useDeleteEventsByRoundIdMutation,
 	useDeleteEventsByDivisionIdMutation,
 	useDeleteEventsBySeasonIdMutation,
 } = eventApi;

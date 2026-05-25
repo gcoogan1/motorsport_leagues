@@ -2,6 +2,7 @@ import {
   useCreateEventMutation,
   useDeleteEventMutation,
   useDeleteEventsByDivisionIdMutation,
+  useDeleteEventsByRoundIdMutation,
   useDeleteEventsBySeasonIdMutation,
   useUpdateEventMutation,
 } from "@/rtkQuery/API/eventApi";
@@ -22,6 +23,11 @@ export const useUpdateEvent = () => {
 // Mutation for deleting a event.
 export const useDeleteEvent = () => {
   return useDeleteEventMutation();
+};
+
+// Mutation for deleting all events associated with a specific round.
+export const useDeleteEventsByRoundId = () => {
+  return useDeleteEventsByRoundIdMutation();
 };
 
 // Mutation for deleting all events associated with a specific division.
