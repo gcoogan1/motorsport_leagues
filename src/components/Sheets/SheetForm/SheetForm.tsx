@@ -32,9 +32,10 @@ type SheetFormProps = {
     information: string;
   };
   listChildren: React.ReactNode;
-  onSave: () => void;
+  onSave?: () => void;
   isSaving?: boolean;
   saveLoadingText?: string;
+  hideSaveButton?: boolean;
 };
 
 const SheetForm = ({
@@ -51,9 +52,10 @@ const SheetForm = ({
   onSave,
   isSaving = false,
   saveLoadingText = "Saving...",
+  hideSaveButton = false,
 }: SheetFormProps) => {
   const isMobile = useMediaQuery("(max-width: 919px)");
-
+  
   return (
     <FormContainer id={id} role="tabpanel" aria-labelledby={`${id}-tab`}>
       <FormHeader>
@@ -79,7 +81,8 @@ const SheetForm = ({
       </FormHeader>
       <FormList>{listChildren}</FormList>
       <ButtonContainer>
-        <Button
+        {!hideSaveButton && (
+          <Button
           onClick={onSave}
           size={isMobile ? "small" : "medium"}
           color="primary"
@@ -90,6 +93,7 @@ const SheetForm = ({
         >
           Save Changes
         </Button>
+        )}
       </ButtonContainer>
     </FormContainer>
   );
