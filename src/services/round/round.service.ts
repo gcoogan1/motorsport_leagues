@@ -8,7 +8,7 @@ import type { CreateRoundPayload, CreateRoundResponse, GetRoundByIdResponse, Get
 // Get a round by its ID
 export const getRoundById = async (roundId: string): Promise<GetRoundByIdResponse> => {
   const { data, error } = await supabase
-    .from("rounds")
+    .from("round")
     .select("*")
     .eq("id", roundId)
     .single();
@@ -33,7 +33,7 @@ export const getRoundById = async (roundId: string): Promise<GetRoundByIdRespons
 // Get all rounds for a specific division
 export const getRoundsByDivisionId = async (divisionId: string): Promise<GetRoundsResponse> => {
   const { data, error } = await supabase
-    .from("rounds")
+    .from("round")
     .select("*")
     .eq("division_id", divisionId);
 
@@ -57,7 +57,7 @@ export const getRoundsByDivisionId = async (divisionId: string): Promise<GetRoun
 // Get all rounds for a specific season
 export const getRoundsBySeasonId = async (seasonId: string): Promise<GetRoundsResponse> => {
   const { data, error } = await supabase
-    .from("rounds")
+    .from("round")
     .select("*")
     .eq("season_id", seasonId);
 
@@ -81,7 +81,7 @@ export const getRoundsBySeasonId = async (seasonId: string): Promise<GetRoundsRe
 // Create a new round
 export const createRound = async ({ roundName, divisionId, seasonId }: CreateRoundPayload): Promise<CreateRoundResponse> => {
   const { data, error } = await supabase
-    .from("rounds")
+    .from("round")
     .insert([{ round_name: roundName, division_id: divisionId, season_id: seasonId }])
     .select()
     .single();
@@ -110,7 +110,7 @@ export const updateRound = async ({ roundId, roundName, briefing }: UpdateRoundP
   if (briefing) updateData.briefing = briefing;
 
   const { data, error } = await supabase
-    .from("rounds")
+    .from("round")
     .update(updateData)
     .eq("id", roundId)
     .single();
@@ -135,7 +135,7 @@ export const updateRound = async ({ roundId, roundName, briefing }: UpdateRoundP
 // Delete a round by its ID
 export const deleteRound = async (roundId: string): Promise<DeleteRoundResponse> => {
   const { error } = await supabase
-    .from("rounds")
+    .from("round")
     .delete()
     .eq("id", roundId);
 
@@ -158,7 +158,7 @@ export const deleteRound = async (roundId: string): Promise<DeleteRoundResponse>
 // Delete all rounds for a specific division
 export const deleteRoundsByDivisionId = async (divisionId: string): Promise<DeleteRoundResponse> => {
   const { error } = await supabase
-    .from("rounds")
+    .from("round")
     .delete()
     .eq("division_id", divisionId);
 
@@ -181,7 +181,7 @@ export const deleteRoundsByDivisionId = async (divisionId: string): Promise<Dele
 // Delete all rounds for a specific season
 export const deleteRoundsBySeasonId = async (seasonId: string): Promise<DeleteRoundResponse> => {
   const { error } = await supabase
-    .from("rounds")
+    .from("round")
     .delete()
     .eq("season_id", seasonId);
 

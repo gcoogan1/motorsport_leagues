@@ -6,7 +6,7 @@ import type { CreateEventPayload, CreateEventResponse, DeleteEventResponse, Even
 // Get an event by its ID
 export const getEventById = async (eventId: string): Promise<GetEventByIdResponse> => {
   const { data, error } = await supabase
-    .from("events")
+    .from("event")
     .select("*")
     .eq("id", eventId)
     .single();
@@ -31,7 +31,7 @@ export const getEventById = async (eventId: string): Promise<GetEventByIdRespons
 // Get all events for a specific round
 export const getEventsByRoundId = async (roundId: string): Promise<GetEventsResponse> => {
   const { data, error } = await supabase
-    .from("events")
+    .from("event")
     .select("*")
     .eq("round_id", roundId);
 
@@ -55,7 +55,7 @@ export const getEventsByRoundId = async (roundId: string): Promise<GetEventsResp
 // Get all events for a specific division
 export const getEventsByDivisionId = async (divisionId: string): Promise<GetEventsResponse> => {
   const { data, error } = await supabase
-    .from("events")
+    .from("event")
     .select("*")
     .eq("division_id", divisionId);
 
@@ -79,7 +79,7 @@ export const getEventsByDivisionId = async (divisionId: string): Promise<GetEven
 // Get all events for a specific season
 export const getEventsBySeasonId = async (seasonId: string): Promise<GetEventsResponse> => {
   const { data, error } = await supabase
-    .from("events")
+    .from("event")
     .select("*")
     .eq("season_id", seasonId);
 
@@ -108,7 +108,7 @@ export const createEvent = async ({
   divisionId,
   seasonId,
 }: CreateEventPayload): Promise<CreateEventResponse> => {
-  const { data, error } = await supabase.from("events").insert([
+  const { data, error } = await supabase.from("event").insert([
     {
       event_name: eventName,
       event_date: eventDate,
@@ -145,7 +145,7 @@ export const updateEvent = async ({
   broadcastLink,
 }: UpdateEventPayload): Promise<UpdateEventResponse> => {
   const { data, error } = await supabase
-    .from("events")
+    .from("event")
     .update({
       ...(eventName && { event_name: eventName }),
       ...(eventDate && { event_date: eventDate }),
@@ -174,7 +174,7 @@ export const updateEvent = async ({
 
 // Delete an event by its ID
 export const deleteEvent = async (eventId: string): Promise<DeleteEventResponse> => {
-  const { error } = await supabase.from("events").delete().eq("id", eventId);
+  const { error } = await supabase.from("event").delete().eq("id", eventId);
 
   if (error) {
     return {
@@ -194,7 +194,7 @@ export const deleteEvent = async (eventId: string): Promise<DeleteEventResponse>
 
 // Delete all events associated with a specific round
 export const deleteEventsByRoundId = async (roundId: string): Promise<DeleteEventResponse> => {
-  const { error } = await supabase.from("events").delete().eq("round_id", roundId);
+  const { error } = await supabase.from("event").delete().eq("round_id", roundId);
 
   if (error) {
     return {
@@ -214,7 +214,7 @@ export const deleteEventsByRoundId = async (roundId: string): Promise<DeleteEven
 
 // Delete all events associated with a specific division
 export const deleteEventsByDivisionId = async (divisionId: string): Promise<DeleteEventResponse> => {
-  const { error } = await supabase.from("events").delete().eq("division_id", divisionId);
+  const { error } = await supabase.from("event").delete().eq("division_id", divisionId);
 
   if (error) {
     return {
@@ -234,7 +234,7 @@ export const deleteEventsByDivisionId = async (divisionId: string): Promise<Dele
 
 // Delete all events associated with a specific season
 export const deleteEventsBySeasonId = async (seasonId: string): Promise<DeleteEventResponse> => {
-  const { error } = await supabase.from("events").delete().eq("season_id", seasonId);
+  const { error } = await supabase.from("event").delete().eq("season_id", seasonId);
 
   if (error) {
     return {

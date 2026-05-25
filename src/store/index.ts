@@ -3,6 +3,7 @@ import accountReducer from "./account/account.slice";
 import leagueReducer from "./leagues/league.slice";
 import profileReducer from "./profile/profile.slice";
 import squadReducer from "./squads/squad.slice";
+import { eventApi } from "../rtkQuery/API/eventApi";
 import { leagueApi } from "../rtkQuery/API/leagueApi";
 import { notificationApi } from "../rtkQuery/API/notificationApi";
 import { profileApi } from "../rtkQuery/API/profileApi";
@@ -15,6 +16,7 @@ export const store = configureStore({
     league: leagueReducer,
     profile: profileReducer,
     squad: squadReducer,
+    [eventApi.reducerPath]: eventApi.reducer,
     [leagueApi.reducerPath]: leagueApi.reducer,
     [notificationApi.reducerPath]: notificationApi.reducer,
     [profileApi.reducerPath]: profileApi.reducer,
@@ -23,6 +25,7 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
+      eventApi.middleware,
       leagueApi.middleware,
       notificationApi.middleware,
       profileApi.middleware,
