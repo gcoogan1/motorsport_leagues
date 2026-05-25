@@ -35,6 +35,7 @@ import {
 import { formatEventDate } from "@/utils/dates";
 import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import RenameRound from "../Edit/RenameRound/RenameRound";
+import DeleteRound from "../../modals/core/DeleteRound/DeleteRound";
 
 type ScheduleProps = {
   seasonData: LeagueSeasonTable;
@@ -187,11 +188,13 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
   };
 
   const handleRoundMenuAction = (roundId: string, action: "rename" | "delete", currentRoundName?: string) => {
-    console.log(`round:${action}`, roundId);
     if (action === "rename" && currentRoundName) {
       openModal(<RenameRound roundId={roundId} currentRoundName={currentRoundName} />);
+    } else if (action === "delete") {
+      openModal(<DeleteRound roundId={roundId} />);
     }
     setOpenRoundMenuId(null);
+    return;
   };
 
   const handleEventMenuAction = (eventId: string, action: "delete") => {

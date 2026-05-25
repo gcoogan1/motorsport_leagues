@@ -8,7 +8,7 @@ import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import { updateRoundNameSchema, type UpdateRoundNameSchema } from "./RenameRound.schema";
-import { useUpdateRoundMutation } from "@/rtkQuery/API/roundApi";
+import { useUpdateRound } from "@/rtkQuery/hooks/mutations/useRoundMutation";
 
 
 type RenameRoundProps = {
@@ -20,7 +20,7 @@ const RenameRound = ({ roundId, currentRoundName }: RenameRoundProps) => {
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [updateRound] = useUpdateRoundMutation();
+  const [updateRound] = useUpdateRound();
 
 
   //  - Form setup -- //
