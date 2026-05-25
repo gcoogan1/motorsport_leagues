@@ -34,6 +34,7 @@ import {
 } from "./Schedule.util";
 import { formatEventDate } from "@/utils/dates";
 import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
+import RenameRound from "../Edit/RenameRound/RenameRound";
 
 type ScheduleProps = {
   seasonData: LeagueSeasonTable;
@@ -185,8 +186,11 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
     }
   };
 
-  const handleRoundMenuAction = (roundId: string, action: "rename" | "delete") => {
+  const handleRoundMenuAction = (roundId: string, action: "rename" | "delete", currentRoundName?: string) => {
     console.log(`round:${action}`, roundId);
+    if (action === "rename" && currentRoundName) {
+      openModal(<RenameRound roundId={roundId} currentRoundName={currentRoundName} />);
+    }
     setOpenRoundMenuId(null);
   };
 
@@ -261,7 +265,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
                         icon: <DeleteIcon />,
                       },
                     ]}
-                    onSelect={(value) => handleRoundMenuAction(round.id, value as "rename" | "delete")}
+                    onSelect={(value) => handleRoundMenuAction(round.id, value as "rename" | "delete", round.round_name)}
                   />
                 )}
               </div>

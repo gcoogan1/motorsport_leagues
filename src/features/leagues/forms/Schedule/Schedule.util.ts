@@ -41,30 +41,9 @@ export const getNextRoundName = (rounds: RoundTable[]): string => {
   return `Round ${getAlphabeticRoundSuffix(highestExistingIndex + 1)}`;
 };
 
-// This function sorts rounds based on their sequence index and creation date.
+// Keep round ordering stable so renaming does not change display position.
 export const sortRounds = (rounds: RoundTable[]): RoundTable[] =>
-  [...rounds].sort((left, right) => {
-    const leftSequence = getRoundSequenceIndex(left.round_name);
-    const rightSequence = getRoundSequenceIndex(right.round_name);
-
-    if (
-      leftSequence !== null &&
-      rightSequence !== null &&
-      leftSequence !== rightSequence
-    ) {
-      return leftSequence - rightSequence;
-    }
-
-    if (leftSequence !== null && rightSequence === null) {
-      return -1;
-    }
-
-    if (leftSequence === null && rightSequence !== null) {
-      return 1;
-    }
-
-    return left.created_at.localeCompare(right.created_at);
-});
+  [...rounds].sort((left, right) => left.created_at.localeCompare(right.created_at));
 
 // -- Event Name Utilities -- //
 
@@ -89,31 +68,6 @@ export const getNextEventName = (events: EventTable[]): string => {
   return `Event ${highestExistingIndex + 1}`;
 };
 
-// This function sorts events based on their sequence index, event date, and creation date.
+// Keep event ordering stable so renaming does not change display position.
 export const sortEvents = (events: EventTable[]): EventTable[] =>
-  [...events].sort((left, right) => {
-    const leftSequence = getEventSequenceIndex(left.event_name);
-    const rightSequence = getEventSequenceIndex(right.event_name);
-
-    if (
-      leftSequence !== null &&
-      rightSequence !== null &&
-      leftSequence !== rightSequence
-    ) {
-      return leftSequence - rightSequence;
-    }
-
-    if (leftSequence !== null && rightSequence === null) {
-      return -1;
-    }
-
-    if (leftSequence === null && rightSequence !== null) {
-      return 1;
-    }
-
-    if (left.event_date !== right.event_date) {
-      return left.event_date.localeCompare(right.event_date);
-    }
-
-    return left.created_at.localeCompare(right.created_at);
-  });
+  [...events].sort((left, right) => left.created_at.localeCompare(right.created_at));
