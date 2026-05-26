@@ -36,6 +36,7 @@ import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import RenameRound from "../Edit/RenameRound/RenameRound";
 import DeleteRound from "../../modals/core/DeleteRound/DeleteRound";
 import { usePanel } from "@/providers/panel/usePanel";
+import DeleteEvent from "../../modals/core/DeleteEvent/DeleteEvent";
 
 type ScheduleProps = {
   seasonData: LeagueSeasonTable;
@@ -56,7 +57,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
   const [createRound] = useCreateRound();
   const [createEvent] = useCreateEvent();
   
-
+  // --- Effect to handle outside clicks for closing dropdown menus --- //
   useEffect(() => {
     const activeMenuId = openRoundMenuId ?? openEventMenuId;
 
@@ -80,6 +81,8 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [openEventMenuId, openRoundMenuId]);
+
+  // --- Memoized values for division options and effective division ID --- //
 
   const divisionOptions = useMemo(
     () => buildDivisionOptions(seasonDivisions.data),
@@ -129,6 +132,8 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
       }, {}),
     [eventDriversByDivision.data],
   );
+
+  // --- Handlers --- //
 
   const handleAddRound = async () => {
     if (!effectiveDivisionId) {
@@ -206,8 +211,11 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
   };
 
   const handleEventMenuAction = (eventId: string, action: "delete") => {
-    console.log(`event:${action}`, eventId);
+    if (action === "delete") {
+      openModal(<DeleteEvent eventId={eventId} />);
+    }
     setOpenEventMenuId(null);
+    return;
   };
 
   const handleBriefingClick = (roundId: string) => {
