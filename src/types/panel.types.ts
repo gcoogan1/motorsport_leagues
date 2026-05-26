@@ -16,6 +16,7 @@ export type PanelTypes =
   | "LEAGUE_FOLLOWERS"
   | "LEAGUE_JOIN"
   | "LEAGUE_PARTICIPANTS"
+  | "BRIEFING";
   
 
 export type PanelProviderTypes = "none" | PanelTypes;

@@ -9,6 +9,7 @@ export type PanelState = {
 type PanelContextValue = {
   openPanel: (type: Exclude<PanelProviderTypes, "none">, props?: Record<string, unknown>) => void;
   closePanel: () => void;
+  setOutsidePanelCloseHandler: (handler: (() => void) | null) => void;
 };
 
 export const PanelContext = createContext<PanelContextValue | null>(null);
