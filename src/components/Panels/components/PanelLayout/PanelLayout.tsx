@@ -10,6 +10,7 @@ import {
 import Button from "@/components/Button/Button";
 import SegmentedTab from "@/components/Tabs/SegmentedTabs/SegmentedTab";
 import { useState } from "react";
+import type { ButtonColor } from "@/components/Button/Button.variants";
 
 
 type Tabs = {
@@ -30,6 +31,7 @@ type PanelLayoutProps = {
       rightIcon?: React.ReactNode;
       loading?: boolean;
       loadingText?: string;
+      color?: ButtonColor;
     };
     secondary?: {
       label: string;
@@ -38,6 +40,7 @@ type PanelLayoutProps = {
       rightIcon?: React.ReactNode;
       loading?: boolean;
       loadingText?: string;
+      color?: ButtonColor;
     };
   };
   tabs?: Tabs[];
@@ -86,7 +89,7 @@ const PanelLayout = ({
           {actions.primary && (
             <PrimaryButtonContainer>
               <Button
-                color="base"
+                color={actions.primary.color ?? "base"}
                 fullWidth
                 variant="filled"
                 onClick={actions.primary.action}
@@ -103,7 +106,7 @@ const PanelLayout = ({
           )}
           {actions.secondary && (
             <Button
-              color="base"
+              color={actions.secondary.color ?? "base"}
               variant="outlined"
               onClick={actions.secondary.action}
               isLoading={actions.secondary.loading}

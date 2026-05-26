@@ -159,6 +159,7 @@ const BriefingPanel = ({ roundId }: BriefingPanelProps) => {
           action: handleSave,
           loading: isSaving,
           loadingText: "Saving...",
+          color: "primary"
         },
       }}
     >
