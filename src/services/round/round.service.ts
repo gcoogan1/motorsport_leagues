@@ -95,6 +95,23 @@ const resolveRoundBriefingForDisplay = (briefing: string | undefined): string | 
   });
 
 // This function generates an alphabetic suffix for a round name based on its sequence index.
+// For example, 0 corresponds to "A", 1 to "B", and so on.
+const getRoundBriefingImagePaths = (briefing: string | null | undefined): string[] => {
+  if (briefing == null || typeof DOMParser === "undefined") {
+    return [];
+  }
+
+  const document = new DOMParser().parseFromString(briefing, "text/html");
+  const imagePaths = Array.from(document.querySelectorAll("img"))
+    .map((image) => image.getAttribute("src"))
+    .filter((src): src is string => Boolean(src))
+    .map((src) => extractRoundBriefingImagePath(src))
+    .filter((path): path is string => Boolean(path));
+
+  return Array.from(new Set(imagePaths));
+};
+
+// This function generates an alphabetic suffix for a round name based on its sequence index.
 const withResolvedRoundBriefing = (round: RoundTable): RoundTable => ({
   ...round,
   briefing: resolveRoundBriefingForDisplay(round.briefing),
@@ -241,6 +258,44 @@ export const updateRound = async ({ roundId, roundName, briefing }: UpdateRoundP
 
 // Delete a round by its ID
 export const deleteRound = async (roundId: string): Promise<DeleteRoundResponse> => {
+  // First, retrieve the round to get its briefing content and associated image paths
+  const { data: roundData, error: roundError } = await supabase
+    .from("round")
+    .select("briefing")
+    .eq("id", roundId)
+    .maybeSingle();
+
+  if (roundError) {
+    return {
+      success: false,
+      error: {
+        message: roundError.message,
+        code: roundError.code,
+        status: 500,
+      },
+    };
+  }
+
+  const briefingImagePaths = getRoundBriefingImagePaths(roundData?.briefing);
+
+  // Delete the briefing images from storage if they exist
+  if (briefingImagePaths.length > 0) {
+    const { error: storageError } = await supabase.storage
+      .from(ROUND_BRIEFING_BUCKET)
+      .remove(briefingImagePaths);
+
+    if (storageError) {
+      return {
+        success: false,
+        error: {
+          message: storageError.message,
+          code: storageError.name,
+          status: 500,
+        },
+      };
+    }
+  }
+
   const { error } = await supabase
     .from("round")
     .delete()

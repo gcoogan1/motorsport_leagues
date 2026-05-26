@@ -74,7 +74,7 @@ const RichTextEditor = ({
   errorMessage,
 }: RichTextEditorProps) => {
   const [internalContent, setInternalContent] = useState(defaultValue);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [, setIsUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const content = value ?? internalContent;
   const formMethods = useForm<RichTextEditorFormValues>({
@@ -187,6 +187,7 @@ const RichTextEditor = ({
   const handleImageSelection = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
+
     const files = Array.from(event.target.files ?? []);
 
     event.target.value = "";
@@ -368,7 +369,7 @@ const RichTextEditor = ({
                 variant="ghost"
                 icon={{ left: <ImageIcon /> }}
                 ariaLabel="Insert image"
-                isLoading={isUploadingImage}
+                // isLoading={isUploadingImage}
                 onClick={handleImageButtonClick}
               />
             </ToolbarButton>

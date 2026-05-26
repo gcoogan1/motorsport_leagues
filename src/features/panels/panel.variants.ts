@@ -15,6 +15,7 @@ import SquadMembers from "./squadMembers/SquadMembers";
 import LeagueFollowers from "./leagueFollowers/LeagueFollowers";
 import LeagueJoin from "./leagueJoin/LeagueJoin";
 import LeagueParticipants from "./leagueParticipants/LeaguePart";
+import BriefingPanel from "./rounds/forms/Briefing/BriefingPanel";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,4 +36,5 @@ export const panelVariants: Record<PanelTypes, React.ComponentType<any>> = {
   LEAGUE_FOLLOWERS: LeagueFollowers,
   LEAGUE_JOIN: LeagueJoin,
   LEAGUE_PARTICIPANTS: LeagueParticipants,
+  BRIEFING: BriefingPanel,
 };

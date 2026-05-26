@@ -36,6 +36,7 @@ import { formatEventDate } from "@/utils/dates";
 import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import RenameRound from "../Edit/RenameRound/RenameRound";
 import DeleteRound from "../../modals/core/DeleteRound/DeleteRound";
+import { usePanel } from "@/providers/panel/usePanel";
 
 type ScheduleProps = {
   seasonData: LeagueSeasonTable;
@@ -44,6 +45,7 @@ type ScheduleProps = {
 
 const Schedule = ({ seasonData }: ScheduleProps) => {
   const { openModal } = useModal();
+  const { openPanel } = usePanel();
   const { showToast } = useToast();
   const [selectedDivisionId, setSelectedDivisionId] = useState("");
   const [openRoundMenuId, setOpenRoundMenuId] = useState<string | null>(null);
@@ -202,6 +204,10 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
     setOpenEventMenuId(null);
   };
 
+  const handleBriefingClick = (roundId: string) => {
+    openPanel("BRIEFING", { roundId });
+  }
+
   const divisionFilter = divisionOptions.length > 1 ? (
     <FilterBar
       divisions={divisionOptions}
@@ -233,7 +239,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
           }}
           buttons={
             <>
-              <Button size="small" color="base" rounded icon={{ left: <IconBriefing /> }} >Add Briefing</Button>
+              <Button size="small" color="base" rounded icon={{ left: <IconBriefing /> }} onClick={() => handleBriefingClick(round.id)}>{round.briefing ? "Edit" : "Add"} Briefing</Button>
               <div
                 ref={(node) => {
                   dropdownContainerRefs.current[`round-${round.id}`] = node;
