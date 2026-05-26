@@ -21,6 +21,7 @@ import {
   ButtonsContainer,
   RaceTime,
 } from "./RoundEvent.styles";
+import { useEventDrivers } from "@/rtkQuery/hooks/queries/useEvents";
 
 type EventButton = {
   onClick: () => void;
@@ -28,6 +29,7 @@ type EventButton = {
 };
 
 type RoundEventProps = {
+  eventId: string;
   eventName: string;
   eventDate: string;
   carImageUrls: string[];
@@ -41,6 +43,7 @@ type RoundEventProps = {
 };
 
 const RoundEvent = ({
+  eventId,
   eventName,
   eventDate,
   carImageUrls,
@@ -52,6 +55,10 @@ const RoundEvent = ({
   raceTime,
   raceTimeType,
 }: RoundEventProps) => {
+
+  const { data: drivers } = useEventDrivers(eventId);
+
+
   return (
     <EventContainer>
       <TextContainer>
@@ -92,7 +99,7 @@ const RoundEvent = ({
               variant="ghost"
               icon={{ left: <ProfileIcon /> }}
             >
-              Drivers
+              {drivers?.length ?? 0} Drivers
             </Button>
           )}
           {resultsButton && (

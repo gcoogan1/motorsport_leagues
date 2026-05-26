@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useModal } from "@/providers/modal/useModal";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
-import PlaceholderImage from "@assets/Graphics/Placeholder.svg";
+import PlaceholderImage from "@assets/Cover/cover2.png";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import type { LeagueSeasonTable, LeagueStatus } from "@/types/league.types";
 import { LineupContainer } from "./ScheduleLineup.styles";
@@ -14,6 +14,7 @@ import { formatEventDate } from "@/utils/dates";
 import { sortEvents, sortRounds } from "@/features/leagues/forms/Schedule/Schedule.util";
 import { buildDivisionOptions } from "./ScheduleLineup.utils";
 import BriefingModal from "@/pages/League/modals/BriefingModal/BriefingModal";
+import OnTheGrid from "@/pages/League/modals/OnTheGrid/OnTheGrid";
 
 type ScheduleProps = {
   seasonStatus: LeagueStatus;
@@ -91,6 +92,7 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
         roundId: round.id,
         roundName: round.round_name,
         cards: (eventsByRoundId[round.id] ?? []).map((event) => ({
+          eventId: event.id,
           eventName: event.event_name,
           eventDate: formatEventDate(event.event_date),
           carImageUrls: [PlaceholderImage],
@@ -109,6 +111,20 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
     openModal(
       <BriefingModal
         roundId={roundId}
+        seasonId={seasonData.id}
+        seasonName={seasonData.season_name}
+      />,
+    );
+  }
+
+  const openOnTheGridModal = (eventId: string) => {
+    if (!seasonData) {
+      return;
+    }
+
+    openModal(
+      <OnTheGrid
+        eventId={eventId}
         seasonId={seasonData.id}
         seasonName={seasonData.season_name}
       />,
@@ -155,7 +171,12 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
               <Round
                 key={round.roundId}
                 roundName={round.roundName}
-                roundCards={round.cards}
+                roundCards={round.cards.map((card) => ({
+                  ...card,
+                  driversButton: {
+                    onClick: () => openOnTheGridModal(card.eventId),
+                  },
+                }))}
                 briefingButton={{
                   onClick: () => openBriefingModal(round.roundId)
                 }}

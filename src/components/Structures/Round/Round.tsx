@@ -8,6 +8,7 @@ type EventButton = {
 };
 
 type RoundCard = {
+  eventId: string;
   eventName: string;
   eventDate: string;
   carImageUrls: string[];
@@ -17,6 +18,7 @@ type RoundCard = {
   watchButton?: EventButton;
   resultsButton?: EventButton;
   driversButton?: EventButton;
+  numberOfDrivers?: number;
   detailsButton?: EventButton;
 }
 
@@ -35,6 +37,7 @@ const Round = ({ roundName, briefingButton, reportButton, roundCards }: RoundPro
         {roundCards.map((card, index) => (
           <RoundEvent
             key={index}
+            eventId={card.eventId}
             eventName={card.eventName}
             eventDate={card.eventDate}
             carImageUrls={card.carImageUrls}
