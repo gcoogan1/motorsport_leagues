@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import AddItem from "@/components/AddItem/AddItem";
 import FormContainerBlock from "@/components/Forms/FormContainerBlock/FormContainerBlock";
-import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+
 import SheetForm from "@/components/Sheets/SheetForm/SheetForm";
 import EventSchedule from "@/components/Structures/EventSchedule/EventSchedule";
 import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
@@ -219,13 +219,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
     />
   ) : undefined;
 
-  const listChildren = !effectiveDivisionId ? (
-    <EmptyMessage
-      title="No Divisions Yet"
-      subtitle="Create a division in this season before adding rounds."
-      hideIcon
-    />
-  ) : (
+  const listChildren = (
     <>
       {rounds.map((round) => (
         <FormContainerBlock
