@@ -39,14 +39,14 @@ import LeagueTabs from "@/components/Tabs/LeagueTabs/LeagueTabs";
 import { LEAGUE_TAB_ITEMS } from "./leagueTabs.data";
 import Overview from "./components/tabs/Overview/Overview";
 import Lineup from "./components/tabs/Lineup/Lineup";
-import Schedule from "./components/tabs/Schedule/Schedule";
+import ScheduleLineup from "./components/tabs/Schedule/ScheduleLineup";
 import Standings from "./components/tabs/Standings/Standings";
 import Rules from "./components/tabs/Rules/Rules";
 
 const LEAGUE_TAB_COMPONENTS = {
   overview: Overview,
   lineup: Lineup,
-  schedule: Schedule,
+  schedule: ScheduleLineup,
   standings: Standings,
   rules: Rules,
 } as const;
