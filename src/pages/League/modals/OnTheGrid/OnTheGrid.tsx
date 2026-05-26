@@ -202,12 +202,13 @@ const OnTheGrid = ({ eventId, seasonId, seasonName }: OnTheGridProps) => {
               </NumberCell>
               <ParticipantCell>
                 <ReadOnlyInput
+                
                   profile={{
                     username: row.displayName,
                     information: row.gameType,
                     avatarType: row.avatarType,
                     avatarValue: row.avatarValue,
-                    size: "small",
+                    size: "medium",
                   }}
                 />
               </ParticipantCell>
