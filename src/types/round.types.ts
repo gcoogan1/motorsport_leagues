@@ -43,6 +43,23 @@ export type CreateRoundSuccess = {
 
 export type CreateRoundResponse = CreateRoundSuccess | SupabaseError;
 
+
+export type UploadRoundBriefingImagePayload = {
+  roundId: string;
+  file: File;
+};
+
+export type UploadRoundBriefingImageSuccess = {
+  success: true;
+  data: {
+    src: string;
+    path: string;
+  };
+};
+
+export type UploadRoundBriefingImageResponse = UploadRoundBriefingImageSuccess | SupabaseError;
+
+
 // -- GET -- //
 
 
