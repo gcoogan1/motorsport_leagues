@@ -11,6 +11,13 @@ export type EventTable = {
   broadcast_link?: string;
 }
 
+export type EventDriverTable = {
+  id: string;
+  created_at: string;
+  event_id: string;
+  season_driver_id: string;
+}
+
 
 // -- DRAFT TYPES -- //
 export type EventTableDraft = {
@@ -72,6 +79,21 @@ export type GetEventByIdSuccess = {
 
 export type GetEventByIdResponse = GetEventByIdSuccess | SupabaseError;
 
+export type GetEventDriversSuccess = {
+  success: true;
+  data: EventDriverTable[];
+};
+
+export type GetEventDriversResponse = GetEventDriversSuccess | SupabaseError;
+
+export type EventIdsLookupSuccess = {
+  success: true;
+  data: string[];
+};
+
+export type EventIdsLookupResponse = EventIdsLookupSuccess | SupabaseError;
+
+
 // -- UPDATE -- //
 
 export type UpdateEventPayload = {
@@ -88,8 +110,24 @@ export type UpdateEventSuccess = {
 
 export type UpdateEventResponse = UpdateEventSuccess | SupabaseError;
 
+export type CreateEventDriverPayload = {
+  eventId: string;
+  seasonDriverId: string;
+};
+
+export type CreateEventDriverSuccess = {
+  success: true;
+  data: EventDriverTable;
+};
+
+export type CreateEventDriverResponse = CreateEventDriverSuccess | SupabaseError;
+
 // -- DELETE -- //
 
 export type DeleteEventResponse = {
   success: true;
 } | SupabaseError; 
+
+export type DeleteEventDriverResponse = {
+  success: true;
+} | SupabaseError;

@@ -1,5 +1,7 @@
 import {
   useGetEventByIdQuery,
+  useGetEventDriversByDivisionIdQuery,
+  useGetEventDriversByEventIdQuery,
   useGetEventsByDivisionIdQuery,
   useGetEventsBySeasonIdQuery,
 } from "@/rtkQuery/API/eventApi";
@@ -23,4 +25,14 @@ export const useEvents = (divisionId?: string) =>
 export const useEventsBySeason = (seasonId?: string) =>
   useGetEventsBySeasonIdQuery(seasonId ?? "", {
     skip: !seasonId,
+  });
+
+export const useEventDriversByDivision = (divisionId?: string) =>
+  useGetEventDriversByDivisionIdQuery(divisionId ?? "", {
+    skip: !divisionId,
+  });
+
+export const useEventDrivers = (eventId?: string) =>
+  useGetEventDriversByEventIdQuery(eventId ?? "", {
+    skip: !eventId,
   });
