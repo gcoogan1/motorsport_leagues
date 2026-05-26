@@ -21,6 +21,7 @@ type PanelLayoutProps = {
   children?: React.ReactNode;
   panelTitle?: string;
   panelTitleIcon?: React.ReactNode;
+  onClose?: () => void;
   actions?: {
     primary?: {
       label: string;
@@ -47,6 +48,7 @@ const PanelLayout = ({
   children,
   panelTitle,
   panelTitleIcon,
+  onClose,
   actions,
   tabs,
   onTabChange
@@ -66,7 +68,7 @@ const PanelLayout = ({
       <PanelHeader
         panelTitle={panelTitle}
         panelTitleIcon={panelTitleIcon}
-        onClose={closePanel}
+        onClose={onClose ?? closePanel}
       />
       {tabs && (
         <PanelTabs>
