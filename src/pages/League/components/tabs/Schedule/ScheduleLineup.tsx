@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useModal } from "@/providers/modal/useModal";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
 import PlaceholderImage from "@assets/Graphics/Placeholder.svg";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
@@ -12,6 +13,7 @@ import { useRoundsBySeason } from "@/rtkQuery/hooks/queries/useRounds";
 import { formatEventDate } from "@/utils/dates";
 import { sortEvents, sortRounds } from "@/features/leagues/forms/Schedule/Schedule.util";
 import { buildDivisionOptions } from "./ScheduleLineup.utils";
+import BriefingModal from "@/pages/League/modals/BriefingModal/BriefingModal";
 
 type ScheduleProps = {
   seasonStatus: LeagueStatus;
@@ -30,11 +32,13 @@ const normalizeDivisionTabLabel = (label: string): string =>
   label.replace(/\s+division$/i, "");
 
 const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
+  const { openModal } = useModal();
   const [selectedDivisionLabel, setSelectedDivisionLabel] = useState("");
   const seasonDivisions = useLeagueSeasonDivisions(seasonData?.id);
   const roundsBySeason = useRoundsBySeason(seasonData?.id);
   const eventsBySeason = useEventsBySeason(seasonData?.id);
 
+  // -- Memoized values to avoid unnecessary re-renders -- //
 
   const divisionOptions = useMemo(
     () => buildDivisionOptions(seasonDivisions.data),
@@ -95,6 +99,22 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
     [eventsByRoundId, rounds],
   );
 
+  // -- Handlers -- //
+
+  const openBriefingModal = (roundId: string) => {
+    if (!seasonData) {
+      return;
+    }
+
+    openModal(
+      <BriefingModal
+        roundId={roundId}
+        seasonId={seasonData.id}
+        seasonName={seasonData.season_name}
+      />,
+    );
+  }
+
   return (
     <>
       {seasonStatus === "setup" ? (
@@ -137,7 +157,7 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
                 roundName={round.roundName}
                 roundCards={round.cards}
                 briefingButton={{
-                  onClick: () => {}
+                  onClick: () => openBriefingModal(round.roundId)
                 }}
               />
             ))
