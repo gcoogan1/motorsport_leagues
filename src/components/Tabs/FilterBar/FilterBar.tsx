@@ -12,7 +12,11 @@ type FilterBarProps = {
   events: FilterItem[];
   sessions: FilterItem[];
   selectedDivision?: string;
+  selectedRound?: string;
+  selectedEvent?: string;
   onDivisionChange?: (value: string) => void;
+  onRoundChange?: (value: string) => void;
+  onEventChange?: (value: string) => void;
   text?: string;
 }
 
@@ -22,7 +26,11 @@ const FilterBar = ({
   events,
   sessions,
   selectedDivision,
+  selectedRound,
+  selectedEvent,
   onDivisionChange,
+  onRoundChange,
+  onEventChange,
   text,
 }: FilterBarProps) => {
   return (
@@ -36,8 +44,22 @@ const FilterBar = ({
           options={divisions}
         />
       )}
-      {rounds.length > 0 && (<SelectButton label={rounds[0].label} options={rounds} />)}
-      {events.length > 0 && (<SelectButton label={events[0].label} options={events} />)}
+      {rounds.length > 0 && (
+        <SelectButton
+          label={rounds[0].label}
+          value={selectedRound}
+          onChange={onRoundChange}
+          options={rounds}
+        />
+      )}
+      {events.length > 0 && (
+        <SelectButton
+          label={events[0].label}
+          value={selectedEvent}
+          onChange={onEventChange}
+          options={events}
+        />
+      )}
       {sessions.length > 0 && (<SelectButton label={sessions[0].label} options={sessions} />)}
       </FilterList>
       {text && <FilterText>{text}</FilterText>}

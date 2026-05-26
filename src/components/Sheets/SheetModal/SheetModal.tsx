@@ -35,6 +35,7 @@ type SheetModalProps = {
   };
   listChildren: React.ReactNode;
   onClose: () => void;
+  fullScreen?: boolean;
 };
 
 const SheetModal = ({
@@ -48,33 +49,36 @@ const SheetModal = ({
   details,
   listChildren,
   onClose,
+  fullScreen,
 }: SheetModalProps) => {
 
   const isMobile = useMediaQuery("(max-width: 919px)");
 
   return (
     <ModalOverlay>
-      <ModalOverlayBackground>
-        <SheetContainer id={id}>
+      <ModalOverlayBackground $fullScreen={fullScreen}>
+        <SheetContainer id={id} $fullScreen={fullScreen}>
           <SheetHeader>
             <TitleContainer>
               <Name>{seasonName}</Name>
               <Header>{header}</Header>
             </TitleContainer>
-            <BlockContainer>
-              <BlockHeaderContainer>
-                <BlockHeader>{blockHeader}</BlockHeader>
-                <BlockDescription>{blockDescription}</BlockDescription>
-              </BlockHeaderContainer>
-              {headerChildren && <BlockContents>{headerChildren}</BlockContents>}
-            </BlockContainer>
+            {(blockHeader || blockDescription || headerChildren) && (
+              <BlockContainer>
+                <BlockHeaderContainer>
+                  <BlockHeader>{blockHeader}</BlockHeader>
+                  <BlockDescription>{blockDescription}</BlockDescription>
+                </BlockHeaderContainer>
+                {headerChildren && <BlockContents>{headerChildren}</BlockContents>}
+              </BlockContainer>
+            )}
             {filters && filters}
             <DetailsContainer>
               <DetailsTitle>{details?.title}</DetailsTitle>
               <DetailsContent>{details?.information}</DetailsContent>
             </DetailsContainer>
           </SheetHeader>
-          <List>{listChildren}</List>
+          <List $fullScreen={fullScreen}>{listChildren}</List>
           <ButtonContainer>
             <Button
               onClick={onClose}

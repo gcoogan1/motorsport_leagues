@@ -13,6 +13,8 @@ export const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   background: ${colors.base.base2};
+  border-radius: ${borders.radius.xLarge};
+  color: ${colors.text.text1};
 
   ${gradientBorder({
     gradient: gradients.base.fadeBottom10,

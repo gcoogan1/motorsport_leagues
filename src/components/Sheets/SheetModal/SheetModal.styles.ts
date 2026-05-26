@@ -14,21 +14,24 @@ export const ModalOverlay = styled.div`
   z-index: 2000;
   padding: ${layout.space.xxxLarge} ${layout.space.xLarge};
   overflow-y: auto;
+  width: 100%;
 `;
 
-export const ModalOverlayBackground = styled.div`
+export const ModalOverlayBackground = styled.div<{ $fullScreen?: boolean }>`
   background: ${colors.base.base2};
   display: flex;
   align-items: flex-start;
   justify-content: center;
   width: 100%;
+  height: 100%;
   max-width: 960px;
   border-radius: ${borders.radius.xxxLarge};
   padding: ${layout.space.xLarge};
   ${effects.boxShadow.elevation}
+  ${({ $fullScreen }) => $fullScreen && `overflow: hidden;`}
 `;
 
-export const SheetContainer = styled.div`
+export const SheetContainer = styled.div<{ $fullScreen?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -36,6 +39,7 @@ export const SheetContainer = styled.div`
   position: relative;
   flex: 1;
   width: 100%;
+  height: ${({ $fullScreen }) => ($fullScreen ? "100%" : "auto")};
   min-width: 0;
   border-radius: ${borders.radius.xxxLarge};
   background: ${({ theme }) => theme.theme.primaryGradientFadeBottom30};
@@ -151,17 +155,20 @@ export const DetailsContent = styled.p`
   margin: 0;
 `;
 
-export const List = styled.div`
+export const List = styled.div<{ $fullScreen?: boolean }>`
   display: flex;
   width: 100%;
-  max-width: 640px;
+  max-width: ${({ $fullScreen }) => ($fullScreen ? "none" : "640px")};
   min-width: 0;
   flex-direction: column;
+  flex: ${({ $fullScreen }) => ($fullScreen ? 1 : "initial")};
   gap: ${layout.space.medium};
-  align-self: center;
+  align-items: center;
+  overflow-y: ${({ $fullScreen }) => ($fullScreen ? "auto" : "visible")};
+  min-height: ${({ $fullScreen }) => ($fullScreen ? "0" : "auto")};
 
   ${layout.mediaQueries.mobile} {
-    max-width: 400px;
+    max-width: ${({ $fullScreen }) => ($fullScreen ? "none" : "400px")};
   }
 `;
 
