@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useEditor, type Editor } from "@tiptap/react";
-import type { Level } from "@tiptap/extension-heading";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
@@ -35,55 +34,8 @@ import {
 } from "./RichTextEditor.styles";
 import SelectInput from "../SelectInput/SelectInput";
 import Button from "@/components/Button/Button";
+import { type RichTextEditorImageUploadResult, MAX_CHARACTERS, type RichTextEditorFormValues, readFileAsDataUrl, getHeadingLevel, HEADING_OPTIONS } from "./RichTextEditor.util";
 
-const MAX_CHARACTERS = 2000;
-
-const HEADING_OPTIONS = [
-  { value: "paragraph", label: "Normal" },
-  { value: "h1", label: "Heading" },
-  { value: "h2", label: "Subheading" },
-] as const;
-
-type RichTextEditorFormValues = {
-  heading: string;
-};
-
-type RichTextEditorImageUploadResult =
-  | string
-  | {
-      src: string;
-      alt?: string;
-    };
-
-const getHeadingLevel = (value: string): Level | null => {
-  const headingLevels: Record<string, Level> = {
-    h1: 1,
-    h2: 2,
-  };
-
-  return headingLevels[value] ?? null;
-};
-
-const readFileAsDataUrl = (file: File) => {
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        resolve(reader.result);
-        return;
-      }
-
-      reject(new Error("Unable to read image file."));
-    };
-
-    reader.onerror = () => {
-      reject(reader.error ?? new Error("Unable to read image file."));
-    };
-
-    reader.readAsDataURL(file);
-  });
-};
 
 type RichTextEditorProps = {
   value?: string;
@@ -114,9 +66,9 @@ const RichTextEditor = ({
   defaultValue = "",
   onChange,
   onImageUpload,
-  label = "Label",
-  helperText = "Helper message.",
-  placeholder = "Placeholder Text",
+  label,
+  helperText,
+  placeholder,
   maxCharacters = MAX_CHARACTERS,
   hasError,
   errorMessage,
@@ -235,18 +187,20 @@ const RichTextEditor = ({
   const handleImageSelection = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const file = event.target.files?.[0];
+    const files = Array.from(event.target.files ?? []);
 
     event.target.value = "";
 
-    if (!file || !editor) {
+    if (files.length === 0 || !editor) {
       return;
     }
 
     setIsUploadingImage(true);
 
     try {
-      await insertImage(file);
+      for (const file of files) {
+        await insertImage(file);
+      }
     } finally {
       setIsUploadingImage(false);
     }
@@ -311,6 +265,7 @@ const RichTextEditor = ({
               ref={fileInputRef}
               type="file"
               accept="image/*"
+              multiple
               hidden
               onChange={handleImageSelection}
             />
@@ -414,7 +369,6 @@ const RichTextEditor = ({
                 icon={{ left: <ImageIcon /> }}
                 ariaLabel="Insert image"
                 isLoading={isUploadingImage}
-                loadingText="Uploading"
                 onClick={handleImageButtonClick}
               />
             </ToolbarButton>
@@ -423,8 +377,8 @@ const RichTextEditor = ({
           <StyledEditorContent editor={editor} />
         </Contents>
 
-        <HelperText>{helperText}</HelperText>
-              {!!hasError && (
+        {!!helperText && <HelperText>{helperText}</HelperText>}
+        {!!hasError && (
         <ErrorText>
           <Error_Outlined width={18} height={18} /> {errorMessage}
         </ErrorText>

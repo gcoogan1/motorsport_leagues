@@ -6,10 +6,13 @@ const { colors, layout, typography, borders } = designTokens;
 
 export const Wrapper = styled.div`
   width: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
+  flex: 1 0 auto;
   gap: ${layout.space.xxxSmall};
   max-width: 640px;
+  align-self: stretch;
 `;
 
 export const TopRow = styled.div`
@@ -32,6 +35,8 @@ export const CharacterCounter = styled.div`
 export const Contents = styled.div<{ $hasError: boolean }>`
   display: flex;
   flex-direction: column;
+  flex: 1 0 auto;
+  min-height: 260px;
   align-items: flex-start;
   align-self: stretch;
   border-radius: ${borders.radius.medium};
@@ -55,7 +60,6 @@ export const Controls = styled.div`
 `;
 
 export const SelectWrapper = styled.div`
-  flex: 1;
 `;
 
 export const ToolbarButton = styled.div<{
@@ -67,17 +71,21 @@ export const ToolbarButton = styled.div<{
 `;
 
 export const StyledEditorContent = styled(EditorContent)`
+
+  width: 100%;
+  flex: 1 0 auto;
+  min-height: 260px;
+
   .ProseMirror {
     min-height: 260px;
-
+    height: auto;
+    width: 100%;
     padding: 18px;
-
     outline: none;
-
     color: white;
-
     font-size: 14px;
     line-height: 1.6;
+    overflow-wrap: anywhere;
   }
 
   .ProseMirror p {
@@ -86,13 +94,9 @@ export const StyledEditorContent = styled(EditorContent)`
 
   .ProseMirror .is-editor-empty:first-child::before {
     content: attr(data-placeholder);
-
     color: #8f8f8f;
-
     pointer-events: none;
-
     float: left;
-
     height: 0;
   }
 
@@ -121,29 +125,21 @@ export const StyledEditorContent = styled(EditorContent)`
 
   .ProseMirror blockquote {
     border-left: 3px solid rgba(255, 255, 255, 0.2);
-
     margin-left: 0;
-
     padding-left: 16px;
-
     color: #cfcfcf;
   }
 
   .ProseMirror code {
     background: rgba(255, 255, 255, 0.08);
-
     padding: 2px 6px;
-
     border-radius: 6px;
   }
 
   .ProseMirror pre {
     background: #1e1e1e;
-
     padding: 16px;
-
     border-radius: 12px;
-
     overflow-x: auto;
   }
 `;
