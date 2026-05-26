@@ -11,14 +11,13 @@ import MoreVerticalIcon from "@assets/Icon/More_Vertical.svg?react";
 import EditIcon from "@assets/Icon/Edit.svg?react";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import {
-  useCreateEventMutation,
-  useGetEventsByDivisionIdQuery,
-} from "@/rtkQuery/API/eventApi";
-import { useGetLeagueSeasonDivisionsQuery } from "@/rtkQuery/API/leagueApi";
-import {
-  useCreateRoundMutation,
-  useGetRoundsByDivisionIdQuery,
-} from "@/rtkQuery/API/roundApi";
+  useEventDriversByDivision,
+  useEvents,
+} from "@/rtkQuery/hooks/queries/useEvents";
+import { useLeagueSeasonDivisions } from "@/rtkQuery/hooks/queries/useLeagueSeasonDivisions";
+import { useCreateEvent } from "@/rtkQuery/hooks/mutations/useEventMutaion";
+import { useCreateRound } from "@/rtkQuery/hooks/mutations/useRoundMutation";
+import { useRounds } from "@/rtkQuery/hooks/queries/useRounds";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import type { EventTable } from "@/types/event.types";
@@ -53,9 +52,10 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
   const [isCreatingRound, setIsCreatingRound] = useState(false);
   const [creatingEventRoundId, setCreatingEventRoundId] = useState<string | null>(null);
   const dropdownContainerRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const seasonDivisions = useGetLeagueSeasonDivisionsQuery(seasonData.id);
-  const [createRound] = useCreateRoundMutation();
-  const [createEvent] = useCreateEventMutation();
+  const seasonDivisions = useLeagueSeasonDivisions(seasonData.id);
+  const [createRound] = useCreateRound();
+  const [createEvent] = useCreateEvent();
+  
 
   useEffect(() => {
     const activeMenuId = openRoundMenuId ?? openEventMenuId;
@@ -98,12 +98,9 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
       : firstDivisionId;
   }, [selectedDivisionId, divisionOptions]);
 
-  const roundsByDivision = useGetRoundsByDivisionIdQuery(effectiveDivisionId, {
-    skip: !effectiveDivisionId,
-  });
-  const eventsByDivision = useGetEventsByDivisionIdQuery(effectiveDivisionId, {
-    skip: !effectiveDivisionId,
-  });
+  const roundsByDivision = useRounds(effectiveDivisionId);
+  const eventsByDivision = useEvents(effectiveDivisionId);
+  const eventDriversByDivision = useEventDriversByDivision(effectiveDivisionId);
 
   const rounds = useMemo(
     () => sortRounds(roundsByDivision.data ?? []),
@@ -123,6 +120,15 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
       {},
     );
   }, [eventsByDivision.data]);
+
+  const eventDriverCountByEventId = useMemo(
+    () =>
+      (eventDriversByDivision.data ?? []).reduce<Record<string, number>>((counts, eventDriver) => {
+        counts[eventDriver.event_id] = (counts[eventDriver.event_id] ?? 0) + 1;
+        return counts;
+      }, {}),
+    [eventDriversByDivision.data],
+  );
 
   const handleAddRound = async () => {
     if (!effectiveDivisionId) {
@@ -208,6 +214,10 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
     openPanel("BRIEFING", { roundId });
   }
 
+  const handleDriverGridClick = (eventId: string) => {
+    openPanel("DRIVER_GRID", { eventId });
+  }
+
   const divisionFilter = divisionOptions.length > 1 ? (
     <FilterBar
       divisions={divisionOptions}
@@ -263,7 +273,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
                         icon: <EditIcon />,
                       },
                       {
-                        label: "Delete Round",
+                        label: "Delete Round",  
                         value: "delete",
                         icon: <DeleteIcon />,
                       },
@@ -281,7 +291,8 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
                 key={event.id}
                 title={event.event_name}
                 subtitle={formatEventDate(event.event_date)}
-                numOfDrivers={0}
+                numOfDrivers={eventDriverCountByEventId[event.id] ?? 0}
+                onProfileClick={() => handleDriverGridClick(event.id)}
                 onMoreClick={() => {
                   setOpenRoundMenuId(null);
                   setOpenEventMenuId((currentMenuId) =>
