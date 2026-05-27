@@ -15,7 +15,7 @@ type ButtonProps = {
   };
   isLoading?: boolean;
   loadingText?: string;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   type?: "button" | "submit";
   fullWidth?: boolean;
   ariaLabel?: string;
