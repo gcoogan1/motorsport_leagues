@@ -34,6 +34,29 @@ const ResultTable = ({ name, columns, customWidth, moreOnClick }: ResultTablePro
   const { control } = useFormContext();
   const { fields } = useFieldArray({ control, name });
 
+  // NEED FOR TIME??
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   let input = e.target.value.replace(/\D/g, ""); // Only digits
+
+  //   // Format as HH:MM.MMM (max 7 digits: 2+2+3)
+  //   if (input.length > 7) {
+  //     input = input.slice(0, 7);
+  //   }
+
+  //   let formatted = "";
+  //   if (input.length >= 1) {
+  //     formatted = input.slice(0, 2); // HH
+  //   }
+  //   if (input.length >= 3) {
+  //     formatted = input.slice(0, 2) + ":" + input.slice(2, 4); // HH:MM
+  //   }
+  //   if (input.length >= 5) {
+  //     formatted = input.slice(0, 2) + ":" + input.slice(2, 4) + "." + input.slice(4, 7); // HH:MM.MMM
+  //   }
+
+  //   setValue(name, formatted);
+  // };
+
   return (
     <TableWrapper style={{ width: customWidth || "640px" }}>
       <ResultHeader>
