@@ -1,6 +1,5 @@
 import { useFieldArray, useFormContext } from "react-hook-form";
 import ProfileSelectInput from "@/components/Inputs/ProfileSelectInput/ProfileSelectInput";
-import TimeInput from "@/components/Inputs/TimeInput/TimeInput";
 import MoreIcon from "@assets/Icon/More_Vertical.svg?react";
 import {
   ColumnText,
@@ -81,7 +80,7 @@ const ResultTable = ({ name, columns, customWidth, moreOnClick }: ResultTablePro
             )}
             {columns.time && (
               <TimeCell>
-                <TimeInput name={`${name}.${i}.${columns.time.name}`} />
+                <TextInput name={`${name}.${i}.${columns.time.name}`} placeholder="00:00.000" />
               </TimeCell>
             )}
             {columns.points && (
