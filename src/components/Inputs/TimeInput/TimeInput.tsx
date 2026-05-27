@@ -1,10 +1,12 @@
 import { useFormContext } from "react-hook-form";
-import { InputContainer, InputField, InputWrapper } from "./TimeInput.styles";
+import TimeIcon from "@assets/Icon/Time.svg?react";
+import { ErrorText, HelperText, IconWrapper, InputContainer, InputField, InputWrapper, Label, LabelRow } from "./TimeInput.styles";
 
 // MUST BE WRAPPED IN REACT-HOOK-FORM FORM PROVIDER
 
 type TimeInputProps = {
   name: string;
+  label: string;
   placeholder?: string;
   helperText?: string;
   hasError?: boolean;
@@ -13,7 +15,8 @@ type TimeInputProps = {
 
 const TimeInput = ({
   name,
-  placeholder = "00:00.000",
+  label,
+  placeholder = "12:00",
   helperText,
   hasError,
   errorMessage,
@@ -21,6 +24,7 @@ const TimeInput = ({
   const { register, watch, setValue } = useFormContext();
 
   const value = watch(name);
+  const hasValue = Boolean(value && value.length > 0);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let input = e.target.value.replace(/\D/g, ""); // Only digits
@@ -45,20 +49,26 @@ const TimeInput = ({
   };
 
   return (
-    <InputWrapper>
+    <InputWrapper $hasValue={hasValue}>
+        <LabelRow>
+            {label && <Label>{label}</Label>}
+          </LabelRow>
       <InputContainer>
         <InputField
           {...register(name)}
-          type="text"
+          type="time"
           placeholder={placeholder}
-          value={value || ""}
+          value={value || "12:00"}
           onChange={handleChange}
           maxLength={8}
           inputMode="numeric"
+          $hasError={!!hasError}
+          $hasValue={hasValue}
         />
+        <IconWrapper $hasValue={hasValue}><TimeIcon /></IconWrapper>
       </InputContainer>
-      {helperText && <div>{helperText}</div>}
-      {hasError && errorMessage && <div>{errorMessage}</div>}
+      {helperText && <HelperText>{helperText}</HelperText>}
+      {hasError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
     </InputWrapper>
   );
 };
