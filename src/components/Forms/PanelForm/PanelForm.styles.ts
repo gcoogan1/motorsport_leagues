@@ -1,0 +1,47 @@
+import styled from "styled-components";
+
+import { designTokens } from "@/app/design/tokens";
+import { gradientBorder } from "@/app/design/mixens/gradientBorder";
+
+const { colors, gradients, layout, borders, typography } = designTokens;
+
+export const FormWrapper = styled.form`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: ${borders.radius.xLarge};
+  border: ${borders.width.thin} solid ${colors.base.translucent10};
+`;
+
+export const FormHeader = styled.div`
+  display: flex;
+  align-items: center;
+  align-content: center;
+  align-self: stretch;
+  flex-wrap: wrap;
+  padding: ${layout.space.medium};
+  gap: ${layout.space.xSmall};
+  background: ${({ theme }) => theme.theme.primaryGradientFadeRight50};
+  border-radius: ${borders.radius.xLarge};
+
+  ${gradientBorder({
+    width: borders.width.thin,
+    gradient: gradients.base.fadeRight10,
+  })}
+`;
+
+export const FormTitle = styled.h3`
+  ${typography.subtitle.medium};
+  color: ${colors.text.text1};
+  flex: 1 0 auto;
+  margin: 0;
+`;
+
+export const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  gap: ${layout.space.medium};
+  padding: ${layout.space.medium};
+`;
