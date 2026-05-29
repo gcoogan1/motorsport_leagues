@@ -7,6 +7,4 @@ export const updateRoundNameSchema = z.object({
     24,
     "Round name cannot be longer than 24 characters.",
   )
-    .trim()
-    .transform((val) => val.toLowerCase()),
 });

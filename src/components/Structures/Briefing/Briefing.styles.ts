@@ -20,4 +20,10 @@ export const Wrapper = styled.div`
     gradient: gradients.base.fadeBottom10,
     width: borders.width.medium,
   })};
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
 `;

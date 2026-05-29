@@ -212,6 +212,7 @@ export const getEventDriversByDivisionId = async (divisionId: string): Promise<G
 export const createEvent = async ({
   eventName,
   eventDate,
+  eventTimeZone,
   roundId,
   divisionId,
   seasonId,
@@ -223,6 +224,7 @@ export const createEvent = async ({
       round_id: roundId,
       division_id: divisionId,
       season_id: seasonId,
+      event_time_zone: eventTimeZone,
     },
   ])
     .select()
@@ -285,6 +287,7 @@ export const updateEvent = async ({
   eventId,
   eventName,
   eventDate,
+  eventTimeZone,
   broadcastLink,
 }: UpdateEventPayload): Promise<UpdateEventResponse> => {
   const { data, error } = await supabase
@@ -292,6 +295,7 @@ export const updateEvent = async ({
     .update({
       ...(eventName && { event_name: eventName }),
       ...(eventDate && { event_date: eventDate }),
+      ...(eventTimeZone && { event_time_zone: eventTimeZone }),
       ...(broadcastLink && { broadcast_link: broadcastLink }),
     })
     .eq("id", eventId)

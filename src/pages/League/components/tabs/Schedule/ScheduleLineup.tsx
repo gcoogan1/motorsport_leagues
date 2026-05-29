@@ -94,7 +94,7 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
         cards: (eventsByRoundId[round.id] ?? []).map((event) => ({
           eventId: event.id,
           eventName: event.event_name,
-          eventDate: formatEventDate(event.event_date),
+          eventDate: formatEventDate(event.event_date, event.event_time_zone ?? "UTC"),
           carImageUrls: [PlaceholderImage],
         })),
       })),

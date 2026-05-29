@@ -276,7 +276,7 @@ const OnTheGrid = ({ eventId, seasonId, seasonName }: OnTheGridProps) => {
   const details = selectedEvent
     ? {
         title: selectedEvent.event_name,
-        information: formatEventDate(selectedEvent.event_date),
+        information: formatEventDate(selectedEvent.event_date, selectedEvent.event_time_zone ?? "UTC"),
       }
     : undefined;
 

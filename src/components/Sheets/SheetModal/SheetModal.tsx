@@ -90,7 +90,7 @@ const SheetModal = ({
                 left: <CloseIcon />
               }}
             >
-              {isMobile && "Close"}
+              {!isMobile && "Close"}
             </Button>
           </ButtonContainer>
         </SheetContainer>

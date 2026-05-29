@@ -8,6 +8,7 @@ export type EventTable = {
   season_id: string;
   event_name: string;
   event_date: string;
+  event_time_zone?: string;
   broadcast_link?: string;
 }
 
@@ -28,6 +29,7 @@ export type EventTableDraft = {
   season_id: string;
   event_name: string;
   event_date: string;
+  event_time_zone?: string;
 }
 
 
@@ -47,6 +49,7 @@ type SupabaseError = {
 export type CreateEventPayload = {
   eventName: string;
   eventDate: string;
+  eventTimeZone?: string;
   roundId: string;
   divisionId: string;
   seasonId: string;
@@ -100,6 +103,7 @@ export type UpdateEventPayload = {
   eventId: string;
   eventName?: string;
   eventDate?: string;
+  eventTimeZone?: string;
   broadcastLink?: string;
 };
 

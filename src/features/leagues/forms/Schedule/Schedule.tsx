@@ -174,6 +174,9 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
 
     const roundEvents = eventsByRoundId[roundId] ?? [];
     const eventName = getNextEventName(roundEvents);
+    const getUserTimeZone = (): string => {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone; 
+    };
 
     try {
       setCreatingEventRoundId(roundId);
@@ -182,6 +185,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
         createEvent({
           eventName,
           eventDate: new Date().toISOString(),
+          eventTimeZone: getUserTimeZone(),
           roundId,
           divisionId: effectiveDivisionId,
           seasonId: seasonData.id,
@@ -298,7 +302,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
               <EventSchedule
                 key={event.id}
                 title={event.event_name}
-                subtitle={formatEventDate(event.event_date)}
+                subtitle={formatEventDate(event.event_date, event.event_time_zone ?? "UTC")}
                 numOfDrivers={eventDriverCountByEventId[event.id] ?? 0}
                 onProfileClick={() => handleDriverGridClick(event.id)}
                 onMoreClick={() => {

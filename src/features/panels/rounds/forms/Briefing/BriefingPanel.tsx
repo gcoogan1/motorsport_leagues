@@ -26,6 +26,7 @@ const BriefingPanel = ({ roundId }: BriefingPanelProps) => {
   const [savedBriefingContent, setSavedBriefingContent] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [hasTriedSave, setHasTriedSave] = useState(false);
   const round = useGetRoundByIdQuery(roundId, {
     skip: !roundId,
   });
@@ -72,15 +73,17 @@ const BriefingPanel = ({ roundId }: BriefingPanelProps) => {
 
   const handleBriefingChange = (nextValue: string) => {
     setBriefingContent(nextValue);
-
-    const nextValidation = briefingPanelSchema.safeParse({ briefing: nextValue });
-
-    setErrorMessage(
-      nextValidation.success ? undefined : (nextValidation.error.issues[0]?.message ?? "Invalid driver briefing."),
-    );
+    // Only set error if user has tried to save
+    if (hasTriedSave) {
+      const nextValidation = briefingPanelSchema.safeParse({ briefing: nextValue });
+      setErrorMessage(
+        nextValidation.success ? undefined : (nextValidation.error.issues[0]?.message ?? "Invalid driver briefing."),
+      );
+    }
   };
 
   const handleSave = async () => {
+    setHasTriedSave(true);
     if (!validateBriefing()) {
       return;
     }
