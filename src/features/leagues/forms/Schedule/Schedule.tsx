@@ -214,9 +214,11 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
     return;
   };
 
-  const handleEventMenuAction = (eventId: string, action: "delete") => {
+  const handleEventMenuAction = (eventId: string, event: EventTable, action: "delete" | "settings") => {
     if (action === "delete") {
       openModal(<DeleteEvent eventId={eventId} />);
+    } else if (action === "settings") {
+      openPanel("EVENT_SETTINGS", { event });
     }
     setOpenEventMenuId(null);
     return;
@@ -322,12 +324,17 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
                       isStandAlone={true}
                       options={[
                         {
+                          label: "Event Settings",
+                          value: "settings",
+                          icon: <EditIcon />,
+                        },
+                        {
                           label: "Delete Event",
                           value: "delete",
                           icon: <DeleteIcon />,
                         },
                       ]}
-                      onSelect={(value) => handleEventMenuAction(event.id, value as "delete")}
+                      onSelect={(value) => handleEventMenuAction(event.id, event, value as "delete" | "settings")}
                     />
                   </div>
                 ) : undefined}
