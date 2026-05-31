@@ -17,6 +17,7 @@ import LeagueJoin from "./leagueJoin/LeagueJoin";
 import LeagueParticipants from "./leagueParticipants/LeaguePart";
 import BriefingPanel from "./rounds/forms/Briefing/BriefingPanel";
 import DriverGridPanel from "./rounds/forms/DriverGrid/DriverGridPanel";
+import EventSettings from "./events/forms/EventSettings/EventSettings";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,4 +40,5 @@ export const panelVariants: Record<PanelTypes, React.ComponentType<any>> = {
   LEAGUE_PARTICIPANTS: LeagueParticipants,
   BRIEFING: BriefingPanel,
   DRIVER_GRID: DriverGridPanel,
+  EVENT_SETTINGS: EventSettings,
 };

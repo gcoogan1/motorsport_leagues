@@ -39,7 +39,7 @@ export const FormTitle = styled.h3`
 
 export const InputContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   align-items: flex-start;
   align-self: stretch;
   gap: ${layout.space.medium};

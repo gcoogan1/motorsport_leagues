@@ -9,7 +9,9 @@ export type EventTable = {
   event_name: string;
   event_date: string;
   event_time_zone?: string;
-  broadcast_link?: string;
+  broadcast_url?: string;
+  reveal_date?: boolean;
+  reveal_broadcast?: boolean;
 }
 
 export type EventDriverTable = {
@@ -104,7 +106,9 @@ export type UpdateEventPayload = {
   eventName?: string;
   eventDate?: string;
   eventTimeZone?: string;
-  broadcastLink?: string;
+  broadcastUrl?: string;
+  revealDate?: boolean;
+  revealBroadcast?: boolean;
 };
 
 export type UpdateEventSuccess = {

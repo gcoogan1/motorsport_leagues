@@ -16,7 +16,6 @@ import type {
   UpdateEventResponse,
 } from "@/types/event.types";
 
-
 // -- Event Service -- //
 
 // -- GET -- //
@@ -49,7 +48,9 @@ const getEventIdsByColumn = async (
 };
 
 // Get an event by its ID
-export const getEventById = async (eventId: string): Promise<GetEventByIdResponse> => {
+export const getEventById = async (
+  eventId: string,
+): Promise<GetEventByIdResponse> => {
   const { data, error } = await supabase
     .from("event")
     .select("*")
@@ -74,7 +75,9 @@ export const getEventById = async (eventId: string): Promise<GetEventByIdRespons
 };
 
 // Get all events for a specific round
-export const getEventsByRoundId = async (roundId: string): Promise<GetEventsResponse> => {
+export const getEventsByRoundId = async (
+  roundId: string,
+): Promise<GetEventsResponse> => {
   const { data, error } = await supabase
     .from("event")
     .select("*")
@@ -98,7 +101,9 @@ export const getEventsByRoundId = async (roundId: string): Promise<GetEventsResp
 };
 
 // Get all events for a specific division
-export const getEventsByDivisionId = async (divisionId: string): Promise<GetEventsResponse> => {
+export const getEventsByDivisionId = async (
+  divisionId: string,
+): Promise<GetEventsResponse> => {
   const { data, error } = await supabase
     .from("event")
     .select("*")
@@ -122,7 +127,9 @@ export const getEventsByDivisionId = async (divisionId: string): Promise<GetEven
 };
 
 // Get all events for a specific season
-export const getEventsBySeasonId = async (seasonId: string): Promise<GetEventsResponse> => {
+export const getEventsBySeasonId = async (
+  seasonId: string,
+): Promise<GetEventsResponse> => {
   const { data, error } = await supabase
     .from("event")
     .select("*")
@@ -146,7 +153,9 @@ export const getEventsBySeasonId = async (seasonId: string): Promise<GetEventsRe
 };
 
 // Get all event drivers for a specific event
-export const getEventDriversByEventId = async (eventId: string): Promise<GetEventDriversResponse> => {
+export const getEventDriversByEventId = async (
+  eventId: string,
+): Promise<GetEventDriversResponse> => {
   const { data, error } = await supabase
     .from("event_driver")
     .select("*")
@@ -170,7 +179,9 @@ export const getEventDriversByEventId = async (eventId: string): Promise<GetEven
 };
 
 // Get all event drivers for events within a specific division
-export const getEventDriversByDivisionId = async (divisionId: string): Promise<GetEventDriversResponse> => {
+export const getEventDriversByDivisionId = async (
+  divisionId: string,
+): Promise<GetEventDriversResponse> => {
   const eventIdsResult = await getEventIdsByColumn("division_id", divisionId);
 
   if (!eventIdsResult.success) {
@@ -225,6 +236,8 @@ export const createEvent = async ({
       division_id: divisionId,
       season_id: seasonId,
       event_time_zone: eventTimeZone,
+      reveal_date: true,
+      reveal_broadcast: true,
     },
   ])
     .select()
@@ -245,7 +258,7 @@ export const createEvent = async ({
     success: true,
     data: data as EventTable,
   };
-}
+};
 
 // Create a new event driver
 export const createEventDriver = async ({
@@ -288,16 +301,39 @@ export const updateEvent = async ({
   eventName,
   eventDate,
   eventTimeZone,
-  broadcastLink,
+  broadcastUrl,
+  revealDate,
+  revealBroadcast,
 }: UpdateEventPayload): Promise<UpdateEventResponse> => {
+  const updateData: Record<string, unknown> = {};
+
+  if (eventName !== undefined) {
+    updateData.event_name = eventName;
+  }
+
+  if (eventDate !== undefined) {
+    updateData.event_date = eventDate;
+  }
+
+  if (eventTimeZone !== undefined) {
+    updateData.event_time_zone = eventTimeZone;
+  }
+
+  if (broadcastUrl !== undefined) {
+    updateData.broadcast_url = broadcastUrl;
+  }
+
+  if (revealDate !== undefined) {
+    updateData.reveal_date = revealDate;
+  }
+
+  if (revealBroadcast !== undefined) {
+    updateData.reveal_broadcast = revealBroadcast;
+  }
+
   const { data, error } = await supabase
     .from("event")
-    .update({
-      ...(eventName && { event_name: eventName }),
-      ...(eventDate && { event_date: eventDate }),
-      ...(eventTimeZone && { event_time_zone: eventTimeZone }),
-      ...(broadcastLink && { broadcast_link: broadcastLink }),
-    })
+    .update(updateData)
     .eq("id", eventId)
     .select()
     .single();
@@ -317,7 +353,7 @@ export const updateEvent = async ({
     success: true,
     data: data as EventTable,
   };
-}
+};
 
 // -- DELETE -- //
 
@@ -349,8 +385,12 @@ const deleteEventDriverRowsByEventIds = async (
 };
 
 // Delete an event by its ID
-export const deleteEvent = async (eventId: string): Promise<DeleteEventResponse> => {
-  const deleteEventDriversResult = await deleteEventDriverRowsByEventIds([eventId]);
+export const deleteEvent = async (
+  eventId: string,
+): Promise<DeleteEventResponse> => {
+  const deleteEventDriversResult = await deleteEventDriverRowsByEventIds([
+    eventId,
+  ]);
 
   if (!deleteEventDriversResult.success) {
     return deleteEventDriversResult;
@@ -375,7 +415,9 @@ export const deleteEvent = async (eventId: string): Promise<DeleteEventResponse>
 };
 
 // Delete an event driver by its driver ID
-export const deleteEventDriver = async (eventDriverId: string): Promise<DeleteEventDriverResponse> => {
+export const deleteEventDriver = async (
+  eventDriverId: string,
+): Promise<DeleteEventDriverResponse> => {
   const { error } = await supabase
     .from("event_driver")
     .delete()
@@ -398,25 +440,34 @@ export const deleteEventDriver = async (eventDriverId: string): Promise<DeleteEv
 };
 
 // Delete all event drivers associated with a specific event
-export const deleteEventDriversByEventId = async (eventId: string): Promise<DeleteEventDriverResponse> => {
+export const deleteEventDriversByEventId = async (
+  eventId: string,
+): Promise<DeleteEventDriverResponse> => {
   return deleteEventDriverRowsByEventIds([eventId]);
 };
 
 // Delete all events associated with a specific round
-export const deleteEventsByRoundId = async (roundId: string): Promise<DeleteEventResponse> => {
+export const deleteEventsByRoundId = async (
+  roundId: string,
+): Promise<DeleteEventResponse> => {
   const eventIdsResult = await getEventIdsByColumn("round_id", roundId);
 
   if (!eventIdsResult.success) {
     return eventIdsResult;
   }
 
-  const deleteEventDriversResult = await deleteEventDriverRowsByEventIds(eventIdsResult.data);
+  const deleteEventDriversResult = await deleteEventDriverRowsByEventIds(
+    eventIdsResult.data,
+  );
 
   if (!deleteEventDriversResult.success) {
     return deleteEventDriversResult;
   }
 
-  const { error } = await supabase.from("event").delete().eq("round_id", roundId);
+  const { error } = await supabase.from("event").delete().eq(
+    "round_id",
+    roundId,
+  );
 
   if (error) {
     return {
@@ -435,20 +486,27 @@ export const deleteEventsByRoundId = async (roundId: string): Promise<DeleteEven
 };
 
 // Delete all events associated with a specific division
-export const deleteEventsByDivisionId = async (divisionId: string): Promise<DeleteEventResponse> => {
+export const deleteEventsByDivisionId = async (
+  divisionId: string,
+): Promise<DeleteEventResponse> => {
   const eventIdsResult = await getEventIdsByColumn("division_id", divisionId);
 
   if (!eventIdsResult.success) {
     return eventIdsResult;
   }
 
-  const deleteEventDriversResult = await deleteEventDriverRowsByEventIds(eventIdsResult.data);
+  const deleteEventDriversResult = await deleteEventDriverRowsByEventIds(
+    eventIdsResult.data,
+  );
 
   if (!deleteEventDriversResult.success) {
     return deleteEventDriversResult;
   }
 
-  const { error } = await supabase.from("event").delete().eq("division_id", divisionId);
+  const { error } = await supabase.from("event").delete().eq(
+    "division_id",
+    divisionId,
+  );
 
   if (error) {
     return {
@@ -467,20 +525,27 @@ export const deleteEventsByDivisionId = async (divisionId: string): Promise<Dele
 };
 
 // Delete all events associated with a specific season
-export const deleteEventsBySeasonId = async (seasonId: string): Promise<DeleteEventResponse> => {
+export const deleteEventsBySeasonId = async (
+  seasonId: string,
+): Promise<DeleteEventResponse> => {
   const eventIdsResult = await getEventIdsByColumn("season_id", seasonId);
 
   if (!eventIdsResult.success) {
     return eventIdsResult;
   }
 
-  const deleteEventDriversResult = await deleteEventDriverRowsByEventIds(eventIdsResult.data);
+  const deleteEventDriversResult = await deleteEventDriverRowsByEventIds(
+    eventIdsResult.data,
+  );
 
   if (!deleteEventDriversResult.success) {
     return deleteEventDriversResult;
   }
 
-  const { error } = await supabase.from("event").delete().eq("season_id", seasonId);
+  const { error } = await supabase.from("event").delete().eq(
+    "season_id",
+    seasonId,
+  );
 
   if (error) {
     return {

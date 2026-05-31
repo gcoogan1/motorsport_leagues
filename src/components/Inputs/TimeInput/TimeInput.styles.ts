@@ -115,6 +115,16 @@ export const InputField = styled.input<{
     -webkit-text-fill-color: ${colors.text.text1};
   }
 
+     &:-webkit-autofill:focus-visible {
+    -webkit-box-shadow: 0 0 0 1000px ${colors.base.translucent10} inset;
+    -webkit-text-fill-color: ${colors.text.text1};
+  }
+
+  /* ADD THE AMPERSAND HERE */
+  &::-webkit-calendar-picker-indicator {
+    display: none;
+  }
+
 `;
 
 export const HelperText = styled.span`
