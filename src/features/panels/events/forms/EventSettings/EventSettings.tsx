@@ -54,6 +54,7 @@ const EventSettings = ({ event }: EventSettingsProps) => {
     reset,
     watch,
     handleSubmit,
+    setValue,
     formState: { errors, isDirty },
   } = formMethods;
 
@@ -63,13 +64,13 @@ const EventSettings = ({ event }: EventSettingsProps) => {
   // -- Handlers -- //
 
   const handleHideDateTimeChange = () => {
-    methods.setValue("revealDate", !revealDate, {
+    setValue("revealDate", !revealDate, {
       shouldDirty: true,
     });
   };
 
   const handleHideBroadcastUrlChange = () => {
-    methods.setValue("revealBroadcast", !revealBroadcast, {
+    setValue("revealBroadcast", !revealBroadcast, {
       shouldDirty: true,
     });
   };
