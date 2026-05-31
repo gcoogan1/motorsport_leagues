@@ -31,10 +31,9 @@ export const DateInputWrapper = styled.div<{
   padding-bottom: ${layout.space.medium};
   padding-left: ${layout.space.medium};
   padding-right: ${layout.space.small};
-
+  height: 52px;
   border-radius: ${borders.radius.medium};
   gap: ${layout.space.xSmall};
-  background: #2d2d2d;
 
   transition: 0.2s ease;
 
@@ -63,9 +62,10 @@ export const DateInputWrapper = styled.div<{
 `;
 
 export const DateInput = styled.input`
-  flex: 1;
+  width: 112px;
   background: transparent;
   border: none;
+  ${typography.body.mediumBold};
   outline: none;
   color: ${colors.text.text1};
   cursor: pointer;
@@ -77,6 +77,7 @@ export const DateInput = styled.input`
 
 export const IconButton = styled.button`
   border: none;
+  display: flex;
   background: transparent;
   color: ${colors.text.text1};
   cursor: pointer;
