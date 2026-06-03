@@ -9,6 +9,7 @@ import { notificationApi } from "../rtkQuery/API/notificationApi";
 import { profileApi } from "../rtkQuery/API/profileApi";
 import { roundApi } from "../rtkQuery/API/roundApi";
 import { squadApi } from "../rtkQuery/API/squadApi";
+import { carsApi } from "@/rtkQuery/API/carsApi";
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     [profileApi.reducerPath]: profileApi.reducer,
     [roundApi.reducerPath]: roundApi.reducer,
     [squadApi.reducerPath]: squadApi.reducer,
+    [carsApi.reducerPath]: carsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -31,6 +33,7 @@ export const store = configureStore({
       profileApi.middleware,
       roundApi.middleware,
       squadApi.middleware,
+      carsApi.middleware,
     ),
 });
 
