@@ -39,6 +39,7 @@ type RoundEventProps = {
     label: string;
   }[];
   trackName?: string;
+  revealCars?: boolean;
   raceTime?: string;
   raceTimeType?: "qualifying" | "race";
   watchButton?: EventButton;
@@ -54,6 +55,7 @@ const RoundEvent = ({
   carImageUrls,
   cars,
   trackName,
+  revealCars = false,
   watchButton,
   resultsButton,
   driversButton,
@@ -140,7 +142,7 @@ const RoundEvent = ({
           )}
         </ButtonsContainer>
       </TextContainer>
-      <RoundCar cars={resolvedCars} />
+      <RoundCar cars={resolvedCars} revealCars={revealCars} />
     </EventContainer>
   );
 };
