@@ -38,7 +38,7 @@ const EventSettings = ({ event }: EventSettingsProps) => {
     resolver: zodResolver(eventSettingsSchema),
     defaultValues: {
       eventName: event.event_name,
-      eventDate: new Date(event.event_date),
+      eventDate: event.event_date && new Date(event.event_date) || undefined,
       eventTime: getTimeFromDate(
         event.event_date,
         event.event_time_zone ||

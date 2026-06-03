@@ -9,7 +9,7 @@ export type EventTable = {
   division_id: string;
   season_id: string;
   event_name: string;
-  event_date: string;
+  event_date?: string;
   event_time_zone?: string;
   broadcast_url?: string;
   reveal_date?: boolean;
@@ -57,7 +57,7 @@ export type EventTableDraft = {
   division_id: string;
   season_id: string;
   event_name: string;
-  event_date: string;
+  event_date?: string;
   event_time_zone?: string;
 }
 
@@ -77,7 +77,7 @@ type SupabaseError = {
 
 export type CreateEventPayload = {
   eventName: string;
-  eventDate: string;
+  eventDate?: string;
   eventTimeZone?: string;
   roundId: string;
   divisionId: string;
