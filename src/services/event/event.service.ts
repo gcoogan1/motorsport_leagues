@@ -93,7 +93,7 @@ export const getEventsByRoundId = async (
   roundId: string,
 ): Promise<GetEventsResponse> => {
   const { data, error } = await supabase
-        .from("event")
+    .from("event")
     .select(`
       *,
       event_track_details(*),
@@ -264,7 +264,7 @@ export const getTrackDetailsByEventId = async (
     success: true,
     data: data,
   };
-}
+};
 
 // Get ALL Car Details for an event by its ID (returns an array of cars for the event, as some events may have multiple cars revealed)
 export const getAllCarDetailsByEventId = async (
@@ -290,7 +290,7 @@ export const getAllCarDetailsByEventId = async (
     success: true,
     data: (data ?? []) as EventCarDetailsTable[],
   };
-}
+};
 
 // -- CREATE -- //
 
@@ -373,7 +373,9 @@ export const createEventTrackDetails = async ({
   eventId,
   trackName,
   revealTrack,
-}: CreateEventTrackDetailsPayload): Promise<CreateEventTrackDetailsResponse> => {
+}: CreateEventTrackDetailsPayload): Promise<
+  CreateEventTrackDetailsResponse
+> => {
   const { data, error } = await supabase
     .from("event_track_details")
     .insert([
@@ -399,7 +401,7 @@ export const createEventTrackDetails = async ({
 
   return {
     success: true,
-    data: data as EventTrackDetailsTable, 
+    data: data as EventTrackDetailsTable,
   };
 };
 
@@ -513,7 +515,9 @@ export const updateEventTrackDetails = async ({
   eventId,
   trackName,
   revealTrack,
-}: UpdateEventTrackDetailsPayload): Promise<UpdateEventTrackDetailsResponse> => {
+}: UpdateEventTrackDetailsPayload): Promise<
+  UpdateEventTrackDetailsResponse
+> => {
   const updateData: Record<string, unknown> = {};
 
   if (trackName !== undefined) {
@@ -649,6 +653,22 @@ export const deleteEvent = async (
     return deleteEventDriversResult;
   }
 
+  const deleteTrackDetailsResult = await deleteEventTrackDetailsByEventId(
+    eventId,
+  );
+
+  if (!deleteTrackDetailsResult.success) {
+    return deleteTrackDetailsResult;
+  }
+
+  const deleteCarDetailsResult = await deleteEventCarDetailsByEventId(
+    eventId,
+  );
+
+  if (!deleteCarDetailsResult.success) {
+    return deleteCarDetailsResult;
+  }
+
   const { error } = await supabase.from("event").delete().eq("id", eventId);
 
   if (error) {
@@ -717,6 +737,22 @@ export const deleteEventsByRoundId = async (
     return deleteEventDriversResult;
   }
 
+  const deleteTrackDetailsResult = await deleteEventTrackDetailsByEventId(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteTrackDetailsResult.success) {
+    return deleteTrackDetailsResult;
+  }
+
+  const deleteCarDetailsResult = await deleteEventCarDetailsByEventId(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteCarDetailsResult.success) {
+    return deleteCarDetailsResult;
+  }
+
   const { error } = await supabase.from("event").delete().eq(
     "round_id",
     roundId,
@@ -756,6 +792,22 @@ export const deleteEventsByDivisionId = async (
     return deleteEventDriversResult;
   }
 
+  const deleteTrackDetailsResult = await deleteEventTrackDetailsByEventId(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteTrackDetailsResult.success) {
+    return deleteTrackDetailsResult;
+  }
+
+  const deleteCarDetailsResult = await deleteEventCarDetailsByEventId(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteCarDetailsResult.success) {
+    return deleteCarDetailsResult;
+  }
+
   const { error } = await supabase.from("event").delete().eq(
     "division_id",
     divisionId,
@@ -793,6 +845,22 @@ export const deleteEventsBySeasonId = async (
 
   if (!deleteEventDriversResult.success) {
     return deleteEventDriversResult;
+  }
+
+  const deleteTrackDetailsResult = await deleteEventTrackDetailsByEventId(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteTrackDetailsResult.success) {
+    return deleteTrackDetailsResult;
+  }
+
+  const deleteCarDetailsResult = await deleteEventCarDetailsByEventId(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteCarDetailsResult.success) {
+    return deleteCarDetailsResult;
   }
 
   const { error } = await supabase.from("event").delete().eq(

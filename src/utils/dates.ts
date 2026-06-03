@@ -2,9 +2,10 @@ import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
 
 // Formats a date string into a human-readable format for display in the schedule.
 export const formatEventDate = (
-  date: string,
-  timeZone: string,
+  date?: string,
+  timeZone?: string,
 ) => {
+  if (!date || !timeZone) return "";
   // 1. Format using 'zzz' which yields standard abbreviations (e.g. "EDT", "EST", "PDT")
   const formatted = formatInTimeZone(
     date,
@@ -33,6 +34,7 @@ export const combineEventDateAndTime = (
   return fromZonedTime(localDateTime, timeZone).toISOString();
 };
 
-export const getTimeFromDate = (date: string, timeZone: string) => {
+export const getTimeFromDate = (date?: string, timeZone?: string) => {
+  if (!date || !timeZone) return "";
   return formatInTimeZone(date, timeZone, "HH:mm");
 }
