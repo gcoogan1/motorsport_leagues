@@ -4,6 +4,8 @@ import {
   useGetEventDriversByEventIdQuery,
   useGetEventsByDivisionIdQuery,
   useGetEventsBySeasonIdQuery,
+  useGetEventTrackDetailsByEventIdQuery,
+  useGetEventCarDetailsByEventIdQuery,
 } from "@/rtkQuery/API/eventApi";
 
 // --- Queries --- //
@@ -34,5 +36,17 @@ export const useEventDriversByDivision = (divisionId?: string) =>
 
 export const useEventDrivers = (eventId?: string) =>
   useGetEventDriversByEventIdQuery(eventId ?? "", {
+    skip: !eventId,
+  });
+
+  // Query to fetch track details for an event
+export const useEventTrackDetails = (eventId?: string) =>
+  useGetEventTrackDetailsByEventIdQuery(eventId ?? "", {
+    skip: !eventId,
+  });
+
+  // Query to fetch ALL car details for an event
+export const useAllEventCarDetails = (eventId?: string) =>
+  useGetEventCarDetailsByEventIdQuery(eventId ?? "", {
     skip: !eventId,
   });

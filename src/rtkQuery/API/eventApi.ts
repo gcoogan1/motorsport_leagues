@@ -14,6 +14,14 @@ import {
 	getEventsByDivisionId,
 	getEventsBySeasonId,
 	updateEvent,
+	getAllCarDetailsByEventId,
+	getTrackDetailsByEventId,
+	createEventCarDetails,
+	createEventTrackDetails,
+	updateEventCarDetails,
+	updateEventTrackDetails,
+	deleteEventTrackDetailsByEventId,
+	deleteEventCarDetailsByEventId,
 } from "@/services/event/event.service";
 import type {
 	CreateEventDriverPayload,
@@ -29,7 +37,19 @@ import type {
 	EventTable,
 	UpdateEventPayload,
 	UpdateEventResponse,
+	EventCarDetailsTable,
+	EventTrackDetailsTable,
+	GetEventCarDetailsByEventIdResponse,
+	GetEventTrackDetailsByEventIdResponse,
+	CreateEventCarDetailsResponse,
+	CreateEventTrackDetailsResponse,
+	UpdateEventCarDetailsResponse,
+	UpdateEventTrackDetailsResponse,
+	DeleteEventCarDetailsResponse,
+	DeleteEventTrackDetailsResponse,
+	JoinedEventTable,
 } from "@/types/event.types";
+import type { CarCategory } from "@/types/cars.types";
 
 type DeleteEventMutationPayload = {
 	eventId: string;
@@ -46,7 +66,7 @@ export const eventApi = createApi({
 	baseQuery: fakeBaseQuery(),
 	tagTypes: ["Events", "EventDrivers"],
 	endpoints: (builder) => ({
-		getEventById: builder.query<EventTable, string>({
+		getEventById: builder.query<JoinedEventTable, string>({
 			queryFn: async (eventId) => {
 				try {
 					const result: GetEventByIdResponse = await getEventById(eventId);
@@ -151,7 +171,7 @@ export const eventApi = createApi({
 				})) ?? []),
 			],
 		}),
-    getEventsBySeasonId: builder.query<EventTable[], string>({
+    getEventsBySeasonId: builder.query<JoinedEventTable[], string>({
       queryFn: async (seasonId) => {
         try {
           const result: GetEventsResponse =
@@ -179,6 +199,54 @@ export const eventApi = createApi({
         })) ?? []),
       ],
     }),
+		getEventTrackDetailsByEventId: builder.query<EventTrackDetailsTable, string>({
+			queryFn: async (eventId) => {
+				try {
+					const result: GetEventTrackDetailsByEventIdResponse =
+						await getTrackDetailsByEventId(eventId);
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: result.data };
+				} catch (error) {
+					return { error };
+				}
+			},
+			providesTags: (_result, _error, eventId) => [
+				{ type: "Events", id: `track-details-${eventId}` },
+			],
+		}),
+		getEventCarDetailsByEventId: builder.query<EventCarDetailsTable[], string>({
+			queryFn: async (eventId) => {
+				try {
+					const result: GetEventCarDetailsByEventIdResponse =
+						await getAllCarDetailsByEventId(eventId);
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: result.data };
+				} catch (error) {
+					return { error };
+				}
+			},
+			providesTags: (_result, _error, eventId) => [
+				{ type: "Events", id: `car-details-${eventId}` },
+			],
+		}),
 		createEvent: builder.mutation<EventTable, CreateEventPayload>({
 			queryFn: async (payload) => {
 				try {
@@ -228,6 +296,68 @@ export const eventApi = createApi({
 				...(result ? [{ type: "EventDrivers" as const, id: result.id }] : []),
 			],
 		}),
+		createEventTrackDetails: builder.mutation<EventTrackDetailsTable, { eventId: string; trackName: string; revealTrack?: boolean }>({
+			queryFn: async ({ eventId, trackName, revealTrack }) => {
+				try {
+					const result: CreateEventTrackDetailsResponse =
+						await createEventTrackDetails({
+							eventId,
+							trackName,
+							revealTrack,
+						});
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: result.data };
+				} catch (error) {
+					return { error };
+				}
+			},
+			invalidatesTags: (_result, _error, { eventId }) => [
+				{ type: "Events", id: `track-details-${eventId}` },
+				{ type: "Events", id: eventId },
+			],
+		}),
+		createEventCarDetails: builder.mutation<EventCarDetailsTable, { eventId: string; carId: string; carSelection: "Specified" | "Category" | "Assigned"; carCategory: CarCategory; carName: string; carImageUrl: string; revealCarDetails: boolean }>({
+			queryFn: async ({ eventId, carId, carSelection, carCategory, carName, carImageUrl, revealCarDetails }) => {
+				try {
+					const result: CreateEventCarDetailsResponse =
+						await createEventCarDetails({
+							eventId,
+							carId,
+							carSelection,
+							carCategory,
+							carName,
+							carImageUrl,
+							revealCarDetails,
+						});
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: result.data };
+				} catch (error) {
+					return { error };
+				}
+			},
+			invalidatesTags: (_result, _error, { eventId }) => [
+				{ type: "Events", id: `car-details-${eventId}` },
+				{ type: "Events", id: eventId },
+			],
+		}),
 		updateEvent: builder.mutation<EventTable, UpdateEventPayload>({
 			queryFn: async (payload) => {
 				try {
@@ -260,6 +390,67 @@ export const eventApi = createApi({
 					...divisionTags,
 				];
 			},
+		}),
+		updateEventTrackDetails: builder.mutation<EventTrackDetailsTable, { eventId: string; trackName: string; revealTrack?: boolean }>({
+			queryFn: async ({ eventId, trackName, revealTrack }) => {
+				try {
+					const result: UpdateEventTrackDetailsResponse =
+						await updateEventTrackDetails({
+							eventId,
+							trackName,
+							revealTrack,
+						});
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: result.data };
+				} catch (error) {
+					return { error };
+				}
+			},
+			invalidatesTags: (_result, _error, { eventId }) => [
+				{ type: "Events", id: `track-details-${eventId}` },
+				{ type: "Events", id: eventId },
+			],
+		}),
+		updateEventCarDetails: builder.mutation<EventCarDetailsTable, { eventId: string; carId: string; carSelection: "Specified" | "Category" | "Assigned"; carCategory: CarCategory; carName: string; carImageUrl: string; revealCarDetails: boolean }>({
+			queryFn: async ({ eventId, carId, carSelection, carCategory, carName, carImageUrl, revealCarDetails }) => {
+				try {
+					const result: UpdateEventCarDetailsResponse = await updateEventCarDetails({
+						eventId,
+						carId,
+						carSelection,
+						carCategory,
+						carName,
+						carImageUrl,
+						revealCarDetails,
+					});
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: result.data };
+				} catch (error) {
+					return { error };
+				}
+			},
+			invalidatesTags: (_result, _error, { eventId }) => [
+				{ type: "Events", id: `car-details-${eventId}` },
+				{ type: "Events", id: eventId },
+			],
 		}),
 		deleteEvent: builder.mutation<boolean, DeleteEventMutationPayload>({
 			queryFn: async ({ eventId }) => {
@@ -412,6 +603,56 @@ export const eventApi = createApi({
         "EventDrivers" as const,
       ],
     }),
+		deleteEventTracksByEventId: builder.mutation<boolean, string>({
+			queryFn: async (eventId) => {
+				try {
+					const result: DeleteEventTrackDetailsResponse =
+						await deleteEventTrackDetailsByEventId(eventId);
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: true };
+				} catch (error) {
+					return { error };
+				}
+			},
+			invalidatesTags: (_result, _error, eventId) => [
+				{ type: "Events", id: `track-details-${eventId}` },
+				{ type: "Events", id: eventId },
+			],
+		}),
+		deleteEventCarsByEventId: builder.mutation<boolean, string>({
+			queryFn: async (eventId) => {
+				try {
+					const result: DeleteEventCarDetailsResponse =
+						await deleteEventCarDetailsByEventId(eventId);
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: true };
+				} catch (error) {
+					return { error };
+				}
+			},
+			invalidatesTags: (_result, _error, eventId) => [
+				{ type: "Events", id: `car-details-${eventId}` },
+				{ type: "Events", id: eventId },
+			],
+		}),
 	}),
 });
 
@@ -421,13 +662,21 @@ export const {
 	useGetEventsByDivisionIdQuery,
   useGetEventDriversByEventIdQuery,
   useGetEventsBySeasonIdQuery,
+	useGetEventTrackDetailsByEventIdQuery,
+	useGetEventCarDetailsByEventIdQuery,
 	useCreateEventMutation,
 	useCreateEventDriverMutation,
+	useCreateEventTrackDetailsMutation,
+	useCreateEventCarDetailsMutation,
 	useUpdateEventMutation,
+	useUpdateEventTrackDetailsMutation,
+	useUpdateEventCarDetailsMutation,
 	useDeleteEventMutation,
 	useDeleteEventDriverMutation,
 	useDeleteEventDriversByEventIdMutation,
 	useDeleteEventsByRoundIdMutation,
 	useDeleteEventsByDivisionIdMutation,
 	useDeleteEventsBySeasonIdMutation,
+	useDeleteEventTracksByEventIdMutation,
+	useDeleteEventCarsByEventIdMutation,
 } = eventApi;

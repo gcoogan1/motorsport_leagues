@@ -12,12 +12,13 @@ type CheckboxOption = {
 
 type PanelFormProps = {
   title: string;
+  hasMultiple?: boolean;
   children?: React.ReactNode;
   checkboxOption?: CheckboxOption;
   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 };
 
-const PanelForm = ({ title, children, checkboxOption, onSubmit }: PanelFormProps) => {
+const PanelForm = ({ title, children, checkboxOption, hasMultiple, onSubmit }: PanelFormProps) => {
   return (
     <FormWrapper onSubmit={onSubmit}>
       <FormHeader>
@@ -33,7 +34,7 @@ const PanelForm = ({ title, children, checkboxOption, onSubmit }: PanelFormProps
           />
         )}
       </FormHeader>
-      <InputContainer>
+      <InputContainer hasMultiple={hasMultiple}>
         {children}
       </InputContainer>
     </FormWrapper>

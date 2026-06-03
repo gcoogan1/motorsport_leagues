@@ -20,7 +20,7 @@ import { useCreateRound } from "@/rtkQuery/hooks/mutations/useRoundMutation";
 import { useRounds } from "@/rtkQuery/hooks/queries/useRounds";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
-import type { EventTable } from "@/types/event.types";
+import type { EventTable, JoinedEventTable } from "@/types/event.types";
 import type { LeagueSeasonTable } from "@/types/league.types";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { withMinDelay } from "@/utils/withMinDelay";
@@ -111,7 +111,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
   );
 
   const eventsByRoundId = useMemo(() => {
-    return sortEvents(eventsByDivision.data ?? []).reduce<Record<string, EventTable[]>>(
+    return sortEvents(eventsByDivision.data ?? []).reduce<Record<string, JoinedEventTable[]>>(
       (groupedEvents, event) => {
         if (!groupedEvents[event.round_id]) {
           groupedEvents[event.round_id] = [];
@@ -214,11 +214,13 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
     return;
   };
 
-  const handleEventMenuAction = (eventId: string, event: EventTable, action: "delete" | "settings") => {
+  const handleEventMenuAction = (eventId: string, event: EventTable, action: "delete" | "settings" | "details") => {
     if (action === "delete") {
       openModal(<DeleteEvent eventId={eventId} />);
     } else if (action === "settings") {
       openPanel("EVENT_SETTINGS", { event });
+    } else if (action === "details") {
+      openPanel("TRACK_CAR_DETAILS", { eventId });
     }
     setOpenEventMenuId(null);
     return;
@@ -329,12 +331,17 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
                           icon: <EditIcon />,
                         },
                         {
+                          label: "Track & Driver Details",
+                          value: "details",
+                          icon: <EditIcon />,
+                        },
+                        {
                           label: "Delete Event",
                           value: "delete",
                           icon: <DeleteIcon />,
                         },
                       ]}
-                      onSelect={(value) => handleEventMenuAction(event.id, event, value as "delete" | "settings")}
+                      onSelect={(value) => handleEventMenuAction(event.id, event, value as "delete" | "settings" | "details")}
                     />
                   </div>
                 ) : undefined}

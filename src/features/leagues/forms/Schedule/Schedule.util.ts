@@ -1,4 +1,4 @@
-import type { EventTable } from "@/types/event.types";
+import type { JoinedEventTable } from "@/types/event.types";
 import type { RoundTable } from "@/types/round.types";
 
 // -- Round Name Utilities -- //
@@ -59,7 +59,7 @@ const getEventSequenceIndex = (eventName: string): number | null => {
 };
 
 // This function generates the next event name based on existing events.
-export const getNextEventName = (events: EventTable[]): string => {
+export const getNextEventName = (events: JoinedEventTable[]): string => {
   const highestExistingIndex = events.reduce((highest, event) => {
     const sequenceIndex = getEventSequenceIndex(event.event_name);
     return sequenceIndex === null ? highest : Math.max(highest, sequenceIndex);
@@ -69,5 +69,5 @@ export const getNextEventName = (events: EventTable[]): string => {
 };
 
 // Keep event ordering stable so renaming does not change display position.
-export const sortEvents = (events: EventTable[]): EventTable[] =>
+export const sortEvents = (events: JoinedEventTable[]): JoinedEventTable[] =>
   [...events].sort((left, right) => left.created_at.localeCompare(right.created_at));

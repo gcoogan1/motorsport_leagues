@@ -18,7 +18,8 @@ export type PanelTypes =
   | "LEAGUE_PARTICIPANTS"
   | "BRIEFING"
   | "DRIVER_GRID"
-  | "EVENT_SETTINGS";
+  | "EVENT_SETTINGS"
+  | "TRACK_CAR_DETAILS";
   
 
 export type PanelProviderTypes = "none" | PanelTypes;

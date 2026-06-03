@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
 import { useModal } from "@/providers/modal/useModal";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
-import PlaceholderImage from "@assets/Cover/cover2.png";
+import PlaceholderImage from "@assets/Cars/Hidden.png";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import type { LeagueSeasonTable, LeagueStatus } from "@/types/league.types";
 import { LineupContainer } from "./ScheduleLineup.styles";
 import SegmentedTab from "@/components/Tabs/SegmentedTabs/SegmentedTab";
 import Round from "@/components/Structures/Round/Round";
+import { useGetCarsQuery } from "@/rtkQuery/API/carsApi";
 import { useLeagueSeasonDivisions } from "@/rtkQuery/hooks/queries/useLeagueSeasonDivisions";
 import { useEventsBySeason } from "@/rtkQuery/hooks/queries/useEvents";
 import { useRoundsBySeason } from "@/rtkQuery/hooks/queries/useRounds";
@@ -15,6 +16,7 @@ import { sortEvents, sortRounds } from "@/features/leagues/forms/Schedule/Schedu
 import { buildDivisionOptions } from "./ScheduleLineup.utils";
 import BriefingModal from "@/pages/League/modals/BriefingModal/BriefingModal";
 import OnTheGrid from "@/pages/League/modals/OnTheGrid/OnTheGrid";
+import type { EventCarDetailsTable, EventTrackDetailsTable } from "@/types/event.types";
 
 type ScheduleProps = {
   seasonStatus: LeagueStatus;
@@ -32,12 +34,34 @@ const formatActiveDivisionTabLabel = (label: string): string => {
 const normalizeDivisionTabLabel = (label: string): string =>
   label.replace(/\s+division$/i, "");
 
+const getTrackDetails = (
+  trackDetails?: EventTrackDetailsTable | EventTrackDetailsTable[] | null,
+): EventTrackDetailsTable | undefined => {
+  if (!trackDetails) {
+    return undefined;
+  }
+
+  return Array.isArray(trackDetails) ? trackDetails[0] : trackDetails;
+};
+
+const getCarDetails = (
+  carDetails?: EventCarDetailsTable[] | EventCarDetailsTable | null,
+): EventCarDetailsTable[] => {
+  if (!carDetails) {
+    return [];
+  }
+
+  return Array.isArray(carDetails) ? carDetails : [carDetails];
+};
+
 const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
   const { openModal } = useModal();
   const [selectedDivisionLabel, setSelectedDivisionLabel] = useState("");
+  const { data: carsData } = useGetCarsQuery();
   const seasonDivisions = useLeagueSeasonDivisions(seasonData?.id);
   const roundsBySeason = useRoundsBySeason(seasonData?.id);
   const eventsBySeason = useEventsBySeason(seasonData?.id);
+
 
   // -- Memoized values to avoid unnecessary re-renders -- //
 
@@ -86,20 +110,82 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
     }, {});
   }, [activeDivision, eventsBySeason.data]);
 
+  const carsById = useMemo(() => {
+    const entries = (carsData ?? []).map((car) => [car.id, car] as const);
+    return new Map(entries);
+  }, [carsData]);
+
+  const stockFallbackImage = useMemo(() => {
+    const stockCar = (carsData ?? []).find((car) => car.car_category === "stock" && car.car_name === "hidden");
+    console.log("Stock car details:", stockCar);
+    return stockCar?.car_image_url || PlaceholderImage;
+  }, [carsData]);
+
+  const categoryImageByCategory = useMemo(() => {
+    const map = new Map<string, string>();
+
+    for (const car of carsData ?? []) {
+      if (car.car_image_url && !map.has(car.car_category)) {
+        map.set(car.car_category, car.car_image_url);
+      }
+    }
+
+    return map;
+  }, [carsData]);
+
+
+
   const roundCards = useMemo(
     () =>
       rounds.map((round) => ({
         roundId: round.id,
         roundName: round.round_name,
-        cards: (eventsByRoundId[round.id] ?? []).map((event) => ({
-          eventId: event.id,
-          eventName: event.event_name,
-          eventDate: formatEventDate(event.event_date, event.event_time_zone ?? "UTC"),
-          carImageUrls: [PlaceholderImage],
-        })),
+        cards: (eventsByRoundId[round.id] ?? []).map((event) => {
+          const trackDetails = getTrackDetails(event.event_track_details);
+          const eventCarDetails = getCarDetails(event.event_car_details);
+
+          const cars =
+            eventCarDetails.length > 0
+              ? eventCarDetails.map((car) => {
+                  const lookupCar = carsById.get(car.car_id);
+                  const categoryFallbackImage =
+                    categoryImageByCategory.get(car.car_category) || stockFallbackImage;
+                  const resolvedImageUrl =
+                    lookupCar?.car_image_url || car.car_image_url || categoryFallbackImage;
+                  const label = `${car.car_category.toUpperCase()} · ${car.reveal_car === false ? "Hidden" : car.car_name || "Hidden"}`;
+                  return {
+                    imageUrl:
+                      car.reveal_car === false
+                        ? PlaceholderImage
+                        : resolvedImageUrl,
+                    label,
+                  };
+                })
+              : [{ imageUrl: stockFallbackImage, label: "STOCK · Hidden" }];
+
+          return {
+            eventId: event.id,
+            eventName: event.event_name,
+            eventDate:
+              !event.event_date || event.reveal_date === false
+                ? "Date Not Set"
+                : formatEventDate(
+                    event.event_date,
+                    event.event_time_zone ?? "UTC",
+                  ),
+            trackName:
+              trackDetails?.reveal_track !== false && trackDetails?.track_name
+                ? trackDetails.track_name
+                : "Hidden track",
+            carImageUrls: cars.map((car) => car.imageUrl),
+            cars,
+            revealCars: eventCarDetails.some((car) => car.reveal_car === true),
+          };
+        }),
       })),
-    [eventsByRoundId, rounds],
+    [carsById, categoryImageByCategory, eventsByRoundId, rounds, stockFallbackImage],
   );
+
 
   // -- Handlers -- //
 
