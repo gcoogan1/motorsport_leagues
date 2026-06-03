@@ -123,3 +123,13 @@ export const GT7_TRACKS = [
 ] as const;
 
 export type GT7Track = typeof GT7_TRACKS[number];
+
+
+// Pre-mapped options for GT7 tracks to be used in select inputs, etc.
+export const GT7_TRACK_OPTIONS = GT7_TRACKS.map((track) => ({
+  value: track,
+  label: track,
+})) satisfies readonly {
+  value: GT7Track;
+  label: string;
+}[];
