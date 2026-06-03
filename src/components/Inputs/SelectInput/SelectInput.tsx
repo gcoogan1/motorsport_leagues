@@ -42,6 +42,7 @@ type SelectInputProps = {
   isClearable?: boolean;
   isSearchable?: boolean;
   blurInputOnSelect?: boolean;
+  openMenuOnFocus?: boolean;
   onValueChange?: (value: string) => void;
 };
 
@@ -95,6 +96,7 @@ const SelectInput = ({
   isClearable = false,
   isSearchable = false,
   blurInputOnSelect = false,
+  openMenuOnFocus = true,
   onValueChange,
 }: SelectInputProps) => {
   const inputId = useId();
@@ -140,7 +142,7 @@ const SelectInput = ({
               value={selectedOption}
               options={options}
               placeholder={placeholder}
-              openMenuOnFocus
+              openMenuOnFocus={openMenuOnFocus}
               openMenuOnClick
               tabSelectsValue={false}
               isSearchable={isSearchable}

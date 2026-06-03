@@ -37,9 +37,9 @@ export const FormTitle = styled.h3`
   margin: 0;
 `;
 
-export const InputContainer = styled.div`
+export const InputContainer = styled.div<{ hasMultiple?: boolean }>`
   display: flex;
-  /* flex-direction: column; */
+  flex-direction: ${({ hasMultiple }) => (hasMultiple ? "column" : "row")};
   align-items: flex-start;
   align-self: stretch;
   gap: ${layout.space.medium};

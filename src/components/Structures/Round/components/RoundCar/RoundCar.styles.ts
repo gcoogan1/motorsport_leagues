@@ -5,7 +5,7 @@ import { designTokens } from "@/app/design/tokens";
 
 const { layout, gradients, borders } = designTokens;
 
-export const CarContainer = styled.div<{ imageUrl: string }>`
+export const CarContainer = styled.div<{ imageUrl?: string }>`
   display: flex;
   width: 384px;
   height: 216px;
@@ -20,7 +20,11 @@ export const CarContainer = styled.div<{ imageUrl: string }>`
   aspect-ratio: 16/9;
   border-radius: ${borders.radius.xxLarge};
   border: ${borders.width.medium} solid ${gradients.base.fadeTop10};
-  background: url(${props => props.imageUrl}) lightgray 50% / cover no-repeat;
+  background-color: #000;
+  background-image: ${({ imageUrl }) => (imageUrl ? `url("${imageUrl}")` : "none")};
+  background-position: 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
 
   ${layout.mediaQueries.mobile} {
     width: 100%;

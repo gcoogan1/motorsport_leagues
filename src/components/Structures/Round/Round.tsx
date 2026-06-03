@@ -12,6 +12,11 @@ type RoundCard = {
   eventName: string;
   eventDate: string;
   carImageUrls: string[];
+  cars?: {
+    imageUrl: string;
+    label: string;
+  }[];
+  revealCars?: boolean;
   trackName?: string;
   raceTime?: string;
   raceTimeType?: "qualifying" | "race";
@@ -34,13 +39,14 @@ const Round = ({ roundName, briefingButton, reportButton, roundCards }: RoundPro
     <RoundContainer>
       <RoundHeader roundName={roundName} briefingButton={briefingButton} reportButton={reportButton}/>
       <EventsContainer>
-        {roundCards.map((card, index) => (
+        {roundCards.map((card) => (
           <RoundEvent
-            key={index}
+            key={card.eventId}
             eventId={card.eventId}
             eventName={card.eventName}
             eventDate={card.eventDate}
             carImageUrls={card.carImageUrls}
+            cars={card.cars}
             trackName={card.trackName}
             raceTime={card.raceTime}
             raceTimeType={card.raceTimeType}
@@ -48,6 +54,7 @@ const Round = ({ roundName, briefingButton, reportButton, roundCards }: RoundPro
             resultsButton={card.resultsButton}
             driversButton={card.driversButton}
             detailsButton={card.detailsButton}
+            revealCars={card.revealCars}
           />
         ))}
       </EventsContainer>

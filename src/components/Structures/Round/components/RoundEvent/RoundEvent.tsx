@@ -1,5 +1,6 @@
 import Button from "@/components/Button/Button";
 import RoundCar from "../RoundCar/RoundCar";
+import PlaceholderImage from "@assets/Cars/Hidden.png";
 import TimerIcon from "@assets/Icon/Timer.svg?react";
 import LapsIcon from "@assets/Icon/Laps.svg?react";
 import BroadcastIcon from "@assets/Icon/Broadcast.svg?react";
@@ -33,6 +34,10 @@ type RoundEventProps = {
   eventName: string;
   eventDate: string;
   carImageUrls: string[];
+  cars?: {
+    imageUrl: string;
+    label: string;
+  }[];
   trackName?: string;
   raceTime?: string;
   raceTimeType?: "qualifying" | "race";
@@ -47,7 +52,8 @@ const RoundEvent = ({
   eventName,
   eventDate,
   carImageUrls,
-  trackName = "Unknown Track",
+  cars,
+  trackName,
   watchButton,
   resultsButton,
   driversButton,
@@ -58,6 +64,16 @@ const RoundEvent = ({
 
   const { data: drivers } = useEventDrivers(eventId);
 
+  const resolvedCars =
+    cars && cars.length > 0
+      ? cars
+      : carImageUrls.length > 0
+      ? carImageUrls.map((imageUrl) => ({
+          imageUrl: imageUrl || PlaceholderImage,
+          label: "Assigned Car",
+        }))
+      : [{ imageUrl: PlaceholderImage, label: "STOCK · Hidden" }];
+
 
   return (
     <EventContainer>
@@ -67,7 +83,7 @@ const RoundEvent = ({
             <EventName>{eventName}</EventName>
             <EventDate>{eventDate}</EventDate>
           </AboutContainer>
-          <TrackName>{trackName}</TrackName>
+          <TrackName>{trackName ?? "Hidden track"}</TrackName>
           <SessionsContainer>
             {raceTime && (
               <SessionContainer>
@@ -124,7 +140,7 @@ const RoundEvent = ({
           )}
         </ButtonsContainer>
       </TextContainer>
-      <RoundCar imageUrls={carImageUrls} />
+      <RoundCar cars={resolvedCars} />
     </EventContainer>
   );
 };
