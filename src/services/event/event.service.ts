@@ -1,19 +1,33 @@
 import { supabase } from "@/lib/supabase";
 import type {
+  CreateEventCarDetailsPayload,
+  CreateEventCarDetailsResponse,
   CreateEventDriverPayload,
   CreateEventDriverResponse,
   CreateEventPayload,
   CreateEventResponse,
+  CreateEventTrackDetailsPayload,
+  CreateEventTrackDetailsResponse,
+  DeleteEventCarDetailsResponse,
   DeleteEventDriverResponse,
   DeleteEventResponse,
+  DeleteEventTrackDetailsResponse,
+  EventCarDetailsTable,
   EventDriverTable,
   EventIdsLookupResponse,
   EventTable,
+  EventTrackDetailsTable,
   GetEventByIdResponse,
+  GetEventCarDetailsByEventIdResponse,
   GetEventDriversResponse,
   GetEventsResponse,
+  GetEventTrackDetailsByEventIdResponse,
+  UpdateEventCarDetailsPayload,
+  UpdateEventCarDetailsResponse,
   UpdateEventPayload,
   UpdateEventResponse,
+  UpdateEventTrackDetailsPayload,
+  UpdateEventTrackDetailsResponse,
 } from "@/types/event.types";
 
 // -- Event Service -- //
@@ -79,8 +93,12 @@ export const getEventsByRoundId = async (
   roundId: string,
 ): Promise<GetEventsResponse> => {
   const { data, error } = await supabase
-    .from("event")
-    .select("*")
+        .from("event")
+    .select(`
+      *,
+      event_track_details(*),
+      event_car_details(*)
+    `)
     .eq("round_id", roundId);
 
   if (error) {
@@ -132,7 +150,11 @@ export const getEventsBySeasonId = async (
 ): Promise<GetEventsResponse> => {
   const { data, error } = await supabase
     .from("event")
-    .select("*")
+    .select(`
+      *,
+      event_track_details(*),
+      event_car_details(*)
+    `)
     .eq("season_id", seasonId);
 
   if (error) {
@@ -217,6 +239,59 @@ export const getEventDriversByDivisionId = async (
   };
 };
 
+// Get Track Details for an event by its ID
+export const getTrackDetailsByEventId = async (
+  eventId: string,
+): Promise<GetEventTrackDetailsByEventIdResponse> => {
+  const { data, error } = await supabase
+    .from("event_track_details")
+    .select("*")
+    .eq("event_id", eventId)
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data,
+  };
+}
+
+// Get ALL Car Details for an event by its ID (returns an array of cars for the event, as some events may have multiple cars revealed)
+export const getAllCarDetailsByEventId = async (
+  eventId: string,
+): Promise<GetEventCarDetailsByEventIdResponse> => {
+  const { data, error } = await supabase
+    .from("event_car_details")
+    .select("*")
+    .eq("event_id", eventId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: (data ?? []) as EventCarDetailsTable[],
+  };
+}
+
 // -- CREATE -- //
 
 // Create a new event
@@ -293,6 +368,84 @@ export const createEventDriver = async ({
   };
 };
 
+// Create Track Details for an event
+export const createEventTrackDetails = async ({
+  eventId,
+  trackName,
+  revealTrack,
+}: CreateEventTrackDetailsPayload): Promise<CreateEventTrackDetailsResponse> => {
+  const { data, error } = await supabase
+    .from("event_track_details")
+    .insert([
+      {
+        event_id: eventId,
+        track_name: trackName,
+        reveal_track: revealTrack,
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data as EventTrackDetailsTable, 
+  };
+};
+
+// Create Car Details for an event
+export const createEventCarDetails = async ({
+  eventId,
+  carId,
+  carSelection,
+  carCategory,
+  carName,
+  carImageUrl,
+  revealCarDetails,
+}: CreateEventCarDetailsPayload): Promise<CreateEventCarDetailsResponse> => {
+  const { data, error } = await supabase
+    .from("event_car_details")
+    .insert([
+      {
+        event_id: eventId,
+        car_id: carId,
+        car_selection: carSelection,
+        car_category: carCategory,
+        car_name: carName,
+        car_image_url: carImageUrl,
+        reveal_car: revealCarDetails,
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data as EventCarDetailsTable,
+  };
+};
+
 // -- UPDATE -- //
 
 // Update an existing event
@@ -352,6 +505,106 @@ export const updateEvent = async ({
   return {
     success: true,
     data: data as EventTable,
+  };
+};
+
+// Update Track Details for an event
+export const updateEventTrackDetails = async ({
+  eventId,
+  trackName,
+  revealTrack,
+}: UpdateEventTrackDetailsPayload): Promise<UpdateEventTrackDetailsResponse> => {
+  const updateData: Record<string, unknown> = {};
+
+  if (trackName !== undefined) {
+    updateData.track_name = trackName;
+  }
+
+  if (revealTrack !== undefined) {
+    updateData.reveal_track = revealTrack;
+  }
+
+  const { data, error } = await supabase
+    .from("event_track_details")
+    .update(updateData)
+    .eq("event_id", eventId)
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data as EventTrackDetailsTable,
+  };
+};
+
+// Update Car Details for an event
+export const updateEventCarDetails = async ({
+  eventId,
+  carId,
+  carSelection,
+  carCategory,
+  carName,
+  carImageUrl,
+  revealCarDetails,
+}: UpdateEventCarDetailsPayload): Promise<UpdateEventCarDetailsResponse> => {
+  const updateData: Record<string, unknown> = {};
+
+  if (carSelection !== undefined) {
+    updateData.car_selection = carSelection;
+  }
+
+  if (carId !== undefined) {
+    updateData.car_id = carId;
+  }
+
+  if (carCategory !== undefined) {
+    updateData.car_category = carCategory;
+  }
+
+  if (carName !== undefined) {
+    updateData.car_name = carName;
+  }
+
+  if (carImageUrl !== undefined) {
+    updateData.car_image_url = carImageUrl;
+  }
+
+  if (revealCarDetails !== undefined) {
+    updateData.reveal_car = revealCarDetails;
+  }
+
+  const { data, error } = await supabase
+    .from("event_car_details")
+    .update(updateData)
+    .eq("event_id", eventId)
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data as EventCarDetailsTable,
   };
 };
 
@@ -546,6 +799,56 @@ export const deleteEventsBySeasonId = async (
     "season_id",
     seasonId,
   );
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
+// Delete Track Details for an event by its ID
+export const deleteEventTrackDetailsByEventId = async (
+  eventId: string,
+): Promise<DeleteEventTrackDetailsResponse> => {
+  const { error } = await supabase
+    .from("event_track_details")
+    .delete()
+    .eq("event_id", eventId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
+// Delete Car Details for an event by its ID
+export const deleteEventCarDetailsByEventId = async (
+  eventId: string,
+): Promise<DeleteEventCarDetailsResponse> => {
+  const { error } = await supabase
+    .from("event_car_details")
+    .delete()
+    .eq("event_id", eventId);
 
   if (error) {
     return {

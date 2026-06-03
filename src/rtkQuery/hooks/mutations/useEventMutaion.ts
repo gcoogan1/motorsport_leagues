@@ -8,6 +8,12 @@ import {
   useDeleteEventsByRoundIdMutation,
   useDeleteEventsBySeasonIdMutation,
   useUpdateEventMutation,
+  useCreateEventCarDetailsMutation,
+  useCreateEventTrackDetailsMutation,
+  useDeleteEventTracksByEventIdMutation,
+  useUpdateEventCarDetailsMutation,
+  useUpdateEventTrackDetailsMutation,
+  useDeleteEventCarsByEventIdMutation,
 } from "@/rtkQuery/API/eventApi";
 
 // --- Mutations --- //
@@ -54,3 +60,33 @@ export const useDeleteEventsByDivisionId = () => {
 export const useDeleteEventsBySeasonId = () => {
   return useDeleteEventsBySeasonIdMutation();
 };
+
+// Mutaion for creating track details for an event
+export const useCreateEventTrackDetails = () => {
+  return useCreateEventTrackDetailsMutation();
+};
+
+// Mutation for creating car details for an event
+export const useCreateEventCarDetails = () => {
+  return useCreateEventCarDetailsMutation();
+};
+
+// Mutation for updating track details for an event
+export const useUpdateEventTrackDetails = () => {
+  return useUpdateEventTrackDetailsMutation();
+};
+
+// Mutation for updating car details for an event
+export const useUpdateEventCarDetails = () => {
+  return useUpdateEventCarDetailsMutation();
+};
+
+// Mutation for deleting track details for an event
+export const useDeleteEventTracksByEventId = () => {
+  return useDeleteEventTracksByEventIdMutation();
+};
+
+// Mutation for deleting car details for an event
+export const useDeleteEventCarDetailsByEventId = () => {
+  return useDeleteEventCarsByEventIdMutation();
+}
