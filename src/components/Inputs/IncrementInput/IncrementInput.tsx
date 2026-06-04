@@ -17,6 +17,7 @@ import Button from "@/components/Button/Button";
 type IncrementInputProps = {
   label: string;
   value?: number;
+  name?: string;
   min?: number;
   max?: number;
   step?: number; // The amount to increment or decrement the value by
@@ -29,6 +30,7 @@ type IncrementInputProps = {
 const IncrementInput = ({
   label,
   value = 0,
+  name,
   min = 0,
   max = 99,
   step = 1,
@@ -85,6 +87,7 @@ const IncrementInput = ({
 
         {/* Value can either be typed directly or adjusted using the buttons */}
         <NumberInput
+          name={name}
           type="number"
           value={count}
           min={min}

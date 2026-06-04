@@ -184,7 +184,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
       await withMinDelay(
         createEvent({
           eventName,
-          eventDate: new Date().toISOString(),
+          // eventDate: new Date().toISOString(),
           eventTimeZone: getUserTimeZone(),
           roundId,
           divisionId: effectiveDivisionId,
@@ -214,13 +214,15 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
     return;
   };
 
-  const handleEventMenuAction = (eventId: string, event: EventTable, action: "delete" | "settings" | "details") => {
+  const handleEventMenuAction = (eventId: string, event: EventTable, action: "delete" | "settings" | "details" | "session_settings") => {
     if (action === "delete") {
       openModal(<DeleteEvent eventId={eventId} />);
     } else if (action === "settings") {
       openPanel("EVENT_SETTINGS", { event });
     } else if (action === "details") {
       openPanel("TRACK_CAR_DETAILS", { eventId });
+    } else if (action === "session_settings") {
+      openPanel("SESSION_SETTINGS", { eventId });
     }
     setOpenEventMenuId(null);
     return;
@@ -306,7 +308,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
               <EventSchedule
                 key={event.id}
                 title={event.event_name}
-                subtitle={formatEventDate(event.event_date, event.event_time_zone ?? "UTC")}
+                subtitle={event.event_date ? formatEventDate(event.event_date, event.event_time_zone) : "No Date Set"}
                 numOfDrivers={eventDriverCountByEventId[event.id] ?? 0}
                 onProfileClick={() => handleDriverGridClick(event.id)}
                 onMoreClick={() => {
@@ -336,12 +338,17 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
                           icon: <EditIcon />,
                         },
                         {
+                          label: "Session Settings",
+                          value: "session_settings",
+                          icon: <EditIcon />,
+                        },
+                        {
                           label: "Delete Event",
                           value: "delete",
                           icon: <DeleteIcon />,
                         },
                       ]}
-                      onSelect={(value) => handleEventMenuAction(event.id, event, value as "delete" | "settings" | "details")}
+                      onSelect={(value) => handleEventMenuAction(event.id, event, value as "delete" | "settings" | "details" | "session_settings")}
                     />
                   </div>
                 ) : undefined}
