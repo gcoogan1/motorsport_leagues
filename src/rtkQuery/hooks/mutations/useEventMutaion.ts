@@ -14,6 +14,9 @@ import {
   useUpdateEventCarDetailsMutation,
   useUpdateEventTrackDetailsMutation,
   useDeleteEventCarsByEventIdMutation,
+  useUpdateEventSessionSettingsMutation,
+  useDeleteEventSessionSettingsByEventIdMutation,
+  useCreateEventSessionSettingsMutation,
 } from "@/rtkQuery/API/eventApi";
 
 // --- Mutations --- //
@@ -90,3 +93,18 @@ export const useDeleteEventTracksByEventId = () => {
 export const useDeleteEventCarDetailsByEventId = () => {
   return useDeleteEventCarsByEventIdMutation();
 }
+
+// Mutation for creating session settings for an event
+export const useCreateEventSessionSettings = () => {
+  return useCreateEventSessionSettingsMutation();
+};
+
+// Mutation for updating session settings for an event
+export const useUpdateEventSessionSettings = () => {
+  return useUpdateEventSessionSettingsMutation();
+};
+
+// Mutation for deleting session settings for an event
+export const useDeleteEventSessionSettingsByEventId = () => {
+  return useDeleteEventSessionSettingsByEventIdMutation();
+};

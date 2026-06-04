@@ -48,6 +48,21 @@ export type EventCarDetailsTable = {
   reveal_car: boolean;
 }
 
+export type EventSessionSettingsTable = {
+  id: string;
+  created_at: string;
+  event_id: string;
+  reveal_session: boolean;
+  has_qualifying: boolean;
+  qualifying_type?: "laps" | "time";
+  qualifying_time?: string;
+  qualifying_laps?: number;
+  has_race: boolean;
+  race_type?: "laps" | "time";
+  race_time?: string;
+  race_laps?: number;
+}
+
 
 // -- DRAFT TYPES -- //
 export type EventTableDraft = {
@@ -91,6 +106,18 @@ export type CreateEventSuccess = {
 
 export type CreateEventResponse = CreateEventSuccess | SupabaseError;
 
+export type CreateEventDriverPayload = {
+  eventId: string;
+  seasonDriverId: string;
+};
+
+export type CreateEventDriverSuccess = {
+  success: true;
+  data: EventDriverTable;
+};
+
+export type CreateEventDriverResponse = CreateEventDriverSuccess | SupabaseError;
+
 export type CreateEventTrackDetailsPayload = {
   eventId: string;
   trackName: string;
@@ -120,6 +147,26 @@ export type CreateEventCarDetailsSuccess = {
 };
 
 export type CreateEventCarDetailsResponse = CreateEventCarDetailsSuccess | SupabaseError;
+
+export type CreateEventSessionSettingsPayload = {
+  eventId: string;
+  revealSession: boolean;
+  hasQualifying: boolean;
+  qualifyingType?: "laps" | "time";
+  qualifyingTime?: string;
+  qualifyingLaps?: number;
+  hasRace: boolean;
+  raceType?: "laps" | "time";
+  raceTime?: string;
+  raceLaps?: number;
+};
+
+export type CreateEventSessionSettingsSuccess = {
+  success: true;
+  data: EventSessionSettingsTable;
+};
+
+export type CreateEventSessionSettingsResponse = CreateEventSessionSettingsSuccess | SupabaseError;
 
 // -- GET -- //
 
@@ -169,6 +216,13 @@ export type GetEventCarDetailsByEventIdSuccess = {
 
 export type GetEventCarDetailsByEventIdResponse = GetEventCarDetailsByEventIdSuccess | SupabaseError;
 
+export type GetEventSessionSettingsByEventIdSuccess = {
+  success: true;
+  data: EventSessionSettingsTable;
+};
+
+export type GetEventSessionSettingsByEventIdResponse = GetEventSessionSettingsByEventIdSuccess | SupabaseError;
+
 // -- UPDATE -- //
 
 export type UpdateEventPayload = {
@@ -188,17 +242,13 @@ export type UpdateEventSuccess = {
 
 export type UpdateEventResponse = UpdateEventSuccess | SupabaseError;
 
-export type CreateEventDriverPayload = {
-  eventId: string;
-  seasonDriverId: string;
-};
-
-export type CreateEventDriverSuccess = {
+export type UpdateEventCarDetailsSuccess = {
   success: true;
-  data: EventDriverTable;
+  data: EventCarDetailsTable;
 };
 
-export type CreateEventDriverResponse = CreateEventDriverSuccess | SupabaseError;
+export type UpdateEventCarDetailsResponse = UpdateEventCarDetailsSuccess | SupabaseError;
+
 
 export type UpdateEventTrackDetailsPayload = {
   eventId: string;
@@ -223,12 +273,25 @@ export type UpdateEventCarDetailsPayload = {
   revealCarDetails?: boolean;
 };
 
-export type UpdateEventCarDetailsSuccess = {
-  success: true;
-  data: EventCarDetailsTable;
+export type UpdateEventSessionSettingsPayload = {
+  eventId: string;
+  revealSession: boolean;
+  hasQualifying: boolean;
+  qualifyingType?: "laps" | "time";
+  qualifyingTime?: string;
+  qualifyingLaps?: number;
+  hasRace: boolean;
+  raceType?: "laps" | "time";
+  raceTime?: string;
+  raceLaps?: number;
 };
 
-export type UpdateEventCarDetailsResponse = UpdateEventCarDetailsSuccess | SupabaseError;
+export type UpdateEventSessionSettingsSuccess = {
+  success: true;
+  data: EventSessionSettingsTable;
+};
+
+export type UpdateEventSessionSettingsResponse = UpdateEventSessionSettingsSuccess | SupabaseError;
 
 // -- DELETE -- //
 
@@ -245,5 +308,9 @@ export type DeleteEventTrackDetailsResponse = {
 } | SupabaseError;
 
 export type DeleteEventCarDetailsResponse = {
+  success: true;
+} | SupabaseError;
+
+export type DeleteEventSessionSettingsResponse = {
   success: true;
 } | SupabaseError;

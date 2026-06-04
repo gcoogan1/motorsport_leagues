@@ -6,6 +6,7 @@ import {
   useGetEventsBySeasonIdQuery,
   useGetEventTrackDetailsByEventIdQuery,
   useGetEventCarDetailsByEventIdQuery,
+  useGetEventSessionSettingsByEventIdQuery,
 } from "@/rtkQuery/API/eventApi";
 
 // --- Queries --- //
@@ -48,5 +49,11 @@ export const useEventTrackDetails = (eventId?: string) =>
   // Query to fetch ALL car details for an event
 export const useAllEventCarDetails = (eventId?: string) =>
   useGetEventCarDetailsByEventIdQuery(eventId ?? "", {
+    skip: !eventId,
+  });
+
+// Query to fetch session settings for an event
+export const useEventSessionSettings = (eventId?: string) =>
+  useGetEventSessionSettingsByEventIdQuery(eventId ?? "", {
     skip: !eventId,
   });

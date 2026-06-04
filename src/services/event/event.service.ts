@@ -6,26 +6,33 @@ import type {
   CreateEventDriverResponse,
   CreateEventPayload,
   CreateEventResponse,
+  CreateEventSessionSettingsPayload,
+  CreateEventSessionSettingsResponse,
   CreateEventTrackDetailsPayload,
   CreateEventTrackDetailsResponse,
   DeleteEventCarDetailsResponse,
   DeleteEventDriverResponse,
   DeleteEventResponse,
+  DeleteEventSessionSettingsResponse,
   DeleteEventTrackDetailsResponse,
   EventCarDetailsTable,
   EventDriverTable,
   EventIdsLookupResponse,
+  EventSessionSettingsTable,
   EventTable,
   EventTrackDetailsTable,
   GetEventByIdResponse,
   GetEventCarDetailsByEventIdResponse,
   GetEventDriversResponse,
+  GetEventSessionSettingsByEventIdResponse,
   GetEventsResponse,
   GetEventTrackDetailsByEventIdResponse,
   UpdateEventCarDetailsPayload,
   UpdateEventCarDetailsResponse,
   UpdateEventPayload,
   UpdateEventResponse,
+  UpdateEventSessionSettingsPayload,
+  UpdateEventSessionSettingsResponse,
   UpdateEventTrackDetailsPayload,
   UpdateEventTrackDetailsResponse,
 } from "@/types/event.types";
@@ -97,7 +104,9 @@ export const getEventsByRoundId = async (
     .select(`
       *,
       event_track_details(*),
-      event_car_details(*)
+      event_car_details(*),
+      event_driver(*),
+      event_session_settings(*)
     `)
     .eq("round_id", roundId);
 
@@ -153,7 +162,9 @@ export const getEventsBySeasonId = async (
     .select(`
       *,
       event_track_details(*),
-      event_car_details(*)
+      event_car_details(*),
+      event_driver(*),
+      event_session_settings(*)
     `)
     .eq("season_id", seasonId);
 
@@ -289,6 +300,30 @@ export const getAllCarDetailsByEventId = async (
   return {
     success: true,
     data: (data ?? []) as EventCarDetailsTable[],
+  };
+};
+
+export const getEventSessionSettingsByEventId = async (eventId: string): Promise<GetEventSessionSettingsByEventIdResponse> => {
+  const { data, error } = await supabase
+    .from("event_session_settings")
+    .select("*")
+    .eq("event_id", eventId)
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data as EventSessionSettingsTable,
   };
 };
 
@@ -445,6 +480,55 @@ export const createEventCarDetails = async ({
   return {
     success: true,
     data: data as EventCarDetailsTable,
+  };
+};
+
+// Create Session Settings for an event
+export const createEventSessionSettings = async ({
+  eventId,
+  revealSession,
+  hasQualifying,
+  qualifyingType,
+  qualifyingTime,
+  qualifyingLaps,
+  hasRace,
+  raceType,
+  raceTime,
+  raceLaps,
+}: CreateEventSessionSettingsPayload): Promise<CreateEventSessionSettingsResponse> => {
+  const { data, error } = await supabase
+    .from("event_session_settings")
+    .insert([
+      {
+        event_id: eventId,
+        reveal_session: revealSession,
+        has_qualifying: hasQualifying,
+        qualifying_type: qualifyingType,
+        qualifying_time: qualifyingTime,
+        qualifying_laps: qualifyingLaps,
+        has_race: hasRace,
+        race_type: raceType,
+        race_time: raceTime,
+        race_laps: raceLaps,
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data as EventSessionSettingsTable,
   };
 };
 
@@ -612,6 +696,81 @@ export const updateEventCarDetails = async ({
   };
 };
 
+// Update Session Settings for an event
+export const updateEventSessionSettings = async ({
+  eventId,
+  revealSession,
+  hasQualifying,
+  qualifyingType,
+  qualifyingTime,
+  qualifyingLaps,
+  hasRace,
+  raceType,
+  raceTime,
+  raceLaps,
+}: UpdateEventSessionSettingsPayload): Promise<UpdateEventSessionSettingsResponse> => {
+  const updateData: Record<string, unknown> = {};
+
+  if (revealSession !== undefined) {
+    updateData.reveal_session = revealSession;
+  }
+
+  if (hasQualifying !== undefined) {
+    updateData.has_qualifying = hasQualifying;
+  }
+
+  if (qualifyingType !== undefined) {
+    updateData.qualifying_type = qualifyingType;
+  }
+
+  if (qualifyingTime !== undefined) {
+    updateData.qualifying_time = qualifyingTime;
+  }
+
+  if (qualifyingLaps !== undefined) {
+    updateData.qualifying_laps = qualifyingLaps;
+  }
+
+  if (hasRace !== undefined) {
+    updateData.has_race = hasRace;
+  }
+
+  if (raceType !== undefined) {
+    updateData.race_type = raceType;
+  }
+
+  if (raceTime !== undefined) {
+    updateData.race_time = raceTime;
+  }
+
+  if (raceLaps !== undefined) {
+    updateData.race_laps = raceLaps;
+  }
+
+  const { data, error } = await supabase
+    .from("event_session_settings")
+    .update(updateData)
+    .eq("event_id", eventId)
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: data as EventSessionSettingsTable,
+  };
+};
+
 // -- DELETE -- //
 
 // Delete event drivers by their associated event IDs (HELPER)
@@ -667,6 +826,14 @@ export const deleteEvent = async (
 
   if (!deleteCarDetailsResult.success) {
     return deleteCarDetailsResult;
+  }
+
+  const deleteSessionSettingsResult = await deleteEventSessionSettingsByEventId(
+    eventId,
+  );
+
+  if (!deleteSessionSettingsResult.success) {
+    return deleteSessionSettingsResult;
   }
 
   const { error } = await supabase.from("event").delete().eq("id", eventId);
@@ -753,6 +920,14 @@ export const deleteEventsByRoundId = async (
     return deleteCarDetailsResult;
   }
 
+  const deleteSessionSettingsResult = await deleteEventSessionSettingsByEventId(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteSessionSettingsResult.success) {
+    return deleteSessionSettingsResult;
+  }
+
   const { error } = await supabase.from("event").delete().eq(
     "round_id",
     roundId,
@@ -806,6 +981,14 @@ export const deleteEventsByDivisionId = async (
 
   if (!deleteCarDetailsResult.success) {
     return deleteCarDetailsResult;
+  }
+
+  const deleteSessionSettingsResult = await deleteEventSessionSettingsByEventId(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteSessionSettingsResult.success) {
+    return deleteSessionSettingsResult;
   }
 
   const { error } = await supabase.from("event").delete().eq(
@@ -863,6 +1046,14 @@ export const deleteEventsBySeasonId = async (
     return deleteCarDetailsResult;
   }
 
+  const deleteSessionSettingsResult = await deleteEventSessionSettingsByEventId(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteSessionSettingsResult.success) {
+    return deleteSessionSettingsResult;
+  }
+
   const { error } = await supabase.from("event").delete().eq(
     "season_id",
     seasonId,
@@ -915,6 +1106,31 @@ export const deleteEventCarDetailsByEventId = async (
 ): Promise<DeleteEventCarDetailsResponse> => {
   const { error } = await supabase
     .from("event_car_details")
+    .delete()
+    .eq("event_id", eventId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
+// Delete Session Settings for an event by its ID
+export const deleteEventSessionSettingsByEventId = async (
+  eventId: string,
+): Promise<DeleteEventSessionSettingsResponse> => {
+  const { error } = await supabase
+    .from("event_session_settings")
     .delete()
     .eq("event_id", eventId);
 

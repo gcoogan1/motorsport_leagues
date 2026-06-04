@@ -22,6 +22,9 @@ import {
 	updateEventTrackDetails,
 	deleteEventTrackDetailsByEventId,
 	deleteEventCarDetailsByEventId,
+	getEventSessionSettingsByEventId,
+	createEventSessionSettings,
+	updateEventSessionSettings,
 } from "@/services/event/event.service";
 import type {
 	CreateEventDriverPayload,
@@ -48,6 +51,12 @@ import type {
 	DeleteEventCarDetailsResponse,
 	DeleteEventTrackDetailsResponse,
 	JoinedEventTable,
+	GetEventSessionSettingsByEventIdResponse,
+	EventSessionSettingsTable,
+	CreateEventSessionSettingsResponse,
+	CreateEventSessionSettingsPayload,
+	UpdateEventSessionSettingsPayload,
+	UpdateEventSessionSettingsResponse,
 } from "@/types/event.types";
 import type { CarCategory } from "@/types/cars.types";
 
@@ -247,6 +256,30 @@ export const eventApi = createApi({
 				{ type: "Events", id: `car-details-${eventId}` },
 			],
 		}),
+		getEventSessionSettingsByEventId: builder.query<EventSessionSettingsTable, string>({
+			queryFn: async (eventId) => {
+				try {
+					const result: GetEventSessionSettingsByEventIdResponse =
+						await getEventSessionSettingsByEventId(eventId);
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: result.data };
+				} catch (error) {
+					return { error };
+				}
+			},
+			providesTags: (_result, _error, eventId) => [
+				{ type: "Events", id: `session-settings-${eventId}` },
+			],
+		}),
 		createEvent: builder.mutation<EventTable, CreateEventPayload>({
 			queryFn: async (payload) => {
 				try {
@@ -358,6 +391,29 @@ export const eventApi = createApi({
 				{ type: "Events", id: eventId },
 			],
 		}),
+		createEventSessionSettings: builder.mutation<EventSessionSettingsTable, CreateEventSessionSettingsPayload>({
+			queryFn: async (payload) => {
+				try {
+					const result: CreateEventSessionSettingsResponse = await createEventSessionSettings(payload);
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: result.data };
+				} catch (error) {
+					return { error };
+				}
+			},
+			invalidatesTags: (_result, _error, { eventId }) => [
+				{ type: "Events", id: `session-settings-${eventId}` },
+			],
+		}),
 		updateEvent: builder.mutation<EventTable, UpdateEventPayload>({
 			queryFn: async (payload) => {
 				try {
@@ -450,6 +506,29 @@ export const eventApi = createApi({
 			invalidatesTags: (_result, _error, { eventId }) => [
 				{ type: "Events", id: `car-details-${eventId}` },
 				{ type: "Events", id: eventId },
+			],
+		}),
+		updateEventSessionSettings: builder.mutation<EventSessionSettingsTable, UpdateEventSessionSettingsPayload>({
+			queryFn: async (payload) => {
+				try {
+					const result: UpdateEventSessionSettingsResponse = await updateEventSessionSettings(payload);
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: result.data };
+				} catch (error) {
+					return { error };
+				}
+			},
+			invalidatesTags: (_result, _error, { eventId }) => [
+				{ type: "Events", id: `session-settings-${eventId}` },
 			],
 		}),
 		deleteEvent: builder.mutation<boolean, DeleteEventMutationPayload>({
@@ -653,6 +732,31 @@ export const eventApi = createApi({
 				{ type: "Events", id: eventId },
 			],
 		}),
+		deleteEventSessionSettingsByEventId: builder.mutation<boolean, string>({
+			queryFn: async (eventId) => {
+				try {
+					const result: DeleteEventTrackDetailsResponse =
+						await deleteEventTrackDetailsByEventId(eventId);
+
+					if (!result.success) {
+						return {
+							error: {
+								status: result.error.status,
+								data: result.error,
+							},
+						};
+					}
+
+					return { data: true };
+				} catch (error) {
+					return { error };
+				}
+			},
+			invalidatesTags: (_result, _error, eventId) => [
+				{ type: "Events", id: `session-settings-${eventId}` },
+				{ type: "Events", id: eventId },
+			],
+		}),
 	}),
 });
 
@@ -664,13 +768,16 @@ export const {
   useGetEventsBySeasonIdQuery,
 	useGetEventTrackDetailsByEventIdQuery,
 	useGetEventCarDetailsByEventIdQuery,
+	useGetEventSessionSettingsByEventIdQuery,
 	useCreateEventMutation,
 	useCreateEventDriverMutation,
 	useCreateEventTrackDetailsMutation,
 	useCreateEventCarDetailsMutation,
+	useCreateEventSessionSettingsMutation,
 	useUpdateEventMutation,
 	useUpdateEventTrackDetailsMutation,
 	useUpdateEventCarDetailsMutation,
+	useUpdateEventSessionSettingsMutation,
 	useDeleteEventMutation,
 	useDeleteEventDriverMutation,
 	useDeleteEventDriversByEventIdMutation,
@@ -679,4 +786,5 @@ export const {
 	useDeleteEventsBySeasonIdMutation,
 	useDeleteEventTracksByEventIdMutation,
 	useDeleteEventCarsByEventIdMutation,
+	useDeleteEventSessionSettingsByEventIdMutation,
 } = eventApi;
