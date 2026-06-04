@@ -720,15 +720,15 @@ export const updateEventSessionSettings = async ({
   }
 
   if (qualifyingType !== undefined) {
-    updateData.qualifying_type = qualifyingType;
+    updateData.qualifying_type = qualifyingType ?? null;
   }
 
   if (qualifyingTime !== undefined) {
-    updateData.qualifying_time = qualifyingTime;
+    updateData.qualifying_time = qualifyingTime ?? null;
   }
 
   if (qualifyingLaps !== undefined) {
-    updateData.qualifying_laps = qualifyingLaps;
+    updateData.qualifying_laps = qualifyingLaps ?? null;
   }
 
   if (hasRace !== undefined) {
@@ -736,15 +736,15 @@ export const updateEventSessionSettings = async ({
   }
 
   if (raceType !== undefined) {
-    updateData.race_type = raceType;
+    updateData.race_type = raceType ?? null;
   }
 
   if (raceTime !== undefined) {
-    updateData.race_time = raceTime;
+    updateData.race_time = raceTime ?? null;
   }
 
   if (raceLaps !== undefined) {
-    updateData.race_laps = raceLaps;
+    updateData.race_laps = raceLaps ?? null;
   }
 
   const { data, error } = await supabase

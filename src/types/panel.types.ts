@@ -19,7 +19,8 @@ export type PanelTypes =
   | "BRIEFING"
   | "DRIVER_GRID"
   | "EVENT_SETTINGS"
-  | "TRACK_CAR_DETAILS";
+  | "TRACK_CAR_DETAILS"
+  | "SESSION_SETTINGS";
   
 
 export type PanelProviderTypes = "none" | PanelTypes;

@@ -277,13 +277,13 @@ export type UpdateEventSessionSettingsPayload = {
   eventId: string;
   revealSession: boolean;
   hasQualifying: boolean;
-  qualifyingType?: "laps" | "time";
-  qualifyingTime?: string;
-  qualifyingLaps?: number;
+  qualifyingType?: "laps" | "time" | null;
+  qualifyingTime?: string | null;
+  qualifyingLaps?: number | null;
   hasRace: boolean;
-  raceType?: "laps" | "time";
-  raceTime?: string;
-  raceLaps?: number;
+  raceType?: "laps" | "time" | null;
+  raceTime?: string | null;
+  raceLaps?: number | null;
 };
 
 export type UpdateEventSessionSettingsSuccess = {
