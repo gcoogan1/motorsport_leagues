@@ -10,7 +10,9 @@ import {
   InputWrapper,
   Label,
   LabelRow,
+  NumberInputWrapper,
   NumberInput,
+  NumberValue,
 } from "./IncrementInput.styles";
 import Button from "@/components/Button/Button";
 
@@ -25,6 +27,7 @@ type IncrementInputProps = {
   hasError?: boolean;
   errorMessage?: string;
   onChange?: (value: number) => void;
+  formatter?: (value: number) => string
 };
 
 const IncrementInput = ({
@@ -38,6 +41,7 @@ const IncrementInput = ({
   hasError = false,
   errorMessage,
   onChange,
+  formatter = (value) => String(value)
 }: IncrementInputProps) => {
   const [count, setCount] = useState(value);
 
@@ -86,32 +90,35 @@ const IncrementInput = ({
         </ButtonGroup>
 
         {/* Value can either be typed directly or adjusted using the buttons */}
-        <NumberInput
-          name={name}
-          type="number"
-          value={count}
-          min={min}
-          max={max}
-          step={step}
-          $hasValue={hasValue}
-          onChange={(e) => {
-            const value = Number(e.target.value);
+        <NumberInputWrapper>
+          <NumberInput
+            name={name}
+            type="number"
+            value={count}
+            min={min}
+            max={max}
+            step={step}
+            $hasValue={hasValue}
+            onChange={(e) => {
+              const value = Number(e.target.value);
 
-            if (isNaN(value)) {
-              setCount(min);
-              onChange?.(min);
-              return;
-            }
+              if (isNaN(value)) {
+                setCount(min);
+                onChange?.(min);
+                return;
+              }
 
-            const clamped = Math.min(
-              Math.max(value, min),
-              max
-            );
+              const clamped = Math.min(
+                Math.max(value, min),
+                max
+              );
 
-            setCount(clamped);
-            onChange?.(clamped);
-          }}
-        />
+              setCount(clamped);
+              onChange?.(clamped);
+            }}
+          />
+          <NumberValue $hasValue={hasValue}>{formatter(count)}</NumberValue>
+        </NumberInputWrapper>
 
         <ButtonGroup>
           <Button

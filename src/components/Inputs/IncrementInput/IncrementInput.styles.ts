@@ -66,8 +66,13 @@ export const InputContainer = styled.div<{
   }
 `;
 
-export const NumberInput = styled.input<{ $hasValue: boolean }>`
+export const NumberInputWrapper = styled.div`
+  position: relative;
   flex: 1;
+  width: 100%;
+`;
+
+export const NumberInput = styled.input<{ $hasValue: boolean }>`
   width: 100%;
   border: none;
   background: transparent;
@@ -75,8 +80,8 @@ export const NumberInput = styled.input<{ $hasValue: boolean }>`
 
   ${typography.body.mediumRegular};
 
-  color: ${({ $hasValue }) =>
-    $hasValue ? colors.text.text1 : colors.text.text2};
+  color: transparent;
+  caret-color: ${colors.text.text1};
 
   outline: none;
 
@@ -95,6 +100,19 @@ export const NumberInput = styled.input<{ $hasValue: boolean }>`
   &::placeholder {
     color: ${colors.text.text3};
   }
+`;
+
+export const NumberValue = styled.span<{ $hasValue: boolean }>`
+  ${typography.body.mediumRegular};
+  color: ${({ $hasValue }) =>
+    $hasValue ? colors.text.text1 : colors.text.text2};
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  user-select: none;
 `;
 
 export const ButtonGroup = styled.div`
