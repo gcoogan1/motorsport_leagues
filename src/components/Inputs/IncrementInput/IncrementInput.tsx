@@ -26,6 +26,7 @@ type IncrementInputProps = {
   helperText?: string;
   hasError?: boolean;
   errorMessage?: string;
+  style?: React.CSSProperties;
   onChange?: (value: number) => void;
   formatter?: (value: number) => string
 };
@@ -38,6 +39,7 @@ const IncrementInput = ({
   max = 99,
   step = 1,
   helperText,
+  style,
   hasError = false,
   errorMessage,
   onChange,
@@ -69,7 +71,7 @@ const IncrementInput = ({
 
 
   return (
-    <InputWrapper $hasValue={hasValue}>
+    <InputWrapper $hasValue={hasValue} style={style}>
       <LabelRow>
         {label && <Label>{label}</Label>}
       </LabelRow>

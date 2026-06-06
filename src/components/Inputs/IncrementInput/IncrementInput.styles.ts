@@ -18,6 +18,9 @@ export const LabelRow = styled.div`
 export const Label = styled.label`
   ${typography.body.smallBold}
   color: ${colors.text.text2};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const Count = styled.span`
@@ -113,6 +116,9 @@ export const NumberValue = styled.span<{ $hasValue: boolean }>`
   justify-content: center;
   pointer-events: none;
   user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const ButtonGroup = styled.div`
