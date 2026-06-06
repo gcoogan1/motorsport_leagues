@@ -20,6 +20,7 @@ import DriverGridPanel from "./rounds/forms/DriverGrid/DriverGridPanel";
 import EventSettings from "./events/forms/EventSettings/EventSettings";
 import TrackCarDetails from "./events/forms/TrackCarDetails/TrackCarDetails";
 import SessionSettings from "./events/forms/SessionSettings/SessionSettings";
+import AdvancedSettings from "./events/forms/AdvancedSettings/AdvancedSettings";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,4 +46,5 @@ export const panelVariants: Record<PanelTypes, React.ComponentType<any>> = {
   EVENT_SETTINGS: EventSettings,
   TRACK_CAR_DETAILS: TrackCarDetails,
   SESSION_SETTINGS: SessionSettings,
+  ADVANCED_SETTINGS: AdvancedSettings,
 };

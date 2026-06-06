@@ -20,7 +20,8 @@ export type PanelTypes =
   | "DRIVER_GRID"
   | "EVENT_SETTINGS"
   | "TRACK_CAR_DETAILS"
-  | "SESSION_SETTINGS";
+  | "SESSION_SETTINGS"
+  | "ADVANCED_SETTINGS"
   
 
 export type PanelProviderTypes = "none" | PanelTypes;
