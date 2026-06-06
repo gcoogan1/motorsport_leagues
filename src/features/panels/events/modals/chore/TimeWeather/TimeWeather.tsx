@@ -14,6 +14,7 @@ import {
   VARIABLE_TIME_SPEED_RATE_MIN,
   VARIABLE_TIME_SPEED_RATE_FORMATTER,
   WEATHER_SELECTION_OPTIONS,
+  VARIABLE_TIME_SPEED_RATE_STEP,
 } from "@/lib/constants/timeWeatherSettings";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import { useState } from "react";
@@ -137,7 +138,7 @@ const TimeWeather = ({ formMethods, setValue: propSetValue, weatherSelection: pr
           label="Variable Time Speed Rate"
           min={VARIABLE_TIME_SPEED_RATE_MIN}
           max={VARIABLE_TIME_SPEED_RATE_MAX}
-          step={VARIABLE_TIME_SPEED_RATE_DEFAULT}
+          step={VARIABLE_TIME_SPEED_RATE_STEP}
           formatter={VARIABLE_TIME_SPEED_RATE_FORMATTER}
           value={variableTimeSpeedRate}
           onChange={handleVariableTimeSpeedRateChange}
