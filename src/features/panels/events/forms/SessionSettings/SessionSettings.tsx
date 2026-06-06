@@ -150,7 +150,7 @@ const SessionSettings = ({ eventId }: SessionSettingsProps) => {
 
   const handleSave = handleSubmit(
   async (data) => {
-    console.log("Validated Form Data:", data);
+
     try {
       setIsSaving(true);
 
