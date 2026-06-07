@@ -10,6 +10,7 @@ import { profileApi } from "../rtkQuery/API/profileApi";
 import { roundApi } from "../rtkQuery/API/roundApi";
 import { squadApi } from "../rtkQuery/API/squadApi";
 import { carsApi } from "@/rtkQuery/API/carsApi";
+import { eventAdvancedSettingsApi } from "@/rtkQuery/API/eventAdvancedSettingsApi";
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     [roundApi.reducerPath]: roundApi.reducer,
     [squadApi.reducerPath]: squadApi.reducer,
     [carsApi.reducerPath]: carsApi.reducer,
+    [eventAdvancedSettingsApi.reducerPath]: eventAdvancedSettingsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -34,6 +36,7 @@ export const store = configureStore({
       roundApi.middleware,
       squadApi.middleware,
       carsApi.middleware,
+      eventAdvancedSettingsApi.middleware,
     ),
 });
 
