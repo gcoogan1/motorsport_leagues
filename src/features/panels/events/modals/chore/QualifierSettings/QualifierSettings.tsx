@@ -167,6 +167,7 @@ const QualifierSettings = ({ formMethods, setValue: propSetValue }: QualifierSet
             formatter={INITIAL_FUEL_QUAL_FORMATTER}
             value={initialFuelQual}
             onChange={handleInitialFuelQualChange}
+            helperText="Default → 1 liters - 100 liters"
           />
           <SelectInput
             name="slipstreamStrengthQual"

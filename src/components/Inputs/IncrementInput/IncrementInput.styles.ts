@@ -75,7 +75,7 @@ export const NumberInputWrapper = styled.div`
   width: 100%;
 `;
 
-export const NumberInput = styled.input<{ $hasValue: boolean }>`
+export const NumberInput = styled.input<{ $hasValue: boolean; $isFocused: boolean }>`
   width: 100%;
   border: none;
   background: transparent;
@@ -83,7 +83,8 @@ export const NumberInput = styled.input<{ $hasValue: boolean }>`
 
   ${typography.body.mediumRegular};
 
-  color: transparent;
+  color: ${({ $isFocused, $hasValue }) =>
+    $isFocused ? ($hasValue ? colors.text.text1 : colors.text.text2) : "transparent"};
   caret-color: ${colors.text.text1};
 
   outline: none;
@@ -92,11 +93,8 @@ export const NumberInput = styled.input<{ $hasValue: boolean }>`
   font-size: 16px;
 
   /* Remove native arrows */
-  -moz-appearance: textfield;
-
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
     margin: 0;
   }
 

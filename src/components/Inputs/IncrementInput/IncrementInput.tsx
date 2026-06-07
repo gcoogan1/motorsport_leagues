@@ -23,6 +23,7 @@ type IncrementInputProps = {
   min?: number;
   max?: number;
   step?: number; // The amount to increment or decrement the value by
+  clampOnBlur?: boolean;
   helperText?: string;
   hasError?: boolean;
   errorMessage?: string;
@@ -38,6 +39,7 @@ const IncrementInput = ({
   min = 0,
   max = 99,
   step = 1,
+  clampOnBlur = true,
   helperText,
   style,
   hasError = false,
@@ -45,27 +47,30 @@ const IncrementInput = ({
   onChange,
   formatter = (value) => String(value)
 }: IncrementInputProps) => {
-  const [count, setCount] = useState(value);
+  const [inputValue, setInputValue] = useState(String(value));
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    setCount(value);
+    setInputValue(String(value));
   }, [value]);
 
-  const hasValue = count > 0;
+  const parsedInputValue = Number(inputValue);
+  const currentNumber = Number.isFinite(parsedInputValue)
+    ? parsedInputValue
+    : min;
+  const hasValue = currentNumber > 0;
 
   const handleIncrement = () => {
-
-    const newValue = Math.min(count + step, max);
-
-    setCount(newValue);
+    const nextValue = currentNumber + step;
+    const newValue = clampOnBlur ? Math.min(nextValue, max) : nextValue;
+    setInputValue(String(newValue));
     onChange?.(newValue);
   };
 
   const handleDecrement = () => {
-
-    const newValue = Math.max(count - step, min);
-
-    setCount(newValue);
+    const nextValue = currentNumber - step;
+    const newValue = clampOnBlur ? Math.max(nextValue, min) : nextValue;
+    setInputValue(String(newValue));
     onChange?.(newValue);
   };
 
@@ -96,30 +101,42 @@ const IncrementInput = ({
           <NumberInput
             name={name}
             type="number"
-            value={count}
+            value={inputValue}
             min={min}
             max={max}
             step={step}
             $hasValue={hasValue}
-            onChange={(e) => {
-              const value = Number(e.target.value);
+            $isFocused={isFocused}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => {
+              setIsFocused(false);
 
-              if (isNaN(value)) {
-                setCount(min);
+              const parsedValue = Number(inputValue);
+              if (!Number.isFinite(parsedValue)) {
+                setInputValue(String(min));
                 onChange?.(min);
                 return;
               }
 
-              const clamped = Math.min(
-                Math.max(value, min),
-                max
-              );
+              const resolvedValue = clampOnBlur
+                ? Math.min(Math.max(parsedValue, min), max)
+                : parsedValue;
+              setInputValue(String(resolvedValue));
+              onChange?.(resolvedValue);
+            }}
+            onChange={(e) => {
+              const nextValue = e.target.value;
+              setInputValue(nextValue);
 
-              setCount(clamped);
-              onChange?.(clamped);
+              const numericValue = Number(nextValue);
+              if (Number.isFinite(numericValue)) {
+                onChange?.(numericValue);
+              }
             }}
           />
-          <NumberValue $hasValue={hasValue}>{formatter(count)}</NumberValue>
+          {!isFocused && (
+            <NumberValue $hasValue={hasValue}>{formatter(currentNumber)}</NumberValue>
+          )}
         </NumberInputWrapper>
 
         <ButtonGroup>
