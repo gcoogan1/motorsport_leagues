@@ -37,6 +37,7 @@ import type {
   UpdateEventTrackDetailsPayload,
   UpdateEventTrackDetailsResponse,
 } from "@/types/event.types";
+import { deleteEventAdvancedSettings } from "./eventAdvancedSettings";
 
 // -- Event Service -- //
 
@@ -931,6 +932,14 @@ export const deleteEventsByRoundId = async (
     return deleteSessionSettingsResult;
   }
 
+  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettings(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteAdvancedSettingsResult.success) {
+    return deleteAdvancedSettingsResult;
+  }
+
   const { error } = await supabase.from("event").delete().eq(
     "round_id",
     roundId,
@@ -994,6 +1003,14 @@ export const deleteEventsByDivisionId = async (
     return deleteSessionSettingsResult;
   }
 
+  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettings(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteAdvancedSettingsResult.success) {
+    return deleteAdvancedSettingsResult;
+  }
+
   const { error } = await supabase.from("event").delete().eq(
     "division_id",
     divisionId,
@@ -1055,6 +1072,14 @@ export const deleteEventsBySeasonId = async (
 
   if (!deleteSessionSettingsResult.success) {
     return deleteSessionSettingsResult;
+  }
+
+  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettings(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteAdvancedSettingsResult.success) {
+    return deleteAdvancedSettingsResult;
   }
 
   const { error } = await supabase.from("event").delete().eq(
