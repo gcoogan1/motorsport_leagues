@@ -1,6 +1,7 @@
 // -- SUPABASE TABLES -- //
 
 import type { CarCategory } from "./cars.types";
+import type { EventAdvancedSettingsTable } from "./eventAdvancedSettings";
 
 export type EventTable = {
   id: string;
@@ -19,6 +20,8 @@ export type EventTable = {
 export type JoinedEventTable = EventTable & {
   event_track_details?: EventTrackDetailsTable;
   event_car_details?: EventCarDetailsTable[];
+  event_session_settings?: EventSessionSettingsTable;
+  event_advanced_settings?: EventAdvancedSettingsTable;
 }
 
 export type EventDriverTable = {

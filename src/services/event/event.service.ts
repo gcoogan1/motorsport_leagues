@@ -17,6 +17,7 @@ import type {
   DeleteEventTrackDetailsResponse,
   EventCarDetailsTable,
   EventDriverTable,
+  JoinedEventTable,
   EventIdsLookupResponse,
   EventSessionSettingsTable,
   EventTable,
@@ -106,7 +107,8 @@ export const getEventsByRoundId = async (
       event_track_details(*),
       event_car_details(*),
       event_driver(*),
-      event_session_settings(*)
+      event_session_settings(*),
+      event_advanced_settings(*)
     `)
     .eq("round_id", roundId);
 
@@ -123,7 +125,7 @@ export const getEventsByRoundId = async (
 
   return {
     success: true,
-    data: data,
+    data: (data ?? []) as JoinedEventTable[],
   };
 };
 
@@ -164,7 +166,8 @@ export const getEventsBySeasonId = async (
       event_track_details(*),
       event_car_details(*),
       event_driver(*),
-      event_session_settings(*)
+      event_session_settings(*),
+      event_advanced_settings(*)
     `)
     .eq("season_id", seasonId);
 
@@ -181,7 +184,7 @@ export const getEventsBySeasonId = async (
 
   return {
     success: true,
-    data: data,
+    data: (data ?? []) as JoinedEventTable[],
   };
 };
 
