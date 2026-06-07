@@ -44,6 +44,7 @@ type SelectInputProps = {
   blurInputOnSelect?: boolean;
   openMenuOnFocus?: boolean;
   onValueChange?: (value: string) => void;
+  style?: React.CSSProperties;
 };
 
 const DropdownIndicator = (
@@ -98,6 +99,7 @@ const SelectInput = ({
   blurInputOnSelect = false,
   openMenuOnFocus = true,
   onValueChange,
+  style,
 }: SelectInputProps) => {
   const inputId = useId();
   const { control } = useFormContext();
@@ -128,6 +130,7 @@ const SelectInput = ({
           <InputWrapper
             $hasValue={!!selectedOption}
             onKeyDown={handleWrapperKeyDown}
+            style={style}
           >
             <SelectMenuGlobalStyles />
             <LabelRow>

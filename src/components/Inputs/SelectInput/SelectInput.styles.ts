@@ -113,6 +113,9 @@ export const LabelRow = styled.div`
 export const Label = styled.label`
   ${typography.body.smallBold}
   color: ${colors.text.text2};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const SelectMenuGlobalStyles = createGlobalStyle`
