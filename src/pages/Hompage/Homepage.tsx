@@ -1,5 +1,12 @@
 import { useAppTheme } from "@/providers/theme/useTheme";
 import { LogoThemes } from "@/app/design/logoThemes";
+import EventDetails from "@/components/Structures/EventDetails/EventDetails";
+import AssignedCarImage from "@/assets/Cars/Assigned.png";
+// import HiddenCarImage from "@/assets/Cars/Hidden.png";
+// import Cover1 from "@/assets/Cover/cover1.png";
+// import Cover2 from "@/assets/Cover/cover2.png";
+// import Cover3 from "@/assets/Cover/cover3.png";
+// import Cover4 from "@/assets/Cover/cover4.png";
 import {
   Container,
   SubTitle,
@@ -14,6 +21,33 @@ const Homepage = () => {
   // Theme
   const { themeName } = useAppTheme();
   const LogoIcon = LogoThemes[themeName];
+
+  const eventDetailItems = [
+    {
+      imageUrl: AssignedCarImage,
+      text: "Assigned · Ferrari 458 Italia",
+    },
+    // {
+    //   imageUrl: Cover1,
+    //   text: "Assigned · Porsche 911 RSR",
+    // },
+    // {
+    //   imageUrl: Cover2,
+    //   text: "Assigned · Nissan GT-R NISMO",
+    // },
+    // {
+    //   imageUrl: Cover3,
+    //   text: "Assigned · McLaren 720S GT3",
+    // },
+    // {
+    //   imageUrl: Cover4,
+    //   text: "Assigned · Mercedes-AMG GT3",
+    // },
+    // {
+    //   imageUrl: HiddenCarImage,
+    //   text: "Assigned · Hidden",
+    // },
+  ];
 
   // Embla carousel hook
   // const {
@@ -30,6 +64,12 @@ const Homepage = () => {
       <Container>
         <LogoIcon />
         <SubTitle>Coming Soon</SubTitle>
+
+        <EventDetails
+          sessions={["Practice", "Qualifying", "Race"]}
+          sectionTitle="Car Selection"
+          items={eventDetailItems}
+        />
 
         {/* ----------------------------- */}
         {/* EMBLA CAROUSEL */}
