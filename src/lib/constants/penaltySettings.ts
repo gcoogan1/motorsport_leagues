@@ -1,5 +1,5 @@
 export const SHORTCUT_PENALTY_OPTIONS = [
-  {  label: "Off", value: "off" },
+  { label: "Off", value: "off" },
   { label: "Weak", value: "weak" },
   { label: "Strong", value: "strong" },
 ]

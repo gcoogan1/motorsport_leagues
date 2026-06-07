@@ -23,10 +23,9 @@ import { withMinDelay } from "@/utils/withMinDelay";
 type TimeWeatherProps = {
   formMethods?: UseFormReturn<AdvancedSettingsFormData>;
   setValue?: ReturnType<typeof useFormContext<AdvancedSettingsFormData>>["setValue"];
-  weatherSelection?: string;
 };
 
-const TimeWeather = ({ formMethods, setValue: propSetValue, weatherSelection: propWeatherSelection }: TimeWeatherProps) => {
+const TimeWeather = ({ formMethods, setValue: propSetValue }: TimeWeatherProps) => {
   const { closeModal } = useModal();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -37,7 +36,7 @@ const TimeWeather = ({ formMethods, setValue: propSetValue, weatherSelection: pr
   // 2. As a child component within the AdvancedSettings form, in which case it uses the form context provided by the parent and updates values directly on change.
   const fallbackFormMethods = useForm<AdvancedSettingsFormData>({
     defaultValues: {
-      weatherSelection: propWeatherSelection ?? "presetWeatherSelection",
+      weatherSelection: "presetWeatherSelection",
       presetWeather: "s01",
       timeOfDay: "earlyMorning",
       equalCondition: "true",
@@ -51,7 +50,7 @@ const TimeWeather = ({ formMethods, setValue: propSetValue, weatherSelection: pr
   const weatherSelection = useWatch({
     control: resolvedFormMethods.control,
     name: "weatherSelection",
-    defaultValue: propWeatherSelection ?? "presetWeatherSelection",
+    defaultValue: "presetWeatherSelection",
   });
   const variableTimeSpeedRate = useWatch({
     control: resolvedFormMethods.control,
