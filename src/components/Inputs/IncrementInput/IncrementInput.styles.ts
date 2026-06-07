@@ -18,6 +18,9 @@ export const LabelRow = styled.div`
 export const Label = styled.label`
   ${typography.body.smallBold}
   color: ${colors.text.text2};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const Count = styled.span`
@@ -66,8 +69,13 @@ export const InputContainer = styled.div<{
   }
 `;
 
-export const NumberInput = styled.input<{ $hasValue: boolean }>`
+export const NumberInputWrapper = styled.div`
+  position: relative;
   flex: 1;
+  width: 100%;
+`;
+
+export const NumberInput = styled.input<{ $hasValue: boolean; $isFocused: boolean }>`
   width: 100%;
   border: none;
   background: transparent;
@@ -75,8 +83,9 @@ export const NumberInput = styled.input<{ $hasValue: boolean }>`
 
   ${typography.body.mediumRegular};
 
-  color: ${({ $hasValue }) =>
-    $hasValue ? colors.text.text1 : colors.text.text2};
+  color: ${({ $isFocused, $hasValue }) =>
+    $isFocused ? ($hasValue ? colors.text.text1 : colors.text.text2) : "transparent"};
+  caret-color: ${colors.text.text1};
 
   outline: none;
 
@@ -84,17 +93,30 @@ export const NumberInput = styled.input<{ $hasValue: boolean }>`
   font-size: 16px;
 
   /* Remove native arrows */
-  -moz-appearance: textfield;
-
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
     margin: 0;
   }
 
   &::placeholder {
     color: ${colors.text.text3};
   }
+`;
+
+export const NumberValue = styled.span<{ $hasValue: boolean }>`
+  ${typography.body.mediumRegular};
+  color: ${({ $hasValue }) =>
+    $hasValue ? colors.text.text1 : colors.text.text2};
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const ButtonGroup = styled.div`

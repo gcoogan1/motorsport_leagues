@@ -214,7 +214,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
     return;
   };
 
-  const handleEventMenuAction = (eventId: string, event: EventTable, action: "delete" | "settings" | "details" | "session_settings") => {
+  const handleEventMenuAction = (eventId: string, event: EventTable, action: "delete" | "settings" | "details" | "session_settings" | "advanced_settings") => {
     if (action === "delete") {
       openModal(<DeleteEvent eventId={eventId} />);
     } else if (action === "settings") {
@@ -223,6 +223,8 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
       openPanel("TRACK_CAR_DETAILS", { eventId });
     } else if (action === "session_settings") {
       openPanel("SESSION_SETTINGS", { eventId });
+    } else if (action === "advanced_settings") {
+      openPanel("ADVANCED_SETTINGS", { eventId });
     }
     setOpenEventMenuId(null);
     return;
@@ -343,12 +345,17 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
                           icon: <EditIcon />,
                         },
                         {
+                          label: "Advanced Settings",
+                          value: "advanced_settings",
+                          icon: <EditIcon />,
+                        },
+                        {
                           label: "Delete Event",
                           value: "delete",
                           icon: <DeleteIcon />,
                         },
                       ]}
-                      onSelect={(value) => handleEventMenuAction(event.id, event, value as "delete" | "settings" | "details" | "session_settings")}
+                      onSelect={(value) => handleEventMenuAction(event.id, event, value as "delete" | "settings" | "details" | "session_settings" | "advanced_settings")}
                     />
                   </div>
                 ) : undefined}

@@ -17,6 +17,7 @@ import type {
   DeleteEventTrackDetailsResponse,
   EventCarDetailsTable,
   EventDriverTable,
+  JoinedEventTable,
   EventIdsLookupResponse,
   EventSessionSettingsTable,
   EventTable,
@@ -36,6 +37,7 @@ import type {
   UpdateEventTrackDetailsPayload,
   UpdateEventTrackDetailsResponse,
 } from "@/types/event.types";
+import { deleteEventAdvancedSettings } from "./eventAdvancedSettings";
 
 // -- Event Service -- //
 
@@ -106,7 +108,8 @@ export const getEventsByRoundId = async (
       event_track_details(*),
       event_car_details(*),
       event_driver(*),
-      event_session_settings(*)
+      event_session_settings(*),
+      event_advanced_settings(*)
     `)
     .eq("round_id", roundId);
 
@@ -123,7 +126,7 @@ export const getEventsByRoundId = async (
 
   return {
     success: true,
-    data: data,
+    data: (data ?? []) as JoinedEventTable[],
   };
 };
 
@@ -164,7 +167,8 @@ export const getEventsBySeasonId = async (
       event_track_details(*),
       event_car_details(*),
       event_driver(*),
-      event_session_settings(*)
+      event_session_settings(*),
+      event_advanced_settings(*)
     `)
     .eq("season_id", seasonId);
 
@@ -181,7 +185,7 @@ export const getEventsBySeasonId = async (
 
   return {
     success: true,
-    data: data,
+    data: (data ?? []) as JoinedEventTable[],
   };
 };
 
@@ -928,6 +932,14 @@ export const deleteEventsByRoundId = async (
     return deleteSessionSettingsResult;
   }
 
+  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettings(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteAdvancedSettingsResult.success) {
+    return deleteAdvancedSettingsResult;
+  }
+
   const { error } = await supabase.from("event").delete().eq(
     "round_id",
     roundId,
@@ -991,6 +1003,14 @@ export const deleteEventsByDivisionId = async (
     return deleteSessionSettingsResult;
   }
 
+  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettings(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteAdvancedSettingsResult.success) {
+    return deleteAdvancedSettingsResult;
+  }
+
   const { error } = await supabase.from("event").delete().eq(
     "division_id",
     divisionId,
@@ -1052,6 +1072,14 @@ export const deleteEventsBySeasonId = async (
 
   if (!deleteSessionSettingsResult.success) {
     return deleteSessionSettingsResult;
+  }
+
+  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettings(
+    eventIdsResult.data[0],
+  );
+
+  if (!deleteAdvancedSettingsResult.success) {
+    return deleteAdvancedSettingsResult;
   }
 
   const { error } = await supabase.from("event").delete().eq(

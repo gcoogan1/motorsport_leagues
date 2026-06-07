@@ -10,7 +10,9 @@ import {
   InputWrapper,
   Label,
   LabelRow,
+  NumberInputWrapper,
   NumberInput,
+  NumberValue,
 } from "./IncrementInput.styles";
 import Button from "@/components/Button/Button";
 
@@ -21,10 +23,13 @@ type IncrementInputProps = {
   min?: number;
   max?: number;
   step?: number; // The amount to increment or decrement the value by
+  clampOnBlur?: boolean;
   helperText?: string;
   hasError?: boolean;
   errorMessage?: string;
+  style?: React.CSSProperties;
   onChange?: (value: number) => void;
+  formatter?: (value: number) => string
 };
 
 const IncrementInput = ({
@@ -34,38 +39,44 @@ const IncrementInput = ({
   min = 0,
   max = 99,
   step = 1,
+  clampOnBlur = true,
   helperText,
+  style,
   hasError = false,
   errorMessage,
   onChange,
+  formatter = (value) => String(value)
 }: IncrementInputProps) => {
-  const [count, setCount] = useState(value);
+  const [inputValue, setInputValue] = useState(String(value));
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    setCount(value);
+    setInputValue(String(value));
   }, [value]);
 
-  const hasValue = count > 0;
+  const parsedInputValue = Number(inputValue);
+  const currentNumber = Number.isFinite(parsedInputValue)
+    ? parsedInputValue
+    : min;
+  const hasValue = currentNumber > 0;
 
   const handleIncrement = () => {
-
-    const newValue = Math.min(count + step, max);
-
-    setCount(newValue);
+    const nextValue = currentNumber + step;
+    const newValue = clampOnBlur ? Math.min(nextValue, max) : nextValue;
+    setInputValue(String(newValue));
     onChange?.(newValue);
   };
 
   const handleDecrement = () => {
-
-    const newValue = Math.max(count - step, min);
-
-    setCount(newValue);
+    const nextValue = currentNumber - step;
+    const newValue = clampOnBlur ? Math.max(nextValue, min) : nextValue;
+    setInputValue(String(newValue));
     onChange?.(newValue);
   };
 
 
   return (
-    <InputWrapper $hasValue={hasValue}>
+    <InputWrapper $hasValue={hasValue} style={style}>
       <LabelRow>
         {label && <Label>{label}</Label>}
       </LabelRow>
@@ -86,32 +97,47 @@ const IncrementInput = ({
         </ButtonGroup>
 
         {/* Value can either be typed directly or adjusted using the buttons */}
-        <NumberInput
-          name={name}
-          type="number"
-          value={count}
-          min={min}
-          max={max}
-          step={step}
-          $hasValue={hasValue}
-          onChange={(e) => {
-            const value = Number(e.target.value);
+        <NumberInputWrapper>
+          <NumberInput
+            name={name}
+            type="number"
+            value={inputValue}
+            min={min}
+            max={max}
+            step={step}
+            $hasValue={hasValue}
+            $isFocused={isFocused}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => {
+              setIsFocused(false);
 
-            if (isNaN(value)) {
-              setCount(min);
-              onChange?.(min);
-              return;
-            }
+              const parsedValue = Number(inputValue);
+              if (!Number.isFinite(parsedValue)) {
+                setInputValue(String(min));
+                onChange?.(min);
+                return;
+              }
 
-            const clamped = Math.min(
-              Math.max(value, min),
-              max
-            );
+              const resolvedValue = clampOnBlur
+                ? Math.min(Math.max(parsedValue, min), max)
+                : parsedValue;
+              setInputValue(String(resolvedValue));
+              onChange?.(resolvedValue);
+            }}
+            onChange={(e) => {
+              const nextValue = e.target.value;
+              setInputValue(nextValue);
 
-            setCount(clamped);
-            onChange?.(clamped);
-          }}
-        />
+              const numericValue = Number(nextValue);
+              if (Number.isFinite(numericValue)) {
+                onChange?.(numericValue);
+              }
+            }}
+          />
+          {!isFocused && (
+            <NumberValue $hasValue={hasValue}>{formatter(currentNumber)}</NumberValue>
+          )}
+        </NumberInputWrapper>
 
         <ButtonGroup>
           <Button

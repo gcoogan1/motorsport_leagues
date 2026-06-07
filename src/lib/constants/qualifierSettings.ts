@@ -1,0 +1,51 @@
+export const TIME_LIMIT_OPTIONS = [
+  { label: "1 Min", value: "1min" },
+  { label: "2 Mins", value: "2min" },
+  { label: "3 Mins", value: "3min" },
+  { label: "5 Mins", value: "5min" },
+  { label: "10 Mins", value: "10min" },
+  { label: "15 Mins", value: "15min" },
+  { label: "20 Mins", value: "20min" },
+  { label: "25 Mins", value: "25min" },
+  { label: "30 Mins", value: "30min" },
+  { label: "40 Mins", value: "40min" },
+  { label: "50 Mins", value: "50min" },
+  { label: "60 Mins", value: "60min" },
+  { label: "90 Mins", value: "90min" },
+]
+
+
+export const QUALIFYING_CONTINUE_TIME_MIN = 30;
+export const QUALIFYING_CONTINUE_TIME_MAX = 180;
+export const QUALIFYING_CONTINUE_TIME_STEP = 10;
+export const QUALIFYING_CONTINUE_TIME_DEFAULT = 90;
+export const QUALIFYING_CONTINUE_TIME_FORMATTER = (value: number) => `${value} sec`;
+
+export const TIRE_WEAR_RT_QUAL_MIN = 0;
+export const TIRE_WEAR_RT_QUAL_MAX = 50;
+export const TIRE_WEAR_RT_QUAL_STEP = 1;
+export const TIRE_WEAR_RT_QUAL_DEFAULT = 3;
+export const TIRE_WEAR_RT_QUAL_FORMATTER = (value: number) =>
+  value === 0 ? "Off" : `${value}x`;
+
+export const FUEL_CONSUMPTION_RT_QUAL_MIN = 0;
+export const FUEL_CONSUMPTION_RT_QUAL_MAX = 50;
+export const FUEL_CONSUMPTION_RT_QUAL_STEP = 1;
+export const FUEL_CONSUMPTION_RT_QUAL_DEFAULT = 3;
+export const FUEL_CONSUMPTION_RT_QUAL_FORMATTER = (value: number) =>
+  value === 0 ? "Off" : `${value}x`;
+
+
+export const INITIAL_FUEL_QUAL_MIN = 0;
+export const INITIAL_FUEL_QUAL_MAX = 100;
+export const INITIAL_FUEL_QUAL_STEP = 1;
+export const INITIAL_FUEL_QUAL_DEFAULT = 0;
+export const INITIAL_FUEL_QUAL_FORMATTER = (value: number) =>
+  value === 0 ? "Default" : `${value} liters`;
+
+export const SLIPSTREAM_STRENGTH_QUAL_OPTIONS = [
+  { label: "Strong", value: "strong" },
+  { label: "Weak", value: "weak" },
+  { label: "Real", value: "real" },
+  { label: "Off", value: "off" },
+];
