@@ -67,11 +67,17 @@ export const Session = styled.div`
   display: flex;
   align-items: flex-start;
   gap: ${layout.space.xxSmall};
+  color: ${colors.text.text1};
 `;
 
 export const SessionLabel = styled.p`
   ${typography.body.mediumBold};
   color: ${colors.text.text1};
+`;
+
+export const SessionDivider = styled.p`
+  ${typography.body.mediumBold};
+  color: ${colors.text.text2};
 `;
 
 export const CarSelection = styled.div`
@@ -88,8 +94,8 @@ export const Header = styled.div`
   border-top-right-radius: ${borders.radius.xLarge};
   border-top-left-radius: ${borders.radius.xLarge};
   padding: ${layout.space.medium};
-  justify-content: flex-start;
   align-items: center;
+  justify-content: center;
 
   ${gradientBorder({
     gradient: gradients.base.fadeBottom10,

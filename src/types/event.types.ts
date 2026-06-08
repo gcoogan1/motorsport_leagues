@@ -3,6 +3,8 @@
 import type { CarCategory } from "./cars.types";
 import type { EventAdvancedSettingsTable } from "./eventAdvancedSettings";
 
+export type CarSelection = "Specified" | "Category" | "Assigned";
+
 export type EventTable = {
   id: string;
   created_at: string;

@@ -2,7 +2,7 @@ export type EventAdvancedSettingsTable = {
   id: string;
   created_at: string;
   event_id: string;
-  reveal_advanced_settings?: string;
+  reveal_advanced_settings?: boolean;
   // Time/Weather Settings
   weather_selection?: string;
   preset_weather?: string;
@@ -70,7 +70,7 @@ export type EventAdvancedSettingsTable = {
 
 export type CreateEventAdvancedSettingsPayload = {
   eventId: string;
-  revealAdvancedSettings?: string;
+  revealAdvancedSettings?: boolean;
   // Time/Weather Settings
   weatherSelection?: string;
   presetWeather?: string;
@@ -159,7 +159,7 @@ export type CreateEventAdvancedSettingsResponse = {
 
 export type UpdateEventAdvancedSettingsPayload = {
   eventId: string;
-  revealAdvancedSettings?: string;
+  revealAdvancedSettings?: boolean;
   // Time/Weather Settings
   weatherSelection?: string;
   presetWeather?: string;

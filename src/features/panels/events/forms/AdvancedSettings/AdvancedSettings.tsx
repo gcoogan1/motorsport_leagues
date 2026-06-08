@@ -124,7 +124,7 @@ const AdvancedSettings = ({ eventId }: AdvancedSettingsProps) => {
       ...((existingAdvancedSettings
         ? {
             revealAdvancedSettings:
-              existingAdvancedSettings.reveal_advanced_settings === "true",
+            existingAdvancedSettings.reveal_advanced_settings ?? false,
             weatherSelection: existingAdvancedSettings.weather_selection ?? "presetWeatherSelection",
             presetWeather: existingAdvancedSettings.preset_weather ?? "s01",
             customWeather: existingAdvancedSettings.custom_weather ?? "",
@@ -264,7 +264,7 @@ const AdvancedSettings = ({ eventId }: AdvancedSettingsProps) => {
 
   const toPayload = (data: AdvancedSettingsFormData): CreateEventAdvancedSettingsPayload => ({
     eventId,
-    revealAdvancedSettings: data.revealAdvancedSettings ? "true" : "false",
+    revealAdvancedSettings: data.revealAdvancedSettings,
     weatherSelection: data.weatherSelection,
     presetWeather: data.presetWeather,
     customWeather: data.customWeather,

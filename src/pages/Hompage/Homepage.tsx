@@ -65,11 +65,11 @@ const Homepage = () => {
         <LogoIcon />
         <SubTitle>Coming Soon</SubTitle>
 
-        <EventDetails
+        {/* <EventDetails
           sessions={["Practice", "Qualifying", "Race"]}
           sectionTitle="Car Selection"
           items={eventDetailItems}
-        />
+        /> */}
 
         {/* ----------------------------- */}
         {/* EMBLA CAROUSEL */}

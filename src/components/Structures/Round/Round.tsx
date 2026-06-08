@@ -25,6 +25,7 @@ type RoundCard = {
   driversButton?: EventButton;
   numberOfDrivers?: number;
   detailsButton?: EventButton;
+  revealDetails?: boolean;
 }
 
 type RoundProps = {
@@ -54,6 +55,7 @@ const Round = ({ roundName, briefingButton, reportButton, roundCards }: RoundPro
             resultsButton={card.resultsButton}
             driversButton={card.driversButton}
             detailsButton={card.detailsButton}
+            revealDetails={card.revealDetails}
             revealCars={card.revealCars}
           />
         ))}

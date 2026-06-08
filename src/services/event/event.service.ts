@@ -41,6 +41,21 @@ import { deleteEventAdvancedSettings } from "./eventAdvancedSettings";
 
 // -- Event Service -- //
 
+// -- HELPER FUNCTIONS -- //
+
+// Remove nested arrays from event relationships and flatten them to single objects, except for event_car_details which should remain an array since some events may have multiple cars revealed.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const normalizeEvent = (event: any): JoinedEventTable => ({
+  ...event,
+  event_track_details: event.event_track_details?.[0],
+  event_session_settings: event.event_session_settings?.[0],
+  event_advanced_settings: event.event_advanced_settings?.[0],
+
+  // keep arrays
+  event_car_details: event.event_car_details ?? [],
+  event_driver: event.event_driver ?? [],
+});
+
 // -- GET -- //
 
 // Get an event IDS by a specific column and value (HELPER)
@@ -125,9 +140,9 @@ export const getEventsByRoundId = async (
   }
 
   return {
-    success: true,
-    data: (data ?? []) as JoinedEventTable[],
-  };
+  success: true,
+  data: (data ?? []).map(normalizeEvent),
+};
 };
 
 // Get all events for a specific division
@@ -184,9 +199,9 @@ export const getEventsBySeasonId = async (
   }
 
   return {
-    success: true,
-    data: (data ?? []) as JoinedEventTable[],
-  };
+  success: true,
+  data: (data ?? []).map(normalizeEvent),
+};
 };
 
 // Get all event drivers for a specific event

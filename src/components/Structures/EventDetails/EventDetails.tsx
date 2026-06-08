@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import CarouselControl from "@/components/CarouselControl/CarouselControl";
 import HiddenCarImage from "@/assets/Cars/Hidden.png";
 import {
@@ -9,19 +9,25 @@ import {
   HeaderTitle,
   ImageContainer,
   Items,
-  ItemText,
+  // ItemText,
   Session,
+  SessionDivider,
   SessionLabel,
   Sessions,
-} from "./EventDeatils.styles";
+} from "./EventDetails.styles";
 
 type EventDetailsItem = {
   imageUrl: string;
   text: string;
 };
 
+type EventDetailsSession = {
+  label: string;
+  icon?: ReactNode;
+};
+
 type EventDetailsProps = {
-  sessions?: string[];
+  sessions?: Array<string | EventDetailsSession>;
   sectionTitle?: string;
   items?: EventDetailsItem[];
   fallbackImageUrls?: string[];
@@ -32,7 +38,7 @@ const CARD_WIDTH = 240;
 const GAP = 8;
 
 const EventDetails = ({
-  sessions = ["Practice"],
+  sessions = [],
   sectionTitle = "Car Selection",
   items = [],
   fallbackImageUrls = [],
@@ -70,6 +76,16 @@ const EventDetails = ({
     ];
   }, [fallbackImageUrls, fallbackText, items]);
 
+  const resolvedSessions = useMemo<EventDetailsSession[]>(
+    () =>
+      sessions.map((session) =>
+        typeof session === "string"
+          ? { label: session }
+          : session,
+      ),
+    [sessions],
+  );
+
   // useEffect(() => {
   //   if (activeIndex >= resolvedItems.length) {
   //     setActiveIndex(0);
@@ -100,9 +116,11 @@ const EventDetails = ({
   return (
     <DetailsContainer>
       <Sessions>
-        {sessions.map((session) => (
-          <Session key={session}>
-            <SessionLabel>{session}</SessionLabel>
+        {resolvedSessions.map((session, index) => (
+          <Session key={`${session.label}-${index}`}>
+            {session.icon}
+            <SessionLabel>{session.label}</SessionLabel>
+            {index < resolvedSessions.length - 1 && <SessionDivider>/</SessionDivider>}
           </Session>
         ))}
       </Sessions>
@@ -123,7 +141,7 @@ const EventDetails = ({
                 key={`${item.imageUrl}-${index}`}
                 imageUrl={item.imageUrl}
               >
-                <ItemText>{item.text}</ItemText>
+                {/* <ItemText>{item.text}</ItemText> */}
               </ImageContainer>
             ))}
           </Items>
