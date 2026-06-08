@@ -19,6 +19,7 @@ import OnTheGrid from "@/pages/League/modals/OnTheGrid/OnTheGrid";
 import DetailsModal from "@/pages/League/modals/DetailsModal/DetailsModal";
 import type { EventCarDetailsTable, EventTrackDetailsTable } from "@/types/event.types";
 import type { EventAdvancedSettingsTable } from "@/types/eventAdvancedSettings";
+import WatchModal from "@/features/leagues/modals/core/WatchModal/WatchModal";
 
 type ScheduleProps = {
   seasonStatus: LeagueStatus;
@@ -175,6 +176,8 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
                   };
                 })
               : [{ imageUrl: stockFallbackImage, label: "STOCK · Hidden" }];
+          
+         // Card Details
           return {
             eventId: event.id,
             eventName: event.event_name,
@@ -193,6 +196,8 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
             cars,
             revealCars: eventCarDetails.some((car) => car.reveal_car === true),
             revealDetails: advancedSettings?.reveal_advanced_settings ?? false,
+            revealBroadcast: event.reveal_broadcast && !!event.broadcast_url,
+            broadcastUrl: event.broadcast_url,
           };
         }),
       })),
@@ -243,6 +248,10 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
       />,
     );
   };
+  
+  const openWatchModal = (broadcastUrl?: string) => {
+    openModal(<WatchModal broadcastUrl={broadcastUrl} />);
+  };
 
   return (
     <>
@@ -292,7 +301,12 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
                   detailsButton: {
                     onClick: () => openDetailsModal(card.eventId),
                   },
+                  watchButton: {
+                    onClick: () => {
+                      openWatchModal(card.broadcastUrl);
+                    }},
                   revealDetails: card.revealDetails,
+                  revealBroadcast: card.revealBroadcast,
                 }))}
                 briefingButton={{
                   onClick: () => openBriefingModal(round.roundId)
