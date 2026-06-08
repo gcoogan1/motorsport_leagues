@@ -47,6 +47,7 @@ type RoundEventProps = {
   driversButton?: EventButton;
   detailsButton?: EventButton;
   revealDetails?: boolean;
+  revealBroadcast?: boolean;
 };
 
 const RoundEvent = ({
@@ -60,6 +61,7 @@ const RoundEvent = ({
   watchButton,
   resultsButton,
   driversButton,
+  revealBroadcast,
   detailsButton,
   raceTime,
   raceTimeType,
@@ -102,7 +104,7 @@ const RoundEvent = ({
           </SessionsContainer>
         </DetailsContainer>
         <ButtonsContainer>
-          {watchButton && (
+          {watchButton && revealBroadcast && (
             <Button
               onClick={watchButton.onClick}
               color="primary"
