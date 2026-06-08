@@ -16,7 +16,9 @@ import { sortEvents, sortRounds } from "@/features/leagues/forms/Schedule/Schedu
 import { buildDivisionOptions } from "./ScheduleLineup.utils";
 import BriefingModal from "@/pages/League/modals/BriefingModal/BriefingModal";
 import OnTheGrid from "@/pages/League/modals/OnTheGrid/OnTheGrid";
+import DetailsModal from "@/pages/League/modals/DetailsModal/DetailsModal";
 import type { EventCarDetailsTable, EventTrackDetailsTable } from "@/types/event.types";
+import type { EventAdvancedSettingsTable } from "@/types/eventAdvancedSettings";
 
 type ScheduleProps = {
   seasonStatus: LeagueStatus;
@@ -52,6 +54,16 @@ const getCarDetails = (
   }
 
   return Array.isArray(carDetails) ? carDetails : [carDetails];
+};
+
+const getAdvancedSettings = (
+  advancedSettings?: EventAdvancedSettingsTable | EventAdvancedSettingsTable[] | null,
+): EventAdvancedSettingsTable | undefined => {
+  if (!advancedSettings) {
+    return undefined;
+  }
+
+  return Array.isArray(advancedSettings) ? advancedSettings[0] : advancedSettings;
 };
 
 const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
@@ -143,6 +155,7 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
         cards: (eventsByRoundId[round.id] ?? []).map((event) => {
           const trackDetails = getTrackDetails(event.event_track_details);
           const eventCarDetails = getCarDetails(event.event_car_details);
+          const advancedSettings = getAdvancedSettings(event.event_advanced_settings);
 
           const cars =
             eventCarDetails.length > 0
@@ -162,7 +175,6 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
                   };
                 })
               : [{ imageUrl: stockFallbackImage, label: "STOCK · Hidden" }];
-
           return {
             eventId: event.id,
             eventName: event.event_name,
@@ -180,6 +192,7 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
             carImageUrls: cars.map((car) => car.imageUrl),
             cars,
             revealCars: eventCarDetails.some((car) => car.reveal_car === true),
+            revealDetails: advancedSettings?.reveal_advanced_settings ?? false,
           };
         }),
       })),
@@ -216,6 +229,20 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
       />,
     );
   }
+
+  const openDetailsModal = (eventId: string, seasonName?: string) => {
+    if (!seasonData) {
+      return;
+    }
+
+    openModal(
+      <DetailsModal
+        eventId={eventId}
+        seasonId={seasonData.id}
+        seasonName={seasonName || seasonData.season_name}
+      />,
+    );
+  };
 
   return (
     <>
@@ -262,6 +289,10 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
                   driversButton: {
                     onClick: () => openOnTheGridModal(card.eventId),
                   },
+                  detailsButton: {
+                    onClick: () => openDetailsModal(card.eventId),
+                  },
+                  revealDetails: card.revealDetails,
                 }))}
                 briefingButton={{
                   onClick: () => openBriefingModal(round.roundId)
