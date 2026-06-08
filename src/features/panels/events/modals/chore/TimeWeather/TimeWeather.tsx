@@ -19,6 +19,7 @@ import {
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import { useState } from "react";
 import { withMinDelay } from "@/utils/withMinDelay";
+import FormRow from "@/components/Forms/FormRow/FormRow";
 
 type TimeWeatherProps = {
   formMethods?: UseFormReturn<AdvancedSettingsFormData>;
@@ -122,16 +123,20 @@ const TimeWeather = ({ formMethods, setValue: propSetValue }: TimeWeatherProps) 
         ) : (
           <TextInput name={"customWeather"} label={"Custom Weather"} placeholder="S01, S02, C03, C04, R05, R06, Random, Random" />
         )}
-        <SelectInput
-          name={"timeOfDay"}
-          label="Time of Day"
-          options={TIME_OF_DAY_OPTIONS}
-        />
-        <SelectInput
-          name={"equalCondition"}
-          label="Equal Condition"
-          options={EQUAL_CONDITION_OPTIONS}
-        />
+        <FormRow>
+          <SelectInput
+            name={"timeOfDay"}
+            label="Time of Day"
+            options={TIME_OF_DAY_OPTIONS}
+          />
+          {weatherSelection === "presetWeatherSelection" && (
+            <SelectInput
+            name={"equalCondition"}
+            label="Equal Condition"
+            options={EQUAL_CONDITION_OPTIONS}
+          />
+          )}
+        </FormRow>
         <IncrementInput
           name={"variableTimeSpeedRate"}
           label="Variable Time Speed Rate"

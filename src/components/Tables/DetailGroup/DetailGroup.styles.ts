@@ -34,6 +34,7 @@ export const GroupContainer = styled.div`
   max-width: 640px;
   flex-direction: column;
   align-items: flex-start;
+  align-self: center;
   border-radius: ${layout.space.xLarge};
 
   ${gradientBorder({

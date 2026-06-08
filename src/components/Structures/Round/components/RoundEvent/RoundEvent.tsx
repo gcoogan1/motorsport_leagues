@@ -46,6 +46,7 @@ type RoundEventProps = {
   resultsButton?: EventButton;
   driversButton?: EventButton;
   detailsButton?: EventButton;
+  revealDetails?: boolean;
 };
 
 const RoundEvent = ({
@@ -62,6 +63,7 @@ const RoundEvent = ({
   detailsButton,
   raceTime,
   raceTimeType,
+  revealDetails,
 }: RoundEventProps) => {
 
   const { data: drivers } = useEventDrivers(eventId);
@@ -130,7 +132,7 @@ const RoundEvent = ({
               Results
             </Button>
           )}
-          {detailsButton && (
+          {detailsButton && revealDetails && (
             <Button
               onClick={detailsButton.onClick}
               color="base"
