@@ -21,6 +21,7 @@ import {
   SessionContainer,
   ButtonsContainer,
   RaceTime,
+  SessionDivider,
 } from "./RoundEvent.styles";
 import { useEventDrivers } from "@/rtkQuery/hooks/queries/useEvents";
 
@@ -40,14 +41,19 @@ type RoundEventProps = {
   }[];
   trackName?: string;
   revealCars?: boolean;
-  raceTime?: string;
-  raceTimeType?: "qualifying" | "race";
+  hasQualifying?: boolean;
+  qualifyingType?: "time" | "laps";
+  qualifyingTimeLap?: string | number;
+  hasRace?: boolean;
+  raceType?: "time" | "laps";
+  raceTimeLap?: string | number;
   watchButton?: EventButton;
   resultsButton?: EventButton;
   driversButton?: EventButton;
   detailsButton?: EventButton;
   revealDetails?: boolean;
   revealBroadcast?: boolean;
+  revealSession?: boolean;
 };
 
 const RoundEvent = ({
@@ -63,9 +69,14 @@ const RoundEvent = ({
   driversButton,
   revealBroadcast,
   detailsButton,
-  raceTime,
-  raceTimeType,
+  hasQualifying,
+  qualifyingType,
+  qualifyingTimeLap,
+  hasRace,
+  raceType,
+  raceTimeLap,
   revealDetails,
+  revealSession,
 }: RoundEventProps) => {
 
   const { data: drivers } = useEventDrivers(eventId);
@@ -80,6 +91,9 @@ const RoundEvent = ({
         }))
       : [{ imageUrl: PlaceholderImage, label: "STOCK · Hidden" }];
 
+    const qualifyingText = qualifyingType === "time" ? `${qualifyingTimeLap} Qualifier` : `${qualifyingTimeLap} Lap Qualifier`;
+    const raceText = raceType === "time" ? `${raceTimeLap} Race` : `${raceTimeLap} Lap Race`;
+
 
   return (
     <EventContainer>
@@ -91,13 +105,26 @@ const RoundEvent = ({
           </AboutContainer>
           <TrackName>{trackName ?? "Hidden track"}</TrackName>
           <SessionsContainer>
-            {raceTime && (
+            {hasQualifying && revealSession && (
               <SessionContainer>
                 <Icon size="medium">
-                  {raceTimeType === "qualifying" ? <TimerIcon /> : <LapsIcon />}
+                  {qualifyingType === "time" ? <TimerIcon /> : <LapsIcon />}
                 </Icon>
                 <AboutTextContainer>
-                  <RaceTime>{raceTime}</RaceTime>
+                  <RaceTime>{qualifyingText}</RaceTime>
+                </AboutTextContainer>
+              </SessionContainer>
+            )}
+            {hasQualifying && hasRace && revealSession && (
+              <SessionDivider>/</SessionDivider>
+            )}
+            {hasRace && revealSession && (
+              <SessionContainer>
+                <Icon size="medium">
+                  {raceType === "time" ? <TimerIcon /> : <LapsIcon />}
+                </Icon>
+                <AboutTextContainer>
+                  <RaceTime>{raceText}</RaceTime>
                 </AboutTextContainer>
               </SessionContainer>
             )}

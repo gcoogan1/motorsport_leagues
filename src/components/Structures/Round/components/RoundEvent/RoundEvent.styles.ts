@@ -118,9 +118,10 @@ export const SessionContainer = styled.div`
   color: ${colors.text.text2};
 `;
 
-// export const SessionDivider = styled.p`
-//   ${typography.body.mediumBold} color: ${colors.base.base4};
-// `;
+export const SessionDivider = styled.p`
+  ${typography.body.mediumBold} 
+  color: ${colors.base.base4};
+`;
 
 export const AboutTextContainer = styled.div`
   display: flex;

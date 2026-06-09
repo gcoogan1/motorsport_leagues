@@ -153,6 +153,13 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
               trackDetails?.reveal_track !== false && trackDetails?.track_name
                 ? trackDetails.track_name
                 : "Hidden track",
+            hasQualifying: event.event_session_settings?.has_qualifying  ?? false,
+            qualifyingType: event.event_session_settings?.qualifying_type,
+            qualifyingTimeLap: event.event_session_settings?.qualifying_laps ?? event.event_session_settings?.qualifying_time,
+            hasRace: event.event_session_settings?.has_race ?? false,
+            raceType: event.event_session_settings?.race_type,
+            raceTimeLap: event.event_session_settings?.race_laps ?? event.event_session_settings?.race_time,
+            revealSession: event.event_session_settings?.reveal_session ?? false,
             carImageUrls: cars.map((car) => car.imageUrl),
             cars,
             revealCars: eventCarDetails.some((car) => car.reveal_car === true),

@@ -18,8 +18,12 @@ type RoundCard = {
   }[];
   revealCars?: boolean;
   trackName?: string;
-  raceTime?: string;
-  raceTimeType?: "qualifying" | "race";
+  hasQualifying?: boolean;
+  qualifyingType?: "time" | "laps";
+  qualifyingTimeLap?: string | number;
+  hasRace?: boolean;
+  raceType?: "time" | "laps";
+  raceTimeLap?: string | number;
   watchButton?: EventButton;
   resultsButton?: EventButton;
   driversButton?: EventButton;
@@ -27,6 +31,7 @@ type RoundCard = {
   detailsButton?: EventButton;
   revealDetails?: boolean;
   revealBroadcast?: boolean;
+  revealSession?: boolean;
 }
 
 type RoundProps = {
@@ -50,8 +55,12 @@ const Round = ({ roundName, briefingButton, reportButton, roundCards }: RoundPro
             carImageUrls={card.carImageUrls}
             cars={card.cars}
             trackName={card.trackName}
-            raceTime={card.raceTime}
-            raceTimeType={card.raceTimeType}
+            hasQualifying={card.hasQualifying}
+            qualifyingType={card.qualifyingType}
+            qualifyingTimeLap={card.qualifyingTimeLap}
+            hasRace={card.hasRace}
+            raceType={card.raceType}
+            raceTimeLap={card.raceTimeLap}
             watchButton={card.watchButton}
             resultsButton={card.resultsButton}
             driversButton={card.driversButton}
@@ -59,6 +68,7 @@ const Round = ({ roundName, briefingButton, reportButton, roundCards }: RoundPro
             revealDetails={card.revealDetails}
             revealCars={card.revealCars}
             revealBroadcast={card.revealBroadcast}
+            revealSession={card.revealSession}
           />
         ))}
       </EventsContainer>
