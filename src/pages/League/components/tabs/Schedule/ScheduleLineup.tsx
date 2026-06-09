@@ -17,7 +17,7 @@ import { buildDivisionOptions, formatActiveDivisionTabLabel, getAdvancedSettings
 import BriefingModal from "@/pages/League/modals/BriefingModal/BriefingModal";
 import OnTheGrid from "@/pages/League/modals/OnTheGrid/OnTheGrid";
 import DetailsModal from "@/pages/League/modals/DetailsModal/DetailsModal";
-import WatchModal from "@/features/leagues/modals/core/WatchModal/WatchModal";
+import WatchModal from "@/pages/League/modals/WatchModal/WatchModal";
 
 type ScheduleProps = {
   seasonStatus: LeagueStatus;

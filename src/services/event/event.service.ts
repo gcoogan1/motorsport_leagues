@@ -855,6 +855,14 @@ export const deleteEvent = async (
     return deleteSessionSettingsResult;
   }
 
+  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettings(
+    eventId,
+  );
+
+  if (!deleteAdvancedSettingsResult.success) {
+    return deleteAdvancedSettingsResult;
+  }
+
   const { error } = await supabase.from("event").delete().eq("id", eventId);
 
   if (error) {

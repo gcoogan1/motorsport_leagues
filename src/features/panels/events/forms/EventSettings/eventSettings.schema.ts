@@ -4,7 +4,7 @@ export const eventSettingsSchema = z.object({
   eventName: z
     .string()
     .min(1, "Please enter a name for this Event.")
-    .max(16, "Event name cannot be longer than 16 characters.")
+    .max(32, "Event name cannot be longer than 32 characters.")
     .trim(),
 
   eventDate: z.date({

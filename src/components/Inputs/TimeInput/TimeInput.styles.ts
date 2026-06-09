@@ -57,6 +57,7 @@ export const InputField = styled.input<{
   width: 100%;
   height: 52px;
   box-sizing: border-box;
+  ${typography.body.mediumBold};
   border-radius: ${borders.radius.medium};
   padding-top: ${layout.space.medium};
   padding-bottom: ${layout.space.medium};

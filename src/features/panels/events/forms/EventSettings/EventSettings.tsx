@@ -20,6 +20,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import UnsavedChanges from "@/features/leagues/modals/errors/UnsavedChanges/UnsavedChanges";
 import { usePanel } from "@/providers/panel/usePanel";
+import FormRow from "@/components/Forms/FormRow/FormRow";
 
 type EventSettingsProps = {
   event: EventTable;
@@ -38,12 +39,12 @@ const EventSettings = ({ event }: EventSettingsProps) => {
     resolver: zodResolver(eventSettingsSchema),
     defaultValues: {
       eventName: event.event_name,
-      eventDate: event.event_date && new Date(event.event_date) || undefined,
+      eventDate: event.event_date && new Date(event.event_date) || new Date(),
       eventTime: getTimeFromDate(
         event.event_date,
         event.event_time_zone ||
           Intl.DateTimeFormat().resolvedOptions().timeZone,
-      ),
+      ) || "12:00",
       broadcastUrl: event.broadcast_url ?? "",
       revealDate: event.reveal_date,
       revealBroadcast: event.reveal_broadcast,
@@ -159,6 +160,8 @@ const EventSettings = ({ event }: EventSettingsProps) => {
           placeholder="Enter event name"
           hasError={!!errors.eventName}
           errorMessage={errors.eventName?.message}
+          showCounter
+          maxLength={32}
         />
         <PanelForm
           title="Date & Time"
@@ -168,20 +171,22 @@ const EventSettings = ({ event }: EventSettingsProps) => {
             onChange: handleHideDateTimeChange,
           }}
         >
-          <DatePicker
+          <FormRow>
+            <DatePicker
             name="eventDate"
-            label="Event Date"
+            label="Date"
             error={errors.eventDate?.message}
           />
           <TimeInput
             name="eventTime"
-            label="Event Time"
+            label="Time"
             hasError={!!errors.eventTime}
             errorMessage={errors.eventTime?.message}
           />
+          </FormRow>
         </PanelForm>
         <PanelForm
-          title="Broadcast URL"
+          title="Broadcast Link"
           checkboxOption={{
             label: "Don't Reveal",
             checked: !revealBroadcast,
@@ -190,8 +195,8 @@ const EventSettings = ({ event }: EventSettingsProps) => {
         >
           <TextInput
             name="broadcastUrl"
-            label="Broadcast URL"
-            placeholder="Enter broadcast URL"
+            label="Streaming URL"
+            placeholder="e.g. Youtube, Twitch, etc."
             hasError={!!errors.broadcastUrl}
             errorMessage={errors.broadcastUrl?.message}
           />

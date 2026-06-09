@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 import { designTokens } from "@/app/design/tokens";
-import { gradientBorder } from "@/app/design/mixens/gradientBorder";
+import { bottomFadeBorder } from "@/app/design/mixens/edgeFadeBorder";
 
 const { colors, gradients, layout, borders, typography } = designTokens;
 
@@ -22,9 +22,9 @@ export const FormHeader = styled.div`
   padding: ${layout.space.medium};
   gap: ${layout.space.xSmall};
   background: ${({ theme }) => theme.theme.primaryGradientFadeRight50};
-  border-radius: ${borders.radius.xLarge};
+    border-top-left-radius: ${borders.radius.xLarge};
 
-  ${gradientBorder({
+  ${bottomFadeBorder({
     width: borders.width.thin,
     gradient: gradients.base.fadeRight10,
   })}
