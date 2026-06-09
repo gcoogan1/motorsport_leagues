@@ -29,7 +29,9 @@ import {
   getNextEventName,
   getNextRoundName,
   sortEvents,
+  sortEventsByDate,
   sortRounds,
+  sortRoundsByMostRecentEventDate,
 } from "./Schedule.util";
 import { formatEventDate } from "@/utils/dates";
 import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
@@ -105,13 +107,19 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
   const eventsByDivision = useEvents(effectiveDivisionId);
   const eventDriversByDivision = useEventDriversByDivision(effectiveDivisionId);
 
-  const rounds = useMemo(
-    () => sortRounds(roundsByDivision.data ?? []),
-    [roundsByDivision.data],
-  );
+  const rounds = useMemo(() => {
+    const sortedRounds = sortRounds(roundsByDivision.data ?? []);
+
+    // Don't re-sort until events are actually loaded
+    if (!eventsByDivision.data?.length) return sortedRounds;
+
+    return sortRoundsByMostRecentEventDate(sortedRounds, eventsByDivision.data);
+}, [roundsByDivision.data, eventsByDivision.data]);
+
 
   const eventsByRoundId = useMemo(() => {
-    return sortEvents(eventsByDivision.data ?? []).reduce<Record<string, JoinedEventTable[]>>(
+    const sortedEvents = sortEvents(eventsByDivision.data ?? []);
+    return sortEventsByDate(sortedEvents).reduce<Record<string, JoinedEventTable[]>>(
       (groupedEvents, event) => {
         if (!groupedEvents[event.round_id]) {
           groupedEvents[event.round_id] = [];
@@ -248,6 +256,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
       onDivisionChange={setSelectedDivisionId}
     />
   ) : undefined;
+
 
   const listChildren = (
     <>

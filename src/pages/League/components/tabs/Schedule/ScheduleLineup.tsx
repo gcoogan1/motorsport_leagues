@@ -12,59 +12,16 @@ import { useLeagueSeasonDivisions } from "@/rtkQuery/hooks/queries/useLeagueSeas
 import { useEventsBySeason } from "@/rtkQuery/hooks/queries/useEvents";
 import { useRoundsBySeason } from "@/rtkQuery/hooks/queries/useRounds";
 import { formatEventDate } from "@/utils/dates";
-import { sortEvents, sortRounds } from "@/features/leagues/forms/Schedule/Schedule.util";
-import { buildDivisionOptions } from "./ScheduleLineup.utils";
+import { sortEvents, sortEventsByDate, sortRounds, sortRoundsByMostRecentEventDate } from "@/features/leagues/forms/Schedule/Schedule.util";
+import { buildDivisionOptions, formatActiveDivisionTabLabel, getAdvancedSettings, getCarDetails, getTrackDetails, normalizeDivisionTabLabel } from "./ScheduleLineup.utils";
 import BriefingModal from "@/pages/League/modals/BriefingModal/BriefingModal";
 import OnTheGrid from "@/pages/League/modals/OnTheGrid/OnTheGrid";
 import DetailsModal from "@/pages/League/modals/DetailsModal/DetailsModal";
-import type { EventCarDetailsTable, EventTrackDetailsTable } from "@/types/event.types";
-import type { EventAdvancedSettingsTable } from "@/types/eventAdvancedSettings";
 import WatchModal from "@/features/leagues/modals/core/WatchModal/WatchModal";
 
 type ScheduleProps = {
   seasonStatus: LeagueStatus;
   seasonData?: LeagueSeasonTable;
-};
-
-const formatActiveDivisionTabLabel = (label: string): string => {
-  if (!label || label.toLowerCase() === "pre-q") {
-    return label;
-  }
-
-  return `Division ${label}`;
-};
-
-const normalizeDivisionTabLabel = (label: string): string =>
-  label.replace(/\s+division$/i, "");
-
-const getTrackDetails = (
-  trackDetails?: EventTrackDetailsTable | EventTrackDetailsTable[] | null,
-): EventTrackDetailsTable | undefined => {
-  if (!trackDetails) {
-    return undefined;
-  }
-
-  return Array.isArray(trackDetails) ? trackDetails[0] : trackDetails;
-};
-
-const getCarDetails = (
-  carDetails?: EventCarDetailsTable[] | EventCarDetailsTable | null,
-): EventCarDetailsTable[] => {
-  if (!carDetails) {
-    return [];
-  }
-
-  return Array.isArray(carDetails) ? carDetails : [carDetails];
-};
-
-const getAdvancedSettings = (
-  advancedSettings?: EventAdvancedSettingsTable | EventAdvancedSettingsTable[] | null,
-): EventAdvancedSettingsTable | undefined => {
-  if (!advancedSettings) {
-    return undefined;
-  }
-
-  return Array.isArray(advancedSettings) ? advancedSettings[0] : advancedSettings;
 };
 
 const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
@@ -102,14 +59,18 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
 
   const rounds = useMemo(
     () =>
-      sortRounds(roundsBySeason.data ?? []).filter(
-        (round) => !activeDivision || round.division_id === activeDivision.value,
-      ),
-    [activeDivision, roundsBySeason.data],
+      (() => {
+        const sortedRounds = sortRounds(roundsBySeason.data ?? []);
+        return sortRoundsByMostRecentEventDate(sortedRounds, eventsBySeason.data ?? []).filter(
+          (round) => !activeDivision || round.division_id === activeDivision.value,
+        );
+      })(),
+    [activeDivision, roundsBySeason.data, eventsBySeason.data],
   );
 
   const eventsByRoundId = useMemo(() => {
-    const filteredEvents = sortEvents(eventsBySeason.data ?? []).filter(
+    const sortedEvents = sortEvents(eventsBySeason.data ?? []);
+    const filteredEvents = sortEventsByDate(sortedEvents).filter(
       (event) => !activeDivision || event.division_id === activeDivision.value,
     );
 
