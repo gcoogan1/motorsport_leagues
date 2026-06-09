@@ -44,17 +44,17 @@ const EventDetails = ({
   fallbackImageUrls = [],
   fallbackText = "Assigned Car",
 }: EventDetailsProps) => {
+  // Automatically find and set the middle card on load
+  const [activeIndex, setActiveIndex] = useState(() => {
+    const count =
+      items.length > 0
+        ? items.length
+        : fallbackImageUrls.length > 0
+          ? fallbackImageUrls.length
+          : 1; // 1 represents the single "Hidden" fallback item
 
-    // Automatically find and set the middle card on load
-    const [activeIndex, setActiveIndex] = useState(() => {
-    const count = items.length > 0 
-      ? items.length 
-      : fallbackImageUrls.length > 0 
-        ? fallbackImageUrls.length 
-        : 1; // 1 represents the single "Hidden" fallback item
-        
     return Math.floor(count / 2);
-  });;
+  });
 
   const resolvedItems = useMemo<EventDetailsItem[]>(() => {
     if (items.length > 0) {
@@ -79,9 +79,7 @@ const EventDetails = ({
   const resolvedSessions = useMemo<EventDetailsSession[]>(
     () =>
       sessions.map((session) =>
-        typeof session === "string"
-          ? { label: session }
-          : session,
+        typeof session === "string" ? { label: session } : session,
       ),
     [sessions],
   );
@@ -99,19 +97,17 @@ const EventDetails = ({
 
   const handlePrevious = () => {
     setActiveIndex(
-      safeActiveIndex === 0
-        ? resolvedItems.length - 1
-        : safeActiveIndex - 1,
+      safeActiveIndex === 0 ? resolvedItems.length - 1 : safeActiveIndex - 1,
     );
   };
 
   const handleNext = () => {
     setActiveIndex(
-      safeActiveIndex === resolvedItems.length - 1
-        ? 0
-        : safeActiveIndex + 1,
+      safeActiveIndex === resolvedItems.length - 1 ? 0 : safeActiveIndex + 1,
     );
   };
+
+  const showCarousel = resolvedItems.length > 1;
 
   return (
     <DetailsContainer>
@@ -120,7 +116,9 @@ const EventDetails = ({
           <Session key={`${session.label}-${index}`}>
             {session.icon}
             <SessionLabel>{session.label}</SessionLabel>
-            {index < resolvedSessions.length - 1 && <SessionDivider>/</SessionDivider>}
+            {index < resolvedSessions.length - 1 && (
+              <SessionDivider>/</SessionDivider>
+            )}
           </Session>
         ))}
       </Sessions>
@@ -146,13 +144,15 @@ const EventDetails = ({
             ))}
           </Items>
 
-          <CarouselControl
-            selectedIndex={safeActiveIndex}
-            scrollSnaps={Array.from(resolvedItems.keys())}
-            onPrevious={handlePrevious}
-            onNext={handleNext}
-            onSelect={setActiveIndex}
-          />
+          {showCarousel && (
+            <CarouselControl
+              selectedIndex={safeActiveIndex}
+              scrollSnaps={Array.from(resolvedItems.keys())}
+              onPrevious={handlePrevious}
+              onNext={handleNext}
+              onSelect={setActiveIndex}
+            />
+          )}
         </CarouselContainer>
       </CarSelection>
     </DetailsContainer>

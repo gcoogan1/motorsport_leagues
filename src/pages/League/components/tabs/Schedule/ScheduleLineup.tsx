@@ -17,7 +17,7 @@ import { buildDivisionOptions, formatActiveDivisionTabLabel, getAdvancedSettings
 import BriefingModal from "@/pages/League/modals/BriefingModal/BriefingModal";
 import OnTheGrid from "@/pages/League/modals/OnTheGrid/OnTheGrid";
 import DetailsModal from "@/pages/League/modals/DetailsModal/DetailsModal";
-import WatchModal from "@/pages/League/modals/WatchModal/WatchModal";
+import WatchModal from "@/pages/League/modals/Watch/WatchModal";
 
 type ScheduleProps = {
   seasonStatus: LeagueStatus;
@@ -134,9 +134,11 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
                         ? PlaceholderImage
                         : resolvedImageUrl,
                     label,
+                    category: car.car_category,
+                    carSelection: car.car_selection,
                   };
                 })
-              : [{ imageUrl: stockFallbackImage, label: "STOCK · Hidden" }];
+              : [{ imageUrl: stockFallbackImage, label: "STOCK · Hidden", category: "stock" }];
           
          // Card Details
           return {

@@ -135,12 +135,12 @@ const TrackCarDetails = ({ eventId }: TrackCarDetailsProps) => {
       }) ?? [];
 
     return {
-      trackName: eventTrackDetails?.track_name ?? "",
+      trackName: eventTrackDetails?.track_name ?? "24 Heures du Mans Racing Circuit",
       carSelection: eventCarDetails?.[0]?.car_selection ?? "Specified",
       cars: mappedCars,
       carCategory: eventCarDetails?.[0]?.car_category
         ? (eventCarDetails[0].car_category as CarCategory)
-        : undefined,
+        : "gr.1",
       revealTrack: eventTrackDetails?.reveal_track ?? true,
       revealCarDetails: eventCarDetails?.[0]?.reveal_car ?? true,
     };

@@ -157,3 +157,27 @@ export const deleteEventAdvancedSettings = async (eventId: string): Promise<Dele
 
   return { success: true };
 }
+
+export const deleteEventAdvancedSettingsByEventIds = async (eventIds: string[]): Promise<DeleteEventAdvancedSettingsResponse> => {
+  if (eventIds.length === 0) {
+    return { success: true };
+  }
+
+  const { error } = await supabase
+    .from("event_advanced_settings")
+    .delete()
+    .in("event_id", eventIds);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
+};

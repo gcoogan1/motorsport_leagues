@@ -15,6 +15,8 @@ type RoundCard = {
   cars?: {
     imageUrl: string;
     label: string;
+    category?: string;
+    carSelection?: string;
   }[];
   revealCars?: boolean;
   trackName?: string;

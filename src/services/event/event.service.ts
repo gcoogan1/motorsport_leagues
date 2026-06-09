@@ -37,7 +37,7 @@ import type {
   UpdateEventTrackDetailsPayload,
   UpdateEventTrackDetailsResponse,
 } from "@/types/event.types";
-import { deleteEventAdvancedSettings } from "./eventAdvancedSettings";
+import { deleteEventAdvancedSettings, deleteEventAdvancedSettingsByEventIds } from "./eventAdvancedSettings";
 
 // -- Event Service -- //
 
@@ -923,45 +923,17 @@ export const deleteEventsByRoundId = async (
     return eventIdsResult;
   }
 
-  const deleteEventDriversResult = await deleteEventDriverRowsByEventIds(
-    eventIdsResult.data,
-  );
-
-  if (!deleteEventDriversResult.success) {
-    return deleteEventDriversResult;
+  if (eventIdsResult.data.length === 0) {
+    return {
+      success: true,
+    };
   }
 
-  const deleteTrackDetailsResult = await deleteEventTrackDetailsByEventId(
-    eventIdsResult.data[0],
-  );
-
-  if (!deleteTrackDetailsResult.success) {
-    return deleteTrackDetailsResult;
-  }
-
-  const deleteCarDetailsResult = await deleteEventCarDetailsByEventId(
-    eventIdsResult.data[0],
-  );
-
-  if (!deleteCarDetailsResult.success) {
-    return deleteCarDetailsResult;
-  }
-
-  const deleteSessionSettingsResult = await deleteEventSessionSettingsByEventId(
-    eventIdsResult.data[0],
-  );
-
-  if (!deleteSessionSettingsResult.success) {
-    return deleteSessionSettingsResult;
-  }
-
-  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettings(
-    eventIdsResult.data[0],
-  );
-
-  if (!deleteAdvancedSettingsResult.success) {
-    return deleteAdvancedSettingsResult;
-  }
+  await deleteEventDriverRowsByEventIds(eventIdsResult.data);
+  await deleteEventTrackDetailsByEventIds(eventIdsResult.data);
+  await deleteEventCarDetailsByEventIds(eventIdsResult.data);
+  await deleteEventSessionSettingsByEventIds(eventIdsResult.data);
+  await deleteEventAdvancedSettingsByEventIds(eventIdsResult.data);
 
   const { error } = await supabase.from("event").delete().eq(
     "round_id",
@@ -994,45 +966,11 @@ export const deleteEventsByDivisionId = async (
     return eventIdsResult;
   }
 
-  const deleteEventDriversResult = await deleteEventDriverRowsByEventIds(
-    eventIdsResult.data,
-  );
-
-  if (!deleteEventDriversResult.success) {
-    return deleteEventDriversResult;
-  }
-
-  const deleteTrackDetailsResult = await deleteEventTrackDetailsByEventId(
-    eventIdsResult.data[0],
-  );
-
-  if (!deleteTrackDetailsResult.success) {
-    return deleteTrackDetailsResult;
-  }
-
-  const deleteCarDetailsResult = await deleteEventCarDetailsByEventId(
-    eventIdsResult.data[0],
-  );
-
-  if (!deleteCarDetailsResult.success) {
-    return deleteCarDetailsResult;
-  }
-
-  const deleteSessionSettingsResult = await deleteEventSessionSettingsByEventId(
-    eventIdsResult.data[0],
-  );
-
-  if (!deleteSessionSettingsResult.success) {
-    return deleteSessionSettingsResult;
-  }
-
-  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettings(
-    eventIdsResult.data[0],
-  );
-
-  if (!deleteAdvancedSettingsResult.success) {
-    return deleteAdvancedSettingsResult;
-  }
+  await deleteEventDriverRowsByEventIds(eventIdsResult.data);
+  await deleteEventTrackDetailsByEventIds(eventIdsResult.data);
+  await deleteEventCarDetailsByEventIds(eventIdsResult.data);
+  await deleteEventSessionSettingsByEventIds(eventIdsResult.data);
+  await deleteEventAdvancedSettingsByEventIds(eventIdsResult.data);
 
   const { error } = await supabase.from("event").delete().eq(
     "division_id",
@@ -1065,45 +1003,11 @@ export const deleteEventsBySeasonId = async (
     return eventIdsResult;
   }
 
-  const deleteEventDriversResult = await deleteEventDriverRowsByEventIds(
-    eventIdsResult.data,
-  );
-
-  if (!deleteEventDriversResult.success) {
-    return deleteEventDriversResult;
-  }
-
-  const deleteTrackDetailsResult = await deleteEventTrackDetailsByEventId(
-    eventIdsResult.data[0],
-  );
-
-  if (!deleteTrackDetailsResult.success) {
-    return deleteTrackDetailsResult;
-  }
-
-  const deleteCarDetailsResult = await deleteEventCarDetailsByEventId(
-    eventIdsResult.data[0],
-  );
-
-  if (!deleteCarDetailsResult.success) {
-    return deleteCarDetailsResult;
-  }
-
-  const deleteSessionSettingsResult = await deleteEventSessionSettingsByEventId(
-    eventIdsResult.data[0],
-  );
-
-  if (!deleteSessionSettingsResult.success) {
-    return deleteSessionSettingsResult;
-  }
-
-  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettings(
-    eventIdsResult.data[0],
-  );
-
-  if (!deleteAdvancedSettingsResult.success) {
-    return deleteAdvancedSettingsResult;
-  }
+  await deleteEventDriverRowsByEventIds(eventIdsResult.data);
+  await deleteEventTrackDetailsByEventIds(eventIdsResult.data);
+  await deleteEventCarDetailsByEventIds(eventIdsResult.data);
+  await deleteEventSessionSettingsByEventIds(eventIdsResult.data);
+  await deleteEventAdvancedSettingsByEventIds(eventIdsResult.data);
 
   const { error } = await supabase.from("event").delete().eq(
     "season_id",
@@ -1126,6 +1030,7 @@ export const deleteEventsBySeasonId = async (
   };
 };
 
+
 // Delete Track Details for an event by its ID
 export const deleteEventTrackDetailsByEventId = async (
   eventId: string,
@@ -1134,6 +1039,35 @@ export const deleteEventTrackDetailsByEventId = async (
     .from("event_track_details")
     .delete()
     .eq("event_id", eventId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
+// Delete event drivers by their associated event IDs (HELPER)
+const deleteEventTrackDetailsByEventIds = async (
+  eventIds: string[],
+): Promise<DeleteEventTrackDetailsResponse> => {
+  if (eventIds.length === 0) {
+    return { success: true };
+  }
+
+  const { error } = await supabase
+    .from("event_track_details")
+    .delete()
+    .in("event_id", eventIds);
 
   if (error) {
     return {
@@ -1176,6 +1110,35 @@ export const deleteEventCarDetailsByEventId = async (
   };
 };
 
+// Delete event drivers by their associated event IDs (HELPER)
+const deleteEventCarDetailsByEventIds = async (
+  eventIds: string[],
+): Promise<DeleteEventCarDetailsResponse> => {
+  if (eventIds.length === 0) {
+    return { success: true };
+  }
+
+  const { error } = await supabase
+    .from("event_car_details")
+    .delete()
+    .in("event_id", eventIds);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
 // Delete Session Settings for an event by its ID
 export const deleteEventSessionSettingsByEventId = async (
   eventId: string,
@@ -1184,6 +1147,36 @@ export const deleteEventSessionSettingsByEventId = async (
     .from("event_session_settings")
     .delete()
     .eq("event_id", eventId);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
+
+// Delete event drivers by their associated event IDs (HELPER)
+const deleteEventSessionSettingsByEventIds = async (
+  eventIds: string[],
+): Promise<DeleteEventSessionSettingsResponse> => {
+  if (eventIds.length === 0) {
+    return { success: true };
+  }
+
+  const { error } = await supabase
+    .from("event_session_settings")
+    .delete()
+    .in("event_id", eventIds);
 
   if (error) {
     return {
