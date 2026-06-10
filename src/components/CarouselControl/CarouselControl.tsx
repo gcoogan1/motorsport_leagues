@@ -6,7 +6,6 @@ import {
   Indicator,
   Indicators,
 } from "./CarouselControl.styles";
-
 // To be used with the embla carousel hook to control the carousel and display indicators for each slide.
 
 type CarouselControlProps = {
@@ -16,6 +15,8 @@ type CarouselControlProps = {
   onPrevious: () => void;
   onNext: () => void;
   onSelect: (index: number) => void;
+
+  maxDots?: number;
 };
 
 const CarouselControl = ({
@@ -24,7 +25,21 @@ const CarouselControl = ({
   onPrevious,
   onNext,
   onSelect,
+  maxDots = 8,
 }: CarouselControlProps) => {
+  const totalSlides = scrollSnaps.length;
+
+  const dotCount = Math.min(totalSlides, maxDots);
+
+  const slidesPerDot =
+    totalSlides > maxDots
+      ? Math.ceil(totalSlides / maxDots)
+      : 1;
+
+  const activeDot = Math.floor(
+    selectedIndex / slidesPerDot,
+  );
+
   return (
     <ControlWrapper>
       <Button
@@ -39,16 +54,16 @@ const CarouselControl = ({
       />
 
       <Indicators>
-        {scrollSnaps.map((_, index) => (
+        {Array.from({ length: dotCount }).map((_, index) => (
           <Indicator
             key={index}
-            $isActive={
-              index === selectedIndex
-            }
+            $isActive={index === activeDot}
             onClick={() =>
-              onSelect(index)
+              onSelect(index * slidesPerDot)
             }
-            aria-label={`Go to slide ${index + 1}`}
+            aria-label={`Go to slide ${
+              index * slidesPerDot + 1
+            }`}
           />
         ))}
       </Indicators>

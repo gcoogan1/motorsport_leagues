@@ -59,6 +59,7 @@ export const TextContainer = styled.div`
     width: 100%;
     min-width: 0;
     align-items: center;
+    justify-content: center;
   }
 `;
 
@@ -71,6 +72,7 @@ export const DetailsContainer = styled.div`
 
   ${layout.mediaQueries.mobile} {
     align-items: center;
+    text-align: center;
   }
 `;
 
@@ -131,7 +133,8 @@ export const AboutTextContainer = styled.div`
 `;
 
 export const RaceTime = styled.p`
-  ${typography.body.mediumBold} color: ${colors.text.text2};
+  ${typography.body.mediumBold} 
+  color: ${colors.text.text2};
 `;
 
 export const ButtonsContainer = styled.div`

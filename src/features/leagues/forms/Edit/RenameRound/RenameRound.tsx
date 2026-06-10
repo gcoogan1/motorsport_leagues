@@ -89,7 +89,7 @@ const RenameRound = ({ roundId, currentRoundName }: RenameRoundProps) => {
           hasError={!!errors.roundName}
           errorMessage={errors.roundName?.message}
           showCounter
-          maxLength={16}
+          maxLength={24}
         />
       </FormModal>
     </FormProvider>

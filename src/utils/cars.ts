@@ -1,4 +1,5 @@
 import type { CarCategory, CarsTable } from "@/types/cars.types";
+import { capitalizeString } from "./capitalizeString";
 
 export const getCarsByCategory = (
   cars: CarsTable[],
@@ -21,7 +22,7 @@ export const getCarCategoryOptions = (cars: CarsTable[]) => {
     .filter(Boolean)
     .sort()
     .map((category) => ({
-      label: category!.toUpperCase(),
+      label: capitalizeString(category!),
       value: category!,
     }));
 };

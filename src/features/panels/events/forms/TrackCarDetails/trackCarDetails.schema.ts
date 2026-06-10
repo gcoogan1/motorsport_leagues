@@ -20,7 +20,7 @@ export const trackCarDetailsSchema = z.object({
   cars: z.array(z.object({
     category: z.enum(Object.values(CarCategory)),
     model: z.string(),
-  })).optional(),
+  })).max(16).optional(),
   carCategory: z.enum(Object.values(CarCategory)).optional(),
   revealTrack: z.boolean().optional(),
   revealCarDetails: z.boolean().optional(),

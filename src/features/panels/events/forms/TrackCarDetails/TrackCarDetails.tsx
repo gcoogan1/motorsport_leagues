@@ -274,6 +274,14 @@ const TrackCarDetails = ({ eventId }: TrackCarDetailsProps) => {
       return;
     }
 
+    if (fields.length >= 16) {
+      showToast({
+        usage: "error",
+        message: "You can only select up to 16 cars.",
+      });
+      return;
+    }
+
     append({ category: defaultCategory, model: defaultModel });
   };
 

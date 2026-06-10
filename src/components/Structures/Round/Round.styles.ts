@@ -23,4 +23,8 @@ export const EventsContainer = styled.div`
   align-items: center;
   gap: ${layout.space.xLarge};
   align-self: stretch;
+
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.xLarge} 0px;
+  }
 `
