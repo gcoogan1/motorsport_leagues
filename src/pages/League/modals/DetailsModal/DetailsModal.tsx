@@ -75,7 +75,7 @@ import {
   AUTO_DRIVE_OPTIONS,
 } from "@/lib/constants/assistsSettings";
 import type { CarCategory } from "@/types/cars.types";
-import { ListContainer, GroupsGrid } from "./DetailsModal.styles";
+import { ListContainer, GroupsGrid, EmptyText, EmptyContainer } from "./DetailsModal.styles";
 import {
   formatValue,
   getLabelFromOptions,
@@ -773,6 +773,11 @@ ${regulationTitle}
     [advancedSettings, weatherSelection, hasQualifying, regulationTitle],
   );
 
+  const eventDetails = selectedEvent?.event_advanced_settings
+  const showDetails = eventDetails && eventDetails?.reveal_advanced_settings
+
+  console.log("selectedEvent", selectedEvent);
+
   const filters =
     divisionOptions.length > 0 ||
     roundOptions.length > 0 ||
@@ -815,13 +820,17 @@ ${regulationTitle}
       />
 
       <GroupsGrid>
-        {detailGroups.map((group) => (
+        {showDetails ? detailGroups.map((group) => (
           <DetailGroup
             key={group.title}
             title={group.title}
             details={group.details}
           />
-        ))}
+        )) : (
+          <EmptyContainer>
+            <EmptyText>Event Details Not Yet Revealed</EmptyText>
+          </EmptyContainer>
+        )}
       </GroupsGrid>
     </ListContainer>
   ) : (

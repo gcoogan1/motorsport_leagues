@@ -49,9 +49,9 @@ export const ButtonLinkContainer = styled.button<
       $isSelected ? colors.text.text3 : colors.base.translucent20};
   }
 
-  ${layout.mediaQueries.mobile} {
-    padding: ${layout.space.xSmall} ${layout.space.small};
-    // flex: 1 1 0%;
-    // min-width: 0;
-  }
+  // ${layout.mediaQueries.mobile} {
+  //   padding: ${layout.space.xSmall} ${layout.space.small};
+  //   flex: 1 1 0%;
+  //   min-width: 0;
+  // }
 `;

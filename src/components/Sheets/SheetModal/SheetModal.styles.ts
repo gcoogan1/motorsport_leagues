@@ -23,19 +23,51 @@ export const ModalOverlayBackground = styled.div<{ $fullScreen?: boolean }>`
   align-items: flex-start;
   justify-content: center;
   width: 100%;
-  height: 100%;
   max-width: 960px;
   border-radius: ${borders.radius.xxxLarge};
   padding: ${layout.space.xLarge};
   ${effects.boxShadow.elevation}
-  ${({ $fullScreen }) => $fullScreen && `overflow: hidden;`}
 `;
+
+// export const ModalOverlayBackground = styled.div<{ $fullScreen?: boolean }>`
+//   background: ${colors.base.base2};
+//   display: flex;
+//   align-items: flex-start;
+//   justify-content: center;
+//   width: 100%;
+//   height: 100%;
+//   max-width: 960px;
+//   border-radius: ${borders.radius.xxxLarge};
+//   padding: ${layout.space.xLarge};
+//   ${effects.boxShadow.elevation}
+//   ${({ $fullScreen }) => $fullScreen && `overflow: hidden;`}
+// `;
+
+// export const SheetContainer = styled.div<{ $fullScreen?: boolean }>`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   position: relative;
+//   flex: 1;
+//   width: 100%;
+//   height: ${({ $fullScreen }) => ($fullScreen ? "100%" : "auto")};
+//   min-width: 0;
+//   border-radius: ${borders.radius.xxxLarge};
+//   background: ${({ theme }) => theme.theme.primaryGradientFadeBottom30};
+//   padding: ${layout.space.xxLarge} ${layout.space.xLarge};
+//   gap: ${layout.space.xLarge};
+
+//   ${layout.mediaQueries.mobile} {
+//     padding: ${layout.space.xxLarge} ${layout.space.medium};
+//   }
+// `;
 
 export const SheetContainer = styled.div<{ $fullScreen?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
   flex: 1;
   width: 100%;
@@ -45,6 +77,9 @@ export const SheetContainer = styled.div<{ $fullScreen?: boolean }>`
   background: ${({ theme }) => theme.theme.primaryGradientFadeBottom30};
   padding: ${layout.space.xxLarge} ${layout.space.xLarge};
   gap: ${layout.space.xLarge};
+
+  overflow-y: ${({ $fullScreen }) => ($fullScreen ? "auto" : "visible")};
+  -webkit-overflow-scrolling: touch;
 
   ${layout.mediaQueries.mobile} {
     padding: ${layout.space.xxLarge} ${layout.space.medium};
@@ -161,16 +196,30 @@ export const List = styled.div<{ $fullScreen?: boolean }>`
   max-width: ${({ $fullScreen }) => ($fullScreen ? "none" : "640px")};
   min-width: 0;
   flex-direction: column;
-  flex: ${({ $fullScreen }) => ($fullScreen ? 1 : "initial")};
   gap: ${layout.space.medium};
   align-items: center;
-  overflow-y: ${({ $fullScreen }) => ($fullScreen ? "auto" : "visible")};
-  min-height: ${({ $fullScreen }) => ($fullScreen ? "0" : "auto")};
 
   ${layout.mediaQueries.mobile} {
     max-width: ${({ $fullScreen }) => ($fullScreen ? "none" : "400px")};
   }
 `;
+
+// export const List = styled.div<{ $fullScreen?: boolean }>`
+//   display: flex;
+//   width: 100%;
+//   max-width: ${({ $fullScreen }) => ($fullScreen ? "none" : "640px")};
+//   min-width: 0;
+//   flex-direction: column;
+//   flex: ${({ $fullScreen }) => ($fullScreen ? 1 : "initial")};
+//   gap: ${layout.space.medium};
+//   align-items: center;
+//   overflow-y: ${({ $fullScreen }) => ($fullScreen ? "auto" : "visible")};
+//   min-height: ${({ $fullScreen }) => ($fullScreen ? "0" : "auto")};
+
+//   ${layout.mediaQueries.mobile} {
+//     max-width: ${({ $fullScreen }) => ($fullScreen ? "none" : "400px")};
+//   }
+// `;
 
 export const ButtonContainer = styled.div`
   position: absolute;
