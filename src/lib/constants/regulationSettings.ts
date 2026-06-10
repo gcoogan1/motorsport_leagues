@@ -22,10 +22,10 @@ export const PP_LIMIT_FORMATTER = (value: number) => {
   return `${value}x`;
 };
 
-export const MAX_POWER_OUTPUT_MIN = 99;
+export const MAX_POWER_OUTPUT_MIN = 98;
 export const MAX_POWER_OUTPUT_MAX = 1479;
 export const MAX_POWER_OUTPUT_STEP = 1;
-export const MAX_POWER_OUTPUT_DEFAULT = 98;
+export const MAX_POWER_OUTPUT_DEFAULT = 97;
 export const MAX_POWER_OUTPUT_FORMATTER = (value: number) => {
   if (
     value < MAX_POWER_OUTPUT_MIN ||

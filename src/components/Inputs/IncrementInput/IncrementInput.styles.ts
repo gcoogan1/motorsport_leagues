@@ -36,7 +36,7 @@ export const InputContainer = styled.div<{
   height: 52px;
   box-sizing: border-box;
   border-radius: ${borders.radius.medium};
-  padding: 0 ${layout.space.medium};
+  padding: ${layout.space.xSmall};
   background: ${colors.base.translucent10};
 
   display: flex;

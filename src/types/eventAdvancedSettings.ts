@@ -62,7 +62,7 @@ export type EventAdvancedSettingsTable = {
   // Assist Settings
   countersteering_assist?: string;
   active_stability_manage?: string;
-  driving_lane_assist?: string;
+  driving_line_assist?: string;
   traction_control?: string;
   abs?: string;
   auto_drive?: string;
@@ -130,7 +130,7 @@ export type CreateEventAdvancedSettingsPayload = {
   // Assist Settings
   countersteeringAssist?: string;
   activeStabilityManage?: string;
-  drivingLaneAssist?: string;
+  drivingLineAssist?: string;
   tractionControl?: string;
   abs?: string;
   autoDrive?: string;
@@ -219,7 +219,7 @@ export type UpdateEventAdvancedSettingsPayload = {
   // Assist Settings
   countersteeringAssist?: string;
   activeStabilityManage?: string;
-  drivingLaneAssist?: string;
+  drivingLineAssist?: string;
   tractionControl?: string;
   abs?: string;
   autoDrive?: string;

@@ -58,7 +58,7 @@ const AdvancedSettings = ({ eventId }: AdvancedSettingsProps) => {
   };
 
   const defaultValues = useMemo<AdvancedSettingsFormData>(() => ({
-      revealAdvancedSettings: false,
+      revealAdvancedSettings: true,
       weatherSelection: "presetWeatherSelection",
       presetWeather: "s01",
       timeOfDay: "earlyMorning",
@@ -116,7 +116,7 @@ const AdvancedSettings = ({ eventId }: AdvancedSettingsProps) => {
 
       countersteeringAssist: "noLimit",
       activeStabilityManage: "noLimit",
-      drivingLaneAssist: "noLimit",
+      drivingLineAssist: "noLimit",
       tractionControl: "noLimit",
       abs: "noLimit",
       autoDrive: "noLimit",
@@ -179,7 +179,7 @@ const AdvancedSettings = ({ eventId }: AdvancedSettingsProps) => {
             flagRules: existingAdvancedSettings.flag_rules ?? "true",
             countersteeringAssist: existingAdvancedSettings.countersteering_assist ?? "noLimit",
             activeStabilityManage: existingAdvancedSettings.active_stability_manage ?? "noLimit",
-            drivingLaneAssist: existingAdvancedSettings.driving_lane_assist ?? "noLimit",
+            drivingLineAssist: existingAdvancedSettings.driving_line_assist ?? "noLimit",
             tractionControl: existingAdvancedSettings.traction_control ?? "noLimit",
             abs: existingAdvancedSettings.abs ?? "noLimit",
             autoDrive: existingAdvancedSettings.auto_drive ?? "noLimit",
@@ -318,7 +318,7 @@ const AdvancedSettings = ({ eventId }: AdvancedSettingsProps) => {
     flagRules: data.flagRules,
     countersteeringAssist: data.countersteeringAssist,
     activeStabilityManage: data.activeStabilityManage,
-    drivingLaneAssist: data.drivingLaneAssist,
+    drivingLineAssist: data.drivingLineAssist,
     tractionControl: data.tractionControl,
     abs: data.abs,
     autoDrive: data.autoDrive,

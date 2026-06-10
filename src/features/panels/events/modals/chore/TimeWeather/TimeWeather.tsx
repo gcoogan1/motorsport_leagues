@@ -1,4 +1,10 @@
-import { FormProvider, useForm, useFormContext, useWatch, type UseFormReturn } from "react-hook-form";
+import {
+  FormProvider,
+  useForm,
+  useFormContext,
+  useWatch,
+  type UseFormReturn,
+} from "react-hook-form";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import { useModal } from "@/providers/modal/useModal";
 import { type AdvancedSettingsFormData } from "../../../forms/AdvancedSettings/advancedSettings.schema";
@@ -23,10 +29,15 @@ import FormRow from "@/components/Forms/FormRow/FormRow";
 
 type TimeWeatherProps = {
   formMethods?: UseFormReturn<AdvancedSettingsFormData>;
-  setValue?: ReturnType<typeof useFormContext<AdvancedSettingsFormData>>["setValue"];
+  setValue?: ReturnType<
+    typeof useFormContext<AdvancedSettingsFormData>
+  >["setValue"];
 };
 
-const TimeWeather = ({ formMethods, setValue: propSetValue }: TimeWeatherProps) => {
+const TimeWeather = ({
+  formMethods,
+  setValue: propSetValue,
+}: TimeWeatherProps) => {
   const { closeModal } = useModal();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -62,7 +73,9 @@ const TimeWeather = ({ formMethods, setValue: propSetValue }: TimeWeatherProps) 
   // -- Handlers -- //
 
   const handleWeatherSelectionChange = (value: string | number) => {
-    resolvedSetValue?.("weatherSelection", value as string, { shouldDirty: true });
+    resolvedSetValue?.("weatherSelection", value as string, {
+      shouldDirty: true,
+    });
   };
 
   const handleVariableTimeSpeedRateChange = (value: number) => {
@@ -78,12 +91,26 @@ const TimeWeather = ({ formMethods, setValue: propSetValue }: TimeWeatherProps) 
     try {
       if (!formMethods && propSetValue) {
         const currentValues = resolvedFormMethods.getValues();
-        propSetValue("weatherSelection", currentValues.weatherSelection, { shouldDirty: true });
-        propSetValue("presetWeather", currentValues.presetWeather, { shouldDirty: true });
-        propSetValue("customWeather", currentValues.customWeather, { shouldDirty: true });
-        propSetValue("timeOfDay", currentValues.timeOfDay, { shouldDirty: true });
-        propSetValue("equalCondition", currentValues.equalCondition, { shouldDirty: true });
-        propSetValue("variableTimeSpeedRate", currentValues.variableTimeSpeedRate, { shouldDirty: true });
+        propSetValue("weatherSelection", currentValues.weatherSelection, {
+          shouldDirty: true,
+        });
+        propSetValue("presetWeather", currentValues.presetWeather, {
+          shouldDirty: true,
+        });
+        propSetValue("customWeather", currentValues.customWeather, {
+          shouldDirty: true,
+        });
+        propSetValue("timeOfDay", currentValues.timeOfDay, {
+          shouldDirty: true,
+        });
+        propSetValue("equalCondition", currentValues.equalCondition, {
+          shouldDirty: true,
+        });
+        propSetValue(
+          "variableTimeSpeedRate",
+          currentValues.variableTimeSpeedRate,
+          { shouldDirty: true },
+        );
       }
 
       await withMinDelay(Promise.resolve(), 600);
@@ -109,10 +136,10 @@ const TimeWeather = ({ formMethods, setValue: propSetValue }: TimeWeatherProps) 
       >
         <SegmentedInput
           name={"weatherSelection"}
+          inputLabel="Weather Selection Method"
           options={WEATHER_SELECTION_OPTIONS}
           value={weatherSelection}
           onChange={handleWeatherSelectionChange}
-        
         />
         {weatherSelection === "presetWeatherSelection" ? (
           <SelectInput
@@ -121,32 +148,58 @@ const TimeWeather = ({ formMethods, setValue: propSetValue }: TimeWeatherProps) 
             options={PRESET_WEATHER_OPTIONS}
           />
         ) : (
-          <TextInput name={"customWeather"} label={"Custom Weather"} placeholder="S01, S02, C03, C04, R05, R06, Random, Random" />
+          <TextInput
+            name={"customWeather"}
+            label={"Custom Weather"}
+            placeholder="S01, S02, C03, C04, R05, R06, Random, Random"
+          />
         )}
-        <FormRow>
-          <SelectInput
-            name={"timeOfDay"}
-            label="Time of Day"
-            options={TIME_OF_DAY_OPTIONS}
-          />
-          {weatherSelection === "presetWeatherSelection" && (
-            <SelectInput
-            name={"equalCondition"}
-            label="Equal Condition"
-            options={EQUAL_CONDITION_OPTIONS}
-          />
-          )}
-        </FormRow>
-        <IncrementInput
-          name={"variableTimeSpeedRate"}
-          label="Variable Time Speed Rate"
-          min={VARIABLE_TIME_SPEED_RATE_MIN}
-          max={VARIABLE_TIME_SPEED_RATE_MAX}
-          step={VARIABLE_TIME_SPEED_RATE_STEP}
-          formatter={VARIABLE_TIME_SPEED_RATE_FORMATTER}
-          value={variableTimeSpeedRate}
-          onChange={handleVariableTimeSpeedRateChange}
-        />
+        {weatherSelection === "presetWeatherSelection" ? (
+          <>
+            <FormRow>
+              <SelectInput
+                name={"timeOfDay"}
+                label="Time of the Day"
+                options={TIME_OF_DAY_OPTIONS}
+              />
+              <SelectInput
+                name={"equalCondition"}
+                label="Equal Conditions Mode"
+                options={EQUAL_CONDITION_OPTIONS}
+              />
+            </FormRow>
+            <IncrementInput
+              name={"variableTimeSpeedRate"}
+              label="Variable Time Speed Rate"
+              min={VARIABLE_TIME_SPEED_RATE_MIN}
+              max={VARIABLE_TIME_SPEED_RATE_MAX}
+              step={VARIABLE_TIME_SPEED_RATE_STEP}
+              formatter={VARIABLE_TIME_SPEED_RATE_FORMATTER}
+              value={variableTimeSpeedRate}
+              onChange={handleVariableTimeSpeedRateChange}
+            />
+          </>
+        ) : (
+          <>
+            <FormRow>
+              <SelectInput
+                name={"timeOfDay"}
+                label="Time of the Day"
+                options={TIME_OF_DAY_OPTIONS}
+              />
+              <IncrementInput
+                name={"variableTimeSpeedRate"}
+                label="Variable Time Speed Rate"
+                min={VARIABLE_TIME_SPEED_RATE_MIN}
+                max={VARIABLE_TIME_SPEED_RATE_MAX}
+                step={VARIABLE_TIME_SPEED_RATE_STEP}
+                formatter={VARIABLE_TIME_SPEED_RATE_FORMATTER}
+                value={variableTimeSpeedRate}
+                onChange={handleVariableTimeSpeedRateChange}
+              />
+            </FormRow>
+          </>
+        )}
       </FormModal>
     </FormProvider>
   );

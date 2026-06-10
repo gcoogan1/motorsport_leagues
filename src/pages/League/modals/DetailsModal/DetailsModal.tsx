@@ -40,6 +40,7 @@ import {
   GRIP_REDUCTION_OFF_TRACK_OPTIONS,
   REQ_TIRE_TYPE_CHANGE_OPTIONS,
   NITRO_OVERTAKE_USAGE_OPTIONS,
+  SETTINGS_OPTIONS,
 } from "@/lib/constants/raceSettings";
 import {
   TIME_LIMIT_OPTIONS,
@@ -69,7 +70,7 @@ import {
 import {
   COUNTERSTEERING_ASSIST_OPTIONS,
   ACTIVE_STABILITY_MANAGE_OPTIONS,
-  DRIVING_LANE_ASSIST_OPTIONS,
+  DRIVING_LINE_ASSIST_OPTIONS,
   TRACTION_CONTROL_OPTIONS,
   ABS_OPTIONS,
   AUTO_DRIVE_OPTIONS,
@@ -365,14 +366,14 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
         title: `${weatherSelection}`,
         details: [
           {
-            detailSetting: "Time Of Day",
+            detailSetting: "Time of the Day",
             detailOption: getLabelFromOptions(
               TIME_OF_DAY_OPTIONS,
               advancedSettings?.time_of_day,
             ),
           },
           {
-            detailSetting: "Variable Time Speed",
+            detailSetting: "Variable Time Speed Rate",
             detailOption: advancedSettings?.variable_time_speed_rate
               ? `${advancedSettings.variable_time_speed_rate}x`
               : "Not Set",
@@ -380,7 +381,7 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
           ...(advancedSettings?.weather_selection === "presetWeatherSelection"
             ? [
                 {
-                  detailSetting: "Equal Conditions",
+                  detailSetting: "Equal Conditions Mode",
                   detailOption: getLabelFromOptions(
                     EQUAL_CONDITION_OPTIONS,
                     advancedSettings?.equal_con_mode,
@@ -424,10 +425,17 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
             ),
           },
           {
-            detailSetting: "BoP / Tuning",
+            detailSetting: "BoP / Tuning Prohibited",
             detailOption: getLabelFromOptions(
               BOP_TUNING_OPTIONS,
               advancedSettings?.bop_tuning_prohibited,
+            ),
+          },
+          {
+            detailSetting: "Settings Options",
+            detailOption: getLabelFromOptions(
+              SETTINGS_OPTIONS,
+              advancedSettings?.settings_options,
             ),
           },
           {
@@ -438,7 +446,7 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
             ),
           },
           {
-            detailSetting: "Slipstream",
+            detailSetting: "Slipstream Strength",
             detailOption: getLabelFromOptions(
               SLIPSTREAM_STRENGTH_OPTIONS,
               advancedSettings?.slipstream_strength,
@@ -466,7 +474,7 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
                 : "Not Set",
           },
           {
-            detailSetting: "Fuel Consumption",
+            detailSetting: "Fuel Consumption Rate",
             detailOption:
               advancedSettings?.fuel_consumption_rate !== undefined
                 ? `${advancedSettings.fuel_consumption_rate}x`
@@ -487,32 +495,32 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
                 : "Not Set",
           },
           {
-            detailSetting: "Grip Reduction",
+            detailSetting: "Grip Reduction Off Track",
             detailOption: getLabelFromOptions(
               GRIP_REDUCTION_OFF_TRACK_OPTIONS,
               advancedSettings?.grip_reduction_off_track,
             ),
           },
           {
-            detailSetting: "Finish Delay",
+            detailSetting: "Race Finish Delay",
             detailOption:
               advancedSettings?.race_finish_delay !== undefined
                 ? `${advancedSettings.race_finish_delay} sec`
                 : "Not Set",
           },
           {
-            detailSetting: "Min Stops",
+            detailSetting: "Minimum No. of Pit Stops",
             detailOption: formatValue(advancedSettings?.min_num_stops),
           },
           {
-            detailSetting: "Req. Tire Change",
+            detailSetting: "Required Tire Type Change",
             detailOption: getLabelFromOptions(
               REQ_TIRE_TYPE_CHANGE_OPTIONS,
               advancedSettings?.req_tire_type_change,
             ),
           },
           {
-            detailSetting: "Nitro Overtake",
+            detailSetting: "Nitro / Overtaking System Usage Time Multiplier",
             detailOption: getLabelFromOptions(
               NITRO_OVERTAKE_USAGE_OPTIONS,
               advancedSettings?.nitro_overtake_usage,
@@ -533,35 +541,35 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
                   ),
                 },
                 {
-                  detailSetting: "Continue Time",
+                  detailSetting: "Qualifying Continuation Time",
                   detailOption:
                     advancedSettings?.qual_contin_time !== undefined
                       ? `${advancedSettings.qual_contin_time} sec`
                       : "Not Set",
                 },
                 {
-                  detailSetting: "Tire Wear",
+                  detailSetting: "Tire Wear Rate (Qualifier)",
                   detailOption:
                     advancedSettings?.tire_wear_rt_qual !== undefined
                       ? `${advancedSettings.tire_wear_rt_qual}x`
                       : "Not Set",
                 },
                 {
-                  detailSetting: "Fuel Consumption",
+                  detailSetting: "Fuel Consumption Rate (Qualifier)",
                   detailOption:
                     advancedSettings?.fuel_consumption_rt_qual !== undefined
                       ? `${advancedSettings.fuel_consumption_rt_qual}x`
                       : "Not Set",
                 },
                 {
-                  detailSetting: "Initial Fuel",
+                  detailSetting: "Initial Fuel (Qualifier)",
                   detailOption:
                     advancedSettings?.initial_fuel_qual !== undefined
                       ? `${advancedSettings.initial_fuel_qual} liters`
                       : "Not Set",
                 },
                 {
-                  detailSetting: "Slipstream",
+                  detailSetting: "Slipstream Strength (Qualifier)",
                   detailOption: getLabelFromOptions(
                     SLIPSTREAM_STRENGTH_QUAL_OPTIONS,
                     advancedSettings?.slipstream_strength_qual,
@@ -581,11 +589,11 @@ ${regulationTitle}
             detailOption: formatValue(advancedSettings?.pp_limit),
           },
           {
-            detailSetting: "Max Power Output",
+            detailSetting: "Max. Power Output",
             detailOption: formatValue(advancedSettings?.max_power_output),
           },
           {
-            detailSetting: "Min Weight",
+            detailSetting: "Minimum Weight",
             detailOption:
               advancedSettings?.min_weight !== undefined
                 ? `${advancedSettings.min_weight} lb`
@@ -599,7 +607,7 @@ ${regulationTitle}
             ),
           },
           {
-            detailSetting: "Usable Tire Types",
+            detailSetting: "Usable Tire & Types",
             detailOption:
               parseStringArrayField(advancedSettings?.usable_tires_types)
                 .map((value) =>
@@ -645,11 +653,11 @@ ${regulationTitle}
             ),
           },
           {
-            detailSetting: "Year Lower",
+            detailSetting: "Year (Lower Limit)",
             detailOption: formatValue(advancedSettings?.year_lower_limit),
           },
           {
-            detailSetting: "Year Upper",
+            detailSetting: "Year (Upper Limit)",
             detailOption: formatValue(advancedSettings?.year_upper_limit),
           },
           {
@@ -679,35 +687,35 @@ ${regulationTitle}
             ),
           },
           {
-            detailSetting: "Wall Collision",
+            detailSetting: "Wall Collision Penalty",
             detailOption: getLabelFromOptions(
               WALL_COLLISION_PENALTY_OPTIONS,
               advancedSettings?.wall_coll_penalty,
             ),
           },
           {
-            detailSetting: "Correct Vehicle Course",
+            detailSetting: "Correct Vehicle Course After Wall Collision",
             detailOption: getLabelFromOptions(
               CORRECT_VEHICLE_COURSE_OPTIONS,
               advancedSettings?.correct_vehicle_course,
             ),
           },
           {
-            detailSetting: "Car Collision",
+            detailSetting: "Car Collision Penalty",
             detailOption: getLabelFromOptions(
               CAR_COLLISION_PENALTY_OPTIONS,
               advancedSettings?.car_coll_penalty,
             ),
           },
           {
-            detailSetting: "Pit Line Cut",
+            detailSetting: "Pit Lane Line-Cutting Penalty",
             detailOption: getLabelFromOptions(
               PIT_LANE_LINE_CUT_OPTIONS,
               advancedSettings?.pit_lane_line_cut_penalty,
             ),
           },
           {
-            detailSetting: "Ghosting",
+            detailSetting: "Ghosting During Race",
             detailOption: getLabelFromOptions(
               GHOSTING_DURING_RACE_OPTIONS,
               advancedSettings?.ghosting_during_race,
@@ -723,27 +731,27 @@ ${regulationTitle}
         ],
       },
       {
-        title: "Assist Settings",
+        title: "Driving Options Limitations",
         details: [
           {
-            detailSetting: "Countersteering",
+            detailSetting: "Countersteering Assist",
             detailOption: getLabelFromOptions(
               COUNTERSTEERING_ASSIST_OPTIONS,
               advancedSettings?.countersteering_assist,
             ),
           },
           {
-            detailSetting: "Stability Management",
+            detailSetting: "Active Stability Management (ASM)",
             detailOption: getLabelFromOptions(
               ACTIVE_STABILITY_MANAGE_OPTIONS,
               advancedSettings?.active_stability_manage,
             ),
           },
           {
-            detailSetting: "Driving Line",
+            detailSetting: "Driving Line Assist",
             detailOption: getLabelFromOptions(
-              DRIVING_LANE_ASSIST_OPTIONS,
-              advancedSettings?.driving_lane_assist,
+              DRIVING_LINE_ASSIST_OPTIONS,
+              advancedSettings?.driving_line_assist,
             ),
           },
           {
@@ -761,7 +769,7 @@ ${regulationTitle}
             ),
           },
           {
-            detailSetting: "Auto Drive",
+            detailSetting: "Auto-Drive",
             detailOption: getLabelFromOptions(
               AUTO_DRIVE_OPTIONS,
               advancedSettings?.auto_drive,

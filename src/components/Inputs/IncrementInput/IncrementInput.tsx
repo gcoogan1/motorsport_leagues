@@ -58,7 +58,7 @@ const IncrementInput = ({
   const currentNumber = Number.isFinite(parsedInputValue)
     ? parsedInputValue
     : min;
-  const hasValue = currentNumber > 0;
+  const hasValue = currentNumber > -1;
 
   const handleIncrement = () => {
     const nextValue = currentNumber + step;

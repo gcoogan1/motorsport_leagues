@@ -31,13 +31,13 @@ const RegulationSettings = ({ formMethods, setValue: propSetValue }: RegulationS
       ppLimit: PP_LIMIT_DEFAULT,
       maxPowerOutput: MAX_POWER_OUTPUT_DEFAULT,
       minWeight: MIN_WEIGHT_DEFAULT,
-      usableTires: "noLimit",
+      usableTires: "racing",
       usableTiresTypes: ["hard", "medium", "soft"],
       reqTireType: ["hard", "medium", "soft"],
       nitrous: "prohibited",
       kartUsage: "false",
-      engineSwap: "unrestricted",
-      tuningParts: "unrestricted",
+      engineSwap: "prohibited",
+      tuningParts: "extremeAndLower",
       yearLowerLimit: YEAR_LOWER_LIMIT_DEFAULT,
       yearUpperLimit: YEAR_UPPER_LIMIT_DEFAULT,
       drivetrain: "unrestricted",
@@ -170,7 +170,7 @@ const RegulationSettings = ({ formMethods, setValue: propSetValue }: RegulationS
           min={MAX_POWER_OUTPUT_MIN}
           max={MAX_POWER_OUTPUT_MAX}
           formatter={MAX_POWER_OUTPUT_FORMATTER}
-          helperText="No Limit → 99 HP to 1479 HP"
+          helperText="No Limit → 98 HP to 1479 HP"
           value={maxPowerOutput}
           clampOnBlur={false}
           onChange={handleMaxPowerOutputChange}
@@ -179,7 +179,7 @@ const RegulationSettings = ({ formMethods, setValue: propSetValue }: RegulationS
       <FormRow>
         <IncrementInput
           name="minWeight"
-          label="Min. Weight"
+          label="Minimum Weight"
           min={MIN_WEIGHT_MIN}
           max={MIN_WEIGHT_MAX}
           clampOnBlur={false}
@@ -233,7 +233,7 @@ const RegulationSettings = ({ formMethods, setValue: propSetValue }: RegulationS
       <FormRow>
         <IncrementInput
           name="yearLowerLimit"
-          label="Year Lower Limit"
+          label="Year (Lower Limit)"
           min={YEAR_LOWER_LIMIT_MIN}
           max={YEAR_LOWER_LIMIT_MAX}
           formatter={YEAR_LOWER_LIMIT_FORMATTER}
@@ -244,7 +244,7 @@ const RegulationSettings = ({ formMethods, setValue: propSetValue }: RegulationS
         />
         <IncrementInput
           name="yearUpperLimit"
-          label="Year Upper Limit"
+          label="Year (Upper Limit)"
           min={YEAR_UPPER_LIMIT_MIN}
           max={YEAR_UPPER_LIMIT_MAX}
           helperText="No Limit → 1929 - 2034"

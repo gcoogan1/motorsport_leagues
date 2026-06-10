@@ -7,7 +7,7 @@ import { type AdvancedSettingsFormData } from "../../../forms/AdvancedSettings/a
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import SelectInput from "@/components/Inputs/SelectInput/SelectInput";
 import FormRow from "@/components/Forms/FormRow/FormRow";
-import { ABS_OPTIONS, ACTIVE_STABILITY_MANAGE_OPTIONS, AUTO_DRIVE_OPTIONS, COUNTERSTEERING_ASSIST_OPTIONS, DRIVING_LANE_ASSIST_OPTIONS, TRACTION_CONTROL_OPTIONS } from "@/lib/constants/assistsSettings";
+import { ABS_OPTIONS, ACTIVE_STABILITY_MANAGE_OPTIONS, AUTO_DRIVE_OPTIONS, COUNTERSTEERING_ASSIST_OPTIONS, DRIVING_LINE_ASSIST_OPTIONS, TRACTION_CONTROL_OPTIONS } from "@/lib/constants/assistsSettings";
 
 type AssistsSettingsProps = {
   formMethods?: UseFormReturn<AdvancedSettingsFormData>;
@@ -28,7 +28,7 @@ const AssistsSettings = ({ formMethods, setValue: propSetValue }: AssistsSetting
     defaultValues: {
       countersteeringAssist: "noLimit",
       activeStabilityManage: "noLimit",
-      drivingLaneAssist: "noLimit",
+      drivingLineAssist: "noLimit",
       tractionControl: "noLimit",
       abs: "noLimit",
       autoDrive: "noLimit",
@@ -51,7 +51,7 @@ const AssistsSettings = ({ formMethods, setValue: propSetValue }: AssistsSetting
         const currentValues = resolvedFormMethods.getValues();
         propSetValue("countersteeringAssist", currentValues.countersteeringAssist);
         propSetValue("activeStabilityManage", currentValues.activeStabilityManage);
-        propSetValue("drivingLaneAssist", currentValues.drivingLaneAssist);
+        propSetValue("drivingLineAssist", currentValues.drivingLineAssist);
         propSetValue("tractionControl", currentValues.tractionControl);
         propSetValue("abs", currentValues.abs);
         propSetValue("autoDrive", currentValues.autoDrive);
@@ -93,9 +93,9 @@ const AssistsSettings = ({ formMethods, setValue: propSetValue }: AssistsSetting
         </FormRow>
         <FormRow>
           <SelectInput
-            name="drivingLaneAssist"
-            label="Driving Lane Assist"
-            options={DRIVING_LANE_ASSIST_OPTIONS}
+            name="drivingLineAssist"
+            label="Driving Line Assist"
+            options={DRIVING_LINE_ASSIST_OPTIONS}
           />
           <SelectInput
             name="tractionControl"

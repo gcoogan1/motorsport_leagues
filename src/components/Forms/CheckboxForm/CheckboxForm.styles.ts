@@ -8,7 +8,7 @@ export const FormWrapper = styled.div< { $isSelected: boolean }>`
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: ${layout.space.medium};
+  /* gap: ${layout.space.medium}; */
   border-radius: ${borders.radius.xLarge};
   align-items: center;
   background: ${({ $isSelected }) =>    $isSelected ? gradients.base.fadeBottom10 : "transparent"};

@@ -8,7 +8,7 @@ export const ACTIVE_STABILITY_MANAGE_OPTIONS = [
   { label: "Prohibited", value: "prohibited" },
 ];
 
-export const DRIVING_LANE_ASSIST_OPTIONS = [
+export const DRIVING_LINE_ASSIST_OPTIONS = [
   { label: "No Limit", value: "noLimit" },
   { label: "Prohibited", value: "prohibited" },
 ];

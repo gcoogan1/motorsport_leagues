@@ -235,7 +235,7 @@ const SessionSettings = ({ eventId }: SessionSettingsProps) => {
             checked: hasQualifying,
             onChange: handleRevealQualifyingChange,
           }}>
-          <SegmentedInput name="qualifyingType" options={LENGTH_OPTIONS} value={qualifyingType} onChange={handleQualifyingTypeChange} />
+          <SegmentedInput name="qualifyingType" inputLabel="Length" options={LENGTH_OPTIONS} value={qualifyingType} onChange={handleQualifyingTypeChange} />
           {qualifyingType === "time" ? (
             <SelectInput name="qualifyingTime" options={SESSION_TIME_OPTIONS} />
           ) : (
@@ -248,7 +248,7 @@ const SessionSettings = ({ eventId }: SessionSettingsProps) => {
             checked: hasRace,
             onChange: handleRevealRaceChange,
           }}>
-            <SegmentedInput name="raceType" options={LENGTH_OPTIONS} value={raceType} onChange={handleRaceTypeChange} />
+            <SegmentedInput name="raceType" inputLabel="Length" options={LENGTH_OPTIONS} value={raceType} onChange={handleRaceTypeChange} />
             {raceType === "time" ? (
               <SelectInput name="raceTime" options={SESSION_TIME_OPTIONS} />
             ) : (

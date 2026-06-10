@@ -19,7 +19,7 @@ export const QUALIFYING_CONTINUE_TIME_MIN = 30;
 export const QUALIFYING_CONTINUE_TIME_MAX = 180;
 export const QUALIFYING_CONTINUE_TIME_STEP = 10;
 export const QUALIFYING_CONTINUE_TIME_DEFAULT = 90;
-export const QUALIFYING_CONTINUE_TIME_FORMATTER = (value: number) => `${value} sec`;
+export const QUALIFYING_CONTINUE_TIME_FORMATTER = (value: number) => `${value} secs`;
 
 export const TIRE_WEAR_RT_QUAL_MIN = 0;
 export const TIRE_WEAR_RT_QUAL_MAX = 50;

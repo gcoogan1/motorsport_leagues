@@ -59,7 +59,7 @@ const buildAdvancedSettingsData = (
   flag_rules: payload.flagRules,
   countersteering_assist: payload.countersteeringAssist,
   active_stability_manage: payload.activeStabilityManage,
-  driving_lane_assist: payload.drivingLaneAssist,
+  driving_line_assist: payload.drivingLineAssist,
   traction_control: payload.tractionControl,
   abs: payload.abs,
   auto_drive: payload.autoDrive,

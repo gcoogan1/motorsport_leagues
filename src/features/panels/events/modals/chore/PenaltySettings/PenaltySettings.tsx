@@ -70,7 +70,7 @@ const PenaltySettings = ({ formMethods, setValue: propSetValue }: PenaltySetting
   return (
     <FormProvider {...resolvedFormMethods}>
       <FormModal
-        question={"Time / Weather Settings"}
+        question={"Penalty Settings"}
         buttons={{
           onCancel: { label: "Close", action: handleOnClose },
           onContinue: {

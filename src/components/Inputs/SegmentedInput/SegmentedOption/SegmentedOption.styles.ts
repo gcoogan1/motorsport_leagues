@@ -21,12 +21,12 @@ export const OptionContainer = styled.button<{ $isSelected?: boolean }>`
 
   &:hover {
     background: ${({ $isSelected }) => ($isSelected ? colors.text.text1 : colors.base.translucent10)};
-      color: ${({ $isSelected }) => ($isSelected ? colors.base.base3 : colors.text.text1)};
+    color: ${({ $isSelected }) => ($isSelected ? colors.base.base3 : colors.text.text1)};
   }
 
   &:active {
     background: ${({ $isSelected }) => ($isSelected ? colors.text.text1 : colors.base.translucent10)};
-      color: ${({ $isSelected }) => ($isSelected ? colors.base.base3 : colors.text.text1)};
+    color: ${({ $isSelected }) => ($isSelected ? colors.base.base3 : colors.text.text1)};
   }
 
   &:focus {

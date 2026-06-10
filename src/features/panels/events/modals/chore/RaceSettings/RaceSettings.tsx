@@ -73,14 +73,14 @@ const RaceSettings = ({ formMethods, setValue: propSetValue }: RaceSettingsProps
   // 2. As a child component within the AdvancedSettings form, in which case it uses the form context provided by the parent and updates values directly on change.
   const fallbackFormMethods = useForm<AdvancedSettingsFormData>({
     defaultValues: {
-      startType: "gridStart",
+      startType: "rollingStart",
       gridOrder: "fastestFirst",
-      bopTuningProhibited: "false",
-      settingsOptions: "some",
+      bopTuningProhibited: "true",
+      settingsOptions: "brakeBalanceOnly",
       boost: "none",
       slipstreamStrength: "real",
       visibleDamage: "true",
-      mechanicalDamage: "none",
+      mechanicalDamage: "real",
       tireWearRate: TIRE_WEAR_RATE_DEFAULT,
       fuelConsumptionRate: FUEL_CONSUMPTION_RATE_DEFAULT,
       refuelingSpeed: REFUELING_SPEED_DEFAULT,
@@ -223,7 +223,7 @@ const RaceSettings = ({ formMethods, setValue: propSetValue }: RaceSettingsProps
         <FormRow>
           <SelectInput
             name="bopTuningProhibited"
-            label="BOP Tuning Prohibited"
+            label="BoP / Tuning Prohibited"
             options={BOP_TUNING_OPTIONS}
           />
           <SelectInput
@@ -336,7 +336,7 @@ const RaceSettings = ({ formMethods, setValue: propSetValue }: RaceSettingsProps
         <FormRow>
           <SelectInput
             name="nitroOvertakeUsage"
-            label="Nitro Overtake Usage"
+            label="Nitro / Overtaking System Usage Time Multiplier"
             options={NITRO_OVERTAKE_USAGE_OPTIONS}
           />
         </FormRow>

@@ -10,7 +10,7 @@ import {
 } from "@/lib/constants/timeWeatherSettings";
 import * as z from "zod";
 import { CAR_COLLISION_PENALTY_OPTIONS, CORRECT_VEHICLE_COURSE_OPTIONS, FLAG_RULES_OPTIONS, GHOSTING_DURING_RACE_OPTIONS, PIT_LANE_LINE_CUT_OPTIONS, SHORTCUT_PENALTY_OPTIONS, WALL_COLLISION_PENALTY_OPTIONS } from "@/lib/constants/penaltySettings";
-import { COUNTERSTEERING_ASSIST_OPTIONS, ACTIVE_STABILITY_MANAGE_OPTIONS, DRIVING_LANE_ASSIST_OPTIONS, TRACTION_CONTROL_OPTIONS, ABS_OPTIONS, AUTO_DRIVE_OPTIONS } from "@/lib/constants/assistsSettings";
+import { COUNTERSTEERING_ASSIST_OPTIONS, ACTIVE_STABILITY_MANAGE_OPTIONS, TRACTION_CONTROL_OPTIONS, ABS_OPTIONS, AUTO_DRIVE_OPTIONS, DRIVING_LINE_ASSIST_OPTIONS } from "@/lib/constants/assistsSettings";
 
 
 // Weather/Time Selection Options
@@ -61,7 +61,7 @@ const flagRulesOptions = FLAG_RULES_OPTIONS.map((option) => option.value);
 // Assist Settings Selection Options
 const countersteeringAssistOptions = COUNTERSTEERING_ASSIST_OPTIONS.map((option) => option.value);
 const activeStabilityManageOptions = ACTIVE_STABILITY_MANAGE_OPTIONS.map((option) => option.value);
-const drivingLaneAssistOptions = DRIVING_LANE_ASSIST_OPTIONS.map((option) => option.value);
+const drivingLineAssistOptions = DRIVING_LINE_ASSIST_OPTIONS.map((option) => option.value);
 const tractionControlOptions = TRACTION_CONTROL_OPTIONS.map((option) => option.value);
 const absOptions = ABS_OPTIONS.map((option) => option.value);
 const autoDriveOptions = AUTO_DRIVE_OPTIONS.map((option) => option.value);
@@ -136,7 +136,7 @@ export const advancedSettingsSchema = z.object({
   // Assist Settings
   countersteeringAssist: z.enum(countersteeringAssistOptions).optional(),
   activeStabilityManage: z.enum(activeStabilityManageOptions).optional(),
-  drivingLaneAssist: z.enum(drivingLaneAssistOptions).optional(),
+  drivingLineAssist: z.enum(drivingLineAssistOptions).optional(),
   tractionControl: z.enum(tractionControlOptions).optional(),
   abs: z.enum(absOptions).optional(),
   autoDrive: z.enum(autoDriveOptions).optional(),
