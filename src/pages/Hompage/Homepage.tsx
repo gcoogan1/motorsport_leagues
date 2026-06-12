@@ -10,8 +10,8 @@ import ProfileIcon from "@assets/Icon/Profile.svg?react";
 import SquadIcon from "@assets/Icon/Squad.svg?react";
 import LeagueIcon from "@assets/Icon/League.svg?react";
 import LeagueImage from "@assets/Cover/cover1.png";
-// import CardsImage from "@assets/Homepage/Features/Cards.png";
-// import DriverImage from "@assets/Homepage/Features/Driver.png";
+import CardsImage from "@assets/Homepage/Features/Cards.png";
+import DriverImage from "@assets/Homepage/Features/Driver.png";
 import ExternalIcon from "@assets/Icon/External.svg?react";
 import FollowIcon from "@assets/Icon/Follow.svg?react";
 import {
@@ -36,26 +36,26 @@ import {
   PathContent,
   PathContentButtons,
   SectionList,
-  // VIPSection,
-  // VIPContainerWrapper,
-  // VIPContainer,
-  // VIPMiniTitle,
-  // VIPTitle,
-  // VIPSubTitle,
-  // VIPList,
-  // VIPItemTop,
-  // VIPItemBottom,
-  // VIPLeagueContainer,
-  // VIPLeagueContents,
-  // VIPLeagueContentsButtons,
-  // VIPLeagueContentsTitle,
-  // VIPLeagueContentsSubTitle,
-  // VIPLeagueContentsTextContainer,
+  VIPSection,
+  VIPContainerWrapper,
+  VIPContainer,
+  VIPMiniTitle,
+  VIPTitle,
+  VIPSubTitle,
+  VIPList,
+  VIPItemTop,
+  VIPItemBottom,
+  VIPLeagueContainer,
+  VIPLeagueContents,
+  VIPLeagueContentsButtons,
+  VIPLeagueContentsTitle,
+  VIPLeagueContentsSubTitle,
+  VIPLeagueContentsTextContainer,
   SectionTitle,
   SectionSubTitle,
-  // VIPItemBottomItem,
-  // VIPItemBottomImage,
-  // VIPItemBottomContents,
+  VIPItemBottomItem,
+  VIPItemBottomImage,
+  VIPItemBottomContents,
   ItemTextContainer,
   ItemSubTitle,
   ItemTitle,
@@ -357,7 +357,7 @@ const Homepage = () => {
           </SectionList>
         </PathContainer>
       </Paths>
-      {/* <VIPSection>
+      <VIPSection>
         <VIPContainerWrapper>
           <VIPContainer>
             <TextContainer>
@@ -442,7 +442,7 @@ const Homepage = () => {
             </VIPList>
           </VIPContainer>
         </VIPContainerWrapper>
-      </VIPSection> */}
+      </VIPSection>
       <FeaturedLeaguesSection>
         <FeaturedLeaguesContainer>
           <TextContainer>

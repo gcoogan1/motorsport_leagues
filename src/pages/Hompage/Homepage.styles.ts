@@ -183,6 +183,11 @@ export const PathItem = styled.div`
     gradient: gradients.base.fadeBottom20,
     width: borders.width.thick,
   })};
+
+  ${layout.mediaQueries.mobile} {
+    width: 100%;
+    max-width: 340px;
+  }
 `;
 
 export const PathItemImageContainer = styled.div`
@@ -537,6 +542,11 @@ export const BlueFeaturedLeagueItem = styled.div`
     gradient: "linear-gradient(180deg, rgba(68, 252, 255, 0.3) 0%, rgba(68, 252, 255, 0) 100%)",
     width: borders.width.thick,
   })};
+
+  ${layout.mediaQueries.mobile} {
+    flex-direction: column;
+    width: 100%;
+  }
 `;
 
 export const RedFeaturedLeagueItem = styled.div`
@@ -552,21 +562,27 @@ export const RedFeaturedLeagueItem = styled.div`
     gradient: "linear-gradient(180deg, rgba(255, 81, 81, 0.3) 0%, rgba(255, 81, 81, 0) 100%)",
     width: borders.width.thick,
   })};
+
+  ${layout.mediaQueries.mobile} {
+    flex-direction: column;
+    width: 100%;
+  }
 `;
 
 
 
 export const FeaturedLeagueItemContents = styled.div`
   display: flex;
-  width: 384px;
+  width: 100%;
+  max-width: 384px;
   flex-direction: column;
   align-items: flex-start;
   gap: ${layout.space.medium};
   padding: ${layout.space.medium};
 
-  /* ${layout.mediaQueries.mobile} {
-    width: 300px;
-  } */
+  ${layout.mediaQueries.mobile} {
+    max-width: 100%;
+  }
 `;
 
 export const FeaturedLeagueContentsButtons = styled.div`
@@ -648,6 +664,12 @@ export const AboutItemImage = styled.img`
     width: 324px;
     height: 185px;
   }
+
+  ${layout.mediaQueries.mobile} {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 7/4;
+  }
 `;
 
 export const AboutItemTextContainer = styled.div`
@@ -657,12 +679,6 @@ export const AboutItemTextContainer = styled.div`
   align-items: flex-start;
   gap: ${layout.space.medium};
   flex: 1 0 0;
-
-  ${layout.mediaQueries.tablet} {
-    align-items: center;
-    text-align: center;
-    max-width: 300px;
-  }
 `;
 
 export const AboutItemTitleContainer = styled.div`
@@ -727,25 +743,19 @@ export const LeagueTabContent = styled.div`
   background: ${gradients.base.fadeBottom10};
 
   ${layout.mediaQueries.tablet} {
-    flex-direction: column;
+    flex-direction: column-reverse;
     padding: ${layout.space.large};
     gap: ${layout.space.xLarge};
-    max-width: 380px;
   }
 `;
 
 export const LeagueTabImage = styled.img`
   display: flex;
-  width: 420px;
+  width: 100%;
   height: 240px;
   background: rgba(119, 119, 119, 1);
   border-radius: ${borders.radius.xLarge};
   object-fit: cover;
-
-  ${layout.mediaQueries.tablet} {
-    width: 340px;
-    height: 162px;
-  }
 `;
 
 export const ContactSection = styled.div`
