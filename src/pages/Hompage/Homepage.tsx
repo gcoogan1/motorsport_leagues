@@ -444,7 +444,7 @@ const Homepage = () => {
           </VIPContainer>
         </VIPContainerWrapper>
       </VIPSection>
-      <FeaturedLeaguesSection>
+      {/* <FeaturedLeaguesSection>
         <FeaturedLeaguesContainer>
           <TextContainer>
             <SectionTitle>Featured Leagues</SectionTitle>
@@ -551,7 +551,7 @@ const Homepage = () => {
             </RedFeaturedLeagueItem>
           </FeaturedLeaguesList>
         </FeaturedLeaguesContainer>
-      </FeaturedLeaguesSection>
+      </FeaturedLeaguesSection> */}
       <AboutSection>
         <AboutContainer>
           <TextContainer>
