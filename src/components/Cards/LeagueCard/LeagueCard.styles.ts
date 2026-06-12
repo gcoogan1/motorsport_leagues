@@ -72,10 +72,17 @@ export const ImageContainer = styled.div<{ $cardSize: "small" | "medium", $image
   align-self: stretch;
   border-radius: ${borders.radius.medium};
   background-color: ${colors.base.translucent10};
-  background-image: ${({ $imageBg }) => $imageBg ? `url(${$imageBg})` : "none"};
+  background-image: ${({ $imageBg }) =>
+  $imageBg
+    ? `
+      linear-gradient(0deg, rgba(21, 21, 21, 0) 70%, #151515 100%),
+      url(${$imageBg})
+    `
+    : "none"};
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
+
 
   /* Small Variant Overrides */
   ${({ $cardSize }) => $cardSize === "small" && css`

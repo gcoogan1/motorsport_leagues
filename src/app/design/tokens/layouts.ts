@@ -27,6 +27,7 @@ export const space: Space = {
 export const mediaQueries: MediaQueries = {
   mobile: "@media (max-width: 919px)",
   desktop: "@media (min-width: 920px)",
+  tablet: "@media (max-width: 1200px)",
 };
 
 // --- Layout Tokens -- //
