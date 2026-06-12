@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { designTokens } from "@/app/design/tokens";
 import { gradientBorder } from "@/app/design/mixens/gradientBorder";
@@ -191,6 +191,10 @@ export const PathItemImageContainer = styled.div`
   align-self: stretch;
   border-radius: ${borders.radius.xLarge};
   background: ${gradients.base.fadeBottom10};
+
+  ${layout.mediaQueries.mobile} {
+    height: 160px;
+  }
 `;
 
 export const GraphicContainer = styled.div`
@@ -242,7 +246,7 @@ export const PathContentSubTitle = styled.h3`
 export const PathContentButtons = styled.div`
   display: flex;
   width: 100%;
-  gap: ${layout.space.small};
+  gap: ${layout.space.xSmall};
   flex-direction: column;
   align-items: center;
   align-self: stretch;
@@ -323,6 +327,10 @@ export const VIPItemTop = styled.div`
       gradient: theme.theme.theme.primaryGradientFadeTop10,
       width: borders.width.thick,
     })};
+
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.xLarge} ${layout.space.medium};
+  }
 `;
 
 export const VIPLeagueContainer = styled.div`
@@ -341,9 +349,9 @@ export const VIPLeagueContainer = styled.div`
     })};
 
   ${layout.mediaQueries.mobile} {
-    flex-direction: column-reverse;
-    gap: ${layout.space.large};
-    padding: ${layout.space.large};
+    flex-direction: column;
+    gap: ${layout.space.medium};
+    padding: ${layout.space.xLarge} ${layout.space.medium};
   }
 `;
 
@@ -352,10 +360,13 @@ export const VIPLeagueContents = styled.div`
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  max-width: 280px;
   flex: 1;
   text-align: left;
   gap: ${layout.space.medium};
+
+  ${layout.mediaQueries.mobile} {
+    padding: 0 ${layout.space.xSmall};
+  }
 `;
 
 export const VIPLeagueContentsTextContainer = styled.div`
@@ -402,12 +413,12 @@ export const VIPItemBottom = styled.div`
   })};
 
   ${layout.mediaQueries.mobile} {
-    padding: ${layout.space.large};
-    gap: ${layout.space.large};
+    padding: ${layout.space.xLarge} ${layout.space.medium};
+    gap: ${layout.space.xLarge};
   }
 `;
 
-export const VIPItemBottomItem = styled.div`
+export const VIPItemBottomItem = styled.div<{ $purple?: boolean }>`
   display: flex;
   padding: ${layout.space.xLarge};
   flex-direction: column;
@@ -415,7 +426,7 @@ export const VIPItemBottomItem = styled.div`
   gap: ${layout.space.xLarge};
   width: 364px;
   border-radius: ${borders.radius.xLarge};
-  background:
+  background: 
     linear-gradient(
       180deg,
       rgba(140, 203, 255, 0.20) 0%,
@@ -428,8 +439,17 @@ export const VIPItemBottomItem = styled.div`
     width: borders.width.medium,
   })};
 
+  ${({ $purple }) =>
+    $purple &&
+    css`
+      background: linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 100%),
+        linear-gradient(180deg, rgba(203, 140, 255, 0.2) 0%, rgba(203, 140, 255, 0) 100%);
+    `};
+
   ${layout.mediaQueries.mobile} {
-    width: 285px;
+    width: 100%;
+    max-width: 364px;
+    padding: ${layout.space.medium};
   }
 `;
 
@@ -446,6 +466,10 @@ export const VIPItemBottomContents = styled.div`
   align-items: flex-start;
   padding: 0px ${layout.space.medium};
   gap: ${layout.space.medium};
+
+  ${layout.mediaQueries.mobile} {
+    padding: 0px ${layout.space.xSmall};
+  }
 `;
 
 export const ItemTextContainer = styled.div`
@@ -536,9 +560,9 @@ export const FeaturedLeagueItemContents = styled.div`
   gap: ${layout.space.medium};
   padding: ${layout.space.medium};
 
-  ${layout.mediaQueries.mobile} {
+  /* ${layout.mediaQueries.mobile} {
     width: 300px;
-  }
+  } */
 `;
 
 export const FeaturedLeagueContentsButtons = styled.div`
@@ -602,8 +626,8 @@ export const AboutItem = styled.div<{ $left?: boolean }>`
 
   ${layout.mediaQueries.tablet} {
     flex-direction: ${({ $left }) => ($left ? "column" : "column-reverse")};
-    gap: ${layout.space.large};
-    padding: ${layout.space.large};
+    gap: ${layout.space.xLarge};
+    padding: ${layout.space.xLarge};
     max-width: 380px;
   }
 `;
@@ -617,8 +641,8 @@ export const AboutItemImage = styled.img`
   object-fit: cover;
 
   ${layout.mediaQueries.tablet} {
-    width: 300px;
-    height: 240px;
+    width: 324px;
+    height: 185px;
   }
 `;
 
@@ -642,12 +666,6 @@ export const AboutItemTitleContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   gap: ${layout.space.xxSmall};
-  align-self: stretch;
-
-    ${layout.mediaQueries.tablet} {
-    align-items: center;
-    text-align: center;
-  }
 `;
 
 export const AboutItemTitle = styled.h2`
@@ -707,9 +725,8 @@ export const LeagueTabContent = styled.div`
   ${layout.mediaQueries.tablet} {
     flex-direction: column;
     padding: ${layout.space.large};
-    gap: ${layout.space.large};
+    gap: ${layout.space.xLarge};
     max-width: 380px;
-
   }
 `;
 
@@ -722,8 +739,8 @@ export const LeagueTabImage = styled.img`
   object-fit: cover;
 
   ${layout.mediaQueries.tablet} {
-    width: 300px;
-    height: 240px;
+    width: 340px;
+    height: 162px;
   }
 `;
 

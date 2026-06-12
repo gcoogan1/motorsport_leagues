@@ -164,7 +164,6 @@ const Homepage = () => {
   };
 
   const tab = tabContent[activeTab as keyof typeof tabContent];
-  console.log("🚀 ~ file: Homepage.tsx:122 ~ Homepage ~ tab:", tab);
 
   // -- Handlers -- //
 
@@ -423,7 +422,7 @@ const Homepage = () => {
                       </Button>
                     </VIPItemBottomContents>
                   </VIPItemBottomItem>
-                  <VIPItemBottomItem>
+                  <VIPItemBottomItem $purple>
                     <VIPItemBottomImage src={DriverImage} alt="Driver" />
                     <VIPItemBottomContents>
                       <ItemTextContainer>
@@ -444,7 +443,7 @@ const Homepage = () => {
           </VIPContainer>
         </VIPContainerWrapper>
       </VIPSection>
-      {/* <FeaturedLeaguesSection>
+      <FeaturedLeaguesSection>
         <FeaturedLeaguesContainer>
           <TextContainer>
             <SectionTitle>Featured Leagues</SectionTitle>
@@ -551,7 +550,7 @@ const Homepage = () => {
             </RedFeaturedLeagueItem>
           </FeaturedLeaguesList>
         </FeaturedLeaguesContainer>
-      </FeaturedLeaguesSection> */}
+      </FeaturedLeaguesSection>
       <AboutSection>
         <AboutContainer>
           <TextContainer>
