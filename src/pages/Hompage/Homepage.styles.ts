@@ -104,7 +104,7 @@ export const Games = styled.div`
   padding: 0px ${layout.space.medium};
   flex-direction: column;
   align-items: center;
-  align-self: stretch;
+  // align-self: stretch;
 `;
 
 export const GamesContainer = styled.div`
@@ -162,7 +162,10 @@ export const SectionList = styled.div`
   align-items: center;
   justify-content: center;
   gap: ${layout.space.xLarge};
-  flex-wrap: wrap;
+  
+  ${layout.mediaQueries.mobile} {
+    flex-direction: column;
+  }
 `;
 
 export const PathItem = styled.div`
@@ -188,7 +191,7 @@ export const PathItemImageContainer = styled.div`
   height: 164px;
   justify-content: center;
   align-items: center;
-  align-self: stretch;
+  // align-self: stretch;
   border-radius: ${borders.radius.xLarge};
   background: ${gradients.base.fadeBottom10};
 
@@ -229,7 +232,7 @@ export const PathContent = styled.div`
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.medium};
-  align-self: stretch;
+  // align-self: stretch;
   padding: 0px ${layout.space.medium};
 `;
 
@@ -249,7 +252,7 @@ export const PathContentButtons = styled.div`
   gap: ${layout.space.xSmall};
   flex-direction: column;
   align-items: center;
-  align-self: stretch;
+  // align-self: stretch;
 `;
 
 export const VIPSection = styled.div`
@@ -282,7 +285,7 @@ export const VIPContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.xxLarge};
-  align-self: stretch;
+  // align-self: stretch;
 `;
 
 export const VIPMiniTitle = styled.h2`
@@ -319,7 +322,7 @@ export const VIPItemTop = styled.div`
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
-  align-self: stretch;
+  // align-self: stretch;
   border-radius: ${borders.radius.xxLarge};
 
   ${(theme) =>
@@ -336,7 +339,7 @@ export const VIPItemTop = styled.div`
 export const VIPLeagueContainer = styled.div`
   display: flex;
   align-items: center;
-  align-self: stretch;
+  // align-self: stretch;
   border-radius: ${borders.radius.xLarge};
   padding: ${layout.space.xxLarge};
   gap: ${layout.space.xxLarge};
@@ -366,6 +369,7 @@ export const VIPLeagueContents = styled.div`
 
   ${layout.mediaQueries.mobile} {
     padding: 0 ${layout.space.xSmall};
+    max-width: 380px;
   }
 `;
 
@@ -394,7 +398,7 @@ export const VIPLeagueContentsButtons = styled.div`
   flex-direction: column;
   align-items: flex-start;
   align-content: flex-start;
-  align-self: stretch;
+  // align-self: stretch;
   flex-wrap: wrap;
 `;
 
@@ -405,7 +409,7 @@ export const VIPItemBottom = styled.div`
   border-radius: ${borders.radius.xxLarge};
   flex-direction: column;
   align-items: center;
-  align-self: stretch;
+  // align-self: stretch;
 
   ${gradientBorder({
     gradient: gradients.base.fadeBottom10,
@@ -415,6 +419,7 @@ export const VIPItemBottom = styled.div`
   ${layout.mediaQueries.mobile} {
     padding: ${layout.space.xLarge} ${layout.space.medium};
     gap: ${layout.space.xLarge};
+    flex-direction: column;
   }
 `;
 
@@ -424,7 +429,7 @@ export const VIPItemBottomItem = styled.div<{ $purple?: boolean }>`
   flex-direction: column;
   align-items: flex-start;
   gap: ${layout.space.xLarge};
-  width: 364px;
+  flex: 1;
   border-radius: ${borders.radius.xLarge};
   background: 
     linear-gradient(
@@ -448,7 +453,6 @@ export const VIPItemBottomItem = styled.div<{ $purple?: boolean }>`
 
   ${layout.mediaQueries.mobile} {
     width: 100%;
-    max-width: 364px;
     padding: ${layout.space.medium};
   }
 `;
@@ -506,13 +510,13 @@ export const FeaturedLeaguesContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.xxLarge};
-  align-self: stretch;
+  // align-self: stretch;
 `;
 
 export const FeaturedLeaguesList = styled.div`
   display: flex;
   width: 100%;
-  align-self: stretch;
+  // align-self: stretch;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
@@ -570,7 +574,7 @@ export const FeaturedLeagueContentsButtons = styled.div`
   width: 100%;
   gap: ${layout.space.xSmall};
   align-items: flex-start;
-  align-self: stretch;
+  // align-self: stretch;
   flex-wrap: wrap;
 `;
 

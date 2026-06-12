@@ -357,7 +357,7 @@ const Homepage = () => {
           </SectionList>
         </PathContainer>
       </Paths>
-      <VIPSection>
+      {/* <VIPSection>
         <VIPContainerWrapper>
           <VIPContainer>
             <TextContainer>
@@ -442,7 +442,7 @@ const Homepage = () => {
             </VIPList>
           </VIPContainer>
         </VIPContainerWrapper>
-      </VIPSection>
+      </VIPSection> */}
       <FeaturedLeaguesSection>
         <FeaturedLeaguesContainer>
           <TextContainer>
