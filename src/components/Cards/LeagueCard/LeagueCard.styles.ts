@@ -19,7 +19,7 @@ export const ClickableWrapper = styled.button<{ $cardSize: "small" | "medium" }>
   box-sizing: border-box;
 
   width: 100%;
-  /* min-width: 264px; */
+  min-width: 264px;
   max-width: 384px;
   border-bottom-left-radius: ${borders.radius.xxLarge};
   border-bottom-right-radius: ${borders.radius.xxLarge};
