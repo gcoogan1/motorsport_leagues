@@ -12,7 +12,9 @@ export const useProfiles = (
     includeOwnProfiles?: boolean;
   },
 ) => {
-  const skip = !userId || !search || activeTab !== "Profiles";
+  // Allow non-user to search for profiles, but only if there's a search term and the active tab is "Profiles"
+  const skip = !search || activeTab !== "Profiles";
+  // const skip = !userId || !search || activeTab !== "Profiles";
   const includeOwnProfiles = options?.includeOwnProfiles ?? false;
 
   return useGetProfilesQuery(
