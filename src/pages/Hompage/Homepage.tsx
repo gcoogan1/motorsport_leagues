@@ -94,6 +94,7 @@ import { navigate } from "@/app/navigation/navigation";
 import LeagueCard from "@/components/Cards/LeagueCard/LeagueCard";
 import Tabs from "@/components/Tabs/Tabs/Tabs";
 import { useState } from "react";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 const TabsData = [
   { id: "league", label: "League" },
@@ -111,6 +112,7 @@ const Homepage = () => {
   const { user } = useAuth();
   const { openModal } = useModal();
   const [activeTab, setActiveTab] = useState<string>("league");
+  const { track } = useAnalytics();
 
   const tabContent = {
     league: {
@@ -169,12 +171,65 @@ const Homepage = () => {
 
   // Redirect to Create Account
   const handleGetStarted = () => {
+    track("cta_click", "hero_get_started");
     return navigate("/create-account");
   };
 
-  // Searches
   const handleSearch = (tab: "Leagues" | "Profiles" | "Squads") => {
+    track("search_open", `search_${tab.toLowerCase()}`);
     openModal(<SearchForm startingTab={tab} />);
+    return
+  };
+
+  const handleCreate = (type: string) => {
+    track("create_click", `create_${type}`);
+    navigate(`/create-${type.toLowerCase()}`);
+    return
+  };
+
+  const handleLearnMore = (type: string) => {
+    track("learn_more_click", `learn_more_${type}`);
+    return
+  };
+
+  const handleViewSeasonGuide = () => {
+    track("view_season_guide_click", "view_season_guide");
+    return
+  };
+
+  const handleJoinDiscord = () => {
+    track("join_league_discord_click", "join_league_discord");
+    return
+  };
+  const handleGoToLeagueRating = () => {
+    track("go_to_league_rating_click", "go_to_league_rating");
+    return
+  };
+
+  const handleJoinLeague = (leagueName: string) => {
+    track("join_league_click", `join_league_${leagueName.toLowerCase()}`);
+    return
+  };
+
+  const handleFollowLeague = (leagueName: string) => {
+    track("follow_league_click", `follow_league_${leagueName.toLowerCase()}`);
+    return
+  };
+
+  const handleAboutClick = (type: string) => {
+    track("about_click", `about_${type.toLowerCase()}`);
+    return
+  };
+
+  const handleOnTabChange = (tabName: string) => {
+    track("tab_change", `tab_change_${tabName.toLowerCase()}`);
+    setActiveTab(tabName);
+    return
+  };
+
+  const handleTabLinkClick = (tabName: string) => {
+    track("tab_link_click", `tab_link_${tabName.toLowerCase()}`);
+    return
   };
 
   return (
@@ -249,7 +304,9 @@ const Homepage = () => {
                     fullWidth
                     onClick={
                       user
-                        ? () => navigate("/create-profile")
+                        ? () => {
+                            handleCreate("Profile");
+                          }
                         : handleGetStarted
                     }
                   >
@@ -264,7 +321,12 @@ const Homepage = () => {
                   >
                     Find Profile
                   </Button>
-                  <Button color="base" variant="ghost" fullWidth>
+                  <Button
+                    color="base"
+                    variant="ghost"
+                    onClick={() => handleLearnMore("Profiles")}
+                    fullWidth
+                  >
                     Learn More
                   </Button>
                 </PathContentButtons>
@@ -292,7 +354,11 @@ const Homepage = () => {
                     icon={{ left: <SquadIcon /> }}
                     fullWidth
                     onClick={
-                      user ? () => navigate("/create-squad") : handleGetStarted
+                      user
+                        ? () => {
+                            handleCreate("Squad");
+                          }
+                        : handleGetStarted
                     }
                   >
                     Create Squad
@@ -306,7 +372,12 @@ const Homepage = () => {
                   >
                     Find Squad
                   </Button>
-                  <Button color="base" variant="ghost" fullWidth>
+                  <Button
+                    color="base"
+                    variant="ghost"
+                    onClick={() => handleLearnMore("Squads")}
+                    fullWidth
+                  >
                     Learn More
                   </Button>
                 </PathContentButtons>
@@ -334,7 +405,11 @@ const Homepage = () => {
                     icon={{ left: <LeagueIcon /> }}
                     fullWidth
                     onClick={
-                      user ? () => navigate("/create-league") : handleGetStarted
+                      user
+                        ? () => {
+                            handleCreate("League");
+                          }
+                        : handleGetStarted
                     }
                   >
                     Create League
@@ -348,7 +423,12 @@ const Homepage = () => {
                   >
                     Find League
                   </Button>
-                  <Button color="base" variant="ghost" fullWidth>
+                  <Button
+                    color="base"
+                    variant="ghost"
+                    onClick={() => handleLearnMore("Leagues")}
+                    fullWidth
+                  >
                     Learn More
                   </Button>
                 </PathContentButtons>
@@ -389,10 +469,10 @@ const Homepage = () => {
                       </VIPLeagueContentsSubTitle>
                     </VIPLeagueContentsTextContainer>
                     <VIPLeagueContentsButtons>
-                      <Button color="primary" variant="ghost">
+                      <Button color="primary" variant="ghost" onClick={handleViewSeasonGuide}>
                         View Season Guide
                       </Button>
-                      <Button color="primary" variant="outlined">
+                      <Button color="primary" variant="outlined" onClick={handleJoinDiscord}>
                         Join Discord
                       </Button>
                     </VIPLeagueContentsButtons>
@@ -417,7 +497,7 @@ const Homepage = () => {
                           approval.
                         </ItemSubTitle>
                       </ItemTextContainer>
-                      <Button color="base" icon={{ right: <ExternalIcon /> }}>
+                      <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={handleGoToLeagueRating}>
                         Go to MSLDrivers.com
                       </Button>
                     </VIPItemBottomContents>
@@ -432,7 +512,7 @@ const Homepage = () => {
                           approval.
                         </ItemSubTitle>
                       </ItemTextContainer>
-                      <Button color="base" icon={{ right: <ExternalIcon /> }}>
+                      <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={handleGoToLeagueRating}>
                         Go to MSLDrivers.com
                       </Button>
                     </VIPItemBottomContents>
@@ -574,7 +654,7 @@ const Homepage = () => {
                   <AboutItemBullet>another one</AboutItemBullet>
                   <AboutItemBullet>and onter one.</AboutItemBullet>
                 </AboutItemBulletList>
-                <Button color="base" icon={{ right: <ExternalIcon /> }}>
+                <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={() => handleAboutClick("squad")}>
                   Go to MSLDrivers.com
                 </Button>
               </AboutItemTextContainer>
@@ -595,7 +675,7 @@ const Homepage = () => {
                   <AboutItemBullet>another one</AboutItemBullet>
                   <AboutItemBullet>and onter one.</AboutItemBullet>
                 </AboutItemBulletList>
-                <Button color="base" icon={{ right: <ExternalIcon /> }}>
+                <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={() => handleAboutClick("league")} >
                   Go to MSLDrivers.com
                 </Button>
               </AboutItemTextContainer>
@@ -614,7 +694,7 @@ const Homepage = () => {
                   <AboutItemBullet>another one</AboutItemBullet>
                   <AboutItemBullet>and onter one.</AboutItemBullet>
                 </AboutItemBulletList>
-                <Button color="base" icon={{ right: <ExternalIcon /> }}>
+                <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={() => handleAboutClick("profile")}>
                   Go to MSLDrivers.com
                 </Button>
               </AboutItemTextContainer>
@@ -633,7 +713,7 @@ const Homepage = () => {
                 <Tabs
                   tabs={TabsData}
                   activeTab={activeTab}
-                  onTabChange={setActiveTab}
+                  onTabChange={handleOnTabChange}
                 />
                 <LeagueTabContent>
                   <LeagueTabContent>
@@ -649,7 +729,7 @@ const Homepage = () => {
                           </AboutItemBullet>
                         ))}
                       </AboutItemBulletList>
-                      <Button color="base" icon={{ right: <ExternalIcon /> }}>
+                      <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={() => handleTabLinkClick(tab.title)} >
                         {tab.link || "Go to MSLDrivers.com"}
                       </Button>
                     </AboutItemTextContainer>
@@ -666,11 +746,12 @@ const Homepage = () => {
                 <SectionSubTitle>Contact me!</SectionSubTitle>
               </TextContainer>
               <ContactButtons>
-                <Button color="base">Join League</Button>
+                <Button color="base" onClick={() => handleJoinLeague("MSLDrivers")}>Join League</Button>
                 <Button
                   color="base"
                   variant="outlined"
                   icon={{ left: <FollowIcon /> }}
+                  onClick={() => handleFollowLeague("MSLDrivers")}
                 >
                   Follow
                 </Button>
