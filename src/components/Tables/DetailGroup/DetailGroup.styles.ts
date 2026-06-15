@@ -12,7 +12,7 @@ export const Detail = styled.div`
   flex: 1 0 0;
   width: 100%;
   min-width: 240px;
-  border-radius: ${layout.space.medium};
+  border-radius: ${borders.radius.medium};
   padding: ${layout.space.medium};
   background: ${colors.base.translucent10};
 `;
@@ -35,7 +35,7 @@ export const GroupContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   align-self: center;
-  border-radius: ${layout.space.xLarge};
+  border-radius: ${borders.radius.xLarge};
 
   ${gradientBorder({
     gradient: gradients.base.fadeBottom10,

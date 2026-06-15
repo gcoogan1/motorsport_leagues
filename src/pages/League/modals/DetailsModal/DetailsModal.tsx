@@ -372,12 +372,16 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
               advancedSettings?.time_of_day,
             ),
           },
-          {
-            detailSetting: "Variable Time Speed Rate",
-            detailOption: advancedSettings?.variable_time_speed_rate
-              ? `${advancedSettings.variable_time_speed_rate}x`
-              : "Not Set",
-          },
+          ...(advancedSettings?.equal_con_mode === "true"
+            ? [
+                {
+                detailSetting: "Variable Time Speed Rate",
+                detailOption: advancedSettings?.variable_time_speed_rate
+                  ? `${advancedSettings.variable_time_speed_rate}x`
+                  : "Not Set",
+              }
+              ]
+            : []),
           ...(advancedSettings?.weather_selection === "presetWeatherSelection"
             ? [
                 {
@@ -784,7 +788,6 @@ ${regulationTitle}
   const eventDetails = selectedEvent?.event_advanced_settings
   const showDetails = eventDetails && eventDetails?.reveal_advanced_settings
 
-  console.log("selectedEvent", selectedEvent);
 
   const filters =
     divisionOptions.length > 0 ||

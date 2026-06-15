@@ -71,8 +71,9 @@ export const SheetContainer = styled.div<{ $fullScreen?: boolean }>`
   position: relative;
   flex: 1;
   width: 100%;
-  height: ${({ $fullScreen }) => ($fullScreen ? "100%" : "auto")};
+  height: ${({ $fullScreen }) => ($fullScreen ? "100dvh" : "auto")};
   min-width: 0;
+  min-height: 0;
   border-radius: ${borders.radius.xxxLarge};
   background: ${({ theme }) => theme.theme.primaryGradientFadeBottom30};
   padding: ${layout.space.xxLarge} ${layout.space.xLarge};

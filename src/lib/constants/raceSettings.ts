@@ -70,9 +70,11 @@ export const REFUELING_SPEED_FORMATTER = (value: number) => `${value}L/sec`;
 export const INITIAL_FUEL_MIN = 0;
 export const INITIAL_FUEL_MAX = 100;
 export const INITIAL_FUEL_STEP = 1;
-export const INITIAL_FUEL_DEFAULT = 0;
+export const INITIAL_FUEL_DEFAULT = 101;
 export const INITIAL_FUEL_FORMATTER = (value: number) =>
-  value === 0 ? "Default" : `${value} liters`;
+  value < INITIAL_FUEL_MIN || value > INITIAL_FUEL_MAX
+    ? "Default"
+    : `${value} liters`;
 
 export const GRIP_REDUCTION_OFF_TRACK_OPTIONS = [
   { label: "Low", value: "low" },

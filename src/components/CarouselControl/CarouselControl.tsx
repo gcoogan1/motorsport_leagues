@@ -25,7 +25,7 @@ const CarouselControl = ({
   onPrevious,
   onNext,
   onSelect,
-  maxDots = 8,
+  maxDots = 6,
 }: CarouselControlProps) => {
   const totalSlides = scrollSnaps.length;
 

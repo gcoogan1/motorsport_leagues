@@ -69,6 +69,11 @@ const TimeWeather = ({
     name: "variableTimeSpeedRate",
     defaultValue: VARIABLE_TIME_SPEED_RATE_DEFAULT,
   });
+  const equalCondition = useWatch({
+    control: resolvedFormMethods.control,
+    name: "equalCondition",
+    defaultValue: "true",
+  });
 
   // -- Handlers -- //
 
@@ -168,16 +173,18 @@ const TimeWeather = ({
                 options={EQUAL_CONDITION_OPTIONS}
               />
             </FormRow>
-            <IncrementInput
-              name={"variableTimeSpeedRate"}
-              label="Variable Time Speed Rate"
-              min={VARIABLE_TIME_SPEED_RATE_MIN}
-              max={VARIABLE_TIME_SPEED_RATE_MAX}
-              step={VARIABLE_TIME_SPEED_RATE_STEP}
-              formatter={VARIABLE_TIME_SPEED_RATE_FORMATTER}
-              value={variableTimeSpeedRate}
-              onChange={handleVariableTimeSpeedRateChange}
-            />
+            {equalCondition === "true" && (
+              <IncrementInput
+                name={"variableTimeSpeedRate"}
+                label="Variable Time Speed Rate"
+                min={VARIABLE_TIME_SPEED_RATE_MIN}
+                max={VARIABLE_TIME_SPEED_RATE_MAX}
+                step={VARIABLE_TIME_SPEED_RATE_STEP}
+                formatter={VARIABLE_TIME_SPEED_RATE_FORMATTER}
+                value={variableTimeSpeedRate}
+                onChange={handleVariableTimeSpeedRateChange}
+              />
+            )}
           </>
         ) : (
           <>
