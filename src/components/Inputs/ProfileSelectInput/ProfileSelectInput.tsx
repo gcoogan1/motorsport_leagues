@@ -37,6 +37,7 @@ type ProfileSelectInputProps = {
   hasError?: boolean;
   errorMessage?: string;
   profiles?: Profile[];
+  shortenText?: boolean;
 };
 
 const ProfileSelectInput = ({
@@ -49,6 +50,7 @@ const ProfileSelectInput = ({
   errorMessage,
   profiles = [],
   placeholder = "Select profile...",
+  shortenText = false,
 }: ProfileSelectInputProps) => {
   const { control } = useFormContext();
   
@@ -97,6 +99,7 @@ const ProfileSelectInput = ({
                   avatarType={selectedProfile.avatar.avatarType}
                   avatarValue={selectedProfile.avatar.avatarValue}
                   information={selectedInfo}
+                  shortenText={shortenText}
                 />
               ) : (
                 <>
