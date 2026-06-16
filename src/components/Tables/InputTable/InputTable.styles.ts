@@ -37,36 +37,49 @@ export const CarHeader = styled.thead`
 
 
 /* Result Header Columns */
-export const PComlumn = styled.th`
+export const PComlumn = styled.th<{ $hasPoints?: boolean }>`
   display: flex;
   width: 48px;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
   text-align: center;
+
+  ${({ $hasPoints }) => $hasPoints && `
+    ${layout.mediaQueries.mobile} {
+      width: 36px;
+    }
+  `}
 `;
 
-export const DriverColumn = styled.th`
+export const DriverColumn = styled.th<{ $hasPoints?: boolean }>`
   display: flex;
+  min-width: 0;
   align-items: center;
-  flex: 1;
-  text-align: left; 
+  flex: 1 1 0;
+  text-align: left;
+
+  ${({ $hasPoints }) => $hasPoints && `
+    ${layout.mediaQueries.mobile} {
+      width: 88px;
+    }
+  `}
 `;
 
-export const TimeColumn = styled.th`
+export const TimeColumn = styled.th<{ $hasPoints?: boolean }>`
   display: flex;
   width: 120px;
   align-items: center;
   flex-shrink: 0;
-  text-align: left; 
+  text-align: left;
 `;
 
-export const PointsColumn = styled.th`
+export const PointsColumn = styled.th<{ $hasPoints?: boolean }>`
   display: flex;
   width: 64px;
   align-items: center;
   flex-shrink: 0;
-  text-align: left; 
+  text-align: left;
 `;
 
 export const ExtraColumn = styled.th`
@@ -78,13 +91,19 @@ export const ExtraColumn = styled.th`
 `
 
 /* Result Body Cells */
-export const PCell = styled.td`
+export const PCell = styled.td<{ $hasPoints?: boolean }>`
   display: flex;
   width: 48px;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
   text-align: center;
+
+  ${({ $hasPoints }) => $hasPoints && `
+    ${layout.mediaQueries.mobile} {
+      width: 36px;
+    }
+  `}
 `;
 
 export const PText = styled.p`
@@ -92,15 +111,23 @@ export const PText = styled.p`
   color: ${colors.text.text1};
 `;
 
-export const DriverCell = styled.td`
+export const DriverCell = styled.td<{ $hasPoints?: boolean }>`
   display: flex;
-  min-width: 88px;
+  min-width: 0;
   align-items: center;
-  flex: 1;
+  flex: 1 1 0;
   text-align: left;
+
+  overflow: hidden;
+
+  ${({ $hasPoints }) => $hasPoints && `
+    ${layout.mediaQueries.mobile} {
+      width: 88px;
+    }
+  `}
 `;
 
-export const TimeCell = styled.td`
+export const TimeCell = styled.td<{ $hasPoints?: boolean }>`
   display: flex;
   width: 120px;
   align-items: center;
@@ -108,7 +135,7 @@ export const TimeCell = styled.td`
   text-align: left;
 `;
 
-export const PointsCell = styled.td`
+export const PointsCell = styled.td<{ $hasPoints?: boolean }>`
   display: flex;
   width: 64px;
   align-items: center;

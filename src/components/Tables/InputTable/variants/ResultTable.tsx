@@ -62,12 +62,12 @@ const ResultTable = ({ name, columns, customWidth, moreOnClick }: ResultTablePro
       <ResultHeader>
         <TableRow>
           {columns.p && (
-            <PComlumn>
+            <PComlumn $hasPoints={!!columns.points}>
               <ColumnText>P</ColumnText>
             </PComlumn>
           )}
           {columns.driver && (
-            <DriverColumn>
+            <DriverColumn $hasPoints={!!columns.points}>
               <ColumnText>{columns.driver.label}</ColumnText>
             </DriverColumn>
           )}
@@ -88,16 +88,17 @@ const ResultTable = ({ name, columns, customWidth, moreOnClick }: ResultTablePro
         {fields.map((field, i) => (
           <TableRow key={field.id}>
             {columns.p && (
-              <PCell>
+              <PCell $hasPoints={!!columns.points}>
                 <PText>{i + 1}</PText>
               </PCell>
             )}
             {columns.driver && (
-              <DriverCell>
+              <DriverCell $hasPoints={!!columns.points}>
                 <ProfileSelectInput
                   name={`${name}.${i}.${columns.driver.name}`}
                   type="driver"
                   profiles={columns.driver.profiles}
+                  shortenText={!!columns.points}
                 />
               </DriverCell>
             )}

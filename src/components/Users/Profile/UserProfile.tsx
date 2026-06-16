@@ -12,9 +12,10 @@ type UserProfileProps = {
   avatarValue: AvatarVariants | string;
   tags?: Tag[];
   centerContent?: boolean;
+  shortenText?: boolean;
 }
 
-const UserProfile = ({ username, information, size = "medium",  avatarType, avatarValue, tags, centerContent = false }: UserProfileProps) => {
+const UserProfile = ({ username, information, size = "medium",  avatarType, avatarValue, tags, centerContent = false, shortenText = false }: UserProfileProps) => {
 
   const avatarSize = size === "small" ? "tiny" : size;
 
@@ -27,7 +28,7 @@ const UserProfile = ({ username, information, size = "medium",  avatarType, avat
         {size === "large" ? (
           <>
             <UsernameContainer  isLarge={true}>
-              <Username $size={size}>{username}</Username>
+              <Username $size={size} $shortenText={shortenText}>{username}</Username>
               {information && <Information $size={size}>{information}</Information>}
             </UsernameContainer>
               {tags && tags.length > 0 && (
@@ -37,7 +38,7 @@ const UserProfile = ({ username, information, size = "medium",  avatarType, avat
         ): (
           <>
           <UsernameContainer isLarge={false}>
-            <Username $size={size}>{username}</Username>
+            <Username $size={size} $shortenText={shortenText}>{username}</Username>
             {tags && tags.length > 0 && (
               <Tags variants={tags} />
             )}

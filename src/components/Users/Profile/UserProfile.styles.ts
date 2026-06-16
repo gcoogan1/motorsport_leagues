@@ -56,7 +56,7 @@ export const UsernameContainer = styled.div<{ isLarge: boolean }>`
   `};
 `;
 
-export const Username = styled.h2<{ $size: "small" | "medium" | "large" }>`
+export const Username = styled.h2<{ $size: "small" | "medium" | "large", $shortenText: boolean }>`
   ${({ $size }) => {
     switch ($size) {
       case "small":
@@ -74,6 +74,14 @@ export const Username = styled.h2<{ $size: "small" | "medium" | "large" }>`
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 200px;
+
+  ${({ $shortenText }) =>
+    $shortenText &&
+    css`
+      ${layout.mediaQueries.mobile} {
+        max-width: 10px;
+      }
+  `};
 `;
 
 export const Information = styled.p<{ $size: "small" | "medium" | "large" }>`
