@@ -19,10 +19,15 @@ import {
 type DriverInfo = {
   id: string;
   username: string;
-  driverNumber: string;
   avatarType: "preset" | "upload";
   avatarValue: AvatarVariants | string;
   tags?: Tag[];
+  teamName?: string;
+};
+
+export type RoundInfo = {
+  roundName: string;
+  trackName: string;
 };
 
 type ResultRow = {
@@ -30,18 +35,33 @@ type ResultRow = {
   points: number;
   driver: DriverInfo;
   time?: string;
+  type: "driver" | "team";
   races?: number;
-  isTeam?: boolean;
+  roundInfo?: RoundInfo;
   onClick: () => void;
 };
 
 type TableProps = {
   title: string;
-  isTeam?: boolean;
   results: ResultRow[];
+  metricLabel?: string;
+  resultPerRound?: boolean;
 };
 
-const Table= ({ title, isTeam, results }: TableProps) => {
+const Table= ({
+  title,
+  results,
+  metricLabel,
+  resultPerRound,
+}: TableProps) => {
+  const hasTime = results.some((result) => typeof result.time === "string" && result.type === "driver");
+  const hasTeam = results.some((result) => result.type === "team");
+
+  const participantTypeLabel = !hasTeam ? "Driver" : "Team";
+  const participantLabel = resultPerRound ? "Rounds" : participantTypeLabel;
+
+
+
   return (
     <TableWrapper>
       <TableHeader>
@@ -53,31 +73,37 @@ const Table= ({ title, isTeam, results }: TableProps) => {
             <HeaderCell>P</HeaderCell>
           </PositionHeaderRow>
           <ParticipantHeaderRow>
-            <HeaderCell>{isTeam ? "Team" : "Driver"}</HeaderCell>
+            <HeaderCell>{participantLabel}</HeaderCell>
           </ParticipantHeaderRow>
-          {isTeam ? (
-            <RaceHeaderRow>
-              <HeaderCell>Race</HeaderCell>
-            </RaceHeaderRow>
-          ) : (
+          {hasTime  ? (
             <TimeHeaderRow>
               <HeaderCell>Time</HeaderCell>
             </TimeHeaderRow>
+          ) : (
+            <>
+              {!!metricLabel && (
+                <RaceHeaderRow>
+                  <HeaderCell>{metricLabel ?? "Races"}</HeaderCell>
+                </RaceHeaderRow>
+              )}
+            </>
           )}
           <PointsHeaderRow>
             <HeaderCell>Points</HeaderCell>
           </PointsHeaderRow>
         </TableContentHeader>
-        {results.map(({ position, points, driver, time, races, onClick }) => (
+        {results.map(({ position, points, driver, time, races, onClick, roundInfo }) => (
           <TableRows key={driver.id}>
             <Row
               position={position}
               points={points}
               driverInfo={driver}
+              isTeamRow={hasTeam}
               time={time}
               races={races}
-              isTeam={isTeam}
               onClick={onClick}
+              resultPerRound={resultPerRound}
+              roundInfo={roundInfo}
             />
           </TableRows>
         ))}

@@ -1,11 +1,12 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { designTokens } from "@app/design/tokens";
 import { bottomFadeBorder } from "@/app/design/mixens/edgeFadeBorder";
 
 const { colors, gradients, layout, borders, typography } = designTokens;
 
 export const RowWrapper = styled.div`
-  max-width: 640px;
+  width: 100%;
+  min-width: 0;
   padding: ${layout.space.xxSmall};
   gap: ${layout.space.xxSmall};
   display: flex;
@@ -23,9 +24,11 @@ export const RowWrapper = styled.div`
 export const RowContainer = styled.button`
   display: flex;
   padding: ${layout.space.xxSmall};
+  border-radius: ${borders.radius.medium};
   align-items: center;
   gap: ${layout.space.medium};
   align-self: stretch;
+  min-width: 0;
   border: none;
   background: none;
   cursor: pointer;
@@ -51,17 +54,81 @@ export const RowContainer = styled.button`
 export const RowText = styled.p`
   ${typography.body.medium};
   color: ${colors.text.text1};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  ${layout.mediaQueries.mobile} {
+    max-width: 120px;
+  }
 `;
 
-export const TimeCell = styled.td`
+export const ParticipantCell = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+export const TeamCell = styled.div`
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+`;
+
+export const TimeCell = styled.div`
   width: 96px;
+  flex-shrink: 0;
 `;
 
-export const RacesCell = styled.td`
+export const RacesCell = styled.div`
   width: 48px;
+  flex-shrink: 0;
   text-align: center;
 `;
 
-export const PointsCell = styled.td`
+export const PointsCell = styled.div`
   width: 48px;
+  flex-shrink: 0;
 `;
+
+export const RoundContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: ${layout.space.xxSmall};
+    min-width: 0;
+    text-align: left;
+`;
+
+export const RoundName = styled.h2<{ $shortenText: boolean }>`
+  ${typography.body.mediumBold};
+  color: ${colors.text.text1};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+
+  ${({ $shortenText }) =>
+    $shortenText &&
+    css`
+      ${layout.mediaQueries.mobile} {
+        max-width: 100px;
+      }
+  `};
+`;
+
+export const TrackName = styled.p<{ $shortenText: boolean }>`
+  ${typography.body.smallRegular};
+  color: ${colors.text.text2};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  
+  ${layout.mediaQueries.mobile} {
+    max-width: 200px;
+
+    ${({ $shortenText }) =>
+      $shortenText &&
+      css`
+        max-width: 100px;
+      `};
+  }
+`;;

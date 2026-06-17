@@ -289,7 +289,6 @@ const OnTheGrid = ({ eventId, seasonId, seasonName }: OnTheGridProps) => {
       listChildren={listChildren}
       filters={filters}
       onClose={closeModal}
-      fullScreen
     />
   );
 };

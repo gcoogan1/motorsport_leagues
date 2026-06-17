@@ -84,7 +84,7 @@ export const Username = styled.h2<{ $size: "small" | "medium" | "large", $shorte
   `};
 `;
 
-export const Information = styled.p<{ $size: "small" | "medium" | "large" }>`
+export const Information = styled.p<{ $size: "small" | "medium" | "large", $shortenText: boolean }>`
   ${({ $size }) => {
     switch ($size) {
       case "small":
@@ -104,5 +104,11 @@ export const Information = styled.p<{ $size: "small" | "medium" | "large" }>`
   
   ${layout.mediaQueries.mobile} {
     max-width: 200px;
+
+    ${({ $shortenText }) =>
+      $shortenText &&
+      css`
+        max-width: 100px;
+      `};
   }
 `;

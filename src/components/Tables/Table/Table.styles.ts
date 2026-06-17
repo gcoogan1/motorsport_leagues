@@ -6,7 +6,7 @@ const { colors, layout, gradients, borders, typography } = designTokens;
 
 export const TableWrapper = styled.div`
   display: flex;
-  width: 640px;
+  width: 100%;
   min-width: 360px;
   max-width: 720px;
   flex-direction: column;
@@ -33,55 +33,68 @@ export const TableTitle = styled.h2`
   color: ${colors.text.text2};
 `;
 
-export const TableContent = styled.table`
+export const TableContent = styled.div`
   display: flex;
   padding: ${layout.space.medium};
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.xSmall};
   align-self: stretch;
+  min-width: 0;
 `;
 
-export const TableContentHeader = styled.thead`
+export const TableContentHeader = styled.div`
   display: flex;
+  width: 100%;
+  height: 18px;
   padding: 0 ${layout.space.xSmall};
   align-items: center;
   gap: ${layout.space.medium};
 `;
 
-export const PositionHeaderRow = styled.tr`
+export const PositionHeaderRow = styled.div`
   width: 48px;
   height: 18px;
+  display: flex;
+  justify-content: center;
 `;
 
-export const ParticipantHeaderRow = styled.tr`
+export const ParticipantHeaderRow = styled.div`
   flex: 1;
-`;
-
-export const TimeHeaderRow = styled.tr`
-  width: 96px;
+  min-width: 0;
   height: 18px;
 `;
 
-export const RaceHeaderRow = styled.tr`
+export const TimeHeaderRow = styled.div`
+  width: 96px;
+  height: 18px;
+  flex-shrink: 0;
+`;
+
+export const RaceHeaderRow = styled.div`
   width: 48px;
   height: 18px;
   text-align: center;
+  flex-shrink: 0;
 `;
 
-export const PointsHeaderRow = styled.tr`
+export const PointsHeaderRow = styled.div`
   width: 48px;
-  height: 18px;
+  flex-shrink: 0;
 `;
 
-export const HeaderCell = styled.td`
+export const HeaderCell = styled.div`
   ${typography.body.smallRegular};
   color: ${colors.text.text2};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
-export const TableRows = styled.tr`
+export const TableRows = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   align-self: stretch;
+  min-width: 0;
 `;

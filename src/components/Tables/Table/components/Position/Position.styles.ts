@@ -12,7 +12,7 @@ export const PositionContainer = styled.div<{ $positionBackground: PositionBackg
   align-items: center;
   justify-content: flex-end;
   border-top-right-radius: ${borders.radius.round};
-  border-top-left-radius: ${borders.radius.round};
+  border-bottom-right-radius: ${borders.radius.round};
   padding: ${layout.space.xxSmall} ${layout.space.medium};
 
 
