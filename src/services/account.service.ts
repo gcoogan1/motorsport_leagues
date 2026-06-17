@@ -47,7 +47,7 @@ export const getAccountById = async (
     .from("accounts")
     .select("*")
     .eq("id", userId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     return {
@@ -92,7 +92,7 @@ export const updateAccountName = async (
     })
     .eq("id", userId)
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) {
     return {
@@ -131,7 +131,7 @@ export const getAccountEmailById = async (
     .from("accounts")
     .select("email")
     .eq("id", accountId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     return null;

@@ -3,6 +3,7 @@ import type { Tag } from "@/components/Tags/Tags.variants";
 import { Information, ProfileContainer, TextContainer, Username, UsernameContainer, AvatarWrapper } from "./UserProfile.styles";
 import Avatar from "@/components/Avatar/Avatar";
 import Tags from "@/components/Tags/Tags";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 type UserProfileProps = {
   username: string;
@@ -13,11 +14,14 @@ type UserProfileProps = {
   tags?: Tag[];
   centerContent?: boolean;
   shortenText?: boolean;
+  shortenTeamText?: boolean;
 }
 
-const UserProfile = ({ username, information, size = "medium",  avatarType, avatarValue, tags, centerContent = false, shortenText = false }: UserProfileProps) => {
+const UserProfile = ({ username, information, size = "medium",  avatarType, avatarValue, tags, centerContent = false, shortenText = false, shortenTeamText = false }: UserProfileProps) => {
 
   const avatarSize = size === "small" ? "tiny" : size;
+  const isMobile = useMediaQuery("(max-width: 919px)");
+  const hideTags = isMobile && shortenTeamText;
 
   return (
     <ProfileContainer size={size} $centerContent={centerContent}>
@@ -29,9 +33,9 @@ const UserProfile = ({ username, information, size = "medium",  avatarType, avat
           <>
             <UsernameContainer  isLarge={true}>
               <Username $size={size} $shortenText={shortenText}>{username}</Username>
-              {information && <Information $size={size}>{information}</Information>}
+              {information && <Information $shortenText={shortenTeamText} $size={size}>{information}</Information>}
             </UsernameContainer>
-              {tags && tags.length > 0 && (
+              {tags && tags.length > 0 && !hideTags && (
                 <Tags variants={tags} />
               )}
           </>
@@ -39,11 +43,11 @@ const UserProfile = ({ username, information, size = "medium",  avatarType, avat
           <>
           <UsernameContainer isLarge={false}>
             <Username $size={size} $shortenText={shortenText}>{username}</Username>
-            {tags && tags.length > 0 && (
+            {tags && tags.length > 0 && !hideTags && (
               <Tags variants={tags} />
             )}
           </UsernameContainer>
-            {information && <Information $size={size}>{information}</Information>}
+            {information && <Information $shortenText={shortenTeamText} $size={size}>{information}</Information>}
           </>
         )}
       </TextContainer>

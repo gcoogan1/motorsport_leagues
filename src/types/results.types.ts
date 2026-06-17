@@ -76,6 +76,19 @@ export type GetResultsResponse = {
   data: ResultsTable[];
 } | SupabaseError;
 
+export type NormalizedResultsTable = ResultsTable & {
+  round_name: string;
+  track_name: string;
+  display_name: string;
+  team_name: string;
+};
+
+// -- GET JOINED RESULTS -- //
+export type GetJoinedResultsResponse = {
+  success: true;
+  data: NormalizedResultsTable[];
+} | SupabaseError;
+
 
 // -- DELETE -- //
 

@@ -111,7 +111,6 @@ const BriefingModal = ({ roundId, seasonId, seasonName }: BriefingModalProps) =>
       listChildren={listChildren}
       filters={filters}
       onClose={closeModal}
-      fullScreen
     ></SheetModal>
   );
 };

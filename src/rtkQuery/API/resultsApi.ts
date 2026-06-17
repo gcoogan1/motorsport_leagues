@@ -8,13 +8,17 @@ import {
   getResultsByRoundId,
   getResultsPerDriverId,
   getResultsPerTeamId,
+  getResultsWithDetailsByDriverId,
+  getResultsWithDetailsPerTeamId,
   updateResult,
 } from "@/services/event/results.service";
 import type {
   CreateResultsPayload,
   CreateResultsResponse,
+  GetJoinedResultsResponse,
   GetResultResponse,
   GetResultsResponse,
+  NormalizedResultsTable,
   ResultsTable,
   UpdateResultsPayload,
   UpdateResultsResponse,
@@ -181,6 +185,56 @@ export const resultsApi = createApi({
       providesTags: (result) =>
         result?.map((item) => ({ type: "Result" as const, id: item.id })) ?? [],
     }),
+    // Fetches a driver's results with round, track, and team data joined in
+    // a single query. Qualifying sessions are already excluded by the service.
+    getResultsWithDetailsByDriverId: builder.query<NormalizedResultsTable[], string>({
+      queryFn: async (driverId) => {
+        try {
+          const result: GetJoinedResultsResponse =
+            await getResultsWithDetailsByDriverId(driverId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (result) =>
+        result?.map((item) => ({ type: "Result" as const, id: item.id })) ?? [],
+    }),
+    // Fetches a driver's results with round, track, and team data joined in
+    // a single query. Qualifying sessions are already excluded by the service.
+    getResultsWithDetailsByTeamId: builder.query<NormalizedResultsTable[], string>({
+      queryFn: async (teamId) => {
+        try {
+          const result: GetJoinedResultsResponse =
+            await getResultsWithDetailsPerTeamId(teamId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (result) =>
+        result?.map((item) => ({ type: "Result" as const, id: item.id })) ?? [],
+    }),
     createResult: builder.mutation<ResultsTable, CreateResultsPayload>({
       queryFn: async (payload) => {
         try {
@@ -256,6 +310,8 @@ export const {
   useGetResultsByRoundIdQuery,
   useGetResultsByDriverIdQuery,
   useGetResultsByTeamIdQuery,
+  useGetResultsWithDetailsByDriverIdQuery,
+  useGetResultsWithDetailsByTeamIdQuery,
   useCreateResultMutation,
   useUpdateResultMutation,
   useDeleteResultMutation,

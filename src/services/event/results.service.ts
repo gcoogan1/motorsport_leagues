@@ -3,11 +3,39 @@ import type {
   CreateResultsPayload,
   CreateResultsResponse,
   DeleteResultsResponse,
+  GetJoinedResultsResponse,
   GetResultResponse,
   GetResultsResponse,
+  NormalizedResultsTable,
   UpdateResultsPayload,
   UpdateResultsResponse,
 } from "@/types/results.types";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const normalizeResult = (result: any): NormalizedResultsTable => {
+  const {
+    round,
+    event,
+    league_season_driver,
+    ...baseResult
+  } = result;
+
+  return {
+    ...baseResult,
+
+    round_name: round?.round_name ?? null,
+
+    track_name:
+      event?.event_track_details?.[0]?.track_name ?? null,
+
+    display_name:
+      league_season_driver?.display_name ?? null,
+
+    team_name:
+      league_season_driver?.league_season_team?.team_name ?? null,
+  };
+};
+
 
 
 // -- GET RESULT-- //
@@ -122,6 +150,40 @@ export const getResultsPerDriverId = async (
   return { success: true, data };
 };
 
+// Fetches a driver's results with related round, track, and team data in a
+// single query using Supabase PostgREST relational joins. Qualifying sessions
+// are excluded at the database level so no extra client-side filtering is needed.
+export const getResultsWithDetailsByDriverId = async (
+  driverId: string,
+): Promise<GetJoinedResultsResponse> => {
+  const { data, error } = await supabase
+    .from("results")
+    .select(`
+      *,
+      round ( round_name ),
+      event (
+        event_track_details ( track_name )
+      ),
+      league_season_driver!driver_id (
+        display_name,
+        team_id,
+        league_season_team ( team_name )
+      )
+    `)
+    .eq("driver_id", driverId)
+    .neq("session_type", "qualifying")
+    .neq("fastest_lap", true);
+
+  if (error) {
+    return {
+      success: false,
+      error: { message: error.message, code: error.code, status: 500 },
+    };
+  }
+
+  return { success: true, data: (data ?? []).map(normalizeResult) };
+};
+
 export const getResultsPerTeamId = async (
   teamId: string,
 ): Promise<GetResultsResponse> => {
@@ -138,6 +200,37 @@ export const getResultsPerTeamId = async (
   }
 
   return { success: true, data };
+};
+
+export const getResultsWithDetailsPerTeamId = async (
+  teamId: string,
+): Promise<GetJoinedResultsResponse> => {
+  const { data, error } = await supabase
+    .from("results")
+    .select(`
+      *,
+      round ( round_name ),
+      event (
+        event_track_details ( track_name )
+      ),
+      league_season_driver!driver_id (
+        display_name,
+        team_id,
+        league_season_team ( team_name )
+      )
+    `)
+    .eq("team_id", teamId)
+    .neq("session_type", "qualifying")
+    .neq("fastest_lap", true)
+
+  if (error) {
+    return {
+      success: false,
+      error: { message: error.message, code: error.code, status: 500 },
+    };
+  }
+
+  return { success: true, data: (data ?? []).map(normalizeResult) };
 };
 
 // -- CREATE RESULT -- //

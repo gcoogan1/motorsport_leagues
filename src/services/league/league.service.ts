@@ -16,6 +16,7 @@ import { getCurrentTimezone } from "@/utils/timezone";
 import { addLeagueApplicationOptions } from "./leagueApplication.service";
 import { addLeagueParticipant, addLeagueParticipantRole } from "./leagueParticipant.service";
 import { createLeagueSeason } from "./leagueSeason.service";
+import { deleteEventsBySeasonId } from "../event/event.service";
 
 const DEFAULT_LEAGUE_APPLICATION_OPEN_ROLES:
   typeof LEAGUE_PARTICIPANT_ROLES[number][] = [
@@ -832,6 +833,189 @@ export const deleteLeagueById = async (
         error: {
           message: coverDeleteError.message,
           code: "LEAGUE_COVER_DELETION_FAILED",
+          status: 500,
+        },
+      };
+    }
+  }
+
+  const { data: seasonRows, error: seasonsFetchError } = await supabase
+    .from("league_season")
+    .select("id")
+    .eq("league_id", leagueId);
+
+  if (seasonsFetchError) {
+    return {
+      success: false,
+      error: {
+        message: seasonsFetchError.message,
+        code: seasonsFetchError.code || "LEAGUE_SEASONS_FETCH_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const seasonIds = (seasonRows ?? []).map((season) => season.id as string);
+
+  const { data: participantRows, error: participantsFetchError } = await supabase
+    .from("league_participants")
+    .select("id")
+    .eq("league_id", leagueId);
+
+  if (participantsFetchError) {
+    return {
+      success: false,
+      error: {
+        message: participantsFetchError.message,
+        code: participantsFetchError.code || "LEAGUE_PARTICIPANTS_FETCH_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const participantIds = (participantRows ?? []).map((participant) => participant.id as string);
+
+  const { error: followsDeleteError } = await supabase
+    .from("league_follows")
+    .delete()
+    .eq("league_id", leagueId);
+
+  if (followsDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: followsDeleteError.message,
+        code: followsDeleteError.code || "LEAGUE_FOLLOWS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const { error: invitesDeleteError } = await supabase
+    .from("league_invites")
+    .delete()
+    .eq("league_id", leagueId);
+
+  if (invitesDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: invitesDeleteError.message,
+        code: invitesDeleteError.code || "LEAGUE_INVITES_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const { error: joinRequestsDeleteError } = await supabase
+    .from("league_join_request")
+    .delete()
+    .eq("league_id", leagueId);
+
+  if (joinRequestsDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: joinRequestsDeleteError.message,
+        code: joinRequestsDeleteError.code || "LEAGUE_JOIN_REQUESTS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  if (seasonIds.length > 0) {
+    for (const seasonId of seasonIds) {
+      const eventsDeleteResult = await deleteEventsBySeasonId(seasonId);
+
+      if (!eventsDeleteResult.success) {
+        return {
+          success: false,
+          error: {
+            message: eventsDeleteResult.error.message,
+            code: eventsDeleteResult.error.code || "LEAGUE_EVENTS_DELETION_FAILED",
+            status: eventsDeleteResult.error.status,
+          },
+        };
+      }
+    }
+
+    const { error: roundsDeleteError } = await supabase
+      .from("round")
+      .delete()
+      .in("season_id", seasonIds);
+
+    if (roundsDeleteError) {
+      return {
+        success: false,
+        error: {
+          message: roundsDeleteError.message,
+          code: roundsDeleteError.code || "LEAGUE_ROUNDS_DELETION_FAILED",
+          status: 500,
+        },
+      };
+    }
+
+    const { error: seasonDriversDeleteError } = await supabase
+      .from("league_season_driver")
+      .delete()
+      .in("season_id", seasonIds);
+
+    if (seasonDriversDeleteError) {
+      return {
+        success: false,
+        error: {
+          message: seasonDriversDeleteError.message,
+          code: seasonDriversDeleteError.code || "LEAGUE_SEASON_DRIVERS_DELETION_FAILED",
+          status: 500,
+        },
+      };
+    }
+
+    const { error: seasonTeamsDeleteError } = await supabase
+      .from("league_season_team")
+      .delete()
+      .in("season_id", seasonIds);
+
+    if (seasonTeamsDeleteError) {
+      return {
+        success: false,
+        error: {
+          message: seasonTeamsDeleteError.message,
+          code: seasonTeamsDeleteError.code || "LEAGUE_SEASON_TEAMS_DELETION_FAILED",
+          status: 500,
+        },
+      };
+    }
+
+    const { error: seasonDivisionsDeleteError } = await supabase
+      .from("league_season_division")
+      .delete()
+      .in("season_id", seasonIds);
+
+    if (seasonDivisionsDeleteError) {
+      return {
+        success: false,
+        error: {
+          message: seasonDivisionsDeleteError.message,
+          code: seasonDivisionsDeleteError.code || "LEAGUE_SEASON_DIVISIONS_DELETION_FAILED",
+          status: 500,
+        },
+      };
+    }
+  }
+
+  if (participantIds.length > 0) {
+    const { error: participantRolesDeleteError } = await supabase
+      .from("league_participants_role")
+      .delete()
+      .in("participant_id", participantIds);
+
+    if (participantRolesDeleteError) {
+      return {
+        success: false,
+        error: {
+          message: participantRolesDeleteError.message,
+          code: participantRolesDeleteError.code || "LEAGUE_PARTICIPANT_ROLES_DELETION_FAILED",
           status: 500,
         },
       };

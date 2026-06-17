@@ -31,7 +31,11 @@ import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { useEventSessionSettings, useEvents } from "@/rtkQuery/hooks/queries/useEvents";
-import { useLeagueSeasonDivisions, useLeagueSeasonDivisionDrivers } from "@/rtkQuery/hooks/queries/useLeagueSeasonDivisions";
+import {
+  useLeagueSeasonDivisions,
+  useLeagueSeasonDivisionDrivers,
+  useLeagueSeasonDivisionTeams,
+} from "@/rtkQuery/hooks/queries/useLeagueSeasonDivisions";
 import { useGetResultBySessionId } from "@/rtkQuery/hooks/queries/useResults";
 import { useCreateResult, useDeleteResult, useUpdateResult } from "@/rtkQuery/hooks/mutations/useResultMutation";
 import { useRounds } from "@/rtkQuery/hooks/queries/useRounds";
@@ -51,6 +55,7 @@ type ResultsProps = {
 const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
   const { openModal } = useModal();
   const { showToast } = useToast();
+  const isTeamChampionship = Boolean(seasonData.is_team_championship);
   const [isSaving, setIsSaving] = useState(false);
   const [selectedDivisionId, setSelectedDivisionId] = useState("");
   const [selectedRoundId, setSelectedRoundId] = useState("");
@@ -83,6 +88,7 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
   const roundsByDivision = useRounds(effectiveDivisionId);
   const eventsByDivision = useEvents(effectiveDivisionId);
   const seasonDriversByDivision = useLeagueSeasonDivisionDrivers(effectiveDivisionId);
+  const seasonTeamsByDivision = useLeagueSeasonDivisionTeams(effectiveDivisionId);
 
   // -- Rounds for the Selected Division -- //
   const rounds = useMemo(
@@ -330,6 +336,38 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
     [driverOptions],
   );
 
+  const seasonDriverById = useMemo(
+    () => new Map((seasonDriversByDivision.currentData ?? []).map((driver) => [driver.id, driver] as const)),
+    [seasonDriversByDivision.currentData],
+  );
+
+  const seasonTeamNameById = useMemo(
+    () => new Map((seasonTeamsByDivision.currentData ?? []).map((team) => [team.id, team.team_name] as const)),
+    [seasonTeamsByDivision.currentData],
+  );
+
+  const getTeamFieldsForDriver = useCallback(
+    (driverId: string): Pick<CreateResultsPayload, "team_id" | "team_name"> => {
+      if (!isTeamChampionship || !driverId) {
+        return {};
+      }
+
+      const teamId = seasonDriverById.get(driverId)?.team_id;
+
+      if (!teamId) {
+        return {};
+      }
+
+      const teamName = seasonTeamNameById.get(teamId);
+
+      return {
+        team_id: teamId,
+        ...(teamName ? { team_name: teamName } : {}),
+      };
+    },
+    [isTeamChampionship, seasonDriverById, seasonTeamNameById],
+  );
+
   const getSelectedDriverSet = (excludeIndex?: number) =>
     new Set(
       watchedResults
@@ -431,6 +469,8 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
       return null;
     }
 
+    const teamFields = getTeamFieldsForDriver(row.driverId);
+
     return {
       division_id: effectiveDivisionId,
       round_id: effectiveRoundId,
@@ -442,6 +482,7 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
       time: row.time || "0:00.000",
       points: pointsVisible ? Number(row.points || 0) : 0,
       driver_id: row.driverId,
+      ...teamFields,
       fastest_lap: fastestLap,
     };
   };
@@ -502,6 +543,8 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
         persistedResult.time !== payload.time ||
         persistedResult.points !== payload.points ||
         persistedResult.position !== payload.position ||
+        persistedResult.team_id !== payload.team_id ||
+        persistedResult.team_name !== payload.team_name ||
         persistedResult.fastest_lap !== payload.fastest_lap ||
         persistedResult.session_id !== payload.session_id ||
         persistedResult.session_type !== payload.session_type;
@@ -535,6 +578,8 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
         persistedResult.time !== payload.time ||
         persistedResult.points !== payload.points ||
         persistedResult.position !== payload.position ||
+        persistedResult.team_id !== payload.team_id ||
+        persistedResult.team_name !== payload.team_name ||
         persistedResult.fastest_lap !== payload.fastest_lap ||
         persistedResult.session_id !== payload.session_id ||
         persistedResult.session_type !== payload.session_type;
