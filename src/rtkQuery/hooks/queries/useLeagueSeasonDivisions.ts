@@ -1,4 +1,4 @@
-import { useGetLeagueSeasonDivisionByDivisionIdQuery, useGetLeagueSeasonDivisionsQuery, useGetLeagueSeasonDriversByDivisionQuery, useGetLeagueSeasonTeamsByDivisionQuery } from "@/rtkQuery/API/leagueApi";
+import { useGetLeagueSeasonDivisionByDivisionIdQuery, useGetLeagueSeasonDivisionsQuery, useGetLeagueSeasonDriverByIdQuery, useGetLeagueSeasonDriversByDivisionQuery, useGetLeagueSeasonTeamByIdQuery, useGetLeagueSeasonTeamsByDivisionQuery } from "@/rtkQuery/API/leagueApi";
 
 
 // -- Get League Season Divisions by Season ID -- //
@@ -24,4 +24,16 @@ export const useLeagueSeasonDivisionDrivers = (divisionId?: string) =>
 export const useLeagueSeasonDivisionTeams = (divisionId?: string) =>
   useGetLeagueSeasonTeamsByDivisionQuery(divisionId ?? "", {
     skip: !divisionId,
+  });
+
+// -- Get League Season Driver by ID -- //
+export const useLeagueSeasonDriver = (driverId?: string) =>
+  useGetLeagueSeasonDriverByIdQuery(driverId ?? "", {
+    skip: !driverId,
+  });
+
+// -- Get League Season Team by ID -- //
+export const useLeagueSeasonTeam = (teamId?: string) =>
+  useGetLeagueSeasonTeamByIdQuery(teamId ?? "", {
+    skip: !teamId,
   });

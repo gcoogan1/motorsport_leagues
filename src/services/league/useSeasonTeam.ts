@@ -75,6 +75,30 @@ export const updateLeagueSeasonTeam = async ({
   };
 };
 
+// -- Get League Season Team by ID -- //
+export const getLeagueSeasonTeamById = async (
+  teamId: string,
+): Promise<{ success: true; data: import("@/types/league.types").LeagueSeasonTeamTable } | { success: false; error: { message: string; code: string; status: number } }> => {
+  const { data, error } = await supabase
+    .from("league_season_team")
+    .select("*")
+    .eq("id", teamId)
+    .single();
+
+  if (error || !data) {
+    return {
+      success: false,
+      error: {
+        message: error?.message ?? "Team not found.",
+        code: error?.code ?? "NOT_FOUND",
+        status: 404,
+      },
+    };
+  }
+
+  return { success: true, data };
+};
+
 // -- Get League Season Teams for a Division -- //
 export const getLeagueSeasonTeamsByDivision = async ({
   divisionId,

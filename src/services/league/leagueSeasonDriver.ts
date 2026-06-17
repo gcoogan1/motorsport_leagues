@@ -175,6 +175,30 @@ export const getLeagueSeasonDriversBySeasonId = async ({
 };
 
 
+// -- Get League Season Driver by ID -- //
+export const getLeagueSeasonDriverById = async (
+  driverId: string,
+): Promise<{ success: true; data: import("@/types/league.types").LeagueSeasonDriverTable } | { success: false; error: { message: string; code: string; status: number } }> => {
+  const { data, error } = await supabase
+    .from("league_season_driver")
+    .select("*")
+    .eq("id", driverId)
+    .single();
+
+  if (error || !data) {
+    return {
+      success: false,
+      error: {
+        message: error?.message ?? "Driver not found.",
+        code: error?.code ?? "NOT_FOUND",
+        status: 404,
+      },
+    };
+  }
+
+  return { success: true, data };
+};
+
 // -- Remove League Season Driver -- //
 export const removeLeagueSeasonDriver = async ({
   driverId,

@@ -113,6 +113,7 @@ import {
 } from "@/services/league/leagueSeason.service";
 import {
   createLeagueSeasonDriver,
+  getLeagueSeasonDriverById,
   getLeagueSeasonDriversByDivision,
   getLeagueSeasonDriversBySeasonId,
   removeLeagueSeasonDriver,
@@ -124,6 +125,7 @@ import {
 } from "@/services/league/leagueSeasonDivision.service";
 import {
   createLeagueSeasonTeam,
+  getLeagueSeasonTeamById,
   getLeagueSeasonTeamsByDivision,
   getLeagueSeasonTeamsBySeasonId,
   removeLeagueSeasonTeam,
@@ -420,6 +422,29 @@ export const leagueApi = createApi({
         { type: "LeagueSeasonDivisions", id: divisionId },
       ],
     }),
+    getLeagueSeasonDriverById: builder.query<LeagueSeasonDriverTable, string>({
+      queryFn: async (driverId) => {
+        try {
+          const result = await getLeagueSeasonDriverById(driverId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, driverId) => [
+        { type: "LeagueSeasonDrivers", id: driverId },
+      ],
+    }),
     getLeagueSeasonDriversByDivision: builder.query<
       LeagueSeasonDriverTable[],
       string
@@ -478,6 +503,29 @@ export const leagueApi = createApi({
       },
       providesTags: (_result, _error, seasonId) => [
         { type: "LeagueSeasonDrivers", id: seasonId },
+      ],
+    }),
+    getLeagueSeasonTeamById: builder.query<LeagueSeasonTeamTable, string>({
+      queryFn: async (teamId) => {
+        try {
+          const result = await getLeagueSeasonTeamById(teamId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, teamId) => [
+        { type: "LeagueSeasonTeams", id: teamId },
       ],
     }),
     getLeagueSeasonTeamsByDivision: builder.query<
@@ -1239,11 +1287,13 @@ export const {
   useAddLeagueParticipantMutation,
   useCreateLeagueJoinRequestMutation,
   useCreateLeagueSeasonDriverMutation,
+  useGetLeagueSeasonDriverByIdQuery,
   useGetLeagueSeasonDriversByDivisionQuery,
   useGetLeagueSeasonDriversBySeasonIdQuery,
   useUpdateLeagueSeasonDriverTeamMutation,
   useRemoveLeagueSeasonDriverMutation,
   useCreateLeagueSeasonTeamMutation,
+  useGetLeagueSeasonTeamByIdQuery,
   useGetLeagueSeasonTeamsByDivisionQuery,
   useGetLeagueSeasonTeamsBySeasonIdQuery,
   useUpdateLeagueSeasonTeamMutation,

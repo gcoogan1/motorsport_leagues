@@ -6,6 +6,7 @@ import {
   useGetResultsByRoundIdQuery,
   useGetResultsBySessionIdQuery,
   useGetResultsByTeamIdQuery,
+  useGetResultsWithDetailsByDriverIdQuery,
 } from "@/rtkQuery/API/resultsApi";
 
 // --- Queries --- //
@@ -50,5 +51,14 @@ export const useGetResultsByDriverId = (driverId: string) => {
 export const useGetResultsByTeamId = (teamId: string) => {
   return useGetResultsByTeamIdQuery(teamId ?? "", {
     skip: !teamId,
+  });
+};
+
+// Returns a driver's results with round, track, and team data pre-joined.
+// Qualifying sessions are excluded. Use this instead of useGetResultsByDriverId
+// when you need the full performance breakdown (e.g. DriverPerformance modal).
+export const useGetResultsWithDetailsByDriverId = (driverId: string) => {
+  return useGetResultsWithDetailsByDriverIdQuery(driverId ?? "", {
+    skip: !driverId,
   });
 };
