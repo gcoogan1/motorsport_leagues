@@ -77,10 +77,10 @@ export type GetResultsResponse = {
 } | SupabaseError;
 
 export type NormalizedResultsTable = ResultsTable & {
-  round_name: string | null;
-  track_name: string | null;
-  display_name: string | null;
-  team_name: string | null;
+  round_name: string;
+  track_name: string;
+  display_name: string;
+  team_name: string;
 };
 
 // -- GET JOINED RESULTS -- //

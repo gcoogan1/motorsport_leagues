@@ -7,6 +7,7 @@ import {
   useGetResultsBySessionIdQuery,
   useGetResultsByTeamIdQuery,
   useGetResultsWithDetailsByDriverIdQuery,
+  useGetResultsWithDetailsByTeamIdQuery,
 } from "@/rtkQuery/API/resultsApi";
 
 // --- Queries --- //
@@ -60,5 +61,12 @@ export const useGetResultsByTeamId = (teamId: string) => {
 export const useGetResultsWithDetailsByDriverId = (driverId: string) => {
   return useGetResultsWithDetailsByDriverIdQuery(driverId ?? "", {
     skip: !driverId,
+  });
+};
+
+
+export const useGetResultsWithDetailsByTeamId = (teamId: string) => {
+  return useGetResultsWithDetailsByTeamIdQuery(teamId ?? "", {
+    skip: !teamId,
   });
 };

@@ -819,10 +819,43 @@ const deleteEventDriverRowsByEventIds = async (
   return { success: true };
 };
 
+// Delete results by their associated event IDs (HELPER)
+const deleteResultsRowsByEventIds = async (
+  eventIds: string[],
+): Promise<DeleteEventResponse> => {
+  if (eventIds.length === 0) {
+    return { success: true };
+  }
+
+  const { error } = await supabase
+    .from("results")
+    .delete()
+    .in("event_id", eventIds);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: error.code,
+        status: 500,
+      },
+    };
+  }
+
+  return { success: true };
+};
+
 // Delete an event by its ID
 export const deleteEvent = async (
   eventId: string,
 ): Promise<DeleteEventResponse> => {
+  const deleteResultsResult = await deleteResultsRowsByEventIds([eventId]);
+
+  if (!deleteResultsResult.success) {
+    return deleteResultsResult;
+  }
+
   const deleteEventDriversResult = await deleteEventDriverRowsByEventIds([
     eventId,
   ]);
@@ -929,11 +962,53 @@ export const deleteEventsByRoundId = async (
     };
   }
 
-  await deleteEventDriverRowsByEventIds(eventIdsResult.data);
-  await deleteEventTrackDetailsByEventIds(eventIdsResult.data);
-  await deleteEventCarDetailsByEventIds(eventIdsResult.data);
-  await deleteEventSessionSettingsByEventIds(eventIdsResult.data);
-  await deleteEventAdvancedSettingsByEventIds(eventIdsResult.data);
+  const deleteResultsResult = await deleteResultsRowsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteResultsResult.success) {
+    return deleteResultsResult;
+  }
+
+  const deleteDriversResult = await deleteEventDriverRowsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteDriversResult.success) {
+    return deleteDriversResult;
+  }
+
+  const deleteTrackDetailsResult = await deleteEventTrackDetailsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteTrackDetailsResult.success) {
+    return deleteTrackDetailsResult;
+  }
+
+  const deleteCarDetailsResult = await deleteEventCarDetailsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteCarDetailsResult.success) {
+    return deleteCarDetailsResult;
+  }
+
+  const deleteSessionSettingsResult = await deleteEventSessionSettingsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteSessionSettingsResult.success) {
+    return deleteSessionSettingsResult;
+  }
+
+  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettingsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteAdvancedSettingsResult.success) {
+    return deleteAdvancedSettingsResult;
+  }
 
   const { error } = await supabase.from("event").delete().eq(
     "round_id",
@@ -966,11 +1041,59 @@ export const deleteEventsByDivisionId = async (
     return eventIdsResult;
   }
 
-  await deleteEventDriverRowsByEventIds(eventIdsResult.data);
-  await deleteEventTrackDetailsByEventIds(eventIdsResult.data);
-  await deleteEventCarDetailsByEventIds(eventIdsResult.data);
-  await deleteEventSessionSettingsByEventIds(eventIdsResult.data);
-  await deleteEventAdvancedSettingsByEventIds(eventIdsResult.data);
+  if (eventIdsResult.data.length === 0) {
+    return {
+      success: true,
+    };
+  }
+
+  const deleteResultsResult = await deleteResultsRowsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteResultsResult.success) {
+    return deleteResultsResult;
+  }
+
+  const deleteDriversResult = await deleteEventDriverRowsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteDriversResult.success) {
+    return deleteDriversResult;
+  }
+
+  const deleteTrackDetailsResult = await deleteEventTrackDetailsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteTrackDetailsResult.success) {
+    return deleteTrackDetailsResult;
+  }
+
+  const deleteCarDetailsResult = await deleteEventCarDetailsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteCarDetailsResult.success) {
+    return deleteCarDetailsResult;
+  }
+
+  const deleteSessionSettingsResult = await deleteEventSessionSettingsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteSessionSettingsResult.success) {
+    return deleteSessionSettingsResult;
+  }
+
+  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettingsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteAdvancedSettingsResult.success) {
+    return deleteAdvancedSettingsResult;
+  }
 
   const { error } = await supabase.from("event").delete().eq(
     "division_id",
@@ -1003,11 +1126,59 @@ export const deleteEventsBySeasonId = async (
     return eventIdsResult;
   }
 
-  await deleteEventDriverRowsByEventIds(eventIdsResult.data);
-  await deleteEventTrackDetailsByEventIds(eventIdsResult.data);
-  await deleteEventCarDetailsByEventIds(eventIdsResult.data);
-  await deleteEventSessionSettingsByEventIds(eventIdsResult.data);
-  await deleteEventAdvancedSettingsByEventIds(eventIdsResult.data);
+  if (eventIdsResult.data.length === 0) {
+    return {
+      success: true,
+    };
+  }
+
+  const deleteResultsResult = await deleteResultsRowsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteResultsResult.success) {
+    return deleteResultsResult;
+  }
+
+  const deleteDriversResult = await deleteEventDriverRowsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteDriversResult.success) {
+    return deleteDriversResult;
+  }
+
+  const deleteTrackDetailsResult = await deleteEventTrackDetailsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteTrackDetailsResult.success) {
+    return deleteTrackDetailsResult;
+  }
+
+  const deleteCarDetailsResult = await deleteEventCarDetailsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteCarDetailsResult.success) {
+    return deleteCarDetailsResult;
+  }
+
+  const deleteSessionSettingsResult = await deleteEventSessionSettingsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteSessionSettingsResult.success) {
+    return deleteSessionSettingsResult;
+  }
+
+  const deleteAdvancedSettingsResult = await deleteEventAdvancedSettingsByEventIds(
+    eventIdsResult.data,
+  );
+
+  if (!deleteAdvancedSettingsResult.success) {
+    return deleteAdvancedSettingsResult;
+  }
 
   const { error } = await supabase.from("event").delete().eq(
     "season_id",
