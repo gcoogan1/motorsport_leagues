@@ -22,6 +22,8 @@ import {
   useRemoveLeagueSeasonDriverMutation,
   useCreateLeagueSeasonTeamMutation,
   useRemoveLeagueSeasonTeamMutation,
+  useGetLeagueSeasonDriversBySeasonIdQuery,
+  useGetLeagueSeasonTeamsBySeasonIdQuery,
   useUpdateLeagueSeasonDriverTeamMutation,
   useUpdateLeagueSeasonTeamMutation,
 } from "@/rtkQuery/API/leagueApi";
@@ -29,6 +31,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import type { LeagueSeasonTable } from "@/types/league.types";
 import type { LeagueSeasonDriverTable } from "@/types/league.types";
+import type { LeagueSeasonTeamTable } from "@/types/league.types";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { withMinDelay } from "@/utils/withMinDelay";
 import {
@@ -92,6 +95,8 @@ const PrequalTeamAssignments = ({
   const [createLeagueSeasonTeam] = useCreateLeagueSeasonTeamMutation();
   const [updateLeagueSeasonTeam] = useUpdateLeagueSeasonTeamMutation();
   const [removeLeagueSeasonTeam] = useRemoveLeagueSeasonTeamMutation();
+  const seasonTeamsBySeason = useGetLeagueSeasonTeamsBySeasonIdQuery(seasonData.id);
+  const seasonDriversBySeason = useGetLeagueSeasonDriversBySeasonIdQuery(seasonData.id);
 
   const schemaStateRef = useState(() => ({
     isLinkedDivision: false,
@@ -189,6 +194,50 @@ const PrequalTeamAssignments = ({
     isDirty,
     onDirtyChange,
   });
+
+  const allSeasonTeams = useMemo(
+    () => seasonTeamsBySeason.currentData ?? seasonTeamsBySeason.data ?? [],
+    [seasonTeamsBySeason.currentData, seasonTeamsBySeason.data],
+  );
+
+  const allSeasonDrivers = useMemo(
+    () => seasonDriversBySeason.currentData ?? seasonDriversBySeason.data ?? [],
+    [seasonDriversBySeason.currentData, seasonDriversBySeason.data],
+  );
+
+  const linkedTeamsByName = useMemo(() => {
+    const map = new Map<string, LeagueSeasonTeamTable[]>();
+
+    allSeasonTeams.forEach((team) => {
+      // Skip active division teams; this map is for propagating into linked divisions only.
+      if (team.division_id === activeDivisionId) {
+        return;
+      }
+
+      const normalized = normalizeTeamName(team.team_name);
+
+      if (!normalized) {
+        return;
+      }
+
+      const existing = map.get(normalized) ?? [];
+      map.set(normalized, [...existing, team]);
+    });
+
+    return map;
+  }, [activeDivisionId, allSeasonTeams]);
+
+  const seasonDriverByProfileAndDivision = useMemo(
+    () =>
+      // Composite key lets us quickly check whether a profile already has a row in a division.
+      new Map<string, LeagueSeasonDriverTable>(
+        allSeasonDrivers.map((driver) => [
+          `${driver.profile_id}:${driver.division_id}`,
+          driver,
+        ]),
+      ),
+    [allSeasonDrivers],
+  );
 
   schemaStateRef.isLinkedDivision = isLinkedDivision;
   schemaStateRef.availableLinkedTeamNames = new Set(
@@ -456,6 +505,58 @@ const PrequalTeamAssignments = ({
                 addedToTeam: assignmentTimestamp,
               }).unwrap();
             }
+
+            // If this pre-qual team already exists in linked divisions (same team name),
+            // ensure the driver also exists in those divisions and is attached to that team.
+            const teamByKey = new Map(
+              currentTeams.map((team) => [getTeamKey(team), team] as const),
+            );
+
+            for (const assignment of currentAssignments) {
+              const participant = participantDetailsByProfileId.get(assignment.driver);
+
+              if (!participant) {
+                continue;
+              }
+
+              const team = teamByKey.get(assignment.teamKey);
+
+              if (!team) {
+                continue;
+              }
+
+              const linkedTeams = linkedTeamsByName.get(normalizeTeamName(team.teamName)) ?? [];
+
+              for (const linkedTeam of linkedTeams) {
+                const key = `${assignment.driver}:${linkedTeam.division_id}` as `${string}:${string}`;
+                const existingDriver = seasonDriverByProfileAndDivision.get(key);
+
+                if (!existingDriver) {
+                  // Missing in linked division: create a division-specific season driver row.
+                  await createLeagueSeasonDriver({
+                    seasonId: seasonData.id,
+                    divisionId: linkedTeam.division_id,
+                    profileId: assignment.driver,
+                    displayName: participant.username,
+                    gameType: participant.game_type,
+                    avatarType: participant.avatar_type,
+                    avatarValue: participant.avatar_value,
+                    teamId: linkedTeam.id,
+                    addedToTeam: assignmentTimestamp,
+                  }).unwrap();
+                  continue;
+                }
+
+                if (existingDriver.team_id !== linkedTeam.id) {
+                  // Existing linked-division row points to a different team: realign it.
+                  await updateLeagueSeasonDriverTeam({
+                    driverId: existingDriver.id,
+                    teamId: linkedTeam.id,
+                    addedToTeam: assignmentTimestamp,
+                  }).unwrap();
+                }
+              }
+            }
           }
 
           await Promise.all(
@@ -467,8 +568,16 @@ const PrequalTeamAssignments = ({
 
       await refetchAfterSave();
       showToast({ usage: "success", message: "Team assignments updated." });
-    } catch {
-      handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
+    } catch (error) {
+      const code = (error as { data?: { code?: string } })?.data?.code;
+      if (code === "DRIVER_IN_EVENT") {
+        showToast({
+          usage: "error",
+          message: "This driver has been added to an event and cannot be removed or reassigned.",
+        });
+      } else {
+        handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
+      }
     } finally {
       setIsSaving(false);
     }
