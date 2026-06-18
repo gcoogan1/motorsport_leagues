@@ -57,6 +57,7 @@ import DriversAssigned from "@/features/leagues/modals/errors/DriversAssigned/Dr
 import CannotSave from "@/features/leagues/modals/errors/CannotSave/CannotSave";
 import NoTeams from "@/features/leagues/modals/errors/NoTeams/NoTeams";
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
+import TeamAssigned from "@/features/leagues/modals/errors/TeamAssigned/TeamAssigned";
 import { useTeamAssignments } from "./hooks/useTeamAssignments";
 
 
@@ -339,10 +340,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
     } catch (error) {
       const code = (error as { data?: { code?: string } })?.data?.code;
       if (code === "DRIVER_IN_EVENT") {
-        showToast({
-          usage: "error",
-          message: "This driver has been added to an event and cannot be removed or reassigned.",
-        });
+        return openModal(<TeamAssigned teamInEvent={true} />);
       } else {
         handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
       }

@@ -571,10 +571,7 @@ const PrequalTeamAssignments = ({
     } catch (error) {
       const code = (error as { data?: { code?: string } })?.data?.code;
       if (code === "DRIVER_IN_EVENT") {
-        showToast({
-          usage: "error",
-          message: "This driver has been added to an event and cannot be removed or reassigned.",
-        });
+        return openModal(<DriversAssigned driverInEvent />);
       } else {
         handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
       }
