@@ -80,6 +80,20 @@ const isValidLinkedDivisionTeamRow = (
   return !!teamName && !!(team?.teamId ?? team?.localId);
 };
 
+const DELETED_DRIVER_TOKEN_PREFIX = "__deleted_driver__:";
+
+const isDeletedDriverToken = (driverId?: string) =>
+  !!driverId &&
+  driverId.startsWith(DELETED_DRIVER_TOKEN_PREFIX);
+
+const getDeletedDriverRecordId = (driverId?: string) => {
+  if (!driverId || !isDeletedDriverToken(driverId)) {
+    return "";
+  }
+
+  return driverId.slice(DELETED_DRIVER_TOKEN_PREFIX.length);
+};
+
 const PrequalTeamAssignments = ({
   seasonData,
   onDirtyChange,
@@ -394,6 +408,10 @@ const PrequalTeamAssignments = ({
       (a) => a.driver && a.teamKey,
     );
 
+    const activeProfileAssignments = currentAssignments.filter(
+      (a) => !isDeletedDriverToken(a.driver),
+    );
+
     if (
       isLinkedDivision &&
       currentTeams.some(
@@ -472,7 +490,8 @@ const PrequalTeamAssignments = ({
             }
           });
 
-          const desiredDriverTeams = new Map<string, string>();
+          const desiredDriverTeamsByProfileId = new Map<string, string>();
+          const desiredDriverTeamsByRecordId = new Map<string, string>();
 
           if (isLinkedDivision) {
             // Linked divisions inherit their drivers from the selected pre-qual teams.
@@ -481,23 +500,35 @@ const PrequalTeamAssignments = ({
               const preQualTeam = preQualTeamByName.get(normalizeTeamName(team.teamName));
               if (!resolvedTeamId || !preQualTeam) return;
               (preQualDriversByTeamId.get(preQualTeam.id) ?? []).forEach((driver: LeagueSeasonDriverTable) => {
-                desiredDriverTeams.set(driver.profile_id, resolvedTeamId);
+                desiredDriverTeamsByProfileId.set(driver.profile_id, resolvedTeamId);
               });
             });
           } else {
             // The pre-qual division assigns drivers directly to teams created here.
             currentAssignments.forEach((assignment) => {
               const resolvedTeamId = resolvedTeamIds.get(assignment.teamKey);
-              if (resolvedTeamId) {
-                desiredDriverTeams.set(assignment.driver, resolvedTeamId);
+              if (!resolvedTeamId) {
+                return;
               }
+
+              if (isDeletedDriverToken(assignment.driver)) {
+                const driverRecordId = getDeletedDriverRecordId(assignment.driver);
+                if (driverRecordId) {
+                  desiredDriverTeamsByRecordId.set(driverRecordId, resolvedTeamId);
+                }
+                return;
+              }
+
+              desiredDriverTeamsByProfileId.set(assignment.driver, resolvedTeamId);
             });
           }
 
           for (const driverRecord of currentDivisionDrivers) {
             // Update or remove existing driver-team relationships.
             const currentTeamId = driverRecord.team_id ?? "";
-            const desiredTeamId = desiredDriverTeams.get(driverRecord.profile_id) ?? "";
+            const desiredTeamId = driverRecord.profile_id
+              ? (desiredDriverTeamsByProfileId.get(driverRecord.profile_id) ?? "")
+              : (desiredDriverTeamsByRecordId.get(driverRecord.id) ?? "");
             if (currentTeamId === desiredTeamId) continue;
 
             if (desiredTeamId) {
@@ -516,7 +547,7 @@ const PrequalTeamAssignments = ({
 
           if (isLinkedDivision) {
             // Create missing division driver rows from pre-qual source records.
-            for (const [profileId, resolvedTeamId] of desiredDriverTeams.entries()) {
+            for (const [profileId, resolvedTeamId] of desiredDriverTeamsByProfileId.entries()) {
               if (persistedAssignmentMap.has(profileId)) continue;
 
               const preQualDriver = preQualDriverDetailsByProfileId.get(profileId);
@@ -540,7 +571,7 @@ const PrequalTeamAssignments = ({
             }
           } else {
             // Create missing pre-qual driver rows from participant profile data.
-            for (const assignment of currentAssignments) {
+            for (const assignment of activeProfileAssignments) {
               if (persistedAssignmentMap.has(assignment.driver)) continue;
 
               const resolvedTeamId = resolvedTeamIds.get(assignment.teamKey);
@@ -569,7 +600,7 @@ const PrequalTeamAssignments = ({
               renamedPreQualTeams.map((team) => [team.teamId, team.previousTeamName] as const),
             );
 
-            for (const assignment of currentAssignments) {
+            for (const assignment of activeProfileAssignments) {
               const participant = participantDetailsByProfileId.get(assignment.driver);
 
               if (!participant) {

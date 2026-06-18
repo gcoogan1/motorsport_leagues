@@ -13,7 +13,9 @@ import {
 } from "@/rtkQuery/API/leagueApi";
 import type { LeagueSeasonTable } from "@/types/league.types";
 import { TEAM_DELETE_BLOCKED_MESSAGE, type TeamAssignmentsFormValues } from "../teamAssignments.schema";
-import { type TeamRow, buildDivisionOptions, buildDriverParticipants, buildDriverOptions, buildParticipantOptionsByProfileId, buildPersistedTeams, getTeamKey, buildCurrentDivisionDrivers, buildPersistedAssignments, buildDriversAssignedToOtherDivisions, buildTeamOptions } from "../util/TeamAssignments.util";
+import { type TeamRow, buildDivisionOptions, buildDriverParticipants, buildDriverOptions, buildParticipantOptionsByProfileId, buildPersistedTeams, getTeamKey, buildCurrentDivisionDrivers, buildDriversAssignedToOtherDivisions, buildTeamOptions } from "../util/TeamAssignments.util";
+
+const DELETED_DRIVER_TOKEN_PREFIX = "__deleted_driver__:";
 
 
 
@@ -188,9 +190,39 @@ export const useTeamAssignments = ({
 
   // Saved driver-team links for this division, shaped as form rows.
   const persistedAssignments = useMemo(
-    () => buildPersistedAssignments(currentDivisionDrivers),
+    () =>
+      currentDivisionDrivers
+        .filter((d) => !!d.team_id)
+        .map((d) => ({
+          driver: d.profile_id ?? `${DELETED_DRIVER_TOKEN_PREFIX}${d.id}`,
+          teamKey: d.team_id ?? "",
+        })),
     [currentDivisionDrivers],
   );
+
+  const seasonDriverFallbackOptions = useMemo(() => {
+    const map = new Map<string, {
+      label: string;
+      value: string;
+      secondaryInfo?: string;
+      avatar: { avatarType: "preset" | "upload"; avatarValue: string };
+    }>();
+
+    for (const d of currentDivisionDrivers) {
+      const value = d.profile_id ?? `${DELETED_DRIVER_TOKEN_PREFIX}${d.id}`;
+      map.set(value, {
+        label: d.display_name ?? "Deleted Driver",
+        value,
+        secondaryInfo: d.game_type,
+        avatar: {
+          avatarType: (d.avatar_type ?? "preset") as "preset" | "upload",
+          avatarValue: d.avatar_value ?? "black",
+        },
+      });
+    }
+
+    return map;
+  }, [currentDivisionDrivers]);
 
   // Fingerprint that changes when the server-side driver assignments change.
   const persistedAssignmentsKey = useMemo(
@@ -213,7 +245,12 @@ export const useTeamAssignments = ({
 
   // Maps profile id → driver record for save-time update/create decisions.
   const persistedAssignmentMap = useMemo(
-    () => new Map(currentDivisionDrivers.map((d) => [d.profile_id, d])),
+    () =>
+      new Map(
+        currentDivisionDrivers
+          .filter((d) => !!d.profile_id)
+          .map((d) => [d.profile_id as string, d]),
+      ),
     [currentDivisionDrivers],
   );
 
@@ -277,7 +314,9 @@ export const useTeamAssignments = ({
     );
 
     // Always include the current value even if the participant was removed from the league.
-    const currentOpt = current ? participantOptionsByProfileId.get(current) : undefined;
+    const currentOpt = current
+      ? participantOptionsByProfileId.get(current) ?? seasonDriverFallbackOptions.get(current)
+      : undefined;
     if (currentOpt && !filtered.some((o) => o.value === currentOpt.value)) {
       return [currentOpt, ...filtered];
     }

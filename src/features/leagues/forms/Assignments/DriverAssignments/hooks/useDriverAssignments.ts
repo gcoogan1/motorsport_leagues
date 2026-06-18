@@ -6,8 +6,10 @@ import {
   useGetLeagueSeasonDriversBySeasonIdQuery,
 } from "@/rtkQuery/API/leagueApi";
 
-import type { LeagueParticipantProfile } from "@/types/league.types";
-import { type DriverAssignmentRow, buildDriverParticipants, buildDriverOptions, buildParticipantOptionsByProfileId, buildDivisionOptions, buildPersistedAssignments, buildPersistedAssignmentMap, buildDriversAssignedToOtherDivisions } from "../util/DriverAssignments.util";
+import type { LeagueParticipantProfile, LeagueSeasonDriverTable } from "@/types/league.types";
+import { type DriverAssignmentRow, buildDriverParticipants, buildDriverOptions, buildParticipantOptionsByProfileId, buildDivisionOptions, buildPersistedAssignmentMap, buildDriversAssignedToOtherDivisions } from "../util/DriverAssignments.util";
+
+const DELETED_DRIVER_TOKEN_PREFIX = "__deleted_driver__:";
 
 // --Types-- //
 
@@ -112,9 +114,41 @@ export const useDriverAssignments = ({
 
   // Rows already saved to the server for this division, loaded into the form.
   const persistedAssignments = useMemo(
-    () => buildPersistedAssignments(seasonDriversBySeason.data, effectiveDivisionId),
+    () =>
+      (seasonDriversBySeason.data ?? [])
+        .filter((driver: LeagueSeasonDriverTable) => driver.division_id === effectiveDivisionId)
+        .map((driver: LeagueSeasonDriverTable) => ({
+          assignmentId: driver.id,
+          driver: driver.profile_id ?? `${DELETED_DRIVER_TOKEN_PREFIX}${driver.id}`,
+        })),
     [seasonDriversBySeason.data, effectiveDivisionId]
   );
+
+  const seasonDriverFallbackOptions = useMemo(() => {
+    const map = new Map<string, {
+      label: string;
+      value: string;
+      secondaryInfo?: string;
+      avatar: { avatarType: "preset" | "upload"; avatarValue: string };
+    }>();
+
+    for (const driver of (seasonDriversBySeason.data ?? [])) {
+      if (driver.division_id !== effectiveDivisionId) continue;
+
+      const value = driver.profile_id ?? `${DELETED_DRIVER_TOKEN_PREFIX}${driver.id}`;
+      map.set(value, {
+        label: driver.display_name ?? "Deleted Driver",
+        value,
+        secondaryInfo: driver.game_type,
+        avatar: {
+          avatarType: (driver.avatar_type ?? "preset") as "preset" | "upload",
+          avatarValue: driver.avatar_value ?? "black",
+        },
+      });
+    }
+
+    return map;
+  }, [effectiveDivisionId, seasonDriversBySeason.data]);
 
   // Map of assignmentId → profileId used by the save handler to detect changes.
   const persistedMap = useMemo(
@@ -185,7 +219,9 @@ export const useDriverAssignments = ({
 
     // Always include the row's current value even if it was removed from the
     // main option list (e.g. the participant was removed from the league).
-    const currentOpt = current ? participantOptionsByProfileId.get(current) : undefined;
+    const currentOpt = current
+      ? participantOptionsByProfileId.get(current) ?? seasonDriverFallbackOptions.get(current)
+      : undefined;
 
     if (currentOpt && !filtered.some(o => o.value === currentOpt.value)) {
       return [currentOpt, ...filtered];

@@ -126,13 +126,13 @@ const DriverAssignments = ({ seasonData, onDirtyChange }: DriverAssignmentsProps
 
     const removedPersistedIds = persistedAssignments
       .filter(
-        (persistedAssignment) =>
+        (persistedAssignment: DriverAssignmentRow) =>
           persistedAssignment.assignmentId &&
           !currentAssignments.some(
             (currentAssignment) => currentAssignment.assignmentId === persistedAssignment.assignmentId,
           ),
       )
-      .map((assignment) => assignment.assignmentId as string);
+      .map((assignment: DriverAssignmentRow) => assignment.assignmentId as string);
 
     const changedPersistedAssignments = currentAssignments.filter(
       (assignment) =>

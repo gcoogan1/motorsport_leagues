@@ -470,6 +470,155 @@ export const deleteProfile = async (
     };
   }
 
+  // Remove league participant role rows linked to this profile's participant rows.
+  const { data: participantRows, error: participantFetchError } = await supabase
+    .from("league_participants")
+    .select("id")
+    .eq("profile_id", profileId);
+
+  if (participantFetchError) {
+    return {
+      success: false,
+      error: {
+        message: participantFetchError.message,
+        code: participantFetchError.code || "LEAGUE_PARTICIPANTS_FETCH_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const participantIds = (participantRows ?? []).map((participant) => participant.id);
+
+  if (participantIds.length > 0) {
+    const { error: participantRolesDeleteError } = await supabase
+      .from("league_participants_role")
+      .delete()
+      .in("participant_id", participantIds);
+
+    if (participantRolesDeleteError) {
+      return {
+        success: false,
+        error: {
+          message: participantRolesDeleteError.message,
+          code: participantRolesDeleteError.code || "LEAGUE_PARTICIPANT_ROLES_DELETION_FAILED",
+          status: 500,
+        },
+      };
+    }
+  }
+
+  const { error: participantsDeleteError } = await supabase
+    .from("league_participants")
+    .delete()
+    .eq("profile_id", profileId);
+
+  if (participantsDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: participantsDeleteError.message,
+        code: participantsDeleteError.code || "LEAGUE_PARTICIPANTS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const { error: leagueFollowsDeleteError } = await supabase
+    .from("league_follows")
+    .delete()
+    .eq("follower_id", profileId);
+
+  if (leagueFollowsDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: leagueFollowsDeleteError.message,
+        code: leagueFollowsDeleteError.code || "LEAGUE_FOLLOWS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const { error: leagueInvitesDeleteError } = await supabase
+    .from("league_invites")
+    .delete()
+    .eq("profile_id", profileId);
+
+  if (leagueInvitesDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: leagueInvitesDeleteError.message,
+        code: leagueInvitesDeleteError.code || "LEAGUE_INVITES_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const { error: leagueJoinRequestsDeleteError } = await supabase
+    .from("league_join_request")
+    .delete()
+    .eq("profile_id", profileId);
+
+  if (leagueJoinRequestsDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: leagueJoinRequestsDeleteError.message,
+        code: leagueJoinRequestsDeleteError.code || "LEAGUE_JOIN_REQUESTS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const { error: squadInvitesDeleteError } = await supabase
+    .from("squad_invites")
+    .delete()
+    .eq("profile_id", profileId);
+
+  if (squadInvitesDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: squadInvitesDeleteError.message,
+        code: squadInvitesDeleteError.code || "SQUAD_INVITES_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const { error: squadMembersDeleteError } = await supabase
+    .from("squad_members")
+    .delete()
+    .eq("profile_id", profileId);
+
+  if (squadMembersDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: squadMembersDeleteError.message,
+        code: squadMembersDeleteError.code || "SQUAD_MEMBERS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  const { error: notificationsDeleteError } = await supabase
+    .from("notifications")
+    .delete()
+    .or(`recipient_profile_id.eq.${profileId},sender_profile_id.eq.${profileId}`);
+
+  if (notificationsDeleteError) {
+    return {
+      success: false,
+      error: {
+        message: notificationsDeleteError.message,
+        code: notificationsDeleteError.code || "NOTIFICATIONS_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
   // Delete the profile from the database
   const { error } = await supabase
     .from("profiles")

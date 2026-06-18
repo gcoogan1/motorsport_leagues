@@ -6,10 +6,6 @@ import type { toProfileOption } from "../../../DriverAssignments/util/DriverAssi
 import type { TeamRow } from "../../../TeamAssignments/util/TeamAssignments.util";
 
 import {
-  buildPersistedAssignments,
-} from "../../../TeamAssignments/util/TeamAssignments.util";
-
-import {
   buildCurrentDivisionDrivers,
   buildDriversAssignedToOtherDivisions,
   buildLinkedDivisionReadOnlyDrivers,
@@ -26,6 +22,8 @@ type AssignmentRow = TeamAssignmentsFormValues["assignments"][number];
 
 /** Inferred option shape returned by `toProfileOption` / `buildDriverOptions`. */
 type ProfileOption = ReturnType<typeof toProfileOption>;
+
+const DELETED_DRIVER_TOKEN_PREFIX = "__deleted_driver__:";
 
 /**
  * Derives all driver-assignment-related state for the prequal team assignments form.
@@ -151,9 +149,14 @@ export const usePrequalAssignments = ({
       () =>
         isLinkedDivision
           ? []
-          : buildPersistedAssignments(
-              currentDivisionDrivers,
-            ),
+          : currentDivisionDrivers
+              .filter((d) => !!d.team_id)
+              .map((d) => ({
+                driver:
+                  d.profile_id ??
+                  `${DELETED_DRIVER_TOKEN_PREFIX}${d.id}`,
+                teamKey: d.team_id ?? "",
+              })),
       [
         currentDivisionDrivers,
         isLinkedDivision,
@@ -173,6 +176,37 @@ export const usePrequalAssignments = ({
         ),
       [currentDivisionDrivers],
     );
+
+    // Fallback option map for drivers still in `league_season_driver` for this division
+    // but no longer present as league participants (e.g. profile deleted).
+    // Built from seasonDrivers filtered by division_id so it is available before
+    // divisionTeams resolves, which is when the orphaned row would first render.
+    const seasonDriverFallbackOptions = useMemo(() => {
+      const map = new Map<string, {
+        label: string;
+        value: string;
+        secondaryInfo?: string;
+        avatar: { avatarType: "preset" | "upload"; avatarValue: string };
+      }>();
+      for (const d of (seasonDrivers ?? [])) {
+        if (d.division_id !== activeDivisionId) continue;
+
+        const value =
+          d.profile_id ??
+          `${DELETED_DRIVER_TOKEN_PREFIX}${d.id}`;
+
+        map.set(value, {
+          label: d.display_name ?? "Deleted Driver",
+          value,
+          secondaryInfo: d.game_type,
+          avatar: {
+            avatarType: (d.avatar_type ?? "preset") as "preset" | "upload",
+            avatarValue: d.avatar_value ?? "black",
+          },
+        });
+      }
+      return map;
+    }, [activeDivisionId, seasonDrivers]);
 
   const driversAssignedToOtherDivisions =
     useMemo(
@@ -219,7 +253,7 @@ export const usePrequalAssignments = ({
     const currentOpt = current
       ? participantOptionsByProfileId.get(
           current,
-        )
+          ) ?? seasonDriverFallbackOptions.get(current)
       : undefined;
 
     if (

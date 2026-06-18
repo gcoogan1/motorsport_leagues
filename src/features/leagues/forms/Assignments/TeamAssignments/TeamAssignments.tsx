@@ -66,6 +66,20 @@ type TeamAssignmentsProps = {
   onDirtyChange?: (isDirty: boolean) => void;
 };
 
+const DELETED_DRIVER_TOKEN_PREFIX = "__deleted_driver__:";
+
+const isDeletedDriverToken = (driverId?: string) =>
+  !!driverId &&
+  driverId.startsWith(DELETED_DRIVER_TOKEN_PREFIX);
+
+const getDeletedDriverRecordId = (driverId?: string) => {
+  if (!driverId || !isDeletedDriverToken(driverId)) {
+    return "";
+  }
+
+  return driverId.slice(DELETED_DRIVER_TOKEN_PREFIX.length);
+};
+
 const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) => {
   const { openModal } = useModal();
   const { showToast } = useToast();
@@ -233,6 +247,10 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
       (a) => a.driver && a.teamKey,
     );
 
+    const activeProfileAssignments = currentAssignments.filter(
+      (a) => !isDeletedDriverToken(a.driver),
+    );
+
     try {
       setIsSaving(true);
 
@@ -274,18 +292,33 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
             }
           });
 
-          // Desired profile → team id mapping from the current form state.
-          const desiredDriverTeams = new Map<string, string>();
+          // Desired team mapping from the current form state.
+          const desiredDriverTeamsByProfileId = new Map<string, string>();
+          const desiredDriverTeamsByRecordId = new Map<string, string>();
 
           currentAssignments.forEach((assignment) => {
             const resolvedTeamId = resolvedTeamIds.get(assignment.teamKey);
-            if (resolvedTeamId) desiredDriverTeams.set(assignment.driver, resolvedTeamId);
+            if (!resolvedTeamId) {
+              return;
+            }
+
+            if (isDeletedDriverToken(assignment.driver)) {
+              const driverRecordId = getDeletedDriverRecordId(assignment.driver);
+              if (driverRecordId) {
+                desiredDriverTeamsByRecordId.set(driverRecordId, resolvedTeamId);
+              }
+              return;
+            }
+
+            desiredDriverTeamsByProfileId.set(assignment.driver, resolvedTeamId);
           });
 
           // Update or remove existing division driver records to match desired state.
           for (const driverRecord of currentDivisionDrivers) {
             const currentTeamId = driverRecord.team_id ?? "";
-            const desiredTeamId = desiredDriverTeams.get(driverRecord.profile_id) ?? "";
+            const desiredTeamId = driverRecord.profile_id
+              ? (desiredDriverTeamsByProfileId.get(driverRecord.profile_id) ?? "")
+              : (desiredDriverTeamsByRecordId.get(driverRecord.id) ?? "");
 
             if (currentTeamId === desiredTeamId) continue;
 
@@ -304,7 +337,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
           }
 
           // Create driver records for profiles not yet in this division.
-          for (const assignment of currentAssignments) {
+          for (const assignment of activeProfileAssignments) {
             if (persistedAssignmentMap.has(assignment.driver)) continue;
 
             const resolvedTeamId = resolvedTeamIds.get(assignment.teamKey);

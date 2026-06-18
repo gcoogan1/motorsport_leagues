@@ -213,16 +213,18 @@ const OnTheGrid = ({ eventId, seasonId, seasonName }: OnTheGridProps) => {
                 />
               </ParticipantCell>
               <ExtraCell data-actions-container="true" style={{ position: "relative" }}>
-                <Button
-                  size="small"
-                  color="base"
-                  rounded
-                  variant="ghost"
-                  ariaLabel="row actions"
-                  icon={{ left: <MoreIcon /> }}
-                  onClick={() => setOpenMenuId((prev) => (prev === row.profileId ? null : row.profileId))}
-                />
-                {openMenuId === row.profileId && (
+                {row.profileId && (
+                  <Button
+                    size="small"
+                    color="base"
+                    rounded
+                    variant="ghost"
+                    ariaLabel="row actions"
+                    icon={{ left: <MoreIcon /> }}
+                    onClick={() => setOpenMenuId((prev) => (prev === row.profileId ? null : row.profileId))}
+                  />
+                )}
+                {openMenuId === row.profileId && row.profileId !== null && (
                   <MenuDropdown
                     type="text"
                     isStandAlone
