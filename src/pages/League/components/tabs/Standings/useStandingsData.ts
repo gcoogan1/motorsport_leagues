@@ -133,8 +133,9 @@ export const useStandingsData = ({
       }
 
       const resolvedTeamId = result.team_id ?? seasonDriver.team_id;
-      const resolvedTeamName = result.team_name
-        ?? (resolvedTeamId ? (teamsById.get(resolvedTeamId)?.team_name ?? "") : "");
+      const resolvedTeamName = resolvedTeamId
+        ? (teamsById.get(resolvedTeamId)?.team_name ?? result.team_name ?? "")
+        : (result.team_name ?? "");
 
       const current = standingsByDriver.get(result.driver_id);
 
@@ -156,7 +157,7 @@ export const useStandingsData = ({
       if (result.session_type === "race") {
         current.completedRaces += 1;
       }
-      if (!current.teamName && resolvedTeamName) {
+      if (resolvedTeamName && current.teamName !== resolvedTeamName) {
         current.teamName = resolvedTeamName;
       }
     });
@@ -206,7 +207,7 @@ export const useStandingsData = ({
       }
 
       const seasonTeam = teamsById.get(teamId);
-      const resolvedTeamName = result.team_name ?? seasonTeam?.team_name;
+      const resolvedTeamName = seasonTeam?.team_name ?? result.team_name;
       const teamName = resolvedTeamName ?? "Unknown Team";
       const current = standingsByTeam.get(teamId);
 
@@ -224,7 +225,7 @@ export const useStandingsData = ({
       if (result.session_type === "race") {
         current.rounds.add(result.round_id);
       }
-      if (resolvedTeamName && current.teamName === "Unknown Team") {
+      if (resolvedTeamName && current.teamName !== resolvedTeamName) {
         current.teamName = resolvedTeamName;
       }
     });

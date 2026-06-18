@@ -15,12 +15,19 @@ const TeamPerformance = ({
   seasonName,
 }: TeamPerformanceProps) => {
   const { closeModal } = useModal();
-  const { teamData, teamName, results } =
+  const { teamData, results } =
     useTeamPerformanceResults(teamId);
 
   const eventResults = useMemo(() => {
     return (results ?? []).filter((entry) => (entry.points ?? 0) > 0);
   }, [results]);
+
+  const participatingDriverCount = useMemo(
+    () => new Set(eventResults.map((entry) => entry.driver_id)).size,
+    [eventResults],
+  );
+
+  const participantLabel = `${participatingDriverCount} Driver${participatingDriverCount === 1 ? "" : "s"}`;
 
   const totalPoints = eventResults.reduce((acc, entry) => acc + (entry.points ?? 0), 0);
 
@@ -40,7 +47,7 @@ const TeamPerformance = ({
           type: "team",
           roundInfo: {
             roundName: entry.round_name,
-            trackName: entry.track_name,
+            trackName: entry.track_name ? entry.track_name : "Hidden Track",
           },
           driver: {
             id: "",
@@ -60,7 +67,7 @@ const TeamPerformance = ({
       id={"team-performance"}
       seasonName={seasonName}
       blockHeader={teamData.team_name ?? "Unknown Team"}
-      blockDescription={teamName ?? ""}
+      blockDescription={participantLabel}
       header={"Team Performance"}
       listChildren={listChildren}
       onClose={closeModal}

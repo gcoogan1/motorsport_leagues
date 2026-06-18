@@ -18,6 +18,8 @@ import BriefingModal from "@/pages/League/modals/BriefingModal/BriefingModal";
 import OnTheGrid from "@/pages/League/modals/OnTheGrid/OnTheGrid";
 import DetailsModal from "@/pages/League/modals/DetailsModal/DetailsModal";
 import WatchModal from "@/pages/League/modals/Watch/WatchModal";
+import ResultsModal from "@/pages/League/modals/ResultsModal/ResultsModal";
+import { useGetResultsByDivisionId } from "@/rtkQuery/hooks/queries/useResults";
 
 type ScheduleProps = {
   seasonStatus: LeagueStatus;
@@ -56,6 +58,8 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
     () => divisionOptions.find((division) => division.label === activeDivisionLabel),
     [activeDivisionLabel, divisionOptions],
   );
+
+  const resultsByDivision = useGetResultsByDivisionId(activeDivision?.value ?? "");
 
   const rounds = useMemo(
     () =>
@@ -106,6 +110,12 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
 
     return map;
   }, [carsData]);
+
+  const eventIdsWithResults = useMemo(
+    () =>
+      new Set((resultsByDivision.data ?? []).map((result) => result.event_id)),
+    [resultsByDivision.data],
+  );
 
 
 
@@ -223,6 +233,21 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
     openModal(<WatchModal broadcastUrl={broadcastUrl} />);
   };
 
+
+  const openResultsModal = (eventId: string, seasonName: string) => {
+    if (!seasonData) {
+      return;
+    }
+
+    openModal(
+      <ResultsModal
+        eventId={eventId}
+        seasonId={seasonData.id}
+        seasonName={seasonName}
+      />,
+    );
+  };
+
   return (
     <>
       {seasonStatus === "setup" ? (
@@ -277,6 +302,13 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
                     }},
                   revealDetails: card.revealDetails,
                   revealBroadcast: card.revealBroadcast,
+                  ...(eventIdsWithResults.has(card.eventId)
+                    ? {
+                        resultsButton: {
+                          onClick: () => openResultsModal(card.eventId, seasonData.season_name),
+                        },
+                      }
+                    : {}),
                 }))}
                 briefingButton={{
                   onClick: () => openBriefingModal(round.roundId)

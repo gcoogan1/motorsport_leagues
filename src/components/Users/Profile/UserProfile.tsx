@@ -13,11 +13,10 @@ type UserProfileProps = {
   avatarValue: AvatarVariants | string;
   tags?: Tag[];
   centerContent?: boolean;
-  shortenText?: boolean;
   shortenTeamText?: boolean;
 }
 
-const UserProfile = ({ username, information, size = "medium",  avatarType, avatarValue, tags, centerContent = false, shortenText = false, shortenTeamText = false }: UserProfileProps) => {
+const UserProfile = ({ username, information, size = "medium",  avatarType, avatarValue, tags, centerContent = false, shortenTeamText = false }: UserProfileProps) => {
 
   const avatarSize = size === "small" ? "tiny" : size;
   const isMobile = useMediaQuery("(max-width: 919px)");
@@ -32,8 +31,8 @@ const UserProfile = ({ username, information, size = "medium",  avatarType, avat
         {size === "large" ? (
           <>
             <UsernameContainer  isLarge={true}>
-              <Username $size={size} $shortenText={shortenText}>{username}</Username>
-              {information && <Information $shortenText={shortenTeamText} $size={size}>{information}</Information>}
+              <Username $size={size} >{username}</Username>
+              {information && <Information $size={size}>{information}</Information>}
             </UsernameContainer>
               {tags && tags.length > 0 && !hideTags && (
                 <Tags variants={tags} />
@@ -42,12 +41,12 @@ const UserProfile = ({ username, information, size = "medium",  avatarType, avat
         ): (
           <>
           <UsernameContainer isLarge={false}>
-            <Username $size={size} $shortenText={shortenText}>{username}</Username>
+            <Username $size={size}>{username}</Username>
             {tags && tags.length > 0 && !hideTags && (
               <Tags variants={tags} />
             )}
           </UsernameContainer>
-            {information && <Information $shortenText={shortenTeamText} $size={size}>{information}</Information>}
+            {information && <Information $size={size}>{information}</Information>}
           </>
         )}
       </TextContainer>

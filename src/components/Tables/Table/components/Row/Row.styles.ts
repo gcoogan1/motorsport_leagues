@@ -104,15 +104,7 @@ export const RoundName = styled.h2<{ $shortenText: boolean }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 200px;
-
-  ${({ $shortenText }) =>
-    $shortenText &&
-    css`
-      ${layout.mediaQueries.mobile} {
-        max-width: 100px;
-      }
-  `};
+  max-width: 100%;
 `;
 
 export const TrackName = styled.p<{ $shortenText: boolean }>`
@@ -121,14 +113,5 @@ export const TrackName = styled.p<{ $shortenText: boolean }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  
-  ${layout.mediaQueries.mobile} {
-    max-width: 200px;
-
-    ${({ $shortenText }) =>
-      $shortenText &&
-      css`
-        max-width: 100px;
-      `};
-  }
+  max-width: 100%
 `;;

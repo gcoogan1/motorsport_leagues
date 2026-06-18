@@ -30,7 +30,7 @@ import TextInput from "@/components/Inputs/TextInput/TextInput";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
-import { useEventSessionSettings, useEvents } from "@/rtkQuery/hooks/queries/useEvents";
+import { useEvent, useEventSessionSettings, useEventTrackDetails, useEvents } from "@/rtkQuery/hooks/queries/useEvents";
 import {
   useLeagueSeasonDivisions,
   useLeagueSeasonDivisionDrivers,
@@ -45,6 +45,7 @@ import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { SESSION_TYPE_LABEL, type ResultsFormValues, type ResultFormRow, RESULT_TABLE_STYLE } from "./Results.util";
 import RaceTimeInput from "@/components/Inputs/RaceTimeInput/RaceTimeInput";
+import { formatEventDate } from "@/utils/dates";
 
 type ResultsProps = {
   seasonData: LeagueSeasonTable;
@@ -137,6 +138,23 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
 
   // -- Event Session Settings For the Selected Event -- //
   const eventSessionSettings = useEventSessionSettings(effectiveEventId);
+  const { data: eventData } = useEvent(effectiveEventId);
+  const { data: eventTrackDetails } = useEventTrackDetails(effectiveEventId);
+
+  // -- Event Track and Date Details -- //
+  const showTrack = eventTrackDetails?.reveal_track;
+  const trackName = showTrack
+    ? eventTrackDetails?.track_name
+    : "Hidden Track";
+
+  const showDate = eventData?.reveal_date;
+  const eventDate =
+    showDate && eventData?.event_date
+      ? formatEventDate(
+          eventData.event_date,
+          eventData.event_time_zone ?? "UTC",
+        )
+      : "No Date Set";
 
   const sessionOptions = useMemo(() => {
     const sessionSettings = eventSessionSettings.currentData;
@@ -696,7 +714,6 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
                     type="driver"
                     profiles={getResultDriverOptionsForRow(index)}
                     placeholder="Select driver..."
-                    shortenText={pointsVisible}
                   />
                 </DriverCell>
                 <TimeCell>
@@ -777,7 +794,6 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
                     type="driver"
                     profiles={getFastestLapDriverOptions()}
                     placeholder="Select driver..."
-                    shortenText={pointsVisible}
                   />
                 </DriverCell>
                 <TimeCell $hasPoints={pointsVisible}>
@@ -840,6 +856,7 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
         id={"results-form"}
         seasonName={seasonData.season_name}
         header={"Enter Results"}
+        details={{ title: trackName, information: eventDate }}
         filters={filters}
         listChildren={listChildren}
         onSave={handleSave}

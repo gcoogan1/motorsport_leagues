@@ -1,10 +1,13 @@
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import { useModal } from "@/providers/modal/useModal";
 import type { LeagueSeasonTable, LeagueStatus } from "@/types/league.types";
 import DriverLineup from "@/components/Cards/DiverLineup/DriverLineup";
 import TeamLineup from "@/components/Cards/TeamLineup/TeamLineup";
 import SegmentedTab from "@/components/Tabs/SegmentedTabs/SegmentedTab";
 import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
+import DriverPerformance from "@/pages/League/modals/DriverPerformance/DriverPerformance";
+import TeamPerformance from "@/pages/League/modals/TeamPerformance/TeamPerformance";
 import {
   DriverColumns,
   LeftColumn,
@@ -35,6 +38,25 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
     countLabel,
     handleTabChange,
   } = useLineupData({ seasonData });
+  const { openModal } = useModal();
+
+  const handleDriverClick = (driverId: string) => {
+    openModal(
+      <DriverPerformance
+        driverId={driverId}
+        seasonName={seasonData?.season_name ?? "Season Name"}
+      />,
+    );
+  };
+
+  const handleTeamClick = (teamId: string) => {
+    openModal(
+      <TeamPerformance
+        teamId={teamId}
+        seasonName={seasonData?.season_name ?? "Season Name"}
+      />,
+    );
+  };
 
   const renderDriverCard = (driver: LineupDriver, fallbackNumber: number) => (
     <DriverLineup
@@ -45,7 +67,8 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
       avatarValue={driver.avatarValue}
       tags={driver.tags}
       cardNumber={String(fallbackNumber)}
-      driverId={driver.profileId}
+      driverId={driver.seasonDriverId}
+      onClick={handleDriverClick}
     />
   );
 
@@ -91,6 +114,7 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
                     key={team.teamId}
                     teamName={team.teamName}
                     teamNumber={index + 1}
+                    onTeamClick={() => handleTeamClick(team.teamId)}
                     drivers={team.drivers.map((driver) => ({
                       id: driver.seasonDriverId,
                       username: driver.displayName,
