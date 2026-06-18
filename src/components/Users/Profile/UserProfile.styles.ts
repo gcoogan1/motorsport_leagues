@@ -101,6 +101,7 @@ export const Information = styled.p<{ $size: "small" | "medium" | "large", $shor
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 100%;
   
   ${layout.mediaQueries.mobile} {
     max-width: 200px;
