@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { designTokens } from "@app/design/tokens";
 import { bottomFadeBorder } from "@/app/design/mixens/edgeFadeBorder";
 
