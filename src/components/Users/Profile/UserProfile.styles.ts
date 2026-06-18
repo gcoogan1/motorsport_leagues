@@ -46,6 +46,7 @@ export const UsernameContainer = styled.div<{ isLarge: boolean }>`
   align-items: center;
   gap: ${layout.space.xxSmall};
   min-width: 0;
+  max-width: 100%;
 
   ${({ isLarge }) =>
     isLarge &&
@@ -56,7 +57,7 @@ export const UsernameContainer = styled.div<{ isLarge: boolean }>`
   `};
 `;
 
-export const Username = styled.h2<{ $size: "small" | "medium" | "large", $shortenText: boolean }>`
+export const Username = styled.h2<{ $size: "small" | "medium" | "large" }>`
   ${({ $size }) => {
     switch ($size) {
       case "small":
@@ -73,18 +74,10 @@ export const Username = styled.h2<{ $size: "small" | "medium" | "large", $shorte
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 200px;
-
-  ${({ $shortenText }) =>
-    $shortenText &&
-    css`
-      ${layout.mediaQueries.mobile} {
-        max-width: 10px;
-      }
-  `};
+  max-width: 100%
 `;
 
-export const Information = styled.p<{ $size: "small" | "medium" | "large", $shortenText: boolean }>`
+export const Information = styled.p<{ $size: "small" | "medium" | "large" }>`
   ${({ $size }) => {
     switch ($size) {
       case "small":
@@ -101,14 +94,5 @@ export const Information = styled.p<{ $size: "small" | "medium" | "large", $shor
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  
-  ${layout.mediaQueries.mobile} {
-    max-width: 200px;
-
-    ${({ $shortenText }) =>
-      $shortenText &&
-      css`
-        max-width: 100px;
-      `};
-  }
+  max-width: 100%;
 `;

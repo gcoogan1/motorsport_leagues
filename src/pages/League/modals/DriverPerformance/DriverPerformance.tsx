@@ -40,7 +40,7 @@ const DriverPerformance = ({
           type: "driver",
           roundInfo: {
             roundName: entry.round_name,
-            trackName: entry.track_name,
+            trackName: entry.track_name ? entry.track_name : "Hidden Track",
           },
           driver: {
             id: driverId,

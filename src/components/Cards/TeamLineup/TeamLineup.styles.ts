@@ -14,12 +14,16 @@ export const TeamLineupWrapper = styled.div`
   border-radius: ${borders.radius.xxLarge};
   padding: ${layout.space.small};
   gap: 10px;
-  ${({ theme }) => gradientBorder({ gradient: theme.theme.primaryGradientFadeBottom30, width: borders.width.medium })};
+  ${({ theme }) =>
+    gradientBorder({
+      gradient: theme.theme.primaryGradientFadeBottom30,
+      width: borders.width.medium,
+    })};
 
   ${layout.mediaQueries.mobile} {
     max-width: 320px;
   }
-`
+`;
 
 export const CardTitle = styled.div`
   position: absolute;
@@ -34,6 +38,7 @@ export const CardTitle = styled.div`
 
 export const TitleText = styled.p`
   ${typography.title.smallBold};
+  max-width: 100%;
   ${({ theme }) => `color: ${theme.theme.primary30};`};
   margin: 0;
 `;
@@ -89,8 +94,6 @@ export const DriverName = styled.p`
   width: 72px;
 `;
 
-
-
 export const EmptyTeamContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -104,8 +107,9 @@ export const EmptyTeamContent = styled.div`
 export const TeamTitle = styled.p`
   ${typography.title.small};
   color: ${colors.text.text1};
+  max-width: 100%;
   margin: 0;
-    overflow: hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 

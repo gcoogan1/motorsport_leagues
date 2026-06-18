@@ -98,7 +98,6 @@ const ResultTable = ({ name, columns, customWidth, moreOnClick }: ResultTablePro
                   name={`${name}.${i}.${columns.driver.name}`}
                   type="driver"
                   profiles={columns.driver.profiles}
-                  shortenText={!!columns.points}
                 />
               </DriverCell>
             )}

@@ -362,6 +362,32 @@ const PrequalTeamAssignments = ({
         ),
     );
 
+    const renamedPreQualTeams = isLinkedDivision
+      ? []
+      : changedTeams
+          .map((team) => {
+            const persistedTeam = persistedTeams.find((p) => p.teamId === team.teamId);
+
+            if (!persistedTeam || !team.teamId) {
+              return undefined;
+            }
+
+            return {
+              teamId: team.teamId,
+              previousTeamName: persistedTeam.teamName,
+              nextTeamName: team.teamName,
+            };
+          })
+          .filter(
+            (
+              team,
+            ): team is {
+              teamId: string;
+              previousTeamName: string;
+              nextTeamName: string;
+            } => !!team,
+          );
+
     const newTeams = currentTeams.filter((team) => !team.teamId);
 
     const currentAssignments = (getValues("assignments") ?? []).filter(
@@ -407,6 +433,34 @@ const PrequalTeamAssignments = ({
               }).unwrap(),
             ),
           );
+
+          if (renamedPreQualTeams.length > 0) {
+            const linkedTeamRenameUpdates = renamedPreQualTeams.flatMap((renamedTeam) =>
+              allSeasonTeams
+                .filter(
+                  (team) =>
+                    team.division_id !== activeDivisionId
+                    && normalizeTeamName(team.team_name)
+                      === normalizeTeamName(renamedTeam.previousTeamName)
+                    && team.team_name !== renamedTeam.nextTeamName,
+                )
+                .map((team) => ({
+                  teamId: team.id,
+                  teamName: renamedTeam.nextTeamName,
+                })),
+            );
+
+            const updatesByTeamId = new Map<string, string>();
+            linkedTeamRenameUpdates.forEach((update) => {
+              updatesByTeamId.set(update.teamId, update.teamName);
+            });
+
+            await Promise.all(
+              [...updatesByTeamId.entries()].map(([teamId, teamName]) =>
+                updateLeagueSeasonTeam({ teamId, teamName }).unwrap(),
+              ),
+            );
+          }
 
           const resolvedTeamIds = new Map<string, string>();
           currentTeams.forEach((team) => {
@@ -511,6 +565,9 @@ const PrequalTeamAssignments = ({
             const teamByKey = new Map(
               currentTeams.map((team) => [getTeamKey(team), team] as const),
             );
+            const previousTeamNameByTeamId = new Map(
+              renamedPreQualTeams.map((team) => [team.teamId, team.previousTeamName] as const),
+            );
 
             for (const assignment of currentAssignments) {
               const participant = participantDetailsByProfileId.get(assignment.driver);
@@ -525,7 +582,16 @@ const PrequalTeamAssignments = ({
                 continue;
               }
 
-              const linkedTeams = linkedTeamsByName.get(normalizeTeamName(team.teamName)) ?? [];
+              const normalizedCurrentTeamName = normalizeTeamName(team.teamName);
+              const normalizedPreviousTeamName = team.teamId
+                ? normalizeTeamName(previousTeamNameByTeamId.get(team.teamId) ?? "")
+                : "";
+
+              const linkedTeams =
+                linkedTeamsByName.get(normalizedCurrentTeamName)
+                ?? (normalizedPreviousTeamName
+                  ? (linkedTeamsByName.get(normalizedPreviousTeamName) ?? [])
+                  : []);
 
               for (const linkedTeam of linkedTeams) {
                 const key = `${assignment.driver}:${linkedTeam.division_id}` as `${string}:${string}`;
