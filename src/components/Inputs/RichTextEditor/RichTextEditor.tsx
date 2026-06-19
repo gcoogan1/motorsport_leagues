@@ -45,6 +45,7 @@ type RichTextEditorProps = {
   helperText?: string;
   placeholder?: string;
   maxCharacters?: number;
+  showCount?: boolean;
   hasError?: boolean;
   errorMessage?: string;
   onImageUpload?: (file: File) => Promise<RichTextEditorImageUploadResult>;
@@ -70,6 +71,7 @@ const RichTextEditor = ({
   helperText,
   placeholder,
   maxCharacters = MAX_CHARACTERS,
+  showCount = true,
   hasError,
   errorMessage,
 }: RichTextEditorProps) => {
@@ -255,9 +257,11 @@ const RichTextEditor = ({
         <TopRow>
           <Label>{label}</Label>
 
-          <CharacterCounter>
-            {characterCount.toLocaleString()} / {maxCharacters.toLocaleString()}
-          </CharacterCounter>
+          {showCount && (
+            <CharacterCounter>
+              {characterCount.toLocaleString()} / {maxCharacters.toLocaleString()}
+            </CharacterCounter>
+          )}
         </TopRow>
 
         <Contents $hasError={!!hasError}>

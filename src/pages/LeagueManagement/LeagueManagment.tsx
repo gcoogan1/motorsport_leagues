@@ -35,6 +35,7 @@ import PrequalDriverAssignments from "@/features/leagues/forms/Assignments/Prequ
 import PrequalTeamAssignments from "@/features/leagues/forms/Assignments/Prequal/Team/PrequalTeamAssignments";
 import Schedule from "@/features/leagues/forms/Schedule/Schedule";
 import Results from "@/features/leagues/forms/Results/Results";
+import RulesForm from "@/features/leagues/forms/Rules/RulesForm";
 
 //TODO: Replace panelContent with SheetForms for each section once they are developed, and implement logic to fetch and display actual data for each section.
 
@@ -181,7 +182,11 @@ const LeagueManagment = () => {
         onDirtyChange={setHasUnsavedChanges}
       />
     ) : activeSection === "rules-and-regulations" && activeSeasonData ? (
-      <>{activeSeasonData.season_name}</>
+      <RulesForm
+        leagueId={activeSeasonData.league_id}
+        seasonName={activeSeasonData.season_name}
+        onDirtyChange={setHasUnsavedChanges}
+      />
     ) : (
       <>Coming Soon</>
     );
@@ -196,7 +201,8 @@ const LeagueManagment = () => {
       activeSection === "league-settings" ||
       activeSection === "participant-roles" ||
       activeSection === "season-settings" ||
-      activeSection === "driver-assignments";
+      activeSection === "driver-assignments" ||
+      activeSection === "rules-and-regulations";
 
     if (!isGuardedSection || !hasUnsavedChanges) {
       action();
