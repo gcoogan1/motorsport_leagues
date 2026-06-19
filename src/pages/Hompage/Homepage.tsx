@@ -9,25 +9,34 @@ import LeMansImage from "@/assets/Homepage/Games/LeMans.png";
 import ProfileIcon from "@assets/Icon/Profile.svg?react";
 import SquadIcon from "@assets/Icon/Squad.svg?react";
 import LeagueIcon from "@assets/Icon/League.svg?react";
-import LeagueImage from "@assets/Cover/cover1.png";
+import LeagueImage from "@assets/Homepage/leagueCard.png";
 import CardsImage from "@assets/Homepage/Features/Cards.png";
 import DriverImage from "@assets/Homepage/Features/Driver.png";
 import ExternalIcon from "@assets/Icon/External.svg?react";
 import FollowIcon from "@assets/Icon/Follow.svg?react";
+import ProfilesPath from "@/assets/Homepage/Paths/profilesPath.png";
+import SquadsPath from "@/assets/Homepage/Paths/squadPath.png";
+import LeaguesPath from "@/assets/Homepage/Paths/leaguePath.png";
+import VipLeagueImage from "@/assets/Cover/cover1.png";
+import JokerImage from "@/assets/Homepage/jokerCard.png";
+import LeagueTab from "@assets/Homepage/Tabs/leagueTab.png";
+import SeasonTab from "@assets/Homepage/Tabs/seasonTab.png";
+import DivisionTab from "@assets/Homepage/Tabs/divisionTab.png";
+import RoundTab from "@assets/Homepage/Tabs/roundTab.png";
+import EventTab from "@assets/Homepage/Tabs/eventTab.png";
+import SessionTab from "@assets/Homepage/Tabs/sessionTab.png";
+import ManageImage from "@assets/Homepage/ManageImage.png";
 import {
   ButtonContainer,
   Container,
   GameImage,
   Games,
   GamesContainer,
-  GraphicContainer,
   Hero,
-  IconWrapper,
   PathContainer,
   PathContentTitle,
   PathContentSubTitle,
   PathItem,
-  PathItemImageContainer,
   Paths,
   SubTitle,
   TextContainer,
@@ -72,11 +81,9 @@ import {
   AboutItem,
   AboutItemImage,
   AboutItemTextContainer,
-  AboutItemBulletList,
   AboutItemTitleContainer,
   AboutItemTitle,
   AboutItemSubTitle,
-  AboutItemBullet,
   LeagueSection,
   LeagueTabs,
   LeagueTabContent,
@@ -85,6 +92,14 @@ import {
   ContactSection,
   ContactContainer,
   ContactButtons,
+  PathItemImage,
+  YellowFeaturedLeagueItem,
+  LeagueTabTextContainer,
+  ManageSection,
+  ManageContainer,
+  ManageListItem,
+  ManageListContainer,
+  ManageImageContent,
 } from "./Homepage.styles";
 import Button from "@/components/Button/Button";
 import { useAuth } from "@/providers/auth/useAuth";
@@ -93,7 +108,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { navigate } from "@/app/navigation/navigation";
 import LeagueCard from "@/components/Cards/LeagueCard/LeagueCard";
 import Tabs from "@/components/Tabs/Tabs/Tabs";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useAnalytics } from "@/hooks/useAnalytics";
 
 const TabsData = [
@@ -112,60 +127,81 @@ const Homepage = () => {
   const { user } = useAuth();
   const { openModal } = useModal();
   const [activeTab, setActiveTab] = useState<string>("league");
+  const profileSectionRef = useRef<HTMLDivElement>(null);
+  const squadSectionRef = useRef<HTMLDivElement>(null);
+  const leagueSectionRef = useRef<HTMLDivElement>(null);
   const { track } = useAnalytics();
 
   const tabContent = {
     league: {
-      title: "League Info",
+      title: "The Racing Series",
       subtitle:
-        "Check the latest, featured leagues with our stamp of approval.",
+        "Leagues are a series of championships run by a community with a set list of participants.",
       bullets: ["This is an explainer.", "another one", "and onter one."],
       link: "https://msldrivers.com",
-      image: LeagueImage,
+      image: LeagueTab,
     },
     season: {
-      title: "Season Info",
+      title: "A Series of Championships",
       subtitle:
-        "Check the latest, featured leagues with our stamp of approval.",
+        "Seasons are a specific championship cycle within the league that contain their own unique overview and rules.",
       bullets: ["This is an explainer.", "another one", "and onter one."],
       link: "https://msldrivers.com",
-      image: LeagueImage,
+      image: SeasonTab,
     },
     division: {
-      title: "Division Info",
+      title: "Multiple Championships",
       subtitle:
-        "Check the latest, featured leagues with our stamp of approval.",
+        "Divisions are standalone competitive tiers within a season used to separate drivers with their own schedule and standings.",
       bullets: ["This is an explainer.", "another one", "and onter one."],
       link: "https://msldrivers.com",
-      image: LeagueImage,
+      image: DivisionTab,
     },
     round: {
-      title: "Round Info",
+      title: "Calendar Slots",
       subtitle:
-        "Check the latest, featured leagues with our stamp of approval.",
+        "Rounds are specific stops in the schedule that act as a container for all the racing events in that instance.",
       bullets: ["This is an explainer.", "another one", "and onter one."],
       link: "https://msldrivers.com",
-      image: LeagueImage,
+      image: RoundTab,
     },
     event: {
-      title: "Event Info",
+      title: "Race Days",
       subtitle:
-        "Check the latest, featured leagues with our stamp of approval.",
+        "Events are a single day of competition for the round in which drivers compete within.",
       bullets: ["This is an explainer.", "another one", "and onter one."],
       link: "https://msldrivers.com",
-      image: LeagueImage,
+      image: EventTab,
     },
     session: {
-      title: "Session Info",
+      title: "Track Time",
       subtitle:
-        "Check the latest, featured leagues with our stamp of approval.",
+        "Sessions are the smallest unit of competition on a track that gets recorded, either for qualifying or race.",
       bullets: ["This is an explainer.", "another one", "and onter one."],
       link: "https://msldrivers.com",
-      image: LeagueImage,
+      image: SessionTab,
     },
   };
 
   const tab = tabContent[activeTab as keyof typeof tabContent];
+
+  const ManageList = [
+    "Announcements",
+    "League Chat",
+    "Season Overview",
+    "Division Management",
+    "Team & Driver Assignments",
+    "Season Schedule",
+    "Driver Briefing",
+    "Grid Lineup",
+    "Event Details",
+    "Broadcast Links",
+    "Incident Reporting",
+    "Steward Decisions",
+    "Steward Decisions",
+    "Steward Decisions",
+    "Rules & Regulations",
+  ];
 
   // -- Handlers -- //
 
@@ -178,69 +214,82 @@ const Homepage = () => {
   const handleSearch = (tab: "Leagues" | "Profiles" | "Squads") => {
     track("search_open", `search_${tab.toLowerCase()}`);
     openModal(<SearchForm startingTab={tab} />);
-    return
+    return;
   };
 
   const handleCreate = (type: string) => {
     track("create_click", `create_${type}`);
     navigate(`/create-${type.toLowerCase()}`);
-    return
+    return;
+  };
+
+  const handleScrollToSection = (sectionRef: React.RefObject<HTMLDivElement | null>) => {
+    if (sectionRef.current) {
+      sectionRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const handleLearnMore = (type: string) => {
     track("learn_more_click", `learn_more_${type}`);
-    return
+    if (type === "Profiles") {
+      handleScrollToSection(profileSectionRef);
+    } else if (type === "Squads") {
+      handleScrollToSection(squadSectionRef);
+    } else if (type === "Leagues") {
+      handleScrollToSection(leagueSectionRef);
+    }
+    return;
   };
 
   const handleViewSeasonGuide = () => {
     track("view_season_guide_click", "view_season_guide");
-    return
+    return;
   };
 
   const handleJoinDiscord = () => {
     track("join_league_discord_click", "join_league_discord");
-    return
+    return;
   };
   const handleGoToLeagueRating = () => {
     track("go_to_league_rating_click", "go_to_league_rating");
-    return
+    return;
   };
 
-  const handleJoinLeague = (leagueName: string) => {
-    track("join_league_click", `join_league_${leagueName.toLowerCase()}`);
-    return
-  };
+  // const handleJoinLeague = (leagueName: string) => {
+  //   track("join_league_click", `join_league_${leagueName.toLowerCase()}`);
+  //   return;
+  // };
 
-  const handleFollowLeague = (leagueName: string) => {
-    track("follow_league_click", `follow_league_${leagueName.toLowerCase()}`);
-    return
-  };
+  // const handleFollowLeague = (leagueName: string) => {
+  //   track("follow_league_click", `follow_league_${leagueName.toLowerCase()}`);
+  //   return;
+  // };
 
   const handleAboutClick = (type: string) => {
     track("about_click", `about_${type.toLowerCase()}`);
-    return
+    return;
   };
 
   const handleOnTabChange = (tabName: string) => {
     track("tab_change", `tab_change_${tabName.toLowerCase()}`);
     setActiveTab(tabName);
-    return
+    return;
   };
 
-  const handleTabLinkClick = (tabName: string) => {
-    track("tab_link_click", `tab_link_${tabName.toLowerCase()}`);
-    return
-  };
+
+  // const handleTabLinkClick = (tabName: string) => {
+  //   track("tab_link_click", `tab_link_${tabName.toLowerCase()}`);
+  //   return
+  // };
 
   return (
     <Wrapper>
       <Hero>
         <Container>
           <TextContainer>
-            <Title>Your Main Sim Racing Hub</Title>
+            <Title>The Home of Sim Racing Leagues</Title>
             <SubTitle>
-              Create your driver profile, recruit your squad, and dominate
-              custom leagues across iRacing, GT7, Assetto Corsa, and more.
+              Create and compete in custom sim racing leagues.
             </SubTitle>
           </TextContainer>
           <ButtonContainer>
@@ -282,19 +331,20 @@ const Homepage = () => {
           </TextContainer>
           <SectionList>
             <PathItem>
-              <PathItemImageContainer>
+              <PathItemImage src={ProfilesPath} alt="Profile" />
+              {/* <PathItemImageContainer>
                 <GraphicContainer>
                   <IconWrapper>
                     <ProfileIcon />
                   </IconWrapper>
                 </GraphicContainer>
-              </PathItemImageContainer>
+              </PathItemImageContainer> */}
               <PathContent>
                 <TextContainer>
                   <PathContentTitle>Profiles</PathContentTitle>
                   <PathContentSubTitle>
-                    Build your career profile, track stats, and find active
-                    championships.
+                    First, you’ll need a profile for the game you want to create
+                    or join the league with.
                   </PathContentSubTitle>
                 </TextContainer>
                 <PathContentButtons>
@@ -333,19 +383,20 @@ const Homepage = () => {
               </PathContent>
             </PathItem>
             <PathItem>
-              <PathItemImageContainer>
+              <PathItemImage src={SquadsPath} alt="Squad" />
+              {/* <PathItemImageContainer>
                 <GraphicContainer>
                   <IconWrapper>
                     <ProfileIcon />
                   </IconWrapper>
                 </GraphicContainer>
-              </PathItemImageContainer>
+              </PathItemImageContainer> */}
               <PathContent>
                 <TextContainer>
                   <PathContentTitle>Squads</PathContentTitle>
                   <PathContentSubTitle>
-                    Build your career profile, track stats, and find active
-                    championships.
+                    Create or join a squad to manage your team and host your
+                    very own leagues.
                   </PathContentSubTitle>
                 </TextContainer>
                 <PathContentButtons>
@@ -384,19 +435,20 @@ const Homepage = () => {
               </PathContent>
             </PathItem>
             <PathItem>
-              <PathItemImageContainer>
+              <PathItemImage src={LeaguesPath} alt="League" />
+              {/* <PathItemImageContainer>
                 <GraphicContainer>
                   <IconWrapper>
                     <ProfileIcon />
                   </IconWrapper>
                 </GraphicContainer>
-              </PathItemImageContainer>
+              </PathItemImageContainer> */}
               <PathContent>
                 <TextContainer>
                   <PathContentTitle>Leagues</PathContentTitle>
                   <PathContentSubTitle>
-                    Build your career profile, track stats, and find active
-                    championships.
+                    Create or join a league that holds seasonal championships
+                    for multiple competitors.
                   </PathContentSubTitle>
                 </TextContainer>
                 <PathContentButtons>
@@ -443,7 +495,9 @@ const Homepage = () => {
             <TextContainer>
               <VIPMiniTitle>Motorsport Leagues presents</VIPMiniTitle>
               <VIPTitle>VIP GT World Championship</VIPTitle>
-              <VIPSubTitle>The ultimate league.</VIPSubTitle>
+              <VIPSubTitle>
+                The most elite team-based sim racing league on Gran Turismo 7.
+              </VIPSubTitle>
             </TextContainer>
             <VIPList>
               <VIPItemTop>
@@ -460,19 +514,29 @@ const Homepage = () => {
                   <VIPLeagueContents>
                     <VIPLeagueContentsTextContainer>
                       <VIPLeagueContentsTitle>
-                        The Premium League
+                        The Ultimate League
                       </VIPLeagueContentsTitle>
                       <VIPLeagueContentsSubTitle>
-                        Join this league for the ultimate experience available
-                        in Gran Turismo 7. It is held annually and is likely to
-                        be the best thing ever made!
+                        The four driver team championship kicks off its
+                        inaugural season from 8 July to 26 September. Each of
+                        the two divisions will battle across 8 challenging
+                        rounds, taking competitors around the world to crown a
+                        Team and Driver champion.
                       </VIPLeagueContentsSubTitle>
                     </VIPLeagueContentsTextContainer>
                     <VIPLeagueContentsButtons>
-                      <Button color="primary" variant="ghost" onClick={handleViewSeasonGuide}>
+                      <Button
+                        color="primary"
+                        variant="ghost"
+                        onClick={handleViewSeasonGuide}
+                      >
                         View Season Guide
                       </Button>
-                      <Button color="primary" variant="outlined" onClick={handleJoinDiscord}>
+                      <Button
+                        color="primary"
+                        variant="outlined"
+                        onClick={handleJoinDiscord}
+                      >
                         Join Discord
                       </Button>
                     </VIPLeagueContentsButtons>
@@ -497,7 +561,11 @@ const Homepage = () => {
                           approval.
                         </ItemSubTitle>
                       </ItemTextContainer>
-                      <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={handleGoToLeagueRating}>
+                      <Button
+                        color="base"
+                        icon={{ right: <ExternalIcon /> }}
+                        onClick={handleGoToLeagueRating}
+                      >
                         Go to MSLDrivers.com
                       </Button>
                     </VIPItemBottomContents>
@@ -512,7 +580,11 @@ const Homepage = () => {
                           approval.
                         </ItemSubTitle>
                       </ItemTextContainer>
-                      <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={handleGoToLeagueRating}>
+                      <Button
+                        color="base"
+                        icon={{ right: <ExternalIcon /> }}
+                        onClick={handleGoToLeagueRating}
+                      >
                         Go to MSLDrivers.com
                       </Button>
                     </VIPItemBottomContents>
@@ -535,7 +607,7 @@ const Homepage = () => {
             <BlueFeaturedLeagueItem>
               <LeagueCard
                 name={"VIP GT World Championship"}
-                coverImageUrl={LeagueImage}
+                coverImageUrl={VipLeagueImage}
                 seasonStatus={"setup"}
                 size={"medium"}
                 gameType={"gt7"}
@@ -545,11 +617,11 @@ const Homepage = () => {
               />
               <FeaturedLeagueItemContents>
                 <ItemTextContainer>
-                  <ItemTitle>Monthly Fun Races</ItemTitle>
+                  <ItemTitle $color="blue">Fun Monthly Races</ItemTitle>
                   <ItemSubTitle>
-                    Join this league for the ultimate experience available in
-                    Gran Turismo 7. It is held annually and is likely to be the
-                    best thing ever made!
+                    Come hang out with the Victory In Performance Racing Team on
+                    a monthly lobby night with three wild races with unique
+                    cars.
                   </ItemSubTitle>
                 </ItemTextContainer>
                 <FeaturedLeagueContentsButtons>
@@ -564,7 +636,7 @@ const Homepage = () => {
                 </FeaturedLeagueContentsButtons>
               </FeaturedLeagueItemContents>
             </BlueFeaturedLeagueItem>
-            <RedFeaturedLeagueItem>
+            <YellowFeaturedLeagueItem>
               <LeagueCard
                 name={"VIP GT World Championship"}
                 coverImageUrl={LeagueImage}
@@ -573,15 +645,15 @@ const Homepage = () => {
                 gameType={"gt7"}
                 numOfParticipants={100}
                 hostingSquad="VIP Racing Team"
-                themeColor={"red"}
+                themeColor={"yellow"}
               />
               <FeaturedLeagueItemContents>
                 <ItemTextContainer>
-                  <ItemTitle>Monthly Fun Races</ItemTitle>
+                  <ItemTitle $color="yellow">The Ultimate League</ItemTitle>
                   <ItemSubTitle>
-                    Join this league for the ultimate experience available in
-                    Gran Turismo 7. It is held annually and is likely to be the
-                    best thing ever made!
+                    A premium championship on Gran Turismo 7 that is held
+                    annually to crown a Team and Driver champion through 8
+                    challenging rounds.
                   </ItemSubTitle>
                 </ItemTextContainer>
                 <FeaturedLeagueContentsButtons>
@@ -595,11 +667,11 @@ const Homepage = () => {
                   </Button>
                 </FeaturedLeagueContentsButtons>
               </FeaturedLeagueItemContents>
-            </RedFeaturedLeagueItem>
+            </YellowFeaturedLeagueItem>
             <RedFeaturedLeagueItem>
               <LeagueCard
                 name={"VIP GT World Championship"}
-                coverImageUrl={LeagueImage}
+                coverImageUrl={JokerImage}
                 seasonStatus={"setup"}
                 size={"medium"}
                 gameType={"gt7"}
@@ -609,11 +681,11 @@ const Homepage = () => {
               />
               <FeaturedLeagueItemContents>
                 <ItemTextContainer>
-                  <ItemTitle>Monthly Fun Races</ItemTitle>
+                  <ItemTitle $color="red">Custom Joker Races</ItemTitle>
                   <ItemSubTitle>
-                    Join this league for the ultimate experience available in
-                    Gran Turismo 7. It is held annually and is likely to be the
-                    best thing ever made!
+                    Take a unique spin on this once a month tournament that
+                    includes a race with a mandatory Joker Lap that drivers must
+                    take.
                   </ItemSubTitle>
                 </ItemTextContainer>
                 <FeaturedLeagueContentsButtons>
@@ -636,130 +708,169 @@ const Homepage = () => {
           <TextContainer>
             <SectionTitle>About Motorsport Leagues</SectionTitle>
             <SectionSubTitle>
-              Explore the three things in this platform.
+              Learn more about the features that make up this platform.
             </SectionSubTitle>
           </TextContainer>
           <AboutContents>
             <AboutItem $left>
-              <AboutItemTextContainer>
+              <AboutItemTextContainer ref={profileSectionRef}>
+                <AboutItemTitleContainer>
+                  <AboutItemTitle>What is a Profile?</AboutItemTitle>
+                  <AboutItemSubTitle>
+                    Profiles are an avatar that a user creates for a certain
+                    game. They use this to participate in the sim racing
+                    ecosystem by following and joining Squads and Leagues.
+                  </AboutItemSubTitle>
+                </AboutItemTitleContainer>
+                {/* <AboutItemBulletList>
+                  <AboutItemBullet>This is an explainer.</AboutItemBullet>
+                  <AboutItemBullet>another one</AboutItemBullet>
+                  <AboutItemBullet>and onter one.</AboutItemBullet>
+                </AboutItemBulletList> */}
+                <Button
+                  color="base"
+                  icon={{ left: <ProfileIcon /> }}
+                  onClick={() => handleAboutClick("profile")}
+                >
+                  Create Profile
+                </Button>
+              </AboutItemTextContainer>
+              <AboutItemImage src={ProfilesPath} />
+            </AboutItem>
+            <AboutItem>
+              <AboutItemImage src={SquadsPath} />
+              <AboutItemTextContainer ref={squadSectionRef}>
                 <AboutItemTitleContainer>
                   <AboutItemTitle>What is a Squad?</AboutItemTitle>
                   <AboutItemSubTitle>
-                    Check the latest, featured leagues with our stamp of
-                    approval.
+                    Squads are a team or a community of Profiles that usually
+                    participate together. Squads are required to host a League,
+                    and are not limited to a single game.
                   </AboutItemSubTitle>
                 </AboutItemTitleContainer>
-                <AboutItemBulletList>
+                {/* <AboutItemBulletList>
                   <AboutItemBullet>This is an explainer.</AboutItemBullet>
                   <AboutItemBullet>another one</AboutItemBullet>
                   <AboutItemBullet>and onter one.</AboutItemBullet>
-                </AboutItemBulletList>
-                <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={() => handleAboutClick("squad")}>
-                  Go to MSLDrivers.com
-                </Button>
-              </AboutItemTextContainer>
-              <AboutItemImage />
-            </AboutItem>
-            <AboutItem>
-              <AboutItemImage />
-              <AboutItemTextContainer>
-                <AboutItemTitleContainer>
-                  <AboutItemTitle>What is a League?</AboutItemTitle>
-                  <AboutItemSubTitle>
-                    Check the latest, featured leagues with our stamp of
-                    approval.
-                  </AboutItemSubTitle>
-                </AboutItemTitleContainer>
-                <AboutItemBulletList>
-                  <AboutItemBullet>This is an explainer.</AboutItemBullet>
-                  <AboutItemBullet>another one</AboutItemBullet>
-                  <AboutItemBullet>and onter one.</AboutItemBullet>
-                </AboutItemBulletList>
-                <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={() => handleAboutClick("league")} >
-                  Go to MSLDrivers.com
+                </AboutItemBulletList> */}
+                <Button
+                  color="base"
+                  icon={{ left: <SquadIcon /> }}
+                  onClick={() => handleAboutClick("squad")}
+                >
+                  Create Squad
                 </Button>
               </AboutItemTextContainer>
             </AboutItem>
             <AboutItem $left>
-              <AboutItemTextContainer>
+              <AboutItemTextContainer ref={leagueSectionRef}>
                 <AboutItemTitleContainer>
-                  <AboutItemTitle>What is a Profile?</AboutItemTitle>
+                  <AboutItemTitle>What is a League?</AboutItemTitle>
                   <AboutItemSubTitle>
-                    Check the latest, featured leagues with our stamp of
-                    approval.
+                    Leagues are a series of championships, hosted by a Squad,
+                    for a particular game. Profiles that want to join the League
+                    must match the game that it is competed on.
                   </AboutItemSubTitle>
                 </AboutItemTitleContainer>
-                <AboutItemBulletList>
+                {/* <AboutItemBulletList>
                   <AboutItemBullet>This is an explainer.</AboutItemBullet>
                   <AboutItemBullet>another one</AboutItemBullet>
                   <AboutItemBullet>and onter one.</AboutItemBullet>
-                </AboutItemBulletList>
-                <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={() => handleAboutClick("profile")}>
-                  Go to MSLDrivers.com
-                </Button>
-              </AboutItemTextContainer>
-              <AboutItemImage />
-            </AboutItem>
-          </AboutContents>
-          <LeagueSection>
-            <LeagueContainer>
-              <TextContainer>
-                <SectionTitle>What’s in a League?</SectionTitle>
-                <SectionSubTitle>
-                  Explore the three things in this platform.
-                </SectionSubTitle>
-              </TextContainer>
-              <LeagueTabs>
-                <Tabs
-                  tabs={TabsData}
-                  activeTab={activeTab}
-                  onTabChange={handleOnTabChange}
-                />
-                <LeagueTabContent>
-                  <LeagueTabContent>
-                    <AboutItemTextContainer>
-                      <AboutItemTitleContainer>
-                        <AboutItemTitle>{tab.title}</AboutItemTitle>
-                        <AboutItemSubTitle>{tab.subtitle}</AboutItemSubTitle>
-                      </AboutItemTitleContainer>
-                      <AboutItemBulletList>
-                        {tab.bullets.map((bullet, index) => (
-                          <AboutItemBullet key={index}>
-                            {bullet}
-                          </AboutItemBullet>
-                        ))}
-                      </AboutItemBulletList>
-                      <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={() => handleTabLinkClick(tab.title)} >
-                        {tab.link || "Go to MSLDrivers.com"}
-                      </Button>
-                    </AboutItemTextContainer>
-                    <LeagueTabImage />
-                  </LeagueTabContent>
-                </LeagueTabContent>
-              </LeagueTabs>
-            </LeagueContainer>
-          </LeagueSection>
-          <ContactSection>
-            <ContactContainer>
-              <TextContainer>
-                <SectionTitle>Got Questions?</SectionTitle>
-                <SectionSubTitle>Contact me!</SectionSubTitle>
-              </TextContainer>
-              <ContactButtons>
-                <Button color="base" onClick={() => handleJoinLeague("MSLDrivers")}>Join League</Button>
+                </AboutItemBulletList> */}
                 <Button
                   color="base"
-                  variant="outlined"
-                  icon={{ left: <FollowIcon /> }}
-                  onClick={() => handleFollowLeague("MSLDrivers")}
+                  icon={{ left: <LeagueIcon /> }}
+                  onClick={() => handleAboutClick("league")}
                 >
-                  Follow
+                  Create League
                 </Button>
-              </ContactButtons>
-            </ContactContainer>
-          </ContactSection>
+              </AboutItemTextContainer>
+              <AboutItemImage src={LeaguesPath} />
+            </AboutItem>
+          </AboutContents>
         </AboutContainer>
       </AboutSection>
+      <LeagueSection>
+        <LeagueContainer>
+          <TextContainer>
+            <SectionTitle>Anatomy of a League</SectionTitle>
+            <SectionSubTitle>
+              Take a deep dive into how a League is structured.
+            </SectionSubTitle>
+          </TextContainer>
+          <LeagueTabs>
+            <Tabs
+              tabs={TabsData}
+              activeTab={activeTab}
+              onTabChange={handleOnTabChange}
+            />
+            <LeagueTabContent>
+              <LeagueTabTextContainer>
+                <AboutItemTitleContainer>
+                  <AboutItemTitle>{tab.title}</AboutItemTitle>
+                  <AboutItemSubTitle>{tab.subtitle}</AboutItemSubTitle>
+                </AboutItemTitleContainer>
+                {/* <AboutItemBulletList>
+                      {tab.bullets.map((bullet, index) => (
+                        <AboutItemBullet key={index}>
+                          {bullet}
+                        </AboutItemBullet>
+                      ))}
+                    </AboutItemBulletList> */}
+                {/* <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={() => handleTabLinkClick(tab.title)} >
+                      {tab.link || "Go to MSLDrivers.com"}
+                    </Button> */}
+              </LeagueTabTextContainer>
+              <LeagueTabImage src={tab.image} />
+            </LeagueTabContent>
+          </LeagueTabs>
+        </LeagueContainer>
+      </LeagueSection>
+      <ManageSection>
+        <ManageContainer>
+          <TextContainer>
+            <SectionTitle>Manage Your Perfect League</SectionTitle>
+            <SectionSubTitle>
+              Manage your entire league, designed specifically for the game,
+              through an intuitive interface that provides rich customization
+              features for your sim racing series.
+            </SectionSubTitle>
+          </TextContainer>
+          <ManageListContainer>
+            {ManageList.map((item, index) => (
+              <ManageListItem key={index}>{item}</ManageListItem>
+            ))}
+          </ManageListContainer>
+          <ManageImageContent imageUrl={ManageImage} />
+        </ManageContainer>
+      </ManageSection>
+      <ContactSection>
+        <ContactContainer>
+          <TextContainer>
+            <SectionTitle>Ready to Race?</SectionTitle>
+            <SectionSubTitle>Create your Profile, join a Squad, and design your perfect League.</SectionSubTitle>
+          </TextContainer>
+          <ContactButtons>
+            <Button
+              color="base"
+              variant="outlined"
+              icon={{ right: <SearchIcon /> }}
+              onClick={() => handleSearch("Profiles")}
+            >
+              Search
+            </Button>
+                {!user && (
+              <Button
+                color="base"
+                icon={{ right: <ArrowForwardIcon /> }}
+                onClick={handleGetStarted}
+              >
+                Get Started
+              </Button>
+            )}
+          </ContactButtons>
+        </ContactContainer>
+      </ContactSection>
     </Wrapper>
   );
 };

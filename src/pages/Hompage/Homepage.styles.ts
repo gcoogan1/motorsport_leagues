@@ -1,9 +1,10 @@
 import styled, { css } from "styled-components";
+import HeroImage from "@/assets/Homepage/hero.png";
 
 import { designTokens } from "@/app/design/tokens";
 import { gradientBorder } from "@/app/design/mixens/gradientBorder";
 
-const { colors, gradients, layout, typography, borders } = designTokens;
+const { colors, gradients, layout, typography, borders, effects } = designTokens;
 
 // export const Wrapper = styled.div`
 //   display: flex;
@@ -55,17 +56,20 @@ export const Hero = styled.div`
   flex-direction: column;
   align-items: center;
   align-self: stretch;
-  justify-content: center;
-  flex: 1;
+  justify-content: flex-end;
+  height: 640px;
   background: ${gradients.base.fadeTop10};
+  background-image: url(${HeroImage});
+  background-size: cover;
+  background-position: center;
 `;
 
 export const Container = styled.div`
   display: flex;
   width: 100%;
   max-width: 1200px;
-  padding-top: 320px;
-  padding-bottom: 320px;
+  padding-top: ${layout.space.xxxLarge};
+  padding-bottom: ${layout.space.xxxLarge};
   flex-direction: column;
   gap: ${layout.space.xLarge};
   align-items: center;
@@ -77,14 +81,16 @@ export const TextContainer = styled.div`
   max-width: 640px;
   flex-direction: column;
   align-items: center;
-  gap: ${layout.space.xxSmall};
+  gap: ${layout.space.xSmall};
   justify-content: center;
   text-align: center;
 `;
 
 export const Title = styled.h1`
   ${typography.title.large};
-  color: ${colors.text.text1};
+  /* color: ${colors.text.text1}; */
+  color: rgba(255, 204, 0, 1);
+
 `;
 
 export const SubTitle = styled.h2`
@@ -144,6 +150,10 @@ export const PathContainer = styled.div`
   flex-direction: column;
   gap: ${layout.space.xxLarge};
   flex-wrap: wrap;
+
+  ${layout.mediaQueries.mobile} {
+    padding: 80px 0;
+  }
 `;
 
 export const SectionTitle = styled.h1`
@@ -170,7 +180,6 @@ export const SectionList = styled.div`
 
 export const PathItem = styled.div`
   display: flex;
-  width: 275px;
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.xLarge};
@@ -190,46 +199,52 @@ export const PathItem = styled.div`
   }
 `;
 
-export const PathItemImageContainer = styled.div`
+export const PathItemImage = styled.img`
   display: flex;
   width: 100%;
-  height: 164px;
-  justify-content: center;
-  align-items: center;
-  // align-self: stretch;
-  border-radius: ${borders.radius.xLarge};
-  background: ${gradients.base.fadeBottom10};
-
-  ${layout.mediaQueries.mobile} {
-    height: 160px;
-  }
+  min-height: 160px;
 `;
 
-export const GraphicContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: ${layout.space.medium};
-  border-radius: ${borders.radius.xxLarge};
-  ${gradientBorder({
-    gradient: gradients.base.fadeOutHorizontal10,
-    width: borders.width.thin,
-  })};
-`;
+// export const PathItemImageContainer = styled.div`
+//   display: flex;
+//   width: 100%;
+//   height: 164px;
+//   justify-content: center;
+//   align-items: center;
+//   // align-self: stretch;
+//   border-radius: ${borders.radius.xLarge};
+//   background: ${gradients.base.fadeBottom10};
 
-export const IconWrapper = styled.div`
-  color: ${colors.base.translucent20};
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+//   ${layout.mediaQueries.mobile} {
+//     height: 160px;
+//   }
+// `;
 
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-`;
+// export const GraphicContainer = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   padding: ${layout.space.medium};
+//   border-radius: ${borders.radius.xxLarge};
+//   ${gradientBorder({
+//     gradient: gradients.base.fadeOutHorizontal10,
+//     width: borders.width.thin,
+//   })};
+// `;
+
+// export const IconWrapper = styled.div`
+//   color: ${colors.base.translucent20};
+//   width: 48px;
+//   height: 48px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+
+//   svg {
+//     width: 100%;
+//     height: 100%;
+//   }
+// `;
 
 export const PathContent = styled.div`
   display: flex;
@@ -291,18 +306,23 @@ export const VIPContainer = styled.div`
   align-items: center;
   gap: ${layout.space.xxLarge};
   // align-self: stretch;
+  ${layout.mediaQueries.mobile} {
+    padding: 80px 0;
+  }
 `;
 
 export const VIPMiniTitle = styled.h2`
   ${typography.title.xSmall};
-  color: ${(theme) => theme.theme.theme.primaryA3};
+  /* color: ${(theme) => theme.theme.theme.primaryA3}; */
+  color: rgba(255, 204, 0, .6);
   text-align: center;
 `;
 
 export const VIPTitle = styled.h1`
   ${typography.title.large};
   text-align: center;
-  color: ${(theme) => theme.theme.theme.primaryA};
+  color: rgba(255, 204, 0, 1);
+  /* color: ${(theme) => theme.theme.theme.primaryA}; */
 `;
 
 export const VIPSubTitle = styled.h2`
@@ -488,10 +508,19 @@ export const ItemTextContainer = styled.div`
   gap: ${layout.space.xSmall};
 `;
 
-export const ItemTitle = styled.h3`
+
+export const ItemTitle = styled.h3<{ $color?: "blue" | "red" | "yellow" }>`
   ${typography.title.small};
-  color: ${colors.text.text1};
+  color: ${({ $color }) =>
+    $color === "blue"
+      ? "rgba(68, 252, 255, 1)"
+      : $color === "red"
+      ? "rgba(255, 81, 81, 1)"
+      : $color === "yellow"
+      ? "rgba(255, 252, 68, 1)"
+      : colors.text.text1};
 `;
+
 
 export const ItemSubTitle = styled.p`
   ${typography.body.mediumRegular};
@@ -516,17 +545,23 @@ export const FeaturedLeaguesContainer = styled.div`
   align-items: center;
   gap: ${layout.space.xxLarge};
   // align-self: stretch;
+  ${layout.mediaQueries.mobile} {
+    padding: 80px 0;
+  }
 `;
 
 export const FeaturedLeaguesList = styled.div`
   display: flex;
   width: 100%;
-  // align-self: stretch;
-  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   align-content: center;
   gap: ${layout.space.xLarge};
+  flex-wrap: wrap;
+
+  ${layout.mediaQueries.mobile} {
+    flex-direction: column;
+  }
 `;
 
 export const BlueFeaturedLeagueItem = styled.div`
@@ -534,9 +569,12 @@ export const BlueFeaturedLeagueItem = styled.div`
   padding: ${layout.space.medium};
   flex-direction: column;
   align-items: flex-start;
+  width: 370px;
+  height: 510px;
   gap: ${layout.space.medium};
   border-radius: ${borders.radius.xxLarge};
   background: var(--Primary-Gradient-FadeTop-10, linear-gradient(0deg, var(--Color-Primary-10, rgba(68, 252, 255, 0.10)) 0%, var(--Color-Primary-0, rgba(68, 252, 255, 0.00)) 100%));
+
 
   ${gradientBorder({
     gradient: "linear-gradient(180deg, rgba(68, 252, 255, 0.3) 0%, rgba(68, 252, 255, 0) 100%)",
@@ -545,7 +583,6 @@ export const BlueFeaturedLeagueItem = styled.div`
 
   ${layout.mediaQueries.mobile} {
     flex-direction: column;
-    width: 100%;
   }
 `;
 
@@ -554,31 +591,55 @@ export const RedFeaturedLeagueItem = styled.div`
   padding: ${layout.space.medium};
   flex-direction: column;
   align-items: flex-start;
+  width: 370px;
+  height: 510px;
   gap: ${layout.space.medium};
   border-radius: ${borders.radius.xxLarge};
   background: var(--Primary-Gradient-FadeTop-10, linear-gradient(360deg, rgba(255, 81, 81, 0.1) 0%, rgba(255, 81, 81, 0) 100%));
 
   ${gradientBorder({
-    gradient: "linear-gradient(180deg, rgba(255, 81, 81, 0.3) 0%, rgba(255, 81, 81, 0) 100%)",
+    gradient: "linear-gradient(180deg, rgba(255, 81, 81, 0.3) 0%, rgba(255, 81, 81, 0) 100%);",
     width: borders.width.thick,
   })};
 
   ${layout.mediaQueries.mobile} {
     flex-direction: column;
-    width: 100%;
   }
 `;
 
+export const YellowFeaturedLeagueItem = styled.div`
+  display: flex;
+  padding: ${layout.space.medium};
+  flex-direction: column;
+  align-items: flex-start;
+  width: 370px;
+  height: 510px;
+  gap: ${layout.space.medium};
+  border-radius: ${borders.radius.xxLarge};
+  background: var(--Primary-Gradient-FadeTop-10, linear-gradient(360deg, rgba(255, 242, 88, 0.1) 0%, rgba(255, 242, 88, 0) 100%));
+
+  ${gradientBorder({
+    gradient: "linear-gradient(180deg, rgba(255, 252, 68, 0.3) 0%, rgba(255, 252, 68, 0) 100%);",
+    width: borders.width.thick,
+  })};
+
+  ${layout.mediaQueries.mobile} {
+    flex-direction: column;
+  }
+`;
 
 
 export const FeaturedLeagueItemContents = styled.div`
   display: flex;
   width: 100%;
   max-width: 384px;
+  flex: 1;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: space-between;
   gap: ${layout.space.medium};
   padding: ${layout.space.medium};
+  min-height: 192px;
 
   ${layout.mediaQueries.mobile} {
     max-width: 100%;
@@ -611,6 +672,10 @@ export const AboutContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: ${layout.space.xxLarge};
+
+  ${layout.mediaQueries.mobile} {
+    padding: 80px 0;
+  }
 `;
 
 export const AboutContents = styled.div`
@@ -713,6 +778,7 @@ export const AboutItemBullet = styled.li`
 
 export const LeagueSection = styled.div`
   display: flex;
+  width: 100%;
   padding: 0 ${layout.space.medium};
   flex-direction: column;
   align-items: center;
@@ -722,13 +788,20 @@ export const LeagueContainer = styled.div`
   display: flex;
   max-width: 1200px;
   padding: 160px 0;
+  width: 100%;
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.xxLarge};
+
+  ${layout.mediaQueries.mobile} {
+    padding: 80px 0;
+    gap: ${layout.space.xLarge};
+  }
 `;
 
 export const LeagueTabs = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.xLarge};
@@ -736,11 +809,17 @@ export const LeagueTabs = styled.div`
 
 export const LeagueTabContent = styled.div`
   display: flex;
+  width: 100%;
   padding: ${layout.space.xxLarge};
   align-items: center;
   gap: ${layout.space.xxLarge};
   border-radius: ${borders.radius.xxLarge};
   background: ${gradients.base.fadeBottom10};
+
+  ${gradientBorder({
+    gradient: gradients.base.fadeBottom10,
+    width: borders.width.thick,
+  })}
 
   ${layout.mediaQueries.tablet} {
     flex-direction: column-reverse;
@@ -749,13 +828,24 @@ export const LeagueTabContent = styled.div`
   }
 `;
 
+export const LeagueTabTextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: ${layout.space.medium};
+  flex: 1 0 0;
+  min-width: 320px;
+  width: 100%;
+  max-width: 640px;
+`;
+
 export const LeagueTabImage = styled.img`
   display: flex;
   width: 100%;
-  height: 240px;
-  background: rgba(119, 119, 119, 1);
-  border-radius: ${borders.radius.xLarge};
+  height: 320px;
   object-fit: cover;
+  border-radius: ${borders.radius.xLarge};
+
 `;
 
 export const ContactSection = styled.div`
@@ -775,6 +865,10 @@ export const ContactContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: ${layout.space.xxLarge};
+
+  ${layout.mediaQueries.mobile} {
+    padding: 80px 0;
+  }
 `;
 
 export const ContactButtons = styled.div`
@@ -784,4 +878,87 @@ export const ContactButtons = styled.div`
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
+`;
+
+export const ManageSection = styled.div`
+  display: flex;
+  width: 100%;
+  padding: 0px ${layout.space.medium};
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(360deg, rgba(255, 242, 88, 0.1) 0%, rgba(255, 242, 88, 0) 100%);
+
+  border-top-width: ${borders.width.thin};
+  border-top-style: solid;
+  border-top-color: ${colors.base.translucent30};
+`;
+
+export const ManageContainer = styled.div`
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  padding: 160px 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: ${layout.space.xxLarge};
+
+  ${layout.mediaQueries.mobile} {
+    padding: 80px 0;
+  }
+`;
+
+export const ManageListContainer = styled.ul`
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  gap: ${layout.space.xSmall} ${layout.space.medium};
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+`;
+
+export const ManageListItem = styled.li`
+  ${typography.body.mediumBold}
+  color: ${colors.text.text1 || "#FFFFFF"};
+  display: inline-flex;
+  align-items: center;
+
+  &::before {
+    content: "•";
+    color: ${colors.text.text1 || "#FFFFFF"};
+    font-size: 1.05em;
+    line-height: 1;
+    margin-right: ${layout.space.xxSmall};
+  }
+`;
+
+export const ManageImageContent = styled.div<{ imageUrl: string }>`
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  height: clamp(260px, 55vw, 640px);
+  align-items: flex-start;
+  background: url(${props => props.imageUrl}) lightgray 50% / cover no-repeat;
+  border-top-left-radius: ${borders.radius.xxxLarge};
+  border-top-right-radius: ${borders.radius.xxxLarge};
+
+  ${gradientBorder({
+    gradient: gradients.base.fadeBottom10,
+    width: borders.width.thick,
+  })}
+
+  ${effects.boxShadow.dropShadow}
+
+  ${layout.mediaQueries.mobile} {
+    height: auto;
+    aspect-ratio: 16 / 10;
+    border-top-left-radius: ${borders.radius.xxLarge};
+    border-top-right-radius: ${borders.radius.xxLarge};
+    background-position: center;
+  }
 `;
