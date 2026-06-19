@@ -11,9 +11,10 @@ type SegmentedTabProps = {
   activeTab: string;
   onChange: (tab: string) => void;
   fullWidth?: boolean;
+  shouldShrink?: boolean;
 };
 
-const SegmentedTab = ({ tabs, activeTab, onChange, fullWidth }: SegmentedTabProps) => {
+const SegmentedTab = ({ tabs, activeTab, onChange, fullWidth, shouldShrink }: SegmentedTabProps) => {
 
   return (
     <SwitchContainer fullWidth={fullWidth}>
@@ -24,6 +25,7 @@ const SegmentedTab = ({ tabs, activeTab, onChange, fullWidth }: SegmentedTabProp
           label={label}
           onClick={() => onChange(label)}
           shouldExpand={shouldExpand}
+          shouldShrink={shouldShrink} 
         />
       ))}
     </SwitchContainer>

@@ -1,11 +1,9 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { designTokens } from "@/app/design/tokens";
 
 const { colors, layout, borders, typography, effects } = designTokens;
 
-export const ButtonLinkContainer = styled.button<
-  { $isSelected: boolean; $shouldExpand?: boolean }
->`
+export const ButtonLinkContainer = styled.button<{ $isSelected: boolean; $shouldExpand?: boolean, $shouldShrink?: boolean }>`
   padding: ${layout.space.small} ${layout.space.large};
   border: none;
   border-radius: ${borders.radius.round};
@@ -21,7 +19,8 @@ export const ButtonLinkContainer = styled.button<
     return `
     flex: ${$shouldExpand ? "3 1 0%" : "1 1 0%"};
     `;
-  }} min-width: max-content;
+  }} 
+  min-width: max-content;
   white-space: nowrap;
 
   background: ${({ $isSelected }) =>
@@ -49,9 +48,11 @@ export const ButtonLinkContainer = styled.button<
       $isSelected ? colors.text.text3 : colors.base.translucent20};
   }
 
-  // ${layout.mediaQueries.mobile} {
-  //   padding: ${layout.space.xSmall} ${layout.space.small};
-  //   flex: 1 1 0%;
-  //   min-width: 0;
-  // }
-`;
+  ${({ $shouldShrink }) => $shouldShrink && css`
+    ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.xSmall} ${layout.space.small};
+    flex: 1 1 0%;
+    min-width: 0;
+  } 
+  `}
+`;  
