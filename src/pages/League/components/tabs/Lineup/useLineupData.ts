@@ -16,6 +16,7 @@ export const ASSIGNMENT_TABS = [{ label: "Teams" }, { label: "Drivers" }];
 /** A driver entry normalised for display in the lineup tab. */
 export type LineupDriver = {
   seasonDriverId: string;
+  performanceDriverId: string;
   createdAt: string;
   addedToTeam: string | null;
   profileId: string;
@@ -107,6 +108,11 @@ export const useLineupData = ({
         participant.roles as Tag[],
       ]),
     );
+    const seasonDriverIdByProfileAndDivision = new Map(
+      (seasonDriversBySeason.data ?? [])
+        .filter((driver) => !!driver.profile_id)
+        .map((driver) => [`${driver.profile_id}:${driver.division_id}`, driver.id] as const),
+    );
 
     const drivers: LineupDriver[] = (seasonDriversBySeason.data ?? []).map(
       (driver) => {
@@ -117,6 +123,7 @@ export const useLineupData = ({
 
         return {
           seasonDriverId: driver.id,
+          performanceDriverId: driver.id,
           createdAt: driver.created_at,
           addedToTeam: driver.added_to_team ?? null,
           profileId: driver.profile_id,
@@ -181,7 +188,14 @@ export const useLineupData = ({
 
           return left.seasonDriverId.localeCompare(right.seasonDriverId);
         })
-        .map((driver, index) => ({ ...driver, teamDriverNumber: index + 1 }));
+        .map((driver, index) => ({
+          ...driver,
+          performanceDriverId:
+            seasonDriverIdByProfileAndDivision.get(
+              `${driver.profileId}:${team.division_id}`,
+            ) ?? driver.seasonDriverId,
+          teamDriverNumber: index + 1,
+        }));
 
       return {
         teamId: team.id,

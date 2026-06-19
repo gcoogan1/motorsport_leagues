@@ -40,19 +40,22 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
   } = useLineupData({ seasonData });
   const { openModal } = useModal();
 
-  const handleDriverClick = (driverId: string) => {
+  const handleDriverClick = (driverId: string, driverName?: string) => {
     openModal(
       <DriverPerformance
         driverId={driverId}
+        driverName={driverName}
         seasonName={seasonData?.season_name ?? "Season Name"}
       />,
     );
   };
 
-  const handleTeamClick = (teamId: string) => {
+  const handleTeamClick = (teamId: string, teamName: string, numOfDrivers: number) => {
     openModal(
       <TeamPerformance
         teamId={teamId}
+        teamName={teamName}
+        numOfDrivers={numOfDrivers}
         seasonName={seasonData?.season_name ?? "Season Name"}
       />,
     );
@@ -67,8 +70,8 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
       avatarValue={driver.avatarValue}
       tags={driver.tags}
       cardNumber={String(fallbackNumber)}
-      driverId={driver.seasonDriverId}
-      onClick={handleDriverClick}
+      driverId={driver.performanceDriverId}
+      onClick={() => handleDriverClick(driver.performanceDriverId, driver.displayName)}
     />
   );
 
@@ -114,7 +117,7 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
                     key={team.teamId}
                     teamName={team.teamName}
                     teamNumber={index + 1}
-                    onTeamClick={() => handleTeamClick(team.teamId)}
+                    onTeamClick={() => handleTeamClick(team.teamId, team.teamName, team.drivers.length)}
                     drivers={team.drivers.map((driver) => ({
                       id: driver.seasonDriverId,
                       username: driver.displayName,

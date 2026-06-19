@@ -4,15 +4,19 @@ import Table from "@/components/Tables/Table/Table";
 import { useModal } from "@/providers/modal/useModal";
 import { useDriverPerformanceResults } from "./useDriverPerformance";
 import SpecialRow from "@/components/Tables/SpecialRow/SpecialRow";
+import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
+import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 
 type DriverPerformanceProps = {
   driverId: string;
   seasonName: string;
+  driverName?: string;
 };
 
 const DriverPerformance = ({
   driverId,
   seasonName,
+  driverName,
 }: DriverPerformanceProps) => {
   const { closeModal } = useModal();
   const { driverData, teamName, results } =
@@ -24,34 +28,41 @@ const DriverPerformance = ({
 
   const totalPoints = eventResults.reduce((acc, entry) => acc + (entry.points ?? 0), 0);
 
-  if (!driverData || eventResults.length === 0) {
-    return null;
-  }
-
+  const isEmpty = !driverData || eventResults.length === 0;
 
   const listChildren = (
     <>
-      <Table
-        title={"Driver's Season Results"}
-        resultPerRound
-        results={eventResults.map((entry) => ({
-          position: entry.position,
-          points: entry.points,
-          type: "driver",
-          roundInfo: {
-            roundName: entry.round_name,
-            trackName: entry.track_name ? entry.track_name : "Hidden Track",
-          },
-          driver: {
-            id: driverId,
-            username: driverData.display_name ?? "Unknown Driver",
-            avatarType: "preset",
-            avatarValue: "black",
-          },
-          onClick: () => {},
-        }))}
-      />
+      {isEmpty ? (
+        <EmptyMessage
+          icon={<SetupIcon />}
+          title="No Results"
+          subtitle="No points have been awarded yet."
+        />
+      ) : (
+        <>
+          <Table
+          title={"Driver's Season Results"}
+          resultPerRound
+          results={eventResults.map((entry) => ({
+            position: entry.position,
+            points: entry.points,
+            type: "driver",
+            roundInfo: {
+              roundName: entry.round_name,
+              trackName: entry.track_name ? entry.track_name : "Hidden Track",
+            },
+            driver: {
+              id: driverId,
+              username: driverData.display_name ?? "Unknown Driver",
+              avatarType: "preset",
+              avatarValue: "black",
+            },
+            onClick: () => {},
+          }))}
+        />
       <SpecialRow label="Total Points" value={totalPoints} />
+        </>
+      )}
     </>
   );
 
@@ -59,7 +70,7 @@ const DriverPerformance = ({
     <SheetModal
       id={"driver-performance"}
       seasonName={seasonName}
-      blockHeader={driverData?.display_name ?? "Unknown Driver"}
+      blockHeader={driverData?.display_name ?? driverName ?? "Unknown Driver"}
       blockDescription={teamName ?? ""}
       header={"Driver Performance"}
       listChildren={listChildren}
