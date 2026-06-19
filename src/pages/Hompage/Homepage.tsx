@@ -25,7 +25,7 @@ import DivisionTab from "@assets/Homepage/Tabs/divisionTab.png";
 import RoundTab from "@assets/Homepage/Tabs/roundTab.png";
 import EventTab from "@assets/Homepage/Tabs/eventTab.png";
 import SessionTab from "@assets/Homepage/Tabs/sessionTab.png";
-import ManageImage from "@assets/Homepage/ManageImage.png";
+import ManageImage from "@assets/Homepage/manageImage.png";
 import {
   ButtonContainer,
   Container,
