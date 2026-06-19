@@ -46,6 +46,7 @@ import { withMinDelay } from "@/utils/withMinDelay";
 import { SESSION_TYPE_LABEL, type ResultsFormValues, type ResultFormRow, RESULT_TABLE_STYLE } from "./Results.util";
 import RaceTimeInput from "@/components/Inputs/RaceTimeInput/RaceTimeInput";
 import { formatEventDate } from "@/utils/dates";
+import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 
 type ResultsProps = {
   seasonData: LeagueSeasonTable;
@@ -340,7 +341,7 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
       (seasonDriversByDivision.currentData ?? []).map((driver) => ({
         label: driver.display_name ?? "Unknown Driver",
         value: driver.id,
-        secondaryInfo: driver.game_type,
+        secondaryInfo: convertGameTypeToFullName(driver.game_type || "gt7"),
         avatar: {
           avatarType: driver.avatar_type ?? "preset",
           avatarValue: driver.avatar_value ?? "black",
