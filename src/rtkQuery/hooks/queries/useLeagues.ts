@@ -1,5 +1,6 @@
 import {
   useGetLeagueApplicationOptionsQuery,
+  useGetLeagueRulesQuery,
 	useGetLeagueParticipantsQuery,
 	useGetLeagueJoinRequestsQuery,
 	useGetLeaguesQuery,
@@ -51,6 +52,12 @@ export const useLeagueJoinRequests = (leagueId?: string) =>
 // Query to fetch application options for a league
 export const useLeagueApplicationOptions = (leagueId?: string) =>
 	useGetLeagueApplicationOptionsQuery(leagueId ?? "", {
+		skip: !leagueId,
+	});
+
+// Query to fetch league rules content.
+export const useLeagueRules = (leagueId?: string) =>
+	useGetLeagueRulesQuery(leagueId ?? "", {
 		skip: !leagueId,
 	});
 

@@ -2,6 +2,7 @@
 // Used to modify data //
 
 import {
+  useAddLeagueRulesMutation,
   useAddLeagueApplicationOptionsMutation,
   useAddLeagueParticipantMutation,
   useAddLeagueParticipantRoleMutation,
@@ -19,6 +20,7 @@ import {
   useUnfollowLeagueMutation,
   // useUpdateLeagueParticipantRoleMutation,
   useUpdateLeagueApplicationOptionsMutation,
+  useUpdateLeagueRulesMutation,
   useUpdateLeagueSeasonMutation,
   useCreateLeagueSeasonDriverMutation,
   useRemoveLeagueSeasonDriverMutation,
@@ -27,6 +29,16 @@ import {
   useUpdateLeagueSeasonTeamMutation,
   useRemoveLeagueSeasonTeamMutation,
 } from "@/rtkQuery/API/leagueApi";
+
+// Mutation for creating league rules content.
+export const useAddLeagueRules = () => {
+  return useAddLeagueRulesMutation();
+};
+
+// Mutation for updating league rules content.
+export const useUpdateLeagueRules = () => {
+  return useUpdateLeagueRulesMutation();
+};
 
 // Mutation for adding league application options.
 export const useAddLeagueApplicationOptions = () => {

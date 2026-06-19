@@ -68,6 +68,14 @@ import {
   type UpdateLeagueSeasonTeamResult,
 } from "@/types/league.types";
 import type { ProfileTable } from "@/types/profile.types";
+import type {
+  AddLeagueRulesPayload,
+  AddLeagueRulesResult,
+  GetLeagueRulesResult,
+  RulesTable,
+  UpdateLeagueRulesPayload,
+  UpdateLeagueRulesResult,
+} from "@/types/rules.types";
 import {
   getAllLeaguesWithInfo,
   getLeaguesWithInfoByAccountId,
@@ -131,6 +139,11 @@ import {
   removeLeagueSeasonTeam,
   updateLeagueSeasonTeam,
 } from "@/services/league/useSeasonTeam";
+import {
+  addLeagueRules,
+  getLeagueRulesByLeagueId,
+  updateLeagueRules,
+} from "@/services/league/leagueRules.service";
 
 export type LeaguesQueryArgs = {
   accountId?: string;
@@ -154,6 +167,7 @@ export const leagueApi = createApi({
     "LeagueSeasonDivisions",
     "LeagueSeasonDrivers",
     "LeagueSeasonTeams",
+    "LeagueRules",
   ],
   endpoints: (builder) => ({
     // GET Requests
@@ -366,6 +380,30 @@ export const leagueApi = createApi({
       },
       providesTags: (_result, _error, leagueId) => [
         { type: "LeagueApplicationOptions", id: leagueId },
+      ],
+    }),
+    getLeagueRules: builder.query<RulesTable | null, string>({
+      queryFn: async (leagueId) => {
+        try {
+          const result: GetLeagueRulesResult =
+            await getLeagueRulesByLeagueId(leagueId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, leagueId) => [
+        { type: "LeagueRules", id: leagueId },
       ],
     }),
     getLeagueSeasonDivisions: builder.query<
@@ -791,6 +829,32 @@ export const leagueApi = createApi({
         { type: "LeagueApplicationOptions", id: payload.leagueId },
       ],
     }),
+    addLeagueRules: builder.mutation<
+      AddLeagueRulesResult,
+      AddLeagueRulesPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await addLeagueRules(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueRules", id: payload.leagueId },
+      ],
+    }),
     createLeagueJoinRequest: builder.mutation<
       CreateLeagueJoinRequestResult,
       CreateLeagueJoinRequestPayload
@@ -977,6 +1041,32 @@ export const leagueApi = createApi({
       },
       invalidatesTags: (_result, _error, payload) => [
         { type: "LeagueApplicationOptions", id: payload.leagueId },
+      ],
+    }),
+    updateLeagueRules: builder.mutation<
+      UpdateLeagueRulesResult,
+      UpdateLeagueRulesPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await updateLeagueRules(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueRules", id: payload.leagueId },
       ],
     }),
     updateLeagueSeasonDriverTeam: builder.mutation<
@@ -1283,6 +1373,9 @@ export const leagueApi = createApi({
 });
 
 export const {
+  useGetLeagueRulesQuery,
+  useAddLeagueRulesMutation,
+  useUpdateLeagueRulesMutation,
   useAddLeagueApplicationOptionsMutation,
   useAddLeagueParticipantMutation,
   useCreateLeagueJoinRequestMutation,
