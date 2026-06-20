@@ -1,15 +1,15 @@
-import type { PanelTypes } from "@/types/panel.types";
-import { usePanel } from "@/providers/panel/usePanel";
+// import type { PanelTypes } from "@/types/panel.types";
+// import { usePanel } from "@/providers/panel/usePanel";
 import Button from "@/components/Button/Button";
-import Profile from "@assets/Icon/Profile.svg?react";
-import Squad from "@assets/Icon/Squad.svg?react";
-import League from "@assets/Icon/League.svg?react";
+// import Profile from "@assets/Icon/Profile.svg?react";
+// import Squad from "@assets/Icon/Squad.svg?react";
+// import League from "@assets/Icon/League.svg?react";
 import NavBrand from "../../components/NavBrand/NavBrand";
-import NavSelect from "../../components/NavSelect/NavSelect";
+// import NavSelect from "../../components/NavSelect/NavSelect";
 import NavLayout from "../../components/NavLayout/NavLayout";
 import { useNavigate } from "react-router";
 import {
-  CenterContainer,
+  // CenterContainer,
   LeftContainer,
   RightContainer,
 } from "./GuestNavbar.styles";
@@ -18,7 +18,7 @@ import {
 
 const GuestNavbar = () => {
   const navigate = useNavigate();
-  const { openPanel } = usePanel();
+  // const { openPanel } = usePanel();
 
   const handleAccountSignup = () => {
     navigate("/create-account");
@@ -28,16 +28,16 @@ const GuestNavbar = () => {
     navigate("/login");
   };
 
-  const openPanelOfType = (type: PanelTypes) => {
-    openPanel(type);
-  };
+  // const openPanelOfType = (type: PanelTypes) => {
+  //   openPanel(type);
+  // };
 
   return (
     <NavLayout>
       <LeftContainer>
         <NavBrand />
       </LeftContainer>
-      <CenterContainer>
+      {/* <CenterContainer>
         <>
           <NavSelect
             icon={<Profile />}
@@ -55,7 +55,7 @@ const GuestNavbar = () => {
             onClick={() => openPanelOfType("GUEST_LEAGUES")}
           />
         </>
-      </CenterContainer>
+      </CenterContainer> */}
       <RightContainer>
         <>
           <Button

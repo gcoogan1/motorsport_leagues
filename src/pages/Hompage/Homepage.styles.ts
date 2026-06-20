@@ -4,7 +4,8 @@ import HeroImage from "@/assets/Homepage/hero.png";
 import { designTokens } from "@/app/design/tokens";
 import { gradientBorder } from "@/app/design/mixens/gradientBorder";
 
-const { colors, gradients, layout, typography, borders, effects } = designTokens;
+const { colors, gradients, layout, typography, borders } =
+  designTokens;
 
 // export const Wrapper = styled.div`
 //   display: flex;
@@ -90,7 +91,6 @@ export const Title = styled.h1`
   ${typography.title.large};
   /* color: ${colors.text.text1}; */
   color: rgba(255, 204, 0, 1);
-
 `;
 
 export const SubTitle = styled.h2`
@@ -103,6 +103,31 @@ export const ButtonContainer = styled.div`
   align-items: flex-start;
   gap: ${layout.space.xSmall};
 `;
+
+// -- SECTIONS (GENERAL) -- //
+export const SectionTitle = styled.h1`
+  ${typography.title.medium};
+  color: ${colors.text.text1};
+`;
+
+export const SectionSubTitle = styled.h2`
+  ${typography.body.mediumRegular};
+  color: ${colors.text.text2};
+`;
+
+export const SectionList = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: ${layout.space.xLarge};
+
+  ${layout.mediaQueries.mobile} {
+    flex-direction: column;
+  }
+`;
+
+// -- GAMES SECTION -- //
 
 export const Games = styled.div`
   display: flex;
@@ -130,6 +155,8 @@ export const GameImage = styled.img`
   opacity: 0.6;
 `;
 
+// -- PATH SECTION -- //
+
 export const Paths = styled.div`
   display: flex;
   width: 100%;
@@ -153,28 +180,6 @@ export const PathContainer = styled.div`
 
   ${layout.mediaQueries.mobile} {
     padding: 80px 0;
-  }
-`;
-
-export const SectionTitle = styled.h1`
-  ${typography.title.medium};
-  color: ${colors.text.text1};
-`;
-
-export const SectionSubTitle = styled.h2`
-  ${typography.body.mediumRegular};
-  color: ${colors.text.text2};
-`;
-
-export const SectionList = styled.div`
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  gap: ${layout.space.xLarge};
-  
-  ${layout.mediaQueries.mobile} {
-    flex-direction: column;
   }
 `;
 
@@ -202,7 +207,10 @@ export const PathItem = styled.div`
 export const PathItemImage = styled.img`
   display: flex;
   width: 100%;
-  min-height: 160px;
+  height: auto;
+  aspect-ratio: 21/10;
+
+  border-radius: ${borders.radius.xLarge};
 `;
 
 // export const PathItemImageContainer = styled.div`
@@ -275,6 +283,8 @@ export const PathContentButtons = styled.div`
   // align-self: stretch;
 `;
 
+// -- VIP SECTION -- //
+
 export const VIPSection = styled.div`
   display: flex;
   width: 100%;
@@ -314,7 +324,7 @@ export const VIPContainer = styled.div`
 export const VIPMiniTitle = styled.h2`
   ${typography.title.xSmall};
   /* color: ${(theme) => theme.theme.theme.primaryA3}; */
-  color: rgba(255, 204, 0, .6);
+  color: rgba(255, 204, 0, 0.6);
   text-align: center;
 `;
 
@@ -420,10 +430,8 @@ export const VIPLeagueContentsButtons = styled.div`
   display: flex;
   width: 100%;
   gap: ${layout.space.xSmall};
-  flex-direction: column;
   align-items: flex-start;
   align-content: flex-start;
-  // align-self: stretch;
   flex-wrap: wrap;
 `;
 
@@ -456,7 +464,7 @@ export const VIPItemBottomItem = styled.div<{ $purple?: boolean }>`
   gap: ${layout.space.xLarge};
   flex: 1;
   border-radius: ${borders.radius.xLarge};
-  background: 
+  background:
     linear-gradient(
       180deg,
       rgba(140, 203, 255, 0.20) 0%,
@@ -472,8 +480,13 @@ export const VIPItemBottomItem = styled.div<{ $purple?: boolean }>`
   ${({ $purple }) =>
     $purple &&
     css`
-      background: linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 100%),
-        linear-gradient(180deg, rgba(203, 140, 255, 0.2) 0%, rgba(203, 140, 255, 0) 100%);
+      background:
+        linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 100%),
+        linear-gradient(
+        180deg,
+        rgba(203, 140, 255, 0.2) 0%,
+        rgba(203, 140, 255, 0) 100%
+      );
     `};
 
   ${layout.mediaQueries.mobile} {
@@ -508,6 +521,7 @@ export const ItemTextContainer = styled.div`
   gap: ${layout.space.xSmall};
 `;
 
+// -- ITEM TEXT STYLES (VIP LEAGUES & FEATURED LEAGUES) -- //
 
 export const ItemTitle = styled.h3<{ $color?: "blue" | "red" | "yellow" }>`
   ${typography.title.small};
@@ -521,11 +535,12 @@ export const ItemTitle = styled.h3<{ $color?: "blue" | "red" | "yellow" }>`
       : colors.text.text1};
 `;
 
-
 export const ItemSubTitle = styled.p`
   ${typography.body.mediumRegular};
   color: ${colors.text.text2};
 `;
+
+// -- FEATURED LEAGUES SECTION -- //
 
 export const FeaturedLeaguesSection = styled.div`
   display: flex;
@@ -533,6 +548,17 @@ export const FeaturedLeaguesSection = styled.div`
   padding: 0px ${layout.space.medium};
   justify-content: center;
   align-items: center;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 242, 88, 0.1) 0%,
+      rgba(255, 242, 88, 0) 50%
+    ),
+    linear-gradient(
+    90deg,
+    rgba(255, 242, 88, 0) 50%,
+    rgba(255, 242, 88, 0.1) 100%
+  );
 `;
 
 export const FeaturedLeaguesContainer = styled.div`
@@ -573,11 +599,18 @@ export const BlueFeaturedLeagueItem = styled.div`
   height: 510px;
   gap: ${layout.space.medium};
   border-radius: ${borders.radius.xxLarge};
-  background: var(--Primary-Gradient-FadeTop-10, linear-gradient(0deg, var(--Color-Primary-10, rgba(68, 252, 255, 0.10)) 0%, var(--Color-Primary-0, rgba(68, 252, 255, 0.00)) 100%));
-
+  background: var(
+    --Primary-Gradient-FadeTop-10,
+    linear-gradient(
+      0deg,
+      var(--Color-Primary-10, rgba(68, 252, 255, 0.10)) 0%,
+      var(--Color-Primary-0, rgba(68, 252, 255, 0.00)) 100%
+    )
+  );
 
   ${gradientBorder({
-    gradient: "linear-gradient(180deg, rgba(68, 252, 255, 0.3) 0%, rgba(68, 252, 255, 0) 100%)",
+    gradient:
+      "linear-gradient(180deg, rgba(68, 252, 255, 0.3) 0%, rgba(68, 252, 255, 0) 100%)",
     width: borders.width.thick,
   })};
 
@@ -595,10 +628,18 @@ export const RedFeaturedLeagueItem = styled.div`
   height: 510px;
   gap: ${layout.space.medium};
   border-radius: ${borders.radius.xxLarge};
-  background: var(--Primary-Gradient-FadeTop-10, linear-gradient(360deg, rgba(255, 81, 81, 0.1) 0%, rgba(255, 81, 81, 0) 100%));
+  background: var(
+    --Primary-Gradient-FadeTop-10,
+    linear-gradient(
+      360deg,
+      rgba(255, 81, 81, 0.1) 0%,
+      rgba(255, 81, 81, 0) 100%
+    )
+  );
 
   ${gradientBorder({
-    gradient: "linear-gradient(180deg, rgba(255, 81, 81, 0.3) 0%, rgba(255, 81, 81, 0) 100%);",
+    gradient:
+      "linear-gradient(180deg, rgba(255, 81, 81, 0.3) 0%, rgba(255, 81, 81, 0) 100%);",
     width: borders.width.thick,
   })};
 
@@ -616,10 +657,18 @@ export const YellowFeaturedLeagueItem = styled.div`
   height: 510px;
   gap: ${layout.space.medium};
   border-radius: ${borders.radius.xxLarge};
-  background: var(--Primary-Gradient-FadeTop-10, linear-gradient(360deg, rgba(255, 242, 88, 0.1) 0%, rgba(255, 242, 88, 0) 100%));
+  background: var(
+    --Primary-Gradient-FadeTop-10,
+    linear-gradient(
+      360deg,
+      rgba(255, 242, 88, 0.1) 0%,
+      rgba(255, 242, 88, 0) 100%
+    )
+  );
 
   ${gradientBorder({
-    gradient: "linear-gradient(180deg, rgba(255, 252, 68, 0.3) 0%, rgba(255, 252, 68, 0) 100%);",
+    gradient:
+      "linear-gradient(180deg, rgba(255, 252, 68, 0.3) 0%, rgba(255, 252, 68, 0) 100%);",
     width: borders.width.thick,
   })};
 
@@ -627,7 +676,6 @@ export const YellowFeaturedLeagueItem = styled.div`
     flex-direction: column;
   }
 `;
-
 
 export const FeaturedLeagueItemContents = styled.div`
   display: flex;
@@ -655,12 +703,17 @@ export const FeaturedLeagueContentsButtons = styled.div`
   flex-wrap: wrap;
 `;
 
+// -- ABOUT SECTION -- //
+
 export const AboutSection = styled.div`
   display: flex;
   width: 100%;
   padding: 0px ${layout.space.medium};
   justify-content: center;
   align-items: center;
+  background: ${gradients.base.fadeTop10};
+  border-top: ${borders.width.thin} solid ${colors.base.translucent30};
+  border-bottom: ${borders.width.thin} solid ${colors.base.translucent30};
 `;
 
 export const AboutContainer = styled.div`
@@ -699,18 +752,19 @@ export const AboutItem = styled.div<{ $left?: boolean }>`
   border-radius: ${borders.radius.xxLarge};
   background: ${gradients.base.fadeTop10};
 
-  ${({ $left }) => $left
-    ? gradientBorder({
+  ${({ $left }) =>
+    $left
+      ? gradientBorder({
         gradient: gradients.base.fadeLeft20,
         width: borders.width.medium,
       })
-    : gradientBorder({
+      : gradientBorder({
         gradient: gradients.base.fadeRight20,
         width: borders.width.medium,
       })};
 
   ${layout.mediaQueries.tablet} {
-    flex-direction: ${({ $left }) => ($left ? "column" : "column-reverse")};
+    flex-direction: ${({ $left }) => ($left ? "column-reverse" : "column")};
     gap: ${layout.space.xLarge};
     padding: ${layout.space.xLarge};
     max-width: 380px;
@@ -719,13 +773,14 @@ export const AboutItem = styled.div<{ $left?: boolean }>`
 
 export const AboutItemImage = styled.img`
   display: flex;
-  width: 420px;
+  width: 100%;
   height: 240px;
+  flex: 1 0 0;
   background: rgba(119, 119, 119, 1);
   border-radius: ${borders.radius.xLarge};
   object-fit: cover;
 
-  ${layout.mediaQueries.tablet} {
+  /* ${layout.mediaQueries.tablet} {
     width: 324px;
     height: 185px;
   }
@@ -734,7 +789,7 @@ export const AboutItemImage = styled.img`
     width: 100%;
     height: auto;
     aspect-ratio: 7/4;
-  }
+  } */
 `;
 
 export const AboutItemTextContainer = styled.div`
@@ -775,16 +830,18 @@ export const AboutItemBullet = styled.li`
   color: ${colors.text.text1};
 `;
 
+// -- TAB SECTION -- //
 
-export const LeagueSection = styled.div`
+export const TabSection = styled.div`
   display: flex;
   width: 100%;
   padding: 0 ${layout.space.medium};
   flex-direction: column;
   align-items: center;
+  background: ${gradients.base.fadeBottom10};
 `;
 
-export const LeagueContainer = styled.div`
+export const TabContainer = styled.div`
   display: flex;
   max-width: 1200px;
   padding: 160px 0;
@@ -799,7 +856,7 @@ export const LeagueContainer = styled.div`
   }
 `;
 
-export const LeagueTabs = styled.div`
+export const TabWrapper = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
@@ -807,7 +864,7 @@ export const LeagueTabs = styled.div`
   gap: ${layout.space.xLarge};
 `;
 
-export const LeagueTabContent = styled.div`
+export const TabContent = styled.div`
   display: flex;
   width: 100%;
   padding: ${layout.space.xxLarge};
@@ -819,16 +876,14 @@ export const LeagueTabContent = styled.div`
   ${gradientBorder({
     gradient: gradients.base.fadeBottom10,
     width: borders.width.thick,
-  })}
-
-  ${layout.mediaQueries.tablet} {
+  })} ${layout.mediaQueries.tablet} {
     flex-direction: column-reverse;
     padding: ${layout.space.large};
     gap: ${layout.space.xLarge};
   }
 `;
 
-export const LeagueTabTextContainer = styled.div`
+export const TabTextContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -839,14 +894,95 @@ export const LeagueTabTextContainer = styled.div`
   max-width: 640px;
 `;
 
-export const LeagueTabImage = styled.img`
+export const TabImage = styled.img`
   display: flex;
-  width: 100%;
-  height: 320px;
-  object-fit: cover;
+  height: 327.619px;
+  flex: 1 0 0;
+  aspect-ratio: 21/10;
   border-radius: ${borders.radius.xLarge};
 
+  ${layout.mediaQueries.mobile} {
+    width: 100%;
+  }
 `;
+
+// -- MANAGE SECTION -- //
+
+export const ManageSection = styled.div`
+  display: flex;
+  width: 100%;
+  padding: 0px ${layout.space.medium};
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    360deg,
+    rgba(255, 242, 88, 0.1) 0%,
+    rgba(255, 242, 88, 0) 100%
+  );
+
+  border-top-width: ${borders.width.thin};
+  border-top-style: solid;
+  border-top-color: ${colors.base.translucent30};
+`;
+
+export const ManageContainer = styled.div`
+  display: flex;
+  width: min(100%, 1200px);
+  min-width: 0;
+  padding-top: 160px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: ${layout.space.xxLarge};
+
+  ${layout.mediaQueries.mobile} {
+    padding: 80px 0;
+  }
+`;
+
+export const ManageListContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  gap: ${layout.space.xSmall};
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+`;
+
+export const ManageListItem = styled.div`
+  ${typography.body.mediumBold} color: ${colors.text.text1 || "#FFFFFF"};
+  display: inline-flex;
+  align-items: center;
+`;
+
+export const ManageImageContent = styled.div<{ imageUrl: string }>`
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: clamp(260px, 55vw, 640px);
+  align-items: flex-start;
+  background: url(${(props) => props.imageUrl}) lightgray 50% / cover no-repeat;
+  border-top-left-radius: ${borders.radius.xxxLarge};
+  border-top-right-radius: ${borders.radius.xxxLarge};
+  box-shadow: 0px -16px 39.5px -8px rgba(0, 0, 0, 0.2);
+
+  ${gradientBorder({
+    gradient: gradients.base.fadeBottom10,
+    width: borders.width.thick,
+  })} ${layout.mediaQueries.mobile} {
+    height: auto;
+    aspect-ratio: 16 / 10;
+    border-top-left-radius: ${borders.radius.xxLarge};
+    border-top-right-radius: ${borders.radius.xxLarge};
+    background-position: center;
+  }
+`;
+
+// -- CONTACT SECTION -- //
 
 export const ContactSection = styled.div`
   display: flex;
@@ -854,6 +990,7 @@ export const ContactSection = styled.div`
   padding: 0px ${layout.space.medium};
   justify-content: center;
   align-items: center;
+  background: ${gradients.base.fadeTop10};
 `;
 
 export const ContactContainer = styled.div`
@@ -878,87 +1015,4 @@ export const ContactButtons = styled.div`
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-`;
-
-export const ManageSection = styled.div`
-  display: flex;
-  width: 100%;
-  padding: 0px ${layout.space.medium};
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(360deg, rgba(255, 242, 88, 0.1) 0%, rgba(255, 242, 88, 0) 100%);
-
-  border-top-width: ${borders.width.thin};
-  border-top-style: solid;
-  border-top-color: ${colors.base.translucent30};
-`;
-
-export const ManageContainer = styled.div`
-  display: flex;
-  width: 100%;
-  max-width: 1200px;
-  padding: 160px 0;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: ${layout.space.xxLarge};
-
-  ${layout.mediaQueries.mobile} {
-    padding: 80px 0;
-  }
-`;
-
-export const ManageListContainer = styled.ul`
-  width: 100%;
-  max-width: 960px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  gap: ${layout.space.xSmall} ${layout.space.medium};
-  flex-wrap: wrap;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-`;
-
-export const ManageListItem = styled.li`
-  ${typography.body.mediumBold}
-  color: ${colors.text.text1 || "#FFFFFF"};
-  display: inline-flex;
-  align-items: center;
-
-  &::before {
-    content: "•";
-    color: ${colors.text.text1 || "#FFFFFF"};
-    font-size: 1.05em;
-    line-height: 1;
-    margin-right: ${layout.space.xxSmall};
-  }
-`;
-
-export const ManageImageContent = styled.div<{ imageUrl: string }>`
-  display: flex;
-  width: 100%;
-  max-width: 1200px;
-  height: clamp(260px, 55vw, 640px);
-  align-items: flex-start;
-  background: url(${props => props.imageUrl}) lightgray 50% / cover no-repeat;
-  border-top-left-radius: ${borders.radius.xxxLarge};
-  border-top-right-radius: ${borders.radius.xxxLarge};
-
-  ${gradientBorder({
-    gradient: gradients.base.fadeBottom10,
-    width: borders.width.thick,
-  })}
-
-  ${effects.boxShadow.dropShadow}
-
-  ${layout.mediaQueries.mobile} {
-    height: auto;
-    aspect-ratio: 16 / 10;
-    border-top-left-radius: ${borders.radius.xxLarge};
-    border-top-right-radius: ${borders.radius.xxLarge};
-    background-position: center;
-  }
 `;

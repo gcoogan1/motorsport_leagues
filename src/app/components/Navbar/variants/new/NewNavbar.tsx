@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/providers/auth/useAuth";
 import { usePanel } from "@/providers/panel/usePanel";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/store";
+import { resetAppState } from "@/store/appReset";
+import { navigate } from "@/app/navigation/navigation";
 import type { PanelTypes } from "@/types/panel.types";
 import type { UserData } from "@/types/auth.types";
 import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
@@ -8,6 +12,7 @@ import Profile from "@assets/Icon/Profile.svg?react";
 import Squad from "@assets/Icon/Squad.svg?react";
 import League from "@assets/Icon/League.svg?react";
 import Account from "@assets/Icon/Account_Filled.svg?react";
+import Logout from "@assets/Icon/Logout.svg?react";
 import NavBrand from "../../components/NavBrand/NavBrand";
 import NavLayout from "../../components/NavLayout/NavLayout";
 import NavNotification from "../../components/NavNotification/NavNotification";
@@ -31,17 +36,19 @@ type MenuOption = {
 };
 
 const NewNavbar = ({ user, countNotifications, accountLabel }: NewNavbarProps) => {
-  const { loading } = useAuth();
+  const { loading, resetAuth } = useAuth();
   const { openPanel } = usePanel();
+  const dispatch = useDispatch<AppDispatch>();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const menuOptions: MenuOption[] = useMemo(
     () => [
-      { label: "Profiles", value: "PROFILES", icon: <Profile /> },
-      { label: "Squads", value: "SQUADS", icon: <Squad /> },
-      { label: "Leagues", value: "LEAGUES", icon: <League /> },
-      { label: "Account", value: "ACCOUNT", icon: <Account /> },
+      { label: "MyProfiles", value: "PROFILES", icon: <Profile /> },
+      { label: "My Squads", value: "SQUADS", icon: <Squad /> },
+      { label: "My Leagues", value: "LEAGUES", icon: <League /> },
+      { label: "Account Settings", value: "ACCOUNT", icon: <Account /> },
+      { label: "Log Out", value: "LOGOUT", icon: <Logout /> },
     ],
     []
   );
@@ -76,7 +83,23 @@ const NewNavbar = ({ user, countNotifications, accountLabel }: NewNavbarProps) =
     openPanel(type);
   };
 
-  const handleMenuSelect = (value: string) => {
+  const handleLogout = async () => {
+    try {
+      await resetAuth();
+      dispatch(resetAppState());
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const handleMenuSelect = async (value: string) => {
+    if (value === "LOGOUT") {
+      setIsMenuOpen(false);
+      await handleLogout();
+      return;
+    }
+
     openPanelOfType(value as PanelTypes);
     setIsMenuOpen(false);
   };

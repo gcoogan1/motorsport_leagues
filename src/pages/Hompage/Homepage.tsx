@@ -84,17 +84,17 @@ import {
   AboutItemTitleContainer,
   AboutItemTitle,
   AboutItemSubTitle,
-  LeagueSection,
-  LeagueTabs,
-  LeagueTabContent,
-  LeagueContainer,
-  LeagueTabImage,
+  TabSection,
+  TabWrapper,
+  TabContent,
+  TabContainer,
+  TabImage,
   ContactSection,
   ContactContainer,
   ContactButtons,
   PathItemImage,
   YellowFeaturedLeagueItem,
-  LeagueTabTextContainer,
+  TabTextContainer,
   ManageSection,
   ManageContainer,
   ManageListItem,
@@ -113,7 +113,7 @@ import { useAnalytics } from "@/hooks/useAnalytics";
 
 const TabsData = [
   { id: "league", label: "League" },
-  { id: "season", label: "Squad" },
+  { id: "season", label: "Season" },
   { id: "division", label: "Division" },
   { id: "round", label: "Round" },
   { id: "event", label: "Event" },
@@ -187,20 +187,20 @@ const Homepage = () => {
 
   const ManageList = [
     "Announcements",
-    "League Chat",
-    "Season Overview",
-    "Division Management",
-    "Team & Driver Assignments",
-    "Season Schedule",
-    "Driver Briefing",
-    "Grid Lineup",
-    "Event Details",
-    "Broadcast Links",
-    "Incident Reporting",
-    "Steward Decisions",
-    "Steward Decisions",
-    "Steward Decisions",
-    "Rules & Regulations",
+    "· League Chat",
+    "· Season Overview",
+    "· Division Management",
+    "· Team & Driver Assignments",
+    "· Season Schedule",
+    "· Driver Briefing",
+    "· Grid Lineup",
+    "· Event Details",
+    "· Broadcast Links",
+    "· Incident Reporting",
+    "· Steward Decisions",
+    "· Steward Decisions",
+    "· Steward Decisions",
+    "· Rules & Regulations",
   ];
 
   // -- Handlers -- //
@@ -252,8 +252,18 @@ const Homepage = () => {
     const url = "https://discord.com/invite/QqWMBUT6G";
     return window.open(url, "_blank", "noopener,noreferrer");
   };
-  const handleGoToLeagueRating = () => {
-    track("go_to_league_rating_click", "go_to_league_rating");
+
+  const handleGoToDrivers = () => {
+    track("go_to_drivers_click", "go_to_drivers_legacy");
+    const url = "https://www.MotorsportLeaguesDrivers.com";
+    return window.open(url, "_blank", "noopener,noreferrer");
+    return;
+  };
+
+  const handleGoToFantasy = () => {
+    track("go_to_fantasy_click", "go_to_fantasy");
+    const url = "https://www.MotorsportLeaguesFantasy.com";
+    return window.open(url, "_blank", "noopener,noreferrer");
     return;
   };
 
@@ -266,11 +276,6 @@ const Homepage = () => {
   //   track("follow_league_click", `follow_league_${leagueName.toLowerCase()}`);
   //   return;
   // };
-
-  const handleAboutClick = (type: string) => {
-    track("about_click", `about_${type.toLowerCase()}`);
-    return;
-  };
 
   const handleOnTabChange = (tabName: string) => {
     track("tab_change", `tab_change_${tabName.toLowerCase()}`);
@@ -289,7 +294,7 @@ const Homepage = () => {
       <Hero>
         <Container>
           <TextContainer>
-            <Title>The Home of Sim Racing Leagues</Title>
+            <Title>The Home <br /> of Sim Racing Leagues</Title>
             <SubTitle>
               Create and compete in custom sim racing leagues.
             </SubTitle>
@@ -307,7 +312,7 @@ const Homepage = () => {
             <Button
               color="base"
               variant="outlined"
-              icon={{ right: <SearchIcon /> }}
+              icon={{ left: <SearchIcon /> }}
               onClick={() => handleSearch("Profiles")}
             >
               Search
@@ -326,9 +331,9 @@ const Homepage = () => {
       <Paths>
         <PathContainer>
           <TextContainer>
-            <SectionTitle>Your Journey Motorsport Leagues</SectionTitle>
+            <SectionTitle>Your Motorsport Leagues Journey</SectionTitle>
             <SectionSubTitle>
-              Explore the three things in this platform.
+              Build your sim racing career with profiles, squads, and leagues.
             </SectionSubTitle>
           </TextContainer>
           <SectionList>
@@ -549,7 +554,7 @@ const Homepage = () => {
                 <TextContainer>
                   <SectionTitle>Custom Features</SectionTitle>
                   <SectionSubTitle>
-                    Explore the three things in this platform.
+                    The VIP GT World Championship offers two extra features that are unique to its series.
                   </SectionSubTitle>
                 </TextContainer>
                 <SectionList>
@@ -557,18 +562,17 @@ const Homepage = () => {
                     <VIPItemBottomImage src={CardsImage} alt="Custom Cards" />
                     <VIPItemBottomContents>
                       <ItemTextContainer>
-                        <ItemTitle>Check Driver’s League Ratings</ItemTitle>
+                        <ItemTitle>Build Your Legacy</ItemTitle>
                         <ItemSubTitle>
-                          Check the latest, featured leagues with our stamp of
-                          approval.
+                          View driver’s league specific performance metrics, including their League Rating, within the Drivers’ Cards.
                         </ItemSubTitle>
                       </ItemTextContainer>
                       <Button
                         color="base"
                         icon={{ right: <ExternalIcon /> }}
-                        onClick={handleGoToLeagueRating}
+                        onClick={handleGoToDrivers}
                       >
-                        Go to MSLDrivers.com
+                        MotorsportLeaguesDrivers.com
                       </Button>
                     </VIPItemBottomContents>
                   </VIPItemBottomItem>
@@ -576,18 +580,17 @@ const Homepage = () => {
                     <VIPItemBottomImage src={DriverImage} alt="Driver" />
                     <VIPItemBottomContents>
                       <ItemTextContainer>
-                        <ItemTitle>Check Driver’s League Ratings</ItemTitle>
+                        <ItemTitle>Build Your Team</ItemTitle>
                         <ItemSubTitle>
-                          Check the latest, featured leagues with our stamp of
-                          approval.
+                          Play along with the championship as a fantasy manager and get the opportunity to shake things up in the actual league.
                         </ItemSubTitle>
                       </ItemTextContainer>
                       <Button
                         color="base"
                         icon={{ right: <ExternalIcon /> }}
-                        onClick={handleGoToLeagueRating}
+                        onClick={handleGoToFantasy}
                       >
-                        Go to MSLDrivers.com
+                        MotorsportLeaguesFantasy.com
                       </Button>
                     </VIPItemBottomContents>
                   </VIPItemBottomItem>
@@ -602,7 +605,7 @@ const Homepage = () => {
           <TextContainer>
             <SectionTitle>Featured Leagues</SectionTitle>
             <SectionSubTitle>
-              Explore the three things in this platform.
+              Check out some of our most prestigious series partnered with Motorsport Leagues.
             </SectionSubTitle>
           </TextContainer>
           <FeaturedLeaguesList>
@@ -732,7 +735,7 @@ const Homepage = () => {
                 <Button
                   color="base"
                   icon={{ left: <ProfileIcon /> }}
-                  onClick={() => handleAboutClick("profile")}
+                  onClick={() => handleCreate("profile")}
                 >
                   Create Profile
                 </Button>
@@ -758,7 +761,7 @@ const Homepage = () => {
                 <Button
                   color="base"
                   icon={{ left: <SquadIcon /> }}
-                  onClick={() => handleAboutClick("squad")}
+                  onClick={() => handleCreate("squad")}
                 >
                   Create Squad
                 </Button>
@@ -782,7 +785,7 @@ const Homepage = () => {
                 <Button
                   color="base"
                   icon={{ left: <LeagueIcon /> }}
-                  onClick={() => handleAboutClick("league")}
+                  onClick={() => handleCreate("league")}
                 >
                   Create League
                 </Button>
@@ -792,22 +795,22 @@ const Homepage = () => {
           </AboutContents>
         </AboutContainer>
       </AboutSection>
-      <LeagueSection>
-        <LeagueContainer>
+      <TabSection>
+        <TabContainer>
           <TextContainer>
             <SectionTitle>Anatomy of a League</SectionTitle>
             <SectionSubTitle>
               Take a deep dive into how a League is structured.
             </SectionSubTitle>
           </TextContainer>
-          <LeagueTabs>
+          <TabWrapper>
             <Tabs
               tabs={TabsData}
               activeTab={activeTab}
               onTabChange={handleOnTabChange}
             />
-            <LeagueTabContent>
-              <LeagueTabTextContainer>
+            <TabContent>
+              <TabTextContainer>
                 <AboutItemTitleContainer>
                   <AboutItemTitle>{tab.title}</AboutItemTitle>
                   <AboutItemSubTitle>{tab.subtitle}</AboutItemSubTitle>
@@ -822,12 +825,12 @@ const Homepage = () => {
                 {/* <Button color="base" icon={{ right: <ExternalIcon /> }} onClick={() => handleTabLinkClick(tab.title)} >
                       {tab.link || "Go to MSLDrivers.com"}
                     </Button> */}
-              </LeagueTabTextContainer>
-              <LeagueTabImage src={tab.image} />
-            </LeagueTabContent>
-          </LeagueTabs>
-        </LeagueContainer>
-      </LeagueSection>
+              </TabTextContainer>
+              <TabImage src={tab.image} />
+            </TabContent>
+          </TabWrapper>
+        </TabContainer>
+      </TabSection>
       <ManageSection>
         <ManageContainer>
           <TextContainer>
@@ -856,7 +859,7 @@ const Homepage = () => {
             <Button
               color="base"
               variant="outlined"
-              icon={{ right: <SearchIcon /> }}
+              icon={{ left: <SearchIcon /> }}
               onClick={() => handleSearch("Profiles")}
             >
               Search
