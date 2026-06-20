@@ -2,8 +2,8 @@
 import type { UserData } from "@/types/auth.types";
 import CoreNavbar from "./variants/core/CoreNavbar";
 import GuestNavbar from "./variants/guest/GuestNavbar";
-import UserNavbar from "./variants/user/UserNavbar";
 import AlphaNavbar from "./variants/alpha/AlphaNavbar";
+import NewNavbar from "./variants/new/NewNavbar";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { selectAllProfiles } from "@/store/profile/profile.selectors";
@@ -14,7 +14,7 @@ import { useAllNotifications } from "@/rtkQuery/hooks/queries/useNotifications";
 // UPDATE CORE and USER navbars to accept props
 
 type NavbarProps = {
-  usage: "core" | "user" | "guest" | 'alpha';
+  usage: "core" | "user" | "guest" | "alpha" | "new";
   user?: UserData;
   manualGoBack?: () => void;
 };
@@ -35,11 +35,13 @@ const Navbar = ({ usage, user, manualGoBack }: NavbarProps) => {
     case "guest":
       return <GuestNavbar />;
     case "user":
-      return <UserNavbar countNotifications={count} accountLabel={label} user={user} />;
+      return <NewNavbar countNotifications={count} accountLabel={label} user={user} />;
+    case "new":
+      return <NewNavbar countNotifications={count} accountLabel={label} user={user} />;
     case "alpha":
       return <AlphaNavbar />;
     default:
-      return <UserNavbar countNotifications={count} accountLabel={label} user={user} />;
+      return <NewNavbar countNotifications={count} accountLabel={label} user={user} />;
   }
 };
 
