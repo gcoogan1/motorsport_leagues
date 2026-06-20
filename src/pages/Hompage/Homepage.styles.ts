@@ -59,10 +59,13 @@ export const Hero = styled.div`
   align-self: stretch;
   justify-content: flex-end;
   height: 640px;
+  max-width: 100vw;
+  overflow: hidden;
   background: ${gradients.base.fadeTop10};
   background-image: url(${HeroImage});
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
 `;
 
 export const Container = styled.div`
