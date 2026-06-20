@@ -294,7 +294,7 @@ const Homepage = () => {
       <Hero>
         <Container>
           <TextContainer>
-            <Title>The Home of Sim Racing Leagues</Title>
+            <Title>The Home <br /> of Sim Racing Leagues</Title>
             <SubTitle>
               Create and compete in custom sim racing leagues.
             </SubTitle>
