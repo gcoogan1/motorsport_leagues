@@ -58,15 +58,10 @@ export const Hero = styled.div`
   align-items: center;
   align-self: stretch;
   justify-content: flex-end;
-  height: 640px;
-  max-width: 100vw;
   overflow: hidden;
-  background: ${gradients.base.fadeTop10};
-  background-image: url(${HeroImage});
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+
 `;
+
 
 export const Container = styled.div`
   display: flex;
@@ -77,7 +72,13 @@ export const Container = styled.div`
   flex-direction: column;
   gap: ${layout.space.xLarge};
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  height: 640px;
+  max-width: 1920px;
+  background-image: url(${HeroImage});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 export const TextContainer = styled.div`

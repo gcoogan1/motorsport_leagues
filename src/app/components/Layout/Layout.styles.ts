@@ -12,5 +12,5 @@ export const Wrapper = styled.div`
 export const Main = styled.main`
   flex: 1;
   display: flex;
-  background: ${colors.base.base1};
+  background: ${colors.base.base2};
 `;

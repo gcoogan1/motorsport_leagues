@@ -186,21 +186,35 @@ const Homepage = () => {
   const tab = tabContent[activeTab as keyof typeof tabContent];
 
   const ManageList = [
-    "Announcements",
-    "· League Chat",
-    "· Season Overview",
-    "· Division Management",
-    "· Team & Driver Assignments",
-    "· Season Schedule",
-    "· Driver Briefing",
-    "· Grid Lineup",
-    "· Event Details",
-    "· Broadcast Links",
-    "· Incident Reporting",
-    "· Steward Decisions",
-    "· Steward Decisions",
-    "· Steward Decisions",
-    "· Rules & Regulations",
+    "Announcements", 
+    "·",
+    "League Chat",
+    "·",
+    "Season Overview",
+    "·",
+    "Division Management",
+    "·",
+    "Team & Driver Assignments",
+    "·",
+    "Season Schedule",
+    "·",
+    "Driver Briefing",
+    "·",
+    "Grid Lineup",
+    "·",
+    "Event Details",
+    "·",
+    "Broadcast Links",
+    "·",
+    "Incident Reporting",
+    "·",
+    "Steward Decisions",
+    "·",
+    "Steward Decisions",
+    "·",
+    "Steward Decisions",
+    "·",
+    "Rules & Regulations",
   ];
 
   // -- Handlers -- //
@@ -294,7 +308,7 @@ const Homepage = () => {
       <Hero>
         <Container>
           <TextContainer>
-            <Title>The Home <br /> of Sim Racing Leagues</Title>
+            <Title>The Home of <br /> Sim Racing Leagues</Title>
             <SubTitle>
               Create and compete in custom sim racing leagues.
             </SubTitle>
