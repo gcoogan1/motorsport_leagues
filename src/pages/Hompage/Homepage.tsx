@@ -243,12 +243,14 @@ const Homepage = () => {
 
   const handleViewSeasonGuide = () => {
     track("view_season_guide_click", "view_season_guide");
-    return;
+    const url = "https://drive.google.com/file/d/1iG0xOqE32Oqwqzsv1CKEPfsTvvo8FuT6/view";
+    return window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const handleJoinDiscord = () => {
     track("join_league_discord_click", "join_league_discord");
-    return;
+    const url = "https://discord.com/invite/QqWMBUT6G";
+    return window.open(url, "_blank", "noopener,noreferrer");
   };
   const handleGoToLeagueRating = () => {
     track("go_to_league_rating_click", "go_to_league_rating");
