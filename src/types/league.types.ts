@@ -112,6 +112,7 @@ export type LeagueSeasonTable = {
   is_team_championship: boolean;
   season_status: LeagueStatus;
   includes_pre_qual?: boolean;
+  poster_url?: string;
 };
 
 export type LeagueSeasonDivisionTable = {
@@ -635,6 +636,7 @@ export type UpdateLeagueSeasonPayload = {
   seasonId: string;
   seasonName: string;
   seasonStatus: LeagueStatus;
+  posterUrl?: string;
 };
 
 // Update League Season --> Success type
