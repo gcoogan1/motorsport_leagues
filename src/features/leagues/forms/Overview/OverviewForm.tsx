@@ -46,7 +46,7 @@ import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import {
   overviewFormSchema,
   type OverviewFormValues,
-} from "./OverviewForm.schema";
+} from "./overviewForm.schema";
 import DefaultOverviewPoster from "@/assets/Overview/defaultOverview.png";
 import DefaultContentPoster from "@/assets/Overview/defaultContent.png";
 import {
