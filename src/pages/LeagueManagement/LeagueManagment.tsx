@@ -36,6 +36,7 @@ import PrequalTeamAssignments from "@/features/leagues/forms/Assignments/Prequal
 import Schedule from "@/features/leagues/forms/Schedule/Schedule";
 import Results from "@/features/leagues/forms/Results/Results";
 import RulesForm from "@/features/leagues/forms/Rules/RulesForm";
+import OverviewForm from "@/features/leagues/forms/Overview/OverviewForm";
 
 //TODO: Replace panelContent with SheetForms for each section once they are developed, and implement logic to fetch and display actual data for each section.
 
@@ -47,7 +48,7 @@ const LeagueManagment = () => {
   const location = useLocation();
   const { leagueId } = useParams<{ leagueId: string }>();
   const [activeSection, setActiveSection] =
-    useState<ManageMenuSection>("enter-results");
+    useState<ManageMenuSection>("overview-page");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   // const activePanel = panelContent[activeSection];
   const [openManageMenu, setOpenManageMenu] = useState(false);
@@ -145,7 +146,7 @@ const LeagueManagment = () => {
         onDirtyChange={setHasUnsavedChanges}
       />
     ) : activeSection === "overview-page" && activeSeasonData ? (
-      <>{activeSeasonData.season_name}</>
+      <OverviewForm seasonData={activeSeasonData} onDirtyChange={setHasUnsavedChanges} />
     ) : activeSection === "driver-assignments" && activeSeasonData ? (
       <>
         {activeSeasonData.is_team_championship ? (
@@ -187,9 +188,7 @@ const LeagueManagment = () => {
         seasonName={activeSeasonData.season_name}
         onDirtyChange={setHasUnsavedChanges}
       />
-    ) : (
-      <>Coming Soon</>
-    );
+    ) : null;
 
   const handlePendingNavigation = (
     action: () => void,
@@ -202,7 +201,8 @@ const LeagueManagment = () => {
       activeSection === "participant-roles" ||
       activeSection === "season-settings" ||
       activeSection === "driver-assignments" ||
-      activeSection === "rules-and-regulations";
+      activeSection === "rules-and-regulations" ||
+      activeSection === "overview-page";
 
     if (!isGuardedSection || !hasUnsavedChanges) {
       action();
