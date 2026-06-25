@@ -76,6 +76,26 @@ import type {
   UpdateLeagueRulesPayload,
   UpdateLeagueRulesResult,
 } from "@/types/rules.types";
+import type {
+  AddLeagueSeasonChampPointsPayload,
+  AddLeagueSeasonChampPointsResult,
+  ChampPointsTable,
+  GetLeagueSeasonChampPointsResult,
+  RemoveLeagueSeasonChampPointsPayload,
+  RemoveLeagueSeasonChampPointsResult,
+  UpdateLeagueSeasonChampPointsPayload,
+  UpdateLeagueSeasonChampPointsResult,
+} from "@/types/champPoints.types";
+import type {
+  AddLeagueSeasonContentBlockPayload,
+  AddLeagueSeasonContentBlockResult,
+  ContentBlockTable,
+  GetLeagueSeasonContentBlocksResult,
+  RemoveLeagueSeasonContentBlockPayload,
+  RemoveLeagueSeasonContentBlockResult,
+  UpdateLeagueSeasonContentBlockPayload,
+  UpdateLeagueSeasonContentBlockResult,
+} from "@/types/contentBlock.types";
 import {
   getAllLeaguesWithInfo,
   getLeaguesWithInfoByAccountId,
@@ -144,6 +164,18 @@ import {
   getLeagueRulesByLeagueId,
   updateLeagueRules,
 } from "@/services/league/leagueRules.service";
+import {
+  addLeagueSeasonChampPoints,
+  getLeagueSeasonChampPointsBySeasonId,
+  removeLeagueSeasonChampPoints,
+  updateLeagueSeasonChampPoints,
+} from "@/services/league/leagueSeasonChampPoints.service";
+import {
+  addLeagueSeasonContentBlock,
+  getLeagueSeasonContentBlocksBySeasonId,
+  removeLeagueSeasonContentBlock,
+  updateLeagueSeasonContentBlock,
+} from "@/services/league/leagueSeasonContentBlock.service";
 
 export type LeaguesQueryArgs = {
   accountId?: string;
@@ -168,6 +200,8 @@ export const leagueApi = createApi({
     "LeagueSeasonDrivers",
     "LeagueSeasonTeams",
     "LeagueRules",
+    "LeagueSeasonChampPoints",
+    "LeagueSeasonContentBlocks",
   ],
   endpoints: (builder) => ({
     // GET Requests
@@ -404,6 +438,54 @@ export const leagueApi = createApi({
       },
       providesTags: (_result, _error, leagueId) => [
         { type: "LeagueRules", id: leagueId },
+      ],
+    }),
+    getLeagueSeasonChampPoints: builder.query<ChampPointsTable[], string>({
+      queryFn: async (seasonId, api) => {
+        try {
+          const result: GetLeagueSeasonChampPointsResult =
+            await getLeagueSeasonChampPointsBySeasonId(seasonId, api.signal);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, seasonId) => [
+        { type: "LeagueSeasonChampPoints", id: seasonId },
+      ],
+    }),
+    getLeagueSeasonContentBlocks: builder.query<ContentBlockTable[], string>({
+      queryFn: async (seasonId, api) => {
+        try {
+          const result: GetLeagueSeasonContentBlocksResult =
+            await getLeagueSeasonContentBlocksBySeasonId(seasonId, api.signal);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, seasonId) => [
+        { type: "LeagueSeasonContentBlocks", id: seasonId },
       ],
     }),
     getLeagueSeasonDivisions: builder.query<
@@ -855,6 +937,58 @@ export const leagueApi = createApi({
         { type: "LeagueRules", id: payload.leagueId },
       ],
     }),
+    addLeagueSeasonChampPoints: builder.mutation<
+      AddLeagueSeasonChampPointsResult,
+      AddLeagueSeasonChampPointsPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await addLeagueSeasonChampPoints(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueSeasonChampPoints", id: payload.seasonId },
+      ],
+    }),
+    addLeagueSeasonContentBlock: builder.mutation<
+      AddLeagueSeasonContentBlockResult,
+      AddLeagueSeasonContentBlockPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await addLeagueSeasonContentBlock(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueSeasonContentBlocks", id: payload.seasonId },
+      ],
+    }),
     createLeagueJoinRequest: builder.mutation<
       CreateLeagueJoinRequestResult,
       CreateLeagueJoinRequestPayload
@@ -1067,6 +1201,58 @@ export const leagueApi = createApi({
       },
       invalidatesTags: (_result, _error, payload) => [
         { type: "LeagueRules", id: payload.leagueId },
+      ],
+    }),
+    updateLeagueSeasonChampPoints: builder.mutation<
+      UpdateLeagueSeasonChampPointsResult,
+      UpdateLeagueSeasonChampPointsPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await updateLeagueSeasonChampPoints(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueSeasonChampPoints", id: payload.seasonId },
+      ],
+    }),
+    updateLeagueSeasonContentBlock: builder.mutation<
+      UpdateLeagueSeasonContentBlockResult,
+      UpdateLeagueSeasonContentBlockPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await updateLeagueSeasonContentBlock(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueSeasonContentBlocks", id: payload.seasonId },
       ],
     }),
     updateLeagueSeasonDriverTeam: builder.mutation<
@@ -1369,13 +1555,71 @@ export const leagueApi = createApi({
         { type: "LeagueSeasonTeams", id: payload.teamId },
       ],
     }),
+    removeLeagueSeasonChampPoints: builder.mutation<
+      RemoveLeagueSeasonChampPointsResult,
+      RemoveLeagueSeasonChampPointsPayload
+    >({
+      queryFn: async (payload, api) => {
+        try {
+          const result = await removeLeagueSeasonChampPoints(payload, api.signal);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueSeasonChampPoints", id: payload.seasonId },
+      ],
+    }),
+    removeLeagueSeasonContentBlock: builder.mutation<
+      RemoveLeagueSeasonContentBlockResult,
+      RemoveLeagueSeasonContentBlockPayload
+    >({
+      queryFn: async (payload, api) => {
+        try {
+          const result = await removeLeagueSeasonContentBlock(payload, api.signal);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: (_result, _error, payload) => [
+        { type: "LeagueSeasonContentBlocks", id: payload.seasonId },
+      ],
+    }),
   }),
 });
 
 export const {
   useGetLeagueRulesQuery,
+  useGetLeagueSeasonChampPointsQuery,
+  useGetLeagueSeasonContentBlocksQuery,
   useAddLeagueRulesMutation,
+  useAddLeagueSeasonChampPointsMutation,
+  useAddLeagueSeasonContentBlockMutation,
   useUpdateLeagueRulesMutation,
+  useUpdateLeagueSeasonChampPointsMutation,
+  useUpdateLeagueSeasonContentBlockMutation,
   useAddLeagueApplicationOptionsMutation,
   useAddLeagueParticipantMutation,
   useCreateLeagueJoinRequestMutation,
@@ -1416,6 +1660,8 @@ export const {
   useRemoveLeagueParticipantMutation,
   useRemoveLeagueParticipantRoleMutation,
   useRemoveLeagueSeasonMutation,
+  useRemoveLeagueSeasonChampPointsMutation,
+  useRemoveLeagueSeasonContentBlockMutation,
   useUpdateLeagueApplicationOptionsMutation,
   useUpdateLeagueSeasonMutation,
   useGetPendingLeagueInvitesQuery,

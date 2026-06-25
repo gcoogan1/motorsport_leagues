@@ -1,6 +1,8 @@
 import {
   useGetLeagueApplicationOptionsQuery,
   useGetLeagueRulesQuery,
+	useGetLeagueSeasonChampPointsQuery,
+	useGetLeagueSeasonContentBlocksQuery,
 	useGetLeagueParticipantsQuery,
 	useGetLeagueJoinRequestsQuery,
 	useGetLeaguesQuery,
@@ -59,6 +61,18 @@ export const useLeagueApplicationOptions = (leagueId?: string) =>
 export const useLeagueRules = (leagueId?: string) =>
 	useGetLeagueRulesQuery(leagueId ?? "", {
 		skip: !leagueId,
+	});
+
+// Query to fetch championship points blocks for a season.
+export const useLeagueSeasonChampPoints = (seasonId?: string) =>
+	useGetLeagueSeasonChampPointsQuery(seasonId ?? "", {
+		skip: !seasonId,
+	});
+
+// Query to fetch content blocks for a season.
+export const useLeagueSeasonContentBlocks = (seasonId?: string) =>
+	useGetLeagueSeasonContentBlocksQuery(seasonId ?? "", {
+		skip: !seasonId,
 	});
 
 // Query to fetch leagues where any profile of this account is a league participant

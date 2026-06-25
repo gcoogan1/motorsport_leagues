@@ -3,6 +3,8 @@
 
 import {
   useAddLeagueRulesMutation,
+  useAddLeagueSeasonChampPointsMutation,
+  useAddLeagueSeasonContentBlockMutation,
   useAddLeagueApplicationOptionsMutation,
   useAddLeagueParticipantMutation,
   useAddLeagueParticipantRoleMutation,
@@ -17,11 +19,15 @@ import {
   useRemoveLeagueParticipantMutation,
   useRemoveLeagueParticipantRoleMutation,
   useRemoveLeagueSeasonMutation,
+  useRemoveLeagueSeasonChampPointsMutation,
+  useRemoveLeagueSeasonContentBlockMutation,
   useUnfollowLeagueMutation,
   // useUpdateLeagueParticipantRoleMutation,
   useUpdateLeagueApplicationOptionsMutation,
   useUpdateLeagueRulesMutation,
   useUpdateLeagueSeasonMutation,
+  useUpdateLeagueSeasonChampPointsMutation,
+  useUpdateLeagueSeasonContentBlockMutation,
   useCreateLeagueSeasonDriverMutation,
   useRemoveLeagueSeasonDriverMutation,
   useUpdateLeagueSeasonDriverTeamMutation,
@@ -35,9 +41,29 @@ export const useAddLeagueRules = () => {
   return useAddLeagueRulesMutation();
 };
 
+// Mutation for adding championship points content to a season.
+export const useAddLeagueSeasonChampPoints = () => {
+  return useAddLeagueSeasonChampPointsMutation();
+};
+
+// Mutation for adding a content block to a season.
+export const useAddLeagueSeasonContentBlock = () => {
+  return useAddLeagueSeasonContentBlockMutation();
+};
+
 // Mutation for updating league rules content.
 export const useUpdateLeagueRules = () => {
   return useUpdateLeagueRulesMutation();
+};
+
+// Mutation for updating championship points content in a season.
+export const useUpdateLeagueSeasonChampPoints = () => {
+  return useUpdateLeagueSeasonChampPointsMutation();
+};
+
+// Mutation for updating a content block in a season.
+export const useUpdateLeagueSeasonContentBlock = () => {
+  return useUpdateLeagueSeasonContentBlockMutation();
 };
 
 // Mutation for adding league application options.
@@ -136,6 +162,16 @@ export const useUpdateLeagueApplicationOptions = () => {
 // Mutation for removing a SEASON from a league.
 export const useRemoveLeagueSeason = () => {
   return useRemoveLeagueSeasonMutation();
+};
+
+// Mutation for removing championship points content from a season.
+export const useRemoveLeagueSeasonChampPoints = () => {
+  return useRemoveLeagueSeasonChampPointsMutation();
+};
+
+// Mutation for removing a content block from a season.
+export const useRemoveLeagueSeasonContentBlock = () => {
+  return useRemoveLeagueSeasonContentBlockMutation();
 };
 
 // Mutation for adding a driver to a SEASON in a league.
