@@ -7,6 +7,8 @@ export const InputContainer = styled.div`
   display: flex;
   gap: ${layout.space.xxxSmall};
   flex-direction: column;
+  width: 100%;
+  align-items: center;
 `
 
 export const ImageUploadContainer = styled.div`
@@ -15,6 +17,7 @@ export const ImageUploadContainer = styled.div`
   justify-content: center;
   flex-direction: column;
   width: 100%;
+  max-width: 720px;
   background: ${gradients.base.fadeBottom10};
   border-top-right-radius: ${borders.radius.xxLarge};
   border-top-left-radius: ${borders.radius.xxLarge};
@@ -23,12 +26,13 @@ export const ImageUploadContainer = styled.div`
 `
 
 export const ImageUpload = styled.div`
-  /* width: 336px; */
-  max-width: 100%;
+  width: 100%;
+  max-width: 640px;
   aspect-ratio: 2 / 1;
   object-fit: cover;
   border-radius: ${borders.radius.medium};
   background: ${colors.base.translucent10};
+  overflow: hidden;
 
 
   img {
@@ -39,8 +43,8 @@ export const ImageUpload = styled.div`
   }
 `
 export const Placeholder = styled.div`
-  /* width: 336px; */
-  max-width: 100%;
+  width: 100%;
+  max-width: 640px;
   aspect-ratio: 2 / 1;
   border-radius: ${borders.radius.medium};
   background: ${colors.base.translucent10};

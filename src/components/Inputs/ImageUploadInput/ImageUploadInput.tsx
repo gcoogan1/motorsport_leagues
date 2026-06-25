@@ -19,18 +19,37 @@ import type { AvatarFormValues } from "@/features/panels/profileEdit/forms/EditA
 import type { CoverImageValue } from "@/types/league.types";
 import type { BannerImageValue } from "@/types/squad.types";
 
+type PosterImageValue = {
+  type: "upload";
+  file?: File;
+  previewUrl?: string;
+};
+
+type ContentBlockImageValue = {
+  type: "upload";
+  file?: File;
+  previewUrl?: string;
+};
+
+type ContentBlockImageFieldPath = `contentBlocks.${number}.image`;
+
 type ImageInputFormValues = {
   avatar?: AvatarFormValues["avatar"];
   banner?: BannerImageValue;
   cover?: CoverImageValue;
+  poster?: PosterImageValue;
+  contentBlocks?: Array<{
+    image?: ContentBlockImageValue;
+  }>;
 };
 
 type Props = {
-  name: "avatar" | "banner" | "cover";
+  name: "avatar" | "banner" | "cover" | "poster" | ContentBlockImageFieldPath;
   isAvatar?: boolean;
   helperMessage?: string;
   hasError?: boolean;
   errorMessage?: string;
+  defaultImageSrc?: string;
 };
 
 const ImageUploadInput = ({
@@ -39,6 +58,7 @@ const ImageUploadInput = ({
   helperMessage,
   hasError,
   errorMessage,
+  defaultImageSrc,
 }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { watch, setValue } = useFormContext<ImageInputFormValues>();
@@ -62,15 +82,15 @@ const ImageUploadInput = ({
 
   // Resolve image src for non-avatar display (upload preview or banner preset)
   const imageSrc = (() => {
-    if (!fieldValue) return undefined;
-    if (fieldValue.type === "upload") return previewUrl;
+    if (!fieldValue) return defaultImageSrc;
+    if (fieldValue.type === "upload") return previewUrl || defaultImageSrc;
     if (name === "banner" && fieldValue.type === "preset") {
       return getBannerVariants()[(fieldValue as Extract<BannerImageValue, { type: "preset" }>).variant];
     }
     if (name === "cover" && fieldValue.type === "preset") {
       return getCoverVariants()[(fieldValue as Extract<CoverImageValue, { type: "preset" }>).variant];
     }
-    return undefined;
+    return defaultImageSrc;
   })();
 
   // Avatar display values (only used when isAvatar is true)
@@ -104,7 +124,23 @@ const ImageUploadInput = ({
         ) : (
           <ImageUpload>
             {imageSrc ? (
-              <img src={imageSrc} alt="Uploaded preview" />
+              <img
+                src={imageSrc}
+                alt="Uploaded preview"
+                onError={(event) => {
+                  if (!defaultImageSrc) {
+                    return;
+                  }
+
+                  const target = event.currentTarget;
+
+                  if (target.src === defaultImageSrc) {
+                    return;
+                  }
+
+                  target.src = defaultImageSrc;
+                }}
+              />
             ) : (
               <Placeholder />
             )}
