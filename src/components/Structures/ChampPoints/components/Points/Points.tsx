@@ -26,7 +26,6 @@ const Points = ({ stats }: PointsProps) => {
         <Headers>
           <HeaderText>Points</HeaderText>
         </Headers>
-        <Headers></Headers>
       </TableHeader>
       <TableBody>
         {stats.map(({ position, points }, index) => (

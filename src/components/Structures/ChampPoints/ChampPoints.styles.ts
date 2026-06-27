@@ -6,7 +6,7 @@ const { colors, gradients, layout, typography, borders } = designTokens;
 
 export const ChampPointsContainer = styled.div`
   display: flex;
-  width: 960px;
+  width: 100%;
   max-width: 960px;
   padding: ${layout.space.xxLarge} 0;
   justify-content: center;
@@ -51,12 +51,12 @@ export const NumberText = styled.h2`
 
 export const TitleText = styled.h3`
   ${typography.subtitle.medium};
-  color: ${colors.base.text1};
+  color: ${colors.text.text1};
 `;
 
 export const DescriptionText = styled.p`
   ${typography.body.mediumRegular};
-  color: ${colors.base.text2};
+  color: ${colors.text.text2};
 `;
 
 // Champ Points Table
@@ -67,6 +67,7 @@ export const TableContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   flex-shrink: 0;
+  border-radius: ${borders.radius.xLarge};
 `;
 
 export const TableHeader = styled.div`
@@ -76,6 +77,8 @@ export const TableHeader = styled.div`
   align-self: stretch;
   background: ${gradients.base.fadeBottom10};
   border-bottom: ${borders.width.medium} solid transparent;
+  border-top-left-radius: ${borders.radius.xLarge};
+  border-top-right-radius: ${borders.radius.xLarge};
 `;
 
 export const Headers = styled.div`
@@ -84,12 +87,13 @@ export const Headers = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
   flex: 1 0 0;
 `;
 
 export const HeaderText = styled.h3`
   ${typography.subtitle.medium};
-  color: ${colors.base.text2};
+  color: ${colors.text.text2};
 `;
 
 export const TableBody = styled.div`
@@ -122,5 +126,5 @@ export const RowContent = styled.div`
 
 export const RowText = styled.p`
   ${typography.body.mediumBold};
-  color: ${colors.base.text1};
+  color: ${colors.text.text1};
 `;

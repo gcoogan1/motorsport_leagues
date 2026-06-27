@@ -1,21 +1,28 @@
 import styled from "styled-components";
 
-export const ImageContainer = styled.img`
+export const ImageContainer = styled.div`
+  position: relative;
+  overflow: hidden;
   width: 100%;
   height: auto;
-  max-width: 960px;
   max-height: 480px;
   aspect-ratio: 2/1;
-  background:
-    linear-gradient(
-      180deg,
-      var(--Color-Base-2, #151515) 0%,
-      rgba(21, 21, 21, 0.00) 10%
-    ),
-    linear-gradient(
-    0deg,
-    var(--Color-Base-2, #151515) 0%,
-    rgba(21, 21, 21, 0.00) 10%
-  ),
-    url(<path-to-image>) lightgray 50% / cover no-repeat;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(360deg, #151515 0%, rgba(21, 21, 21, 0) 10%),
+      linear-gradient(180deg, #151515 0%, rgba(21, 21, 21, 0) 10%);
+    z-index: 1;
+  }
+`;
+
+export const PosterImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 `;

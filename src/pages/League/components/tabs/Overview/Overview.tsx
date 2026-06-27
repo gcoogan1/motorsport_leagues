@@ -1,12 +1,43 @@
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
+import DefaultContentPoster from "@/assets/Overview/defaultContent.png";
+import ChampPoints from "@/components/Structures/ChampPoints/ChampPoints";
+import ContentBlocksBlock from "@/components/Structures/ContentBlocksBlock/ContentBlocksBlock";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
-import type { LeagueStatus } from "@/types/league.types";
+import SeasonPoster from "@/components/Structures/SeasonPoster/SeasonPoster";
+import { useGetLeagueSeasonChampPointsQuery, useGetLeagueSeasonContentBlocksQuery } from "@/rtkQuery/API/leagueApi";
+import { resolveLeagueSeasonPosterUrl } from "@/services/league/leagueSeason.service";
+import type { LeagueSeasonTable, LeagueStatus } from "@/types/league.types";
+import styled from "styled-components";
 
 type OverviewProps = {
   seasonStatus: LeagueStatus;
+  seasonData?: LeagueSeasonTable;
 };
 
-const Overview = ({ seasonStatus }: OverviewProps) => {
+const Overview = ({ seasonStatus, seasonData }: OverviewProps) => {
+  const seasonId = seasonData?.id ?? "";
+  const { data: champPointsData, isLoading: isChampPointsLoading } = useGetLeagueSeasonChampPointsQuery(
+    seasonId,
+    {
+      skip: !seasonId,
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const { data: contentBlocksData, isLoading: isContentBlocksLoading } = useGetLeagueSeasonContentBlocksQuery(
+    seasonId,
+    {
+      skip: !seasonId,
+      refetchOnMountOrArgChange: true,
+    },
+  );
+
+  const hasPoster = Boolean(seasonData?.poster_url);
+  const hasContentBlocks = (contentBlocksData?.length ?? 0) > 0;
+  const hasChampPoints = (champPointsData?.length ?? 0) > 0;
+  const hasOverviewData = hasPoster || hasContentBlocks || hasChampPoints;
+
+  const isLoading = isChampPointsLoading || isContentBlocksLoading;
+
   return (
     <>
       {seasonStatus === "setup" ? (
@@ -15,15 +46,75 @@ const Overview = ({ seasonStatus }: OverviewProps) => {
           title="Coming Soon"
           subtitle="The latest Season of this League is being set up!"
         />
+      ) : !seasonData?.id ? (
+        <EmptyMessage
+          icon={<SetupIcon />}
+          title="No Active Season"
+          subtitle="There is no active season selected for this league yet."
+        />
+      ) : isLoading && !hasOverviewData ? (
+        <EmptyMessage
+          icon={<SetupIcon />}
+          title="Loading Overview"
+          subtitle="Fetching the latest season poster, content, and champ points."
+        />
+      ) : hasOverviewData ? (
+        <OverviewContainer>
+          {hasPoster && (
+            <SeasonPoster
+              posterUrl={resolveLeagueSeasonPosterUrl(seasonData.poster_url)}
+            />
+          )}
+
+          {hasContentBlocks && (
+            <ContentBlocksContainer>
+              {(contentBlocksData ?? []).map((block, index) => (
+                <ContentBlocksBlock
+                  key={block.id}
+                  title={block.header}
+                  description={block.description}
+                  imageSrc={block.content_image_url || DefaultContentPoster}
+                  isFlipped={index % 2 === 1}
+                />
+              ))}
+            </ContentBlocksContainer>
+          )}
+
+          {hasChampPoints && (
+            <ChampPoints
+              stats={(champPointsData ?? []).map((row) => ({
+                position: row.position,
+                points: row.points,
+              }))}
+              numOfDivisions={seasonData.num_of_divisions}
+            />
+          )}
+        </OverviewContainer>
       ) : (
         <EmptyMessage
           icon={<SetupIcon />}
-            title="Coming Soon"
-          subtitle="The latest Season of this League is being set up!"
+          title="Overview Not Published"
+          subtitle="No season poster, content blocks, or champ points have been published yet."
         />
       )}
     </>
   );
 };
+
+const OverviewContainer = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+`;
+
+const ContentBlocksContainer = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+`;
 
 export default Overview;

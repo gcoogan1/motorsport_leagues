@@ -1,27 +1,5 @@
 import z from "zod";
 
-export type OverviewFormValues = {
-  poster?: {
-    type: "upload";
-    file?: File;
-    previewUrl?: string;
-  };
-  contentBlocks: {
-    id?: string;
-    image?: {
-      type: "upload";
-      file?: File;
-      previewUrl?: string;
-    };
-    title: string;
-    description: string;
-  }[];
-  championshipPoints: {
-    id?: string;
-    points: string;
-  }[];
-};
-
 export const overviewFormSchema = z.object({
   poster: z
     .object({
@@ -57,3 +35,5 @@ export const overviewFormSchema = z.object({
     }),
   ),
 });
+
+export type OverviewFormValues = z.infer<typeof overviewFormSchema>;

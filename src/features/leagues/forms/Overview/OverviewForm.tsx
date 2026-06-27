@@ -166,7 +166,7 @@ const OverviewForm = ({ seasonData, onDirtyChange }: OverviewFormProps) => {
       })
       .map((row) => ({
         id: row.id,
-        points: row.points ?? "1",
+        points: String(row.points ?? "1"),
       }));
   }, [champPointsQuery.data]);
 
@@ -371,6 +371,7 @@ const OverviewForm = ({ seasonData, onDirtyChange }: OverviewFormProps) => {
       </FormContainerBlock>
     </>
   );
+  console.log(errors, "errors");
 
   // -- Handlers -- //
 
@@ -489,7 +490,7 @@ const OverviewForm = ({ seasonData, onDirtyChange }: OverviewFormProps) => {
     for (let index = 0; index < championshipPoints.length; index += 1) {
       const champPoint = championshipPoints[index];
       const position = index + 1;
-      const points = champPoint.points.trim();
+      const points = String(champPoint.points ?? "").trim();
 
       if (champPoint.id) {
         remainingChampPointIds.delete(champPoint.id);
@@ -507,7 +508,7 @@ const OverviewForm = ({ seasonData, onDirtyChange }: OverviewFormProps) => {
 
         savedChampPoints.push({
           id: updateResult.data.id,
-          points: updateResult.data.points ?? "1",
+          points: String(updateResult.data.points ?? "1"),
         });
         continue;
       }
@@ -525,7 +526,7 @@ const OverviewForm = ({ seasonData, onDirtyChange }: OverviewFormProps) => {
 
       savedChampPoints.push({
         id: addResult.data.id,
-        points: addResult.data.points ?? "1",
+        points: String(addResult.data.points ?? "1"),
       });
     }
 
@@ -545,6 +546,7 @@ const OverviewForm = ({ seasonData, onDirtyChange }: OverviewFormProps) => {
 
   // Handle Invalid Form Submission
   const handleOnInvalidSubmit = () => {
+    console.error("Form submission failed due to validation errors.", errors);
     openModal(<CannotSave />);
     return;
   };

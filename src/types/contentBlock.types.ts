@@ -7,7 +7,7 @@ export type ContentBlockTable = {
   league_id: string;
   header: string;
   description?: string;
-  content_image_url?: string;
+  content_image_url: string;
 };
 
 type SupabaseError = {

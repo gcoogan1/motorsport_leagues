@@ -1,4 +1,4 @@
-import { ImageContainer } from "./SeasonPoster.styles";
+import { ImageContainer, PosterImage } from "./SeasonPoster.styles";
 
 type SeasonPosterProps = {
   posterUrl?: string;
@@ -6,7 +6,9 @@ type SeasonPosterProps = {
 
 const SeasonPoster = ({ posterUrl }: SeasonPosterProps) => {
   return (
-    <ImageContainer src={posterUrl} alt="Season Poster" />
+    <ImageContainer>
+      <PosterImage src={posterUrl} alt="Season Poster" />
+    </ImageContainer>
   )
 }
 
