@@ -90,6 +90,28 @@ export const uploadLeagueSeasonContentBlockImage = async ({
 	};
 };
 
+export const deleteLeagueSeasonContentBlockImageFromStorage = async (contentImageUrl: string) => {
+  const filePath = getStoredContentImagePath(contentImageUrl);
+  const { error } = await supabase.storage
+    .from(CONTENT_BLOCK_BUCKET)
+    .remove([filePath]);
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: error.message,
+        code: "AVATAR_DELETION_FAILED",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+};
+
 const mapContentBlockForDisplay = (
 	contentBlock: ContentBlockTable,
 ): ContentBlockTable => ({
@@ -212,6 +234,61 @@ export const removeLeagueSeasonContentBlock = async (
 	{ contentBlockId }: RemoveLeagueSeasonContentBlockPayload,
 	signal?: AbortSignal,
 ): Promise<RemoveLeagueSeasonContentBlockResult> => {
+	let contentBlockQuery = supabase
+		.from("season_content_block")
+		.select("content_image_url")
+		.eq("id", contentBlockId);
+
+	if (signal) {
+		contentBlockQuery = contentBlockQuery.abortSignal(signal);
+	}
+
+	const { data: contentBlockData, error: contentBlockFetchError } = await contentBlockQuery.single();
+
+	if (contentBlockFetchError) {
+		if (
+			contentBlockFetchError.code === "ABORT" ||
+			contentBlockFetchError.message?.includes("abort")
+		) {
+			return { success: true };
+		}
+
+		return {
+			success: false,
+			error: {
+				message: contentBlockFetchError.message,
+				code: contentBlockFetchError.code || "SERVER_ERROR",
+				status: 500,
+			},
+		};
+	}
+
+	if (
+		contentBlockData?.content_image_url &&
+		!contentBlockData.content_image_url.includes(DEFAULT_CONTENT_IMAGE_FILE)
+	) {
+		const imageDeleteResult = await deleteLeagueSeasonContentBlockImageFromStorage(
+			contentBlockData.content_image_url,
+		);
+
+		if (!imageDeleteResult.success) {
+			const imageDeleteError = imageDeleteResult.error ?? {
+				message: "Failed to delete content block image.",
+				code: "CONTENT_IMAGE_DELETION_FAILED",
+				status: 500,
+			};
+
+			return {
+				success: false,
+				error: {
+					message: imageDeleteError.message,
+					code: imageDeleteError.code,
+					status: imageDeleteError.status,
+				},
+			};
+		}
+	}
+
 	let query = supabase.from("season_content_block").delete().eq("id", contentBlockId);
 
 	if (signal) {

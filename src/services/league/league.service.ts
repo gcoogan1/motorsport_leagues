@@ -15,7 +15,7 @@ import { normalizeName } from "@/utils/normalizeName";
 import { getCurrentTimezone } from "@/utils/timezone";
 import { addLeagueApplicationOptions } from "./leagueApplication.service";
 import { addLeagueParticipant, addLeagueParticipantRole } from "./leagueParticipant.service";
-import { createLeagueSeason } from "./leagueSeason.service";
+import { createLeagueSeason, removeLeagueSeason } from "./leagueSeason.service";
 import { deleteEventsBySeasonId } from "../event/event.service";
 
 const DEFAULT_LEAGUE_APPLICATION_OPEN_ROLES:
@@ -1039,20 +1039,21 @@ export const deleteLeagueById = async (
     };
   }
 
-  const { error: seasonsDeleteError } = await supabase
-    .from("league_season")
-    .delete()
-    .eq("league_id", leagueId);
+  for (const seasonId of seasonIds) {
+    const removeSeasonResult = await removeLeagueSeason({ seasonId });
 
-  if (seasonsDeleteError) {
-    return {
-      success: false,
-      error: {
-        message: seasonsDeleteError.message,
-        code: seasonsDeleteError.code || "LEAGUE_SEASONS_DELETION_FAILED",
-        status: 500,
-      },
-    };
+    if (!removeSeasonResult.success) {
+      return {
+        success: false,
+        error: {
+          message: removeSeasonResult.error.message,
+          code:
+            removeSeasonResult.error.code ||
+            "LEAGUE_SEASON_CASCADE_DELETION_FAILED",
+          status: removeSeasonResult.error.status,
+        },
+      };
+    }
   }
 
   const { error: applicationOptionsDeleteError } = await supabase
