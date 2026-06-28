@@ -15,6 +15,8 @@ type GetParticipantActionsParams = {
   onShareLeague: () => void;
   onLeaveLeague: () => void;
   onInviteParticipants: () => void;
+  onChat: () => void;
+  onAnnouncements: () => void;
 };
 
 type GetGuestActionsParams = {
@@ -30,6 +32,8 @@ export const getParticipantActions = ({
   onShareLeague,
   onLeaveLeague,
   onInviteParticipants,
+  onChat,
+  onAnnouncements,
 }: GetParticipantActionsParams): CoverAction[] => {
   return [
     ...(isDirector
@@ -48,18 +52,14 @@ export const getParticipantActions = ({
       label: "Announcements",
       color: "base" as const,
       leftIcon: <AnnouncementsIcon />,
-      onClick: () => {
-        console.log("Announcements clicked");
-      },
+      onClick: onAnnouncements,
     },
     {
       id: "chat",
       label: "Chat",
       color: "base" as const,
       leftIcon: <ChatIcon />,
-      onClick: () => {
-        console.log("Chat clicked");
-      },
+      onClick: onChat,
     },
     ...(isDirector
       ? [

@@ -21,6 +21,9 @@ import EventSettings from "./events/forms/EventSettings/EventSettings";
 import TrackCarDetails from "./events/forms/TrackCarDetails/TrackCarDetails";
 import SessionSettings from "./events/forms/SessionSettings/SessionSettings";
 import AdvancedSettings from "./events/forms/AdvancedSettings/AdvancedSettings";
+import SquadChat from "./squadChat/SquadChat";
+import Announcements from "./announcements/Announcements";
+import LeagueChat from "./leagueChat/LeagueChat";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -47,4 +50,7 @@ export const panelVariants: Record<PanelTypes, React.ComponentType<any>> = {
   TRACK_CAR_DETAILS: TrackCarDetails,
   SESSION_SETTINGS: SessionSettings,
   ADVANCED_SETTINGS: AdvancedSettings,
+  SQUAD_CHAT: SquadChat,
+  LEAGUE_CHAT: LeagueChat,
+  LEAGUE_ANNOUNCEMENTS: Announcements,
 };

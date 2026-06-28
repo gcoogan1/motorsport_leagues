@@ -22,6 +22,9 @@ export type PanelTypes =
   | "TRACK_CAR_DETAILS"
   | "SESSION_SETTINGS"
   | "ADVANCED_SETTINGS"
+  | "SQUAD_CHAT"
+  | "LEAGUE_CHAT"
+  | "LEAGUE_ANNOUNCEMENTS"
   
 
 export type PanelProviderTypes = "none" | PanelTypes;

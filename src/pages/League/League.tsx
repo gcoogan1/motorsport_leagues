@@ -354,6 +354,14 @@ const League = () => {
     });
   };
 
+  const handleLeagueChat = () => {
+    openPanel("LEAGUE_CHAT");
+  };
+
+  const handleLeagueAnnouncements = () => {
+    openPanel("LEAGUE_ANNOUNCEMENTS");
+  };
+
   // -- Action buttons based on view type -- //
 
   const participantActions = getParticipantActions({
@@ -372,6 +380,8 @@ const League = () => {
         />,
       );
     },
+    onChat: handleLeagueChat,
+    onAnnouncements: handleLeagueAnnouncements,
   });
 
   const guestActions = getGuestActions({

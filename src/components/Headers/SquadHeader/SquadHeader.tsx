@@ -66,6 +66,7 @@ type SquadHeaderProps = {
   onEdit?: () => void;
   onShare?: () => void;
   onInvite?: () => void;
+  onChat?: () => void;
 };
 
 const SquadHeader = ({
@@ -84,6 +85,7 @@ const SquadHeader = ({
   onEdit,
   onShare,
   onInvite,
+  onChat,
   viewType = "guest",
 }: SquadHeaderProps) => {
   //TODO: Get Members and render in members list. Get number of followers.
@@ -134,7 +136,9 @@ const SquadHeader = ({
   };
 
   const handleChat = () => {
-    console.log("Chat clicked for squad:", squadId);
+    if (onChat) {
+      onChat();
+    }
   };
 
   const handleMore = () => {
