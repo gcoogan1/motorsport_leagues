@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import type { GetLeagueInvitesResult, GetLeagueInviteTableResult, InviteLeaguePayload, InviteLeagueResult, MarkLeagueInviteClickedPayload, MarkLeagueInviteClickedResult, RemoveLeagueInviteResult } from "@/types/league.types";
+import { FunctionsHttpError } from "@supabase/supabase-js";
 
 // --- League Invite Service --- //
 
@@ -29,6 +30,27 @@ export const inviteToLeague = async (
       },
     },
   );
+
+    if (error) {
+      if (error instanceof FunctionsHttpError) {
+        const errorMessage = await error.context.json();
+  
+        if (
+          errorMessage &&
+          errorMessage.error ===
+            `duplicate key value violates unique constraint "league_invites_profile_id_squad_id_idx"`
+        ) {
+          return {
+            success: false,
+            error: {
+              message: "A pending invite for this profile already exists.",
+              code: "DUPLICATE_INVITE",
+              status: 400,
+            },
+          };
+        }
+      }
+    }
 
   if (error) {
     return {
