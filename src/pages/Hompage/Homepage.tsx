@@ -263,7 +263,7 @@ const Homepage = () => {
 
   const handleJoinDiscord = () => {
     track("join_league_discord_click", "join_league_discord");
-    const url = "https://discord.com/invite/QqWMBUT6G";
+    const url = "https://discord.com/invite/yjTMKydM9f";
     return window.open(url, "_blank", "noopener,noreferrer");
   };
 
