@@ -9,6 +9,10 @@ export const PageWrapper = styled.div`
   flex: 1;
   padding: ${layout.space.xxxLarge};
   background-color: ${colors.base.base2};
+
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.large};
+  }
 `;
 
 export const ContentContainer = styled.div`

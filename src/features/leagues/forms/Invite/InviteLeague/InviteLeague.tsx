@@ -23,6 +23,7 @@ import { useLeagueParticipants } from "@/rtkQuery/hooks/queries/useLeagues";
 import { useLeagueInvites } from "@/rtkQuery/hooks/queries/useLeagueInvites";
 import type { Tag } from "@/components/Tags/Tags.variants";
 import SelectInput from "@/components/Inputs/SelectInput/SelectInput";
+import Duplicate from "@/features/squads/modals/errors/Duplicate/Duplicate";
 
 type InviteLeagueProps = {
   leagueId: string;
@@ -162,7 +163,13 @@ const InviteLeague = ({
       });
       closeModal();
       return;
-    } catch {
+    } catch (err) {
+        const error = err as Error;
+        
+        if (error?.message === "A pending invite for this profile already exists.") {
+          openModal(<Duplicate  />);
+          return;
+        }
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     } finally {
       setLoading(false);

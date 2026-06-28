@@ -16,6 +16,7 @@ import FormModal from "@/components/Forms/FormModal/FormModal";
 import MultiUserInput from "@/components/Inputs/MultiUserInput/MultiUserInput";
 import { inviteSchema } from "./inviteSquadSchema";
 import { useCreateNotification } from "@/rtkQuery/hooks/mutations/useNotificationMutation";
+import Duplicate from "@/features/squads/modals/errors/Duplicate/Duplicate";
 
 type InviteSquadProps = {
   squadId: string;
@@ -179,7 +180,13 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
       });
       closeModal();
       return;
-    } catch {
+    } catch (err) {
+      const error = err as Error;
+      
+      if (error?.message === "A pending invite for this profile already exists.") {
+        openModal(<Duplicate  />);
+        return;
+      }
       handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     } finally {
       setLoading(false);

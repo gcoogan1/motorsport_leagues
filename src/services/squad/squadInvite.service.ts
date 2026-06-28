@@ -1,5 +1,14 @@
 import { supabase } from "@/lib/supabase";
-import type { InviteSquadPayload, InviteSquadResult, GetInviteTableResult, RemoveSquadInviteByTokenResult, MarkSquadInviteClickedPayload, MarkSquadInviteClickedResult, GetSquadInvitesResult } from "@/types/squad.types";
+import type {
+  GetInviteTableResult,
+  GetSquadInvitesResult,
+  InviteSquadPayload,
+  InviteSquadResult,
+  MarkSquadInviteClickedPayload,
+  MarkSquadInviteClickedResult,
+  RemoveSquadInviteByTokenResult,
+} from "@/types/squad.types";
+import { FunctionsHttpError } from "@supabase/supabase-js";
 
 // --- Squad Invite Service --- //
 
@@ -24,6 +33,27 @@ export const inviteToSquad = async (
       senderProfileId,
     },
   });
+
+  if (error) {
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json();
+
+      if (
+        errorMessage &&
+        errorMessage.error ===
+          `duplicate key value violates unique constraint "unique_pending_invite_profile"`
+      ) {
+        return {
+          success: false,
+          error: {
+            message: "A pending invite for this profile already exists.",
+            code: "DUPLICATE_INVITE",
+            status: 400,
+          },
+        };
+      }
+    }
+  }
 
   if (error) {
     return {
