@@ -87,11 +87,12 @@ export const TextContainer = styled.div<{ $cardSize: "small" | "medium" }>`
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.xxxSmall};
-  text-align: left;
+  text-align: center;
   flex: 1;
   
   ${({ $cardSize }) => $cardSize === "small" && css`
     align-items: flex-start;
+    text-align: left;
   `}
 
 `
@@ -99,6 +100,12 @@ export const TextContainer = styled.div<{ $cardSize: "small" | "medium" }>`
 export const NameText = styled.p`
   ${typography.body.mediumBold};
   color: ${colors.text.text1};
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
 `
 
 export const MemberCountText = styled.p`

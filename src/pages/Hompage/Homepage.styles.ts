@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import HeroImage from "@/assets/Homepage/hero.png";
+import MobileHeroImage from "@/assets/Homepage/heroMobile.png";
 
 import { designTokens } from "@/app/design/tokens";
 import { gradientBorder } from "@/app/design/mixens/gradientBorder";
@@ -59,7 +60,6 @@ export const Hero = styled.div`
   align-self: stretch;
   justify-content: flex-end;
   overflow: hidden;
-
 `;
 
 
@@ -79,6 +79,16 @@ export const Container = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+
+  ${layout.mediaQueries.mobile} {
+    height: 420px;
+    background-image: url(${MobileHeroImage});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding-top: ${layout.space.xLarge};
+    padding-bottom: ${layout.space.xLarge};
+  }
 `;
 
 export const TextContainer = styled.div`
@@ -95,6 +105,10 @@ export const Title = styled.h1`
   ${typography.title.large};
   /* color: ${colors.text.text1}; */
   color: rgba(255, 204, 0, 1);
+
+  ${layout.mediaQueries.mobile} {
+    ${typography.title.medium};
+  }
 `;
 
 export const SubTitle = styled.h2`
@@ -938,10 +952,6 @@ export const ManageContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: ${layout.space.xxLarge};
-
-  ${layout.mediaQueries.mobile} {
-    padding: 80px 0;
-  }
 `;
 
 export const ManageListContainer = styled.div`

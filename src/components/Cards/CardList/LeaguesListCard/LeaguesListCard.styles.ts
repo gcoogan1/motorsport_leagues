@@ -42,6 +42,5 @@ export const ListContainer = styled.div`
   align-content: flex-start;
   flex-wrap: wrap;
   gap: ${layout.space.xLarge};
-  padding: ${layout.space.xLarge};
   border: ${borders.width.medium} solid transparent;
 `;

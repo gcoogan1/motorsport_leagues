@@ -103,7 +103,7 @@ const LeaguesPanel = () => {
         activeTab === "My Leagues" || (activeTab === "Following" && following && following.length > 0)
           ? {
               primary: {
-                label: "Create New League",
+                label: "Create League",
                 leftIcon: <CreateIcon />,
                 action: handleCreateLeague,
               },
@@ -149,7 +149,7 @@ const LeaguesPanel = () => {
           subtitle="Use your driver Profile to join a League or use a Squad to create your perfect racing series."
           actions={{
             primary: {
-              label: "Create New League",
+              label: "Create League",
               leftIcon: <CreateIcon />,
               onClick: handleCreateLeague,
             },
@@ -180,7 +180,7 @@ const LeaguesPanel = () => {
           subtitle="Track your favorite Leagues that you are not participating in by Following them."
           actions={{
             primary: {
-              label: "Create New League",
+              label: "Create League",
               leftIcon: <CreateIcon />,
               onClick: handleCreateLeague,
             },
