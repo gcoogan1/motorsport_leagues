@@ -1,7 +1,7 @@
 import styled, { createGlobalStyle, css } from "styled-components";
 import { designTokens } from "@/app/design/tokens";
 
-const { colors, layout, typography, borders } = designTokens;
+const { colors, layout, typography, borders, effects } = designTokens;
 
 export const FieldWrapper = styled.div`
   display: flex;
@@ -90,10 +90,14 @@ export const FieldWrapper = styled.div`
 // renders the dropdown outside FieldWrapper, so scoped styles won't reach it
 export const MultiSelectMenuGlobalStyles = createGlobalStyle`
   .select__menu {
+    min-width: 200px;
     background: ${colors.base.base3};
-    border-radius: 12px;
+    border: ${borders.width.thin} solid ${colors.base.translucent10};
+    border-radius: ${borders.radius.xxLarge};
     overflow: hidden;
     z-index: 9999;
+    margin-top: 4px;
+    ${effects.boxShadow.elevationModal};
   }
 
   .select__menu-list {
