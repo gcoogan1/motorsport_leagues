@@ -66,7 +66,7 @@ export const OptionLabel = styled.p`
   max-width: 200px;
 
   ${layout.mediaQueries.mobile} {
-    max-width: 120px;
+    max-width: 180px;
   }
 `
 
@@ -80,7 +80,7 @@ export const OptionInfo = styled.p`
   max-width: 200px;
 
   ${layout.mediaQueries.mobile} {
-    max-width: 120px;
+    max-width: 180px;
   }
 `
 
