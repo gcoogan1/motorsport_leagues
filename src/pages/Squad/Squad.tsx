@@ -177,6 +177,10 @@ const Squad = () => {
     );
   };
 
+  const handleSquadChat = () => {
+    openPanel("SQUAD_CHAT");
+  };
+
   const handleInviteToSquad = () => {
     if (!isViewerFounder) return;
 
@@ -210,6 +214,7 @@ const Squad = () => {
         onEdit={handleEditSquad}
         onShare={handleOnShareSquad}
         onInvite={handleInviteToSquad}
+        onChat={handleSquadChat}
       />
       <Contents>
         <Container>
