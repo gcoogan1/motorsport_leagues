@@ -93,6 +93,12 @@ export const Name = styled.h1`
   ${typography.title.large};
   color: ${colors.text.text1};
   text-align: center;
+    max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
 `;
 
 export const MemberTop = styled.div`

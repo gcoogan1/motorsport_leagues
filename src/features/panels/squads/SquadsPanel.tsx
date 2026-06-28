@@ -94,7 +94,7 @@ const SquadsPanel = () => {
         activeTab === "My Squads" && mySquads.length > 0 || activeTab === "Following" && following && following.length > 0
           ? {
               primary: {
-                label: "Create New Squad",
+                label: "Create Squad",
                 leftIcon: <CreateIcon />,
                 action: handleCreateSquad,
               },
@@ -124,7 +124,7 @@ const SquadsPanel = () => {
             subtitle="Start building your racing community by creating or joining your first Squad with a Profile."
             actions={{
               primary: {
-                label: "Create New Squad",
+                label: "Create Squad",
                 leftIcon: <CreateIcon />,
                 onClick: handleCreateSquad,
               },
@@ -155,7 +155,7 @@ const SquadsPanel = () => {
             subtitle="Keep up with your favorite teams and communities by following Squads."
             actions={{
               primary: {
-                label: "Create New Squad",
+                label: "Create Squad",
                 leftIcon: <CreateIcon />,
                 onClick: handleCreateSquad,
               },

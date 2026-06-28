@@ -112,15 +112,27 @@ export const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 0;
   gap: ${layout.space.xxxSmall};
   align-items: center;
   text-align: center;
   max-width: 960px;
+
+  ${layout.mediaQueries.mobile} {
+    max-width: 320px;
+  }
 `;
 
 export const Title = styled.h1`
   ${typography.title.large};
   color: ${colors.text.text1};
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  
 `;
 
 export const Description = styled.p`

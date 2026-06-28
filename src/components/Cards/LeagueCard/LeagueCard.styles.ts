@@ -57,9 +57,11 @@ export const ClickableWrapper = styled.button<{ $cardSize: "small" | "medium" }>
     border-radius: ${borders.radius.medium};
     flex-direction: row;
     align-items: center;
+    
 
     ${layout.mediaQueries.mobile} {
       flex-direction: column;
+      min-width: 0;
     }
   `}
 `;
@@ -101,7 +103,8 @@ export const IndicatorsContainer = styled.div`
   display: flex;
   padding: ${layout.space.xSmall};
   justify-content: flex-end;
-  border-radius: inherit;
+  border-top-left-radius: ${borders.radius.medium};
+  border-top-right-radius: ${borders.radius.medium};
   align-items: center;
   gap: ${layout.space.xxSmall};
   align-self: stretch;
@@ -128,6 +131,7 @@ export const TextContainer = styled.div<{ $cardSize: "small" | "medium" }>`
     
     ${layout.mediaQueries.mobile} {
       align-items: center;
+      text-align: center;
     }
   `}
 `
@@ -139,10 +143,17 @@ export const LeagueName = styled.h3<{ $cardSize: "small" | "medium" }>`
   overflow: hidden;
   text-overflow: ellipsis; */
   max-width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
   
   ${({ $cardSize }) => $cardSize === "small" && css`
     max-width: 120px;
     ${typography.body.mediumBold};
+    
   `}
 
   ${layout.mediaQueries.mobile} {
@@ -183,6 +194,7 @@ export const Divider = styled.div`
 export const SquadInfoText = styled.p`
   ${typography.body.smallRegular};
   color: ${colors.text.text2};
+  
 /* 
   ${layout.mediaQueries.mobile} {
     white-space: nowrap;

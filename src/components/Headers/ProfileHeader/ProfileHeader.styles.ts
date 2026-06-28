@@ -116,9 +116,9 @@ export const TextContent = styled.div`
 export const Username = styled.h2`
   ${typography.title.large};
   color: ${colors.text.text1};
-  overflow: hidden;
+  /* overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: nowrap; */
   width: 100%;
 `;
 
