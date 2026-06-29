@@ -7,7 +7,7 @@ const { colors, layout, gradients, borders, typography } = designTokens;
 export const TableWrapper = styled.div`
   display: flex;
   width: 100%;
-  min-width: 360px;
+  /* min-width: 360px; */
   max-width: 720px;
   flex-direction: column;
   align-items: center;
