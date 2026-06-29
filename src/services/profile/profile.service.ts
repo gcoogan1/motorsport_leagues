@@ -29,6 +29,31 @@ export const resolveAvatarValue = (
   return data.publicUrl;
 };
 
+const syncLeagueSeasonDriverProfileSnapshot = async (
+  profileId: string,
+  updates: {
+    display_name?: string;
+    avatar_type?: "preset" | "upload";
+    avatar_value?: string;
+  },
+) => {
+  const { error } = await supabase
+    .from("league_season_driver")
+    .update(updates)
+    .eq("profile_id", profileId);
+
+  if (error) {
+    return {
+      success: false as const,
+      error,
+    };
+  }
+
+  return {
+    success: true as const,
+  };
+};
+
 // -- Get Profiles by User ID -- //
 export const getProfilesByUserId = async (
   userId: string,
@@ -307,6 +332,22 @@ export const updateProfileAvatar = async ({
     avatarValue,
   );
 
+  const driverAvatarSync = await syncLeagueSeasonDriverProfileSnapshot(profileId, {
+    avatar_type: avatarType,
+    avatar_value: resolvedAvatar,
+  });
+
+  if (!driverAvatarSync.success) {
+    return {
+      success: false,
+      error: {
+        message: driverAvatarSync.error.message,
+        code: driverAvatarSync.error.code || "LEAGUE_SEASON_DRIVER_SYNC_FAILED",
+        status: 500,
+      },
+    };
+  }
+
   return {
     success: true,
     data: {
@@ -345,6 +386,21 @@ export const updateProfileUsername = async ({
     data.avatar_type,
     data.avatar_value,
   );
+
+  const driverUsernameSync = await syncLeagueSeasonDriverProfileSnapshot(profileId, {
+    display_name: username,
+  });
+
+  if (!driverUsernameSync.success) {
+    return {
+      success: false,
+      error: {
+        message: driverUsernameSync.error.message,
+        code: driverUsernameSync.error.code || "LEAGUE_SEASON_DRIVER_SYNC_FAILED",
+        status: 500,
+      },
+    };
+  }
 
   return {
     success: true,
