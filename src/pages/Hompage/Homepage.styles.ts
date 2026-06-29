@@ -857,6 +857,7 @@ export const TabSection = styled.div`
   flex-direction: column;
   align-items: center;
   background: ${gradients.base.fadeBottom10};
+  min-width: 0;
 `;
 
 export const TabContainer = styled.div`
@@ -867,6 +868,7 @@ export const TabContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.xxLarge};
+  min-width: 0;
 
   ${layout.mediaQueries.mobile} {
     padding: 80px 0;
@@ -880,6 +882,8 @@ export const TabWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   gap: ${layout.space.xLarge};
+    min-width: 0;
+  overflow: hidden;
 `;
 
 export const TabContent = styled.div`

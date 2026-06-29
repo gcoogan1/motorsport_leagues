@@ -13,9 +13,9 @@ export type LeagueTabs = {
 }
 
 type LeagueTabsProps = {
-  seasons: Season[];
-  activeSeason: string;
-  onSeasonChange: (seasonValue: string) => void;
+  seasons?: Season[];
+  activeSeason?: string;
+  onSeasonChange?: (seasonValue: string) => void;
   leagues: LeagueTabs[];
   activeLeague?: string;
   onLeagueChange?: (leagueId: string) => void;
@@ -25,9 +25,11 @@ const LeagueTabs = ({ seasons, activeSeason, onSeasonChange, leagues, activeLeag
   return (
     <TabsContainer>
       <Tabs tabs={leagues} activeTab={activeLeague} onTabChange={onLeagueChange} />
-      <SeasonSelectWrapper>
-        <SelectButton options={seasons} value={activeSeason} onChange={onSeasonChange} />
-      </SeasonSelectWrapper>
+      {seasons && seasons.length > 0 && (
+        <SeasonSelectWrapper>
+          <SelectButton options={seasons} value={activeSeason} onChange={onSeasonChange} />
+        </SeasonSelectWrapper>
+      )}
     </TabsContainer>
   )
 }

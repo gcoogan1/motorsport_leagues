@@ -44,7 +44,7 @@ const NewNavbar = ({ user, countNotifications, accountLabel }: NewNavbarProps) =
 
   const menuOptions: MenuOption[] = useMemo(
     () => [
-      { label: "MyProfiles", value: "PROFILES", icon: <Profile /> },
+      { label: "My Profiles", value: "PROFILES", icon: <Profile /> },
       { label: "My Squads", value: "SQUADS", icon: <Squad /> },
       { label: "My Leagues", value: "LEAGUES", icon: <League /> },
       { label: "Account Settings", value: "ACCOUNT", icon: <Account /> },
