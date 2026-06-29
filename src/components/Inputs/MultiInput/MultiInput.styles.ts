@@ -71,6 +71,7 @@ export const FieldWrapper = styled.div`
 		height: 100%;
 		min-width: 0;
 		min-height: 0;
+		max-width: 100%; 
     gap: ${layout.space.xxSmall};
     padding: 0;
     overflow: hidden;
@@ -118,6 +119,7 @@ export const FieldWrapper = styled.div`
 		max-width: 100%;
 		${layout.mediaQueries.mobile} {
 			padding: ${layout.space.xxxSmall} ${layout.space.xxSmall};
+			max-width: 60px; 
 		}
 	}
 

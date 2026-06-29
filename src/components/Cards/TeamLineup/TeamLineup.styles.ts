@@ -91,7 +91,8 @@ export const DriverName = styled.p`
   ${typography.body.mediumRegular};
   color: ${colors.text.text2};
   margin: 0;
-  width: 72px;
+  min-width: 72px;
+  text-align: left;
 `;
 
 export const EmptyTeamContent = styled.div`

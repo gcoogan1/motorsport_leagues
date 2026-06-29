@@ -8,6 +8,7 @@ export const ProfileContainer = styled.div<{ size: "small" | "medium" | "large",
   align-items:  ${({ $centerContent }) => ($centerContent ? "center" : "flex-start")};
   gap: ${layout.space.small};
   width: 100%;
+  overflow: hidden;
 
   ${({ size }) => {
     if (size === "medium") {
@@ -33,12 +34,16 @@ export const TextContainer = styled.div<{ $size: "small" | "medium" | "large" }>
   align-items: flex-start;
   gap: ${layout.space.xxSmall};
   min-width: 0;
+  flex: 1;
+  overflow: hidden;
   
   ${({ $size }) =>
     $size === "medium" &&
     css`
     gap: 0;
+    overflow: hidden;
   `};
+
 `;
 
 export const UsernameContainer = styled.div<{ isLarge: boolean }>`
@@ -46,7 +51,7 @@ export const UsernameContainer = styled.div<{ isLarge: boolean }>`
   align-items: center;
   gap: ${layout.space.xxSmall};
   min-width: 0;
-  max-width: 100%;
+  overflow: hidden;
 
   ${({ isLarge }) =>
     isLarge &&
@@ -74,6 +79,7 @@ export const Username = styled.h2<{ $size: "small" | "medium" | "large" }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
   max-width: 100%
 `;
 
@@ -95,4 +101,5 @@ export const Information = styled.p<{ $size: "small" | "medium" | "large" }>`
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
+  min-width: 0;
 `;

@@ -294,7 +294,6 @@ const OverviewForm = ({ seasonData, onDirtyChange }: OverviewFormProps) => {
               <TextInput
                 name={`contentBlocks.${index}.title`}
                 label="Header"
-                placeholder="Content Block Title"
                 maxLength={80}
                 hasError={!!errors.contentBlocks?.[index]?.title}
                 errorMessage={errors.contentBlocks?.[index]?.title?.message}
@@ -303,7 +302,6 @@ const OverviewForm = ({ seasonData, onDirtyChange }: OverviewFormProps) => {
               <TextAreaInput
                 name={`contentBlocks.${index}.description`}
                 label="Body"
-                placeholder="Enter some text here to provide extra information about this season. The content blocks in the overview tab are unique for each season, along with the poster image."
                 rows={4}
                 maxLength={360}
                 hasError={!!errors.contentBlocks?.[index]?.description}

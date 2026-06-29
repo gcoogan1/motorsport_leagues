@@ -138,7 +138,7 @@ const Host = ({ onSuccess, onBack }: HostProps) => {
           fieldLabel="Hosting Squad"
           helperText={
             directorProfileId
-              ? "Select one of the squads the chosen director profile belongs to."
+              ? "The League will live under this Squad and cannot be changed later."
               : "Go back and choose a director profile first."
           }
           squads={formattedSquads}
