@@ -28,7 +28,6 @@ export const TabsViewport = styled.div`
     overflow-x: scroll;
     justify-items: center;
     display: grid;
-    overflow: visible;
   }
 `;
 
