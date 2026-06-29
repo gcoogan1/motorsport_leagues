@@ -38,20 +38,20 @@ export const TableContent = styled.div`
   padding: ${layout.space.medium};
   flex-direction: column;
   align-items: center;
-  gap: ${layout.space.xSmall};
+  /* gap: ${layout.space.xSmall}; */
   align-self: stretch;
   min-width: 0;
 
   ${layout.mediaQueries.mobile} {
-    padding: ${layout.space.medium} 0px;
+    padding: ${layout.space.medium};
   }
 `;
 
 export const TableContentHeader = styled.div`
   display: flex;
   width: 100%;
-  height: 18px;
   padding: 0 ${layout.space.xSmall};
+  padding-bottom: ${layout.space.xSmall};
   align-items: center;
   gap: ${layout.space.medium};
 `;

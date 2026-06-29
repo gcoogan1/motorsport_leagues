@@ -28,16 +28,18 @@ type DriverInfo = {
 type RoundInfo = {
   roundName: string;
   trackName: string;
+  secondaryLabel?: string;
 };
 
 type RowProps = {
-  position: number;
+  position?: number;
   points: number;
   driverInfo: DriverInfo;
   time?: string;
   races?: number;
   isTeamRow?: boolean;
   resultPerRound?: boolean;
+  showPosition?: boolean;
   roundInfo?: RoundInfo;
   onClick: () => void;
 };
@@ -51,17 +53,20 @@ const Row = ({
   driverInfo,
   isTeamRow,
   resultPerRound,
+  showPosition = true,
   roundInfo,
 }: RowProps) => {
   return (
     <RowWrapper>
       <RowContainer onClick={onClick}>
-        <Position position={position} />
+        {showPosition && typeof position === "number" && <Position position={position} />}
         {resultPerRound ? (
           <ParticipantCell>
             <RoundContainer>
               <RoundName $shortenText={true}>{roundInfo?.roundName}</RoundName>
-              <TrackName $shortenText={true}>{roundInfo?.trackName}</TrackName>
+              <TrackName $shortenText={true}>
+                {roundInfo?.secondaryLabel ?? roundInfo?.trackName}
+              </TrackName>
             </RoundContainer>
           </ParticipantCell>
         ) : (

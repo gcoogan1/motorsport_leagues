@@ -28,10 +28,11 @@ type DriverInfo = {
 export type RoundInfo = {
   roundName: string;
   trackName: string;
+  secondaryLabel?: string;
 };
 
 type ResultRow = {
-  position: number;
+  position?: number;
   points: number;
   driver: DriverInfo;
   time?: string;
@@ -46,6 +47,7 @@ type TableProps = {
   results: ResultRow[];
   metricLabel?: string;
   resultPerRound?: boolean;
+  showPosition?: boolean;
 };
 
 const Table= ({
@@ -53,6 +55,7 @@ const Table= ({
   results,
   metricLabel,
   resultPerRound,
+  showPosition = true,
 }: TableProps) => {
   const hasTime = results.some((result) => typeof result.time === "string" && result.type === "driver");
   const hasTeam = results.some((result) => result.type === "team");
@@ -69,11 +72,13 @@ const Table= ({
       </TableHeader>
       <TableContent>
         <TableContentHeader>
-          <PositionHeaderRow>
-            <HeaderCell>P</HeaderCell>
-          </PositionHeaderRow>
+          {showPosition && (
+            <PositionHeaderRow>
+              <HeaderCell>P</HeaderCell>
+            </PositionHeaderRow>
+          )}
           <ParticipantHeaderRow>
-            <HeaderCell>{participantLabel}</HeaderCell>
+            <HeaderCell>{resultPerRound ? "Rounds" : participantLabel}</HeaderCell>
           </ParticipantHeaderRow>
           {hasTime  ? (
             <TimeHeaderRow>
@@ -104,6 +109,7 @@ const Table= ({
               onClick={onClick}
               resultPerRound={resultPerRound}
               roundInfo={roundInfo}
+              showPosition={showPosition}
             />
           </TableRows>
         ))}

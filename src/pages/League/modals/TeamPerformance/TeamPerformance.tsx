@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import SheetModal from "@/components/Sheets/SheetModal/SheetModal";
 import Table from "@/components/Tables/Table/Table";
 import { useModal } from "@/providers/modal/useModal";
@@ -21,24 +20,15 @@ const TeamPerformance = ({
   seasonName,
 }: TeamPerformanceProps) => {
   const { closeModal } = useModal();
-  const { teamData, results } =
+  const { teamData, events, driverCount } =
     useTeamPerformanceResults(teamId);
 
-  const eventResults = useMemo(() => {
-    return (results ?? []).filter((entry) => (entry.points ?? 0) > 0);
-  }, [results]);
+  const resolvedDriverCount = driverCount === 0 ? numOfDrivers ?? 0 : driverCount;
+  const participantLabel = `${resolvedDriverCount} Driver${resolvedDriverCount === 1 ? "" : "s"}`;
 
-  const participatingDriverCount = useMemo(
-    () => new Set(eventResults.map((entry) => entry.driver_id)).size,
-    [eventResults],
-  );
+  const totalPoints = events.reduce((acc, entry) => acc + entry.totalPoints, 0);
 
-  const driverCount = participatingDriverCount === 0 ? numOfDrivers ?? 0 : participatingDriverCount;
-  const participantLabel = `${driverCount} Driver${driverCount === 1 ? "" : "s"}`;
-
-  const totalPoints = eventResults.reduce((acc, entry) => acc + (entry.points ?? 0), 0);
-
-  const isEmpty = !teamData || eventResults.length === 0;
+  const isEmpty = !teamData || events.length === 0;
 
 
 
@@ -53,27 +43,29 @@ const TeamPerformance = ({
         />
       ) : (
         <>
-        <Table
-        title={"Team's Season Results"}
-        resultPerRound
-        results={eventResults.map((entry) => ({
-          position: entry.position,
-          points: entry.points,
-          type: "team",
-          roundInfo: {
-            roundName: entry.round_name,
-            trackName: entry.track_name ? entry.track_name : "Hidden Track",
-          },
-          driver: {
-            id: "",
-            username: "",
-            avatarType: "preset",
-            avatarValue: "black",
-          },
-          onClick: () => {},
-        }))}
-      />
-      <SpecialRow label="Total Points" value={totalPoints} />
+          <Table
+            title={"Team's Season Results"}
+            resultPerRound
+            showPosition={false}
+            results={events.map((event) => ({
+              points: event.totalPoints,
+              type: "team",
+              roundInfo: {
+                roundName: event.roundName,
+                trackName: event.eventName,
+                secondaryLabel: event.eventName,
+              },
+              driver: {
+                id: event.eventId,
+                username: teamData?.team_name ?? teamName ?? "Unknown Team",
+                teamName: teamData?.team_name ?? teamName ?? "Unknown Team",
+                avatarType: "preset",
+                avatarValue: "black",
+              },
+              onClick: () => {},
+            }))}
+          />
+          <SpecialRow label="Total Points" value={totalPoints} />
         </>
       )}
     </>
