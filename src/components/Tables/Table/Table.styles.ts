@@ -41,6 +41,10 @@ export const TableContent = styled.div`
   gap: ${layout.space.xSmall};
   align-self: stretch;
   min-width: 0;
+
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.medium} 0px;
+  }
 `;
 
 export const TableContentHeader = styled.div`
