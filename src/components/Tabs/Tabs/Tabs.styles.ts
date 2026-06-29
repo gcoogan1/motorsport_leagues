@@ -26,6 +26,7 @@ export const TabsViewport = styled.div`
 
   ${layout.mediaQueries.mobile} {
     overflow-x: scroll;
+    justify-items: center;
   }
 `;
 
