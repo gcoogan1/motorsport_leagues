@@ -83,8 +83,10 @@ const TeamPerformance = ({
     <SheetModal
       id={"team-performance"}
       seasonName={seasonName}
-      blockHeader={teamData?.team_name ?? teamName ?? "Unknown Team"}
-      blockDescription={participantLabel}
+      details={{
+        title: teamData?.team_name ?? teamName ?? "Unknown Team",
+        information: participantLabel,
+      }}
       header={"Team Performance"}
       listChildren={listChildren}
       onClose={closeModal}

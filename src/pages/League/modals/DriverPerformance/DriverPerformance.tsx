@@ -11,15 +11,17 @@ type DriverPerformanceProps = {
   driverId: string;
   seasonName: string;
   driverName?: string;
+  teamName?: string;
 };
 
 const DriverPerformance = ({
   driverId,
   seasonName,
   driverName,
+  teamName,
 }: DriverPerformanceProps) => {
   const { closeModal } = useModal();
-  const { driverData, teamName, results } =
+  const { driverData, teamName: performanceTeamName, results } =
     useDriverPerformanceResults(driverId);
 
   const eventResults = useMemo(() => {
@@ -70,8 +72,10 @@ const DriverPerformance = ({
     <SheetModal
       id={"driver-performance"}
       seasonName={seasonName}
-      blockHeader={driverData?.display_name ?? driverName ?? "Unknown Driver"}
-      blockDescription={teamName ?? ""}
+      details={{
+        title: driverData?.display_name ?? driverName ?? "Unknown Driver",
+        information: performanceTeamName ?? teamName ?? "",
+      }}
       header={"Driver Performance"}
       listChildren={listChildren}
       onClose={closeModal}

@@ -88,7 +88,7 @@ const Row = ({
           <RacesCell>
             <RowText>{races ?? 0}</RowText>
           </RacesCell>
-        ) : (
+        ) : time && (
           <TimeCell>
             <RowText>{time}</RowText>
           </TimeCell>

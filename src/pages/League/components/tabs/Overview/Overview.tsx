@@ -7,7 +7,7 @@ import SeasonPoster from "@/components/Structures/SeasonPoster/SeasonPoster";
 import { useGetLeagueSeasonChampPointsQuery, useGetLeagueSeasonContentBlocksQuery } from "@/rtkQuery/API/leagueApi";
 import { resolveLeagueSeasonPosterUrl } from "@/services/league/leagueSeason.service";
 import type { LeagueSeasonTable, LeagueStatus } from "@/types/league.types";
-import styled from "styled-components";
+import { OverviewContainer, ContentBlocksContainer } from "./Overview.styles";
 
 type OverviewProps = {
   seasonStatus: LeagueStatus;
@@ -100,21 +100,5 @@ const Overview = ({ seasonStatus, seasonData }: OverviewProps) => {
     </>
   );
 };
-
-const OverviewContainer = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-`;
-
-const ContentBlocksContainer = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-`;
 
 export default Overview;
