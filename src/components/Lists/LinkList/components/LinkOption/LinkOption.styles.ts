@@ -50,12 +50,19 @@ export const Option = styled.button`
   &:only-child {
     border-radius: ${borders.radius.xLarge};
   }
+
+  > span {
+    flex: 0 0 auto;
+  }
 `;
 
 export const OptionTextContainer = styled.div`
-  flex: 2;
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   flex-direction: column;
+  max-width: 100%;
+  overflow: hidden;
 `;
 
 export const OptionTitle = styled.h3`
@@ -67,4 +74,8 @@ export const OptionTitle = styled.h3`
 export const OptionHelper = styled.p`
   ${typography.body.smallRegular};
   color: ${colors.text.text2};
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;

@@ -27,7 +27,7 @@ export const settingsFormSchema = z.object({
     .string()
     .trim()
     .min(1, "Please enter a name for this League.")
-    .max(50, "League name must be 50 characters or less."),
+    .max(64, "League name must be 64 characters or less."),
   description: z
     .string()
     .trim()

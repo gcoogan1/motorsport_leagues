@@ -34,9 +34,9 @@ export const ReadOnlyContainer = styled.div`
 export const InputContainer = styled.div`
   width: 240px;
   
-  ${layout.mediaQueries.mobile} {
+  /* ${layout.mediaQueries.mobile} {
     width: 140px;
-  }
+  } */
 `;
 
 export const ReadOnlyRow = styled.div`

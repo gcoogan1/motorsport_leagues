@@ -39,16 +39,31 @@ export const PlaceholderWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: ${layout.space.xSmall};
+  min-width: 0;
+  overflow: hidden;
+  flex: 1;
+  padding-right: ${layout.space.xLarge};
   color: ${colors.text.text2};
 `;
 
 export const PlaceholderText = styled.span`
   ${typography.body.mediumRegular}
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 `;
 
 export const SquadText = styled.span`
   ${typography.body.mediumBold}
   color: ${colors.text.text1};
+  min-width: 0;
+  width: 100%;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const HelperText = styled.span`
@@ -78,6 +93,8 @@ export const StyledTrigger = styled(SelectPrimitive.Trigger)<{
   display: flex;
   align-items: center;
   cursor: pointer;
+  min-width: 0;
+  overflow: hidden;
 
   box-shadow: ${({ $hasError }) =>
     $hasError

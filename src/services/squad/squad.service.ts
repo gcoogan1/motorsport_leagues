@@ -501,7 +501,10 @@ export const editSquadName = async (
 ): Promise<EditSquadNameResult> => {
   const { data, error } = await supabase
     .from("squads")
-    .update({ squad_name: newSquadName })
+    .update({
+      squad_name: newSquadName,
+      squad_name_normalized: normalizeName(newSquadName),
+    })
     .eq("id", squadId)
     .select()
     .single();
@@ -512,6 +515,23 @@ export const editSquadName = async (
       error: {
         message: error.message,
         code: error.code || "SERVER_ERROR",
+        status: 500,
+      },
+    };
+  }
+
+  // Update any leagues that reference this squad as the hosting squad to reflect the new name
+  const { error: leaguesUpdateError } = await supabase
+    .from("leagues")
+    .update({ hosting_squad_name: newSquadName })
+    .eq("hosting_squad_id", squadId);
+
+  if (leaguesUpdateError) {
+    return {
+      success: false,
+      error: {
+        message: leaguesUpdateError.message,
+        code: leaguesUpdateError.code || "SERVER_ERROR",
         status: 500,
       },
     };

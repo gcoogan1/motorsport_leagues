@@ -7,6 +7,8 @@ export const InputWrapper = styled.div<{ $centerContent?: boolean }>`
   width: ${({ $centerContent }) => ($centerContent ? "min(100%, 240px)" : "100%")};
   position: relative;
   gap: ${layout.space.xxxSmall};
+  min-width: 0;
+  overflow: hidden;
   margin: ${({ $centerContent }) => ($centerContent ? "0 auto" : "0")};
 `;
 
@@ -18,7 +20,9 @@ export const Label = styled.label`
 
 export const InputField = styled.div<{ $centerContent?: boolean }>`
   width: 100%;
+  overflow: hidden;
   max-width: ${({ $centerContent }) => ($centerContent ? "240px" : "none")};
+  min-width: 0;
   border-radius: ${borders.radius.medium};
   padding: ${layout.space.medium};
   border: none;
@@ -34,6 +38,11 @@ export const InputField = styled.div<{ $centerContent?: boolean }>`
 export const TextValue = styled.p`
   ${typography.body.mediumBold}
   color: ${colors.text.text1};
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 export const HelperText = styled.span`
@@ -41,5 +50,6 @@ export const HelperText = styled.span`
   color: ${colors.text.text2};
   display: flex;
   margin-top: 3px;
+  overflow: hidden;
 `;
 

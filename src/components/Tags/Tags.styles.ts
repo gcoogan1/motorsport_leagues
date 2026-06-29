@@ -7,7 +7,11 @@ const { layout, borders, typography } = designTokens;
 export const TagsContainer = styled.div`
   display: flex;
   /* flex-wrap: wrap; */
+  flex-wrap: nowrap;
   gap: ${layout.space.xxxSmall};
+  min-width: 0;
+  overflow: hidden;   /* clips tags that don't fit — no JS needed */
+  flex-shrink: 1;
 `;
 
 export const TagItem = styled.div<{ $variant: TagVariant }>`

@@ -239,7 +239,7 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
           placeholder="Enter league name"
           hasError={!!errors.leagueName}
           errorMessage={errors.leagueName?.message}
-          maxLength={50}
+          maxLength={64}
           showCounter
         />
         <TextAreaInput

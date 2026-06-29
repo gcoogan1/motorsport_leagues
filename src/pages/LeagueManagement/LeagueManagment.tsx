@@ -48,7 +48,7 @@ const LeagueManagment = () => {
   const location = useLocation();
   const { leagueId } = useParams<{ leagueId: string }>();
   const [activeSection, setActiveSection] =
-    useState<ManageMenuSection>("overview-page");
+    useState<ManageMenuSection>("participant-roles");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   // const activePanel = panelContent[activeSection];
   const [openManageMenu, setOpenManageMenu] = useState(false);
