@@ -9,7 +9,7 @@ export const TabsViewport = styled.div`
   width: 100%;
   min-width: 0;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
 
   -webkit-overflow-scrolling: touch;
 
@@ -28,6 +28,7 @@ export const TabsViewport = styled.div`
     overflow-x: scroll;
     justify-items: center;
     display: grid;
+    overflow: visible;
   }
 `;
 
