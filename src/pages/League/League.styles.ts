@@ -22,6 +22,10 @@ export const ContentContainer = styled.div`
   width: 100%;
   padding: 0px ${layout.space.xLarge};
   gap: ${layout.space.xxLarge};
+
+  ${layout.mediaQueries.mobile} {
+    padding: 0px ${layout.space.medium};
+  }
 `;
 
 export const TabContainer = styled.div`

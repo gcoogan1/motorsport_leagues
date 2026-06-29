@@ -20,6 +20,10 @@ export const Contents = styled.div`
   justify-content: center;
   width: 100%;
   padding: ${layout.space.xxLarge} ${layout.space.xLarge};
+
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.xxLarge} ${layout.space.medium};
+  }
 `;
 
 export const Container = styled.div`

@@ -20,6 +20,10 @@ export const Content = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.xxLarge} ${layout.space.medium};
+  }
 `;
 
 export const Container = styled.div`
