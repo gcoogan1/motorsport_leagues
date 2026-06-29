@@ -15,6 +15,10 @@ export const ModalOverlay = styled.div`
   padding: ${layout.space.xxxLarge} ${layout.space.xLarge};
   overflow-y: auto;
   width: 100%;
+
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.medium};
+  }
 `;
 
 export const ModalOverlayBackground = styled.div<{ $fullScreen?: boolean }>`
@@ -27,6 +31,10 @@ export const ModalOverlayBackground = styled.div<{ $fullScreen?: boolean }>`
   border-radius: ${borders.radius.xxxLarge};
   padding: ${layout.space.xLarge};
   ${effects.boxShadow.elevation}
+
+  ${layout.mediaQueries.mobile} {
+    padding: ${layout.space.medium};
+  }
 `;
 
 // export const ModalOverlayBackground = styled.div<{ $fullScreen?: boolean }>`
@@ -102,6 +110,7 @@ export const TitleContainer = styled.div`
   flex-direction: column;
   align-items: center;
   align-self: stretch;
+  text-align: center;
 `
 
 export const Name = styled.h2`

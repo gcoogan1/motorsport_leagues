@@ -107,9 +107,9 @@ import SearchForm from "@/features/search/forms/SearchForm";
 import { useModal } from "@/providers/modal/useModal";
 import { navigate } from "@/app/navigation/navigation";
 import LeagueCard from "@/components/Cards/LeagueCard/LeagueCard";
-import Tabs from "@/components/Tabs/Tabs/Tabs";
 import { useRef, useState } from "react";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import LeagueTabs from "@/components/Tabs/LeagueTabs/LeagueTabs";
 
 const TabsData = [
   { id: "league", label: "League" },
@@ -818,11 +818,7 @@ const Homepage = () => {
             </SectionSubTitle>
           </TextContainer>
           <TabWrapper>
-            <Tabs
-              tabs={TabsData}
-              activeTab={activeTab}
-              onTabChange={handleOnTabChange}
-            />
+            <LeagueTabs leagues={TabsData} activeLeague={activeTab} onLeagueChange={handleOnTabChange} />
             <TabContent>
               <TabTextContainer>
                 <AboutItemTitleContainer>

@@ -23,6 +23,10 @@ export const TabsViewport = styled.div`
     gradient: gradients.base.fadeOutHorizontal20,
     width: borders.width.medium,
   })}
+
+  ${layout.mediaQueries.mobile} {
+    overflow-x: scroll;
+  }
 `;
 
 export const TabsContainer = styled.div`
@@ -33,9 +37,9 @@ export const TabsContainer = styled.div`
 
   justify-content: center;
 
-  ${layout.mediaQueries.mobile} {
+  /* ${layout.mediaQueries.mobile} {
     justify-content: flex-start;
-  }
+  } */
 `;
 
 

@@ -1,7 +1,7 @@
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+// import { useMediaQuery } from "@/hooks/useMediaQuery";
 import TabLink from "./TabLink/TabLink";
 import { TabsContainer, TabsViewport } from "./Tabs.styles";
-import SelectButton from "@/components/SelectButton/SelectButton";
+// import SelectButton from "@/components/SelectButton/SelectButton";
 
 type TabLinkItem = {
   id: string
@@ -17,18 +17,9 @@ type TabMenuProps = {
 
 const Tabs = ({ tabs, activeTab, onTabChange }: TabMenuProps) => {
 
-const isMobile = useMediaQuery("(max-width: 919px)");
+// const isMobile = useMediaQuery("(max-width: 919px)");
 
-return isMobile ? (
-  <SelectButton
-    options={tabs.map(tab => ({
-      value: tab.id,
-      label: tab.label,
-    }))}
-    value={activeTab}
-    onChange={(value) => onTabChange?.(value)}
-  />
-) : (
+return (
   <TabsViewport>
     <TabsContainer>
       {tabs.map((tab) => (

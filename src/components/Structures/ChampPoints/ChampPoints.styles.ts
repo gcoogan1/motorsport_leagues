@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { designTokens } from "@app/design/tokens";
 import { bottomFadeBorder } from "@/app/design/mixens/edgeFadeBorder";
+import { gradientBorder } from "@/app/design/mixens/gradientBorder";
 
 const { colors, gradients, layout, typography, borders } = designTokens;
 
@@ -68,6 +69,11 @@ export const TableContainer = styled.div`
   align-items: flex-start;
   flex-shrink: 0;
   border-radius: ${borders.radius.xLarge};
+
+  ${gradientBorder({
+    gradient: gradients.base.fadeBottom10,
+    width: borders.width.medium,
+  })};
 `;
 
 export const TableHeader = styled.div`
@@ -76,7 +82,6 @@ export const TableHeader = styled.div`
   align-items: flex-start;
   align-self: stretch;
   background: ${gradients.base.fadeBottom10};
-  border-bottom: ${borders.width.medium} solid transparent;
   border-top-left-radius: ${borders.radius.xLarge};
   border-top-right-radius: ${borders.radius.xLarge};
 `;
