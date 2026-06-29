@@ -25,6 +25,6 @@ export const EventsContainer = styled.div`
   align-self: stretch;
 
   ${layout.mediaQueries.mobile} {
-    padding: ${layout.space.xLarge} 0px;
+    padding: ${layout.space.xLarge} ${layout.space.medium};
   }
 `

@@ -58,9 +58,7 @@ const League = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { setOverrideThemeName, clearOverrideThemeName } = useAppTheme();
-  const [activeLeagueTab, setActiveLeagueTab] = useState(
-    LEAGUE_TAB_ITEMS[0]?.id ?? "overview",
-  );
+  const [activeLeagueTab, setActiveLeagueTab] = useState("schedule");
 
   //  -- Route and account context -- //
   const { leagueId, token } = useParams<{ leagueId: string; token?: string }>();
