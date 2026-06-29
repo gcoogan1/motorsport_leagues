@@ -10,7 +10,7 @@ export const SwitchContainer = styled.div<{ fullWidth?: boolean }>`
   border-radius: ${borders.radius.round};
   background: ${colors.base.translucent10};
   width: ${({ fullWidth }) => (fullWidth ? "100%" : "auto")};
-  gap: ${layout.space.xSmall};
+  gap: ${layout.space.xxxSmall};
   padding: ${layout.space.xSmall};
 
   ${layout.mediaQueries.mobile} {
