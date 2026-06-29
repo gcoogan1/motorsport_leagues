@@ -36,6 +36,10 @@ export const TextContainer = styled.div`
 export const Title = styled.h1`
   ${typography.title.medium};
   color: ${({ theme }) => theme.theme.primaryA};
+
+  ${layout.mediaQueries.mobile} {
+    ${typography.title.small};
+  }
 `
 
 export const ActionsContainer = styled.div`
