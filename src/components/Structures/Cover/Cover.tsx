@@ -27,6 +27,7 @@ import {
   CoverWrapper,
   Description,
   DetailsContainer,
+  SquadName,
   StatusContainer,
   TextContainer,
   Title,
@@ -157,7 +158,7 @@ const Cover = ({
               rounded
               onClick={onSquadNameClick}
             >
-              {squadName}
+              <SquadName>{squadName}</SquadName>
             </Button>
           </DetailsContainer>
           <ActionsContainer>

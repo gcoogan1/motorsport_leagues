@@ -18,6 +18,7 @@ export const Content = styled.div`
   display: flex;
   width: 100%;
   gap: ${layout.space.xSmall};
+  min-width: 0;
 `;
 
 export const AvatarWrapper = styled.div`
@@ -29,12 +30,14 @@ export const TextContainer = styled.div`
   width: 100%;
   flex-direction: column;
   gap: ${layout.space.xxxSmall};
+  min-width: 0;
 `;
 
 export const TopRow = styled.div`
   display: flex;
   justify-content: space-between;
   gap: ${layout.space.xxxSmall};
+  min-width: 0;
 `;
 
 export const Title = styled.p`
@@ -53,6 +56,10 @@ export const Timestamp = styled.p`
 export const Message = styled.p`
   ${typography.body.mediumRegular}
   color: ${colors.text.text1};
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `;
 
 // export const BoldText = styled.span`

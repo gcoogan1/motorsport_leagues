@@ -150,3 +150,13 @@ export const StatusContainer = styled.div`
   align-self: stretch;
   flex-wrap: wrap;
 `
+
+export const SquadName = styled.p`
+  ${typography.body.mediumBold};
+  color: ${colors.text.text1};
+  max-width: 100px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;

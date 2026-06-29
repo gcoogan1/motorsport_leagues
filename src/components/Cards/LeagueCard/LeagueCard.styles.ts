@@ -194,11 +194,9 @@ export const Divider = styled.div`
 export const SquadInfoText = styled.p`
   ${typography.body.smallRegular};
   color: ${colors.text.text2};
-  
-/* 
-  ${layout.mediaQueries.mobile} {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  } */
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
 `
