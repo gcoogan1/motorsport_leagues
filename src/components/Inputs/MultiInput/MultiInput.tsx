@@ -12,7 +12,6 @@ import CheckIcon from "@assets/Icon/Check.svg?react";
 import CheckboxCheckedIcon from "@assets/Icon/Checkbox_Checked.svg?react";
 import CheckboxUncheckedIcon from "@assets/Icon/Checkbox_Unchecked.svg?react";
 import { getTagVariants, type Tag } from "@/components/Tags/Tags.variants";
-import { useAppTheme } from "@/providers/theme/useTheme";
 import Icon from "@/components/Icon/Icon";
 import {
   ErrorText,
@@ -106,12 +105,11 @@ const MultiInput = ({
   onMenuClose,
 }: MultiInputProps) => {
   const inputId = useId();
-  const { themeName } = useAppTheme();
   const { clearErrors, control, trigger } = useFormContext();
 
   const tagOptions: TagOption[] =
     options ??
-    getTagVariants(themeName).map((tag) => ({
+    getTagVariants().map((tag) => ({
       value: tag.name as Tag,
       label: tag.label,
     }));
