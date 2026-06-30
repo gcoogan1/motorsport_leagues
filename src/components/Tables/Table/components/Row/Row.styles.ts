@@ -64,13 +64,17 @@ export const RowText = styled.p`
 `;
 
 export const ParticipantCell = styled.div`
-  flex: 1;
+  flex: 1 1 0;
+  width: 0;
   min-width: 0;
+  overflow: hidden;
 `;
 
 export const TeamCell = styled.div`
-  flex: 1;
+  flex: 1 1 0;
+  width: 0;
   min-width: 0;
+  overflow: hidden;
   text-align: left;
 `;
 

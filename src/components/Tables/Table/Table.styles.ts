@@ -64,8 +64,10 @@ export const PositionHeaderRow = styled.div`
 `;
 
 export const ParticipantHeaderRow = styled.div`
-  flex: 1;
+  flex: 1 1 0;
+  width: 0;
   min-width: 0;
+  overflow: hidden;
   height: 18px;
 `;
 
