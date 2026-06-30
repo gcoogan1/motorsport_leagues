@@ -149,8 +149,8 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
     const options: Array<{ label: string; value: SessionType }> = [];
 
   const RESULT_TYPE_LABEL: Record<SessionType, string> = {
-    qualifying: "Qualifying Results",
-    race: "Race Results",
+    qualifying: "Qualifying Session",
+    race: "Race Session",
   };
 
     if (sessionSettings.has_qualifying) {
