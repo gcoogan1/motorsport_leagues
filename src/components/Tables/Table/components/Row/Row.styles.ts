@@ -98,7 +98,7 @@ export const PointsCell = styled.div`
 export const RoundContainer = styled.div`
     display: flex;
     flex-direction: column;
-    gap: ${layout.space.xxSmall};
+    /* gap: ${layout.space.xxSmall}; */
     min-width: 0;
     text-align: left;
 `;

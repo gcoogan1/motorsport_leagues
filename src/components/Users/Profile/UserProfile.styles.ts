@@ -32,7 +32,7 @@ export const TextContainer = styled.div<{ $size: "small" | "medium" | "large" }>
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: ${layout.space.xxSmall};
+  /* gap: ${layout.space.xxSmall}; */
   min-width: 0;
   flex: 1;
   overflow: hidden;
