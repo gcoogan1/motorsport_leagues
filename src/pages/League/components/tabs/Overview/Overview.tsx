@@ -4,7 +4,9 @@ import ChampPoints from "@/components/Structures/ChampPoints/ChampPoints";
 import ContentBlocksBlock from "@/components/Structures/ContentBlocksBlock/ContentBlocksBlock";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import SeasonPoster from "@/components/Structures/SeasonPoster/SeasonPoster";
-import { useGetLeagueSeasonChampPointsQuery, useGetLeagueSeasonContentBlocksQuery } from "@/rtkQuery/API/leagueApi";
+import { useGetLeagueSeasonChampPointsQuery, useGetLeagueSeasonContentBlocksQuery, useGetLeagueSeasonDriversBySeasonIdQuery, useGetLeagueSeasonTeamsBySeasonIdQuery, useGetLeagueSeasonDivisionsQuery, useGetLeagueSeasonDriversByDivisionQuery, useGetLeagueSeasonTeamsByDivisionQuery } from "@/rtkQuery/API/leagueApi";
+import { useGetEventsBySeasonIdQuery } from "@/rtkQuery/API/eventApi";
+import { useMemo } from "react";
 import { resolveLeagueSeasonPosterUrl } from "@/services/league/leagueSeason.service";
 import type { LeagueSeasonTable, LeagueStatus } from "@/types/league.types";
 import { OverviewContainer, ContentBlocksContainer } from "./Overview.styles";
@@ -16,6 +18,8 @@ type OverviewProps = {
 
 const Overview = ({ seasonStatus, seasonData }: OverviewProps) => {
   const seasonId = seasonData?.id ?? "";
+  const hasPreQual = seasonData?.includes_pre_qual ?? false;
+
   const { data: champPointsData, isLoading: isChampPointsLoading } = useGetLeagueSeasonChampPointsQuery(
     seasonId,
     {
@@ -30,6 +34,39 @@ const Overview = ({ seasonStatus, seasonData }: OverviewProps) => {
       refetchOnMountOrArgChange: true,
     },
   );
+
+  // Get divisions to identify pre-qual division if it exists
+  const { data: divisionsData } = useGetLeagueSeasonDivisionsQuery(seasonId, { skip: !seasonId || !hasPreQual });
+
+  // Find pre-qual division (division_number === 0)
+  const preQualDivision = useMemo(
+    () => (divisionsData ?? []).find((div) => div.division_number === 0),
+    [divisionsData],
+  );
+
+  const preQualDivisionId = preQualDivision?.id ?? "";
+
+  // Query drivers from pre-qual if it exists, otherwise from season
+  const { data: preQualDriversData } = useGetLeagueSeasonDriversByDivisionQuery(preQualDivisionId, {
+    skip: !hasPreQual || !preQualDivisionId,
+  });
+  const { data: seasonDriversData } = useGetLeagueSeasonDriversBySeasonIdQuery(seasonId, {
+    skip: hasPreQual || !seasonId,
+  });
+
+  const driversData = hasPreQual ? preQualDriversData : seasonDriversData;
+
+  // Query teams from pre-qual if it exists and it's a team championship, otherwise from season
+  const { data: preQualTeamsData } = useGetLeagueSeasonTeamsByDivisionQuery(preQualDivisionId, {
+    skip: !hasPreQual || !preQualDivisionId || !seasonData?.is_team_championship,
+  });
+  const { data: seasonTeamsData } = useGetLeagueSeasonTeamsBySeasonIdQuery(seasonId, {
+    skip: hasPreQual || !seasonId || !seasonData?.is_team_championship,
+  });
+
+  const teamsData = hasPreQual ? preQualTeamsData : seasonTeamsData;
+
+  const { data: eventsData } = useGetEventsBySeasonIdQuery(seasonId, { skip: !seasonId });
 
   const hasPoster = Boolean(seasonData?.poster_url);
   const hasContentBlocks = (contentBlocksData?.length ?? 0) > 0;
@@ -87,6 +124,9 @@ const Overview = ({ seasonStatus, seasonData }: OverviewProps) => {
                 points: row.points,
               }))}
               numOfDivisions={seasonData.num_of_divisions}
+              numOfRounds={eventsData?.length}
+              numOfDrivers={driversData?.length}
+              numOfTeams={seasonData.is_team_championship ? teamsData?.length : undefined}
             />
           )}
         </OverviewContainer>

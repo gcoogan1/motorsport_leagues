@@ -27,7 +27,7 @@ export const createSquadThunk = createAsyncThunk(
   "squad/create",
   async (
     { founderAccountId, founderProfileId, squadName, banner }: CreateSquadPayload,
-    { rejectWithValue },
+    { rejectWithValue, dispatch },
   ) => {
     const result = await createSquadWithBanner({
       founderAccountId,
@@ -39,6 +39,15 @@ export const createSquadThunk = createAsyncThunk(
     if (!result.success) {
       return rejectWithValue(result.error);
     }
+
+    dispatch(
+      squadApi.util.invalidateTags([
+        "Squads",
+        "SquadMembers",
+        "SquadFollowers",
+        "SquadFollowing",
+      ]),
+    );
 
     return result;
   },

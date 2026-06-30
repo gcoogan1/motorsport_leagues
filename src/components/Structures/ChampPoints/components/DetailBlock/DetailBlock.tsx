@@ -22,7 +22,7 @@ const DetailBlock = ({
 }: DetailBlockProps) => {
   return (
     <DetailBlocksContainer>
-      {numOfDivisions && (
+      {numOfDivisions && numOfDivisions > 0 ? (
         <DetailBlockContainer>
           <Detail>
             <NumberText>{numOfDivisions}</NumberText>
@@ -33,8 +33,8 @@ const DetailBlock = ({
             lineup, schedule and standings.
           </DescriptionText>
         </DetailBlockContainer>
-      )}
-      {numOfRounds && (
+      ) : null}
+      {numOfRounds && numOfRounds > 0 ? (
         <DetailBlockContainer>
           <Detail>
             <NumberText>{numOfRounds}</NumberText>
@@ -45,8 +45,8 @@ const DetailBlock = ({
             events.
           </DescriptionText>
         </DetailBlockContainer>
-      )}
-      {numOfDrivers && (
+      ) : null}
+      {numOfDrivers && numOfDrivers > 0 ? (
         <DetailBlockContainer>
           <Detail>
             <NumberText>{numOfDrivers}</NumberText>
@@ -57,8 +57,8 @@ const DetailBlock = ({
             race.
           </DescriptionText>
         </DetailBlockContainer>
-      )}
-      {numOfTeams && (
+      ) : null}
+      {numOfTeams && numOfTeams > 0 ? (
         <DetailBlockContainer>
           <Detail>
             <NumberText>{numOfTeams}</NumberText>
@@ -68,7 +68,7 @@ const DetailBlock = ({
             Each division’s lineup of drivers are placed in multiple teams.
           </DescriptionText>
         </DetailBlockContainer>
-      )}
+      ) : null}
     </DetailBlocksContainer>
   );
 };

@@ -183,6 +183,15 @@ export const LeagueInfoText = styled.p`
   text-overflow: ellipsis; */
 `
 
+export const HostingInfoText = styled.p`
+  ${typography.body.smallBold};
+  color: ${colors.text.text2};
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
 export const Divider = styled.div`
   width: 1px;
   height: 24px;
