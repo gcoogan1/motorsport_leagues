@@ -1,5 +1,4 @@
 import { getTagVariants, type Tag, type TagVariant } from "./Tags.variants";
-import { useAppTheme } from "@/providers/theme/useTheme";
 import { TagItem, TagsContainer } from "./Tags.styles";
 
 type TagProps = {
@@ -7,8 +6,7 @@ type TagProps = {
 }
 
 const Tags = ({ variants }: TagProps) => {
-  const { themeName } = useAppTheme();
-  const tagVariants: TagVariant[] = getTagVariants(themeName);
+  const tagVariants: TagVariant[] = getTagVariants();
   
   const renderedTags = variants.map((variant) => {
     const tagVariant = tagVariants.find((v) => v.name === variant);

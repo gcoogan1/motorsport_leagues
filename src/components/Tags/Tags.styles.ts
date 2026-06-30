@@ -21,8 +21,8 @@ export const TagItem = styled.div<{ $variant: TagVariant }>`
   text-align: center;
   padding: 0 ${layout.space.xxSmall};
   border-radius: ${borders.radius.small};
-  color: ${({ $variant }) => $variant.color};
-  background: ${({ $variant }) => $variant.background};
+  color: ${({ $variant, theme }) => $variant.color ? $variant.color : theme.theme.primaryA };
+  background: ${({ $variant, theme }) => $variant.background ? $variant.background : theme.theme.primary10 };
 
   ${typography.body.smallBold};
 `;
