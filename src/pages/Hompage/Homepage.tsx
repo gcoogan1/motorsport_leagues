@@ -221,18 +221,18 @@ const Homepage = () => {
 
   // Redirect to Create Account
   const handleGetStarted = () => {
-    track("cta_click", "hero_get_started");
+    track("sign_up_initiated", { cta_position: "hero", page_section: "Homepage" });
     return navigate("/create-account");
   };
 
   const handleSearch = (tab: "Leagues" | "Profiles" | "Squads") => {
-    track("search_open", `search_${tab.toLowerCase()}`);
+    track("search_initiated", { search_tab: tab.toLowerCase(), page_section: "Homepage" });
     openModal(<SearchForm startingTab={tab} />);
     return;
   };
 
   const handleCreate = (type: string) => {
-    track("create_click", `create_${type}`);
+    track("navigation_click", { create_type: type, page_section: "Homepage" });
     navigate(`/create-${type.toLowerCase()}`);
     return;
   };
@@ -244,7 +244,7 @@ const Homepage = () => {
   };
 
   const handleLearnMore = (type: string) => {
-    track("learn_more_click", `learn_more_${type}`);
+    track("learn_more_click", { learn_type: type.toLowerCase(), page_section: "Homepage" });
     if (type === "Profiles") {
       handleScrollToSection(profileSectionRef);
     } else if (type === "Squads") {
@@ -256,26 +256,26 @@ const Homepage = () => {
   };
 
   const handleViewSeasonGuide = () => {
-    track("view_season_guide_click", "view_season_guide");
+    track("navigation_click_download", { navigation_type: "view_season_guide", page_section: "Homepage" });
     const url = "https://drive.google.com/file/d/1iG0xOqE32Oqwqzsv1CKEPfsTvvo8FuT6/view";
     return window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const handleJoinDiscord = () => {
-    track("join_league_discord_click", "join_league_discord");
+    track("navigation_click_outside", { navigation_type: "join_discord", page_section: "Homepage" });
     const url = "https://discord.com/invite/yjTMKydM9f";
     return window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const handleGoToDrivers = () => {
-    track("go_to_drivers_click", "go_to_drivers_legacy");
+    track("navigation_click_outside", { navigation_type: "go_to_drivers_legacy", page_section: "Homepage" });
     const url = "https://www.MotorsportLeaguesDrivers.com";
     return window.open(url, "_blank", "noopener,noreferrer");
     return;
   };
 
   const handleGoToFantasy = () => {
-    track("go_to_fantasy_click", "go_to_fantasy");
+    track("navigation_click_outside", { navigation_type: "go_to_fantasy", page_section: "Homepage" });
     const url = "https://www.MotorsportLeaguesFantasy.com";
     return window.open(url, "_blank", "noopener,noreferrer");
     return;
@@ -292,16 +292,10 @@ const Homepage = () => {
   // };
 
   const handleOnTabChange = (tabName: string) => {
-    track("tab_change", `tab_change_${tabName.toLowerCase()}`);
+    track("tab_change", { tab_name: tabName.toLowerCase(), page_section: "Homepage" });
     setActiveTab(tabName);
     return;
   };
-
-
-  // const handleTabLinkClick = (tabName: string) => {
-  //   track("tab_link_click", `tab_link_${tabName.toLowerCase()}`);
-  //   return
-  // };
 
   return (
     <Wrapper>

@@ -7,6 +7,7 @@ import NavigatorBridge from "../navigation/NavigatorBridge";
 import { AppErrorBoundary } from "./AppErrorBoundry";
 import { ScrollToTop } from "@/utils/scrollToTop";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { AnalyticsRouteTracker } from "@/hooks/useAnalyticsRouteTracker";
 
 const AppRouter = () => {
   return (
@@ -14,6 +15,7 @@ const AppRouter = () => {
       <NavigatorBridge onReady={setNavigate} />
       <AppErrorBoundary>
         <ScrollToTop />
+        <AnalyticsRouteTracker />
         <Routes>
           <Route element={<Layout />}>
             {ROUTES.map(({ path, element, protected: isProtected }) => (

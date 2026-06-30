@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import { Provider, useDispatch } from "react-redux";
 import ReactGA from "react-ga4";
-
-
 import store, { type AppDispatch } from "@/store";
 import { fetchProfilesThunk } from "@/store/profile/profile.thunk";
 import { fetchAccountThunk } from "@/store/account/account.thunks";
@@ -18,15 +16,10 @@ import { fetchSquadsByAccountIdThunk } from "@/store/squads/squad.thunk";
 import { useSquadPendingInviteNotification } from "@/hooks/useSquadPendingInviteNotification";
 import { useLeaguePendingInviteNotification } from "@/hooks/useLeaguePendingInviteNotification";
 
-// import Toast from "@/components/Messages/Toast/Toast";
-
-//TODO: Re-enable Toast component once global state management is implemented
-
 const AppContent = () => {
   const { user, loading } = useAuth();
   const dispatch = useDispatch<AppDispatch>();
 
-  // Resolve any stored squad invite notification only after auth/bootstrap state settles.
   useSquadPendingInviteNotification();
   useLeaguePendingInviteNotification();
 
@@ -34,14 +27,14 @@ const AppContent = () => {
     if (loading) return;
 
     if (user?.id) {
+      ReactGA.set({ userId: user.id });
       dispatch(fetchAccountThunk(user.id));
       dispatch(fetchProfilesThunk(user.id));
       dispatch(fetchSquadsByAccountIdThunk(user.id));
       return;
     }
 
-    // Auth resolved and no session: move app slices out of loading state
-    // so selectors can resolve guest views.
+    ReactGA.set({ userId: undefined });
     dispatch(resetAppState());
   }, [loading, user?.id, dispatch]);
 
@@ -49,11 +42,13 @@ const AppContent = () => {
 };
 
 const App = () => {
-  ReactGA.initialize(import.meta.env.VITE_GA_MEASUREMENT_ID);
-  ReactGA.send({
-    hitType: "pageview",
-    page: window.location.pathname + window.location.search,
-  });
+  useEffect(() => {
+    const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+    
+    if (measurementId) {
+      ReactGA.initialize(measurementId);
+    }
+  }, []);
 
   return (
     <Provider store={store}>
