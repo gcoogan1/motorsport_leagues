@@ -31,7 +31,7 @@ export type RoundInfo = {
 };
 
 type ResultRow = {
-  position: number;
+  position?: number;
   points: number;
   driver: DriverInfo;
   time?: string;

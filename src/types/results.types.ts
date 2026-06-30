@@ -81,6 +81,7 @@ export type NormalizedResultsTable = ResultsTable & {
   track_name: string;
   display_name: string;
   team_name: string;
+  event_date?: string;
 };
 
 // -- GET JOINED RESULTS -- //

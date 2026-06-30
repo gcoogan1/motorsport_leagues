@@ -64,7 +64,6 @@ const TeamPerformance = ({
           <Table
             title={"Team's Season Results"}
             resultPerRound
-            showPosition={false}
             results={events.map((event) => ({
               points: event.totalPoints,
               type: "team",
