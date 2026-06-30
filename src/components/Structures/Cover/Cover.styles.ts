@@ -154,7 +154,19 @@ export const StatusContainer = styled.div`
 export const SquadName = styled.p`
   ${typography.body.mediumBold};
   color: ${colors.text.text1};
-  max-width: 100px;
+  max-width: 192px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+
+export const GameTypeText = styled.p`
+  ${typography.body.mediumBold};
+  color: ${colors.text.text1};
+  text-transform: uppercase;
+  max-width: 192px;
   min-width: 0;
   white-space: nowrap;
   overflow: hidden;

@@ -7,7 +7,7 @@ import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import type { LeagueCover, LeagueStatus } from "@/types/league.types";
 import type { Tag } from "../../Tags/Tags.variants";
 import type { GameType } from "@/types/profile.types";
-import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
+// import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import { getCoverVariants } from "./Cover.variants";
 import GameIcon from "@assets/Icon/Game.svg?react";
 import HostIcon from "@assets/Icon/Hosts.svg?react";
@@ -27,6 +27,7 @@ import {
   CoverWrapper,
   Description,
   DetailsContainer,
+  GameTypeText,
   SquadName,
   StatusContainer,
   TextContainer,
@@ -148,7 +149,7 @@ const Cover = ({
               rounded
               onClick={onGameClick}
             >
-              {convertGameTypeToFullName(gameType)}
+              <GameTypeText>{gameType}</GameTypeText>
             </Button>
             <Button
               size="small"

@@ -32,11 +32,23 @@ const Standings = ({ seasonStatus, seasonData }: StandingsProps) => {
   const showingTeams = isTeamChampionship && activeView === "Teams";
 
   const handleDriverClick = (driverId: string) => {
-    return openModal(<DriverPerformance driverId={driverId} seasonName={seasonData?.season_name ?? "Season Name"} />);
+    return openModal(
+      <DriverPerformance
+        driverId={driverId}
+        seasonId={seasonData?.id}
+        seasonName={seasonData?.season_name ?? "Season Name"}
+      />,
+    );
   };
 
   const handleTeamClick = (teamId: string) => {
-    return openModal(<TeamPerformance teamId={teamId} seasonName={seasonData?.season_name ?? "Season Name"} />)
+    return openModal(
+      <TeamPerformance
+        teamId={teamId}
+        seasonId={seasonData?.id}
+        seasonName={seasonData?.season_name ?? "Season Name"}
+      />,
+    );
   }
 
   return (

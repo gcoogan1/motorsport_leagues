@@ -44,6 +44,7 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
     openModal(
       <DriverPerformance
         driverId={driverId}
+        seasonId={seasonData?.id}
         driverName={driverName}
         seasonName={seasonData?.season_name ?? "Season Name"}
         teamName={teamName}
@@ -55,6 +56,7 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
     openModal(
       <TeamPerformance
         teamId={teamId}
+        seasonId={seasonData?.id}
         teamName={teamName}
         numOfDrivers={numOfDrivers}
         seasonName={seasonData?.season_name ?? "Season Name"}

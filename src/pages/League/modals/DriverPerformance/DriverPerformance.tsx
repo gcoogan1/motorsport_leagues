@@ -6,9 +6,11 @@ import { useDriverPerformanceResults } from "./useDriverPerformance";
 import SpecialRow from "@/components/Tables/SpecialRow/SpecialRow";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import ResultsModal from "@/pages/League/modals/ResultsModal/ResultsModal";
 
 type DriverPerformanceProps = {
   driverId: string;
+  seasonId?: string;
   seasonName: string;
   driverName?: string;
   teamName?: string;
@@ -16,11 +18,12 @@ type DriverPerformanceProps = {
 
 const DriverPerformance = ({
   driverId,
+  seasonId,
   seasonName,
   driverName,
   teamName,
 }: DriverPerformanceProps) => {
-  const { closeModal } = useModal();
+  const { closeModal, openModal } = useModal();
   const { driverData, teamName: performanceTeamName, results } =
     useDriverPerformanceResults(driverId);
 
@@ -31,6 +34,21 @@ const DriverPerformance = ({
   const totalPoints = eventResults.reduce((acc, entry) => acc + (entry.points ?? 0), 0);
 
   const isEmpty = !driverData || eventResults.length === 0;
+
+  const handleResultClick = (eventId: string) => {
+    if (!seasonId) {
+      return;
+    }
+
+    closeModal();
+    openModal(
+      <ResultsModal
+        eventId={eventId}
+        seasonId={seasonId}
+        seasonName={seasonName}
+      />,
+    );
+  };
 
   const listChildren = (
     <>
@@ -59,7 +77,7 @@ const DriverPerformance = ({
               avatarType: "preset",
               avatarValue: "black",
             },
-            onClick: () => {},
+            onClick: () => handleResultClick(entry.event_id),
           }))}
         />
       <SpecialRow label="Total Points" value={totalPoints} />

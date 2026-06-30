@@ -4,10 +4,12 @@ import { useModal } from "@/providers/modal/useModal";
 import { useTeamPerformanceResults } from "./useTeamPerfomance";
 import SpecialRow from "@/components/Tables/SpecialRow/SpecialRow";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import ResultsModal from "@/pages/League/modals/ResultsModal/ResultsModal";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
 
 type TeamPerformanceProps = {
   teamId: string;
+  seasonId?: string;
   seasonName: string;
   teamName?: string;
   numOfDrivers?: number;
@@ -15,11 +17,12 @@ type TeamPerformanceProps = {
 
 const TeamPerformance = ({
   teamId,
+  seasonId,
   teamName,
   numOfDrivers,
   seasonName,
 }: TeamPerformanceProps) => {
-  const { closeModal } = useModal();
+  const { closeModal, openModal } = useModal();
   const { teamData, events, driverCount } =
     useTeamPerformanceResults(teamId);
 
@@ -29,6 +32,21 @@ const TeamPerformance = ({
   const totalPoints = events.reduce((acc, entry) => acc + entry.totalPoints, 0);
 
   const isEmpty = !teamData || events.length === 0;
+
+  const handleEventClick = (eventId: string) => {
+    if (!seasonId) {
+      return;
+    }
+
+    closeModal();
+    openModal(
+      <ResultsModal
+        eventId={eventId}
+        seasonId={seasonId}
+        seasonName={seasonName}
+      />,
+    );
+  };
 
 
 
@@ -62,7 +80,7 @@ const TeamPerformance = ({
                 avatarType: "preset",
                 avatarValue: "black",
               },
-              onClick: () => {},
+              onClick: () => handleEventClick(event.eventId),
             }))}
           />
           <SpecialRow label="Total Points" value={totalPoints} />
