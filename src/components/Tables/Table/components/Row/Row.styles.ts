@@ -77,6 +77,7 @@ export const TeamCell = styled.div`
 export const TimeCell = styled.div`
   width: 96px;
   flex-shrink: 0;
+  text-align: left;
 `;
 
 export const RacesCell = styled.div`
