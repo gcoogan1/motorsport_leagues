@@ -18,6 +18,7 @@ import StatusActiveIcon from "@assets/Icon/Season_Active.svg?react";
 import StatusCompleteIcon from "@assets/Icon/Season_Complete.svg?react";
 import Button from "@/components/Button/Button";
 import Tags from "@/components/Tags/Tags";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   ActionDropdownContainer,
   ActionsContainer,
@@ -95,6 +96,7 @@ const Cover = ({
 
   const participantText = participantsCount === 1 ? "Participant" : "Participants";
   const followerText = followersCount === 1 ? "Follower" : "Followers";
+  const isMobile = useMediaQuery("(max-width: 919px)");
 
   const statusContentMap = {
     setup: {
@@ -216,7 +218,7 @@ const Cover = ({
                   color={action.color || "primary"}
                   ariaLabel={action.label}
                 >
-                  {action.label}
+                  {!isMobile && action.label}
                 </Button>
               );
             })}
