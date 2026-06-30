@@ -7,7 +7,7 @@ const { colors, gradients, layout, borders, typography, effects } = designTokens
 export const ModalOverlay = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: flex-start;
   justify-content: center;

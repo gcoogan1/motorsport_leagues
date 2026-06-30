@@ -43,7 +43,7 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
   );
 
   const activeDivisionLabel = useMemo(() => {
-    const firstDivisionLabel = divisionOptions[0]?.label ?? "";
+    const firstDivisionLabel = divisionOptions[1]?.label ?? divisionOptions[0]?.label ?? "";
 
     if (!selectedDivisionLabel) {
       return firstDivisionLabel;

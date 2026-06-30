@@ -6,7 +6,7 @@ import Icon from "@/components/Icon/Icon";
 import ParticipantsIcon from "@/assets/Icon/Participants.svg?react";
 import GameIcon from "@/assets/Icon/Game.svg?react";
 import HostIcon from "@/assets/Icon/Hosts.svg?react";
-import { ClickableWrapper, Divider, ImageContainer, IndicatorsContainer, LeagueInfoContainer, LeagueInfoContent, LeagueInfoText, LeagueName, SquadInfoText, TextContainer } from "./LeagueCard.styles";
+import { ClickableWrapper, Divider, HostingInfoText, ImageContainer, IndicatorsContainer, LeagueInfoContainer, LeagueInfoContent, LeagueInfoText, LeagueName, SquadInfoText, TextContainer } from "./LeagueCard.styles";
 import Status from "@/components/Status/Status";
 import Tags from "@/components/Tags/Tags";
 import { ThemeProvider } from "styled-components";
@@ -111,7 +111,7 @@ const LeagueCard = ({
                 {hostingSquad && (
                   <LeagueInfoContent>
                     <Icon size="small"><HostIcon /></Icon>
-                    <LeagueInfoText>{hostingSquad}</LeagueInfoText>
+                    <HostingInfoText>{hostingSquad}</HostingInfoText>
                   </LeagueInfoContent>
                 )}
             </LeagueInfoContainer>

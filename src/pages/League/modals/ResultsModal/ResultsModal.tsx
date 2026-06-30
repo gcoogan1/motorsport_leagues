@@ -320,7 +320,7 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
             const driver = driverById.get(result.driver_id);
 
             return {
-              position: index + 1,
+              position: index,
               points: result.points ?? 0,
               time: result.time,
               type: "driver" as const,

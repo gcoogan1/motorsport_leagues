@@ -36,7 +36,7 @@ export const ValueContainer = styled.div`
   border-bottom-right-radius: ${borders.radius.large};
   padding: ${layout.space.medium} ${layout.space.xLarge};
   gap: 10px;
-  background-color: ${({ theme }) => theme.theme.primaryGradientFadeLeft50};
+  background: ${({ theme }) => theme.theme.primaryGradientFadeLeft50};
 `;
 
 export const Value = styled.h2`

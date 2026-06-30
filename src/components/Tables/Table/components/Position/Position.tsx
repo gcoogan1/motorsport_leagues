@@ -48,7 +48,7 @@ const Position= ({ position }: PositionProps) => {
 
   return (
     <PositionContainer $positionBackground={positionBackground}>
-      <PositionText>{position}</PositionText>
+      <PositionText>{position === 0 ? "FL" : position}</PositionText>
     </PositionContainer>
   );
 };

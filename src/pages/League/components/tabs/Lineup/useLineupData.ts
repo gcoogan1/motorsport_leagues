@@ -253,7 +253,7 @@ export const useLineupData = ({
     [lineupData?.divisions],
   );
 
-  const defaultDivisionId = divisionOptions[0]?.value ?? "";
+  const defaultDivisionId = divisionOptions[1]?.value ?? divisionOptions[0]?.value ?? "";
   // Non-team championships are always in the Drivers view.
   const activeView = isTeamChampionship ? activeTab : "Drivers";
   // Fall back to the first division if the stored selection is no longer valid

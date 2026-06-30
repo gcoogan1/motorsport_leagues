@@ -65,7 +65,7 @@ export const useStandingsData = ({
     [seasonDivisions.data],
   );
 
-  const defaultDivisionId = divisionOptions[0]?.value ?? "";
+  const defaultDivisionId = divisionOptions[1]?.value ?? divisionOptions[0]?.value ?? "";
   const activeDivisionId = divisionOptions.some(
     (option) => option.value === selectedDivisionId,
   )

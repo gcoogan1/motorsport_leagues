@@ -49,7 +49,6 @@ export const SelectButtonWrapper = styled.div`
     margin: 0;
     max-height: 20px;
     align-items: self-start;
-    gap: ${layout.space.xxSmall};
   }
 
   .select__single-value,

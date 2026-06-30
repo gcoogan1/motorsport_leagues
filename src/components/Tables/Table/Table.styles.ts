@@ -75,9 +75,9 @@ export const TimeHeaderRow = styled.div`
   width: 96px;
   height: 18px;
   flex-shrink: 0;
-  
+
   ${layout.mediaQueries.mobile} {
-    width: 64px;
+    width: 40px;
   }
 `;
 

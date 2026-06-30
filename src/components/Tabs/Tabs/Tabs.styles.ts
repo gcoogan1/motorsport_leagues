@@ -26,7 +26,7 @@ export const TabsViewport = styled.div`
 
     ${layout.mediaQueries.mobile} {
     overflow-x: scroll;
-    justify-items: start; /* Changed from center to allow smooth scrolling */
+    justify-items: start;
     display: grid;
 
     /* Pull the container to the absolute screen edges */
@@ -51,7 +51,7 @@ export const TabsContainer = styled.div`
   justify-content: center;
 
   ${layout.mediaQueries.mobile} {
-    justify-content: flex-start;
+    /* justify-content: flex-start; */
   }
 `;
 
