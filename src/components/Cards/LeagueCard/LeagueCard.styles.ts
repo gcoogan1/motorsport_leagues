@@ -125,13 +125,11 @@ export const TextContainer = styled.div<{ $cardSize: "small" | "medium" }>`
   
   ${({ $cardSize }) => $cardSize === "small" && css`
     display: flex;
-    max-width: 100%;
     min-width: 80px;
     padding: 0px;
     flex: 1 0 0;
     
     ${layout.mediaQueries.mobile} {
-      max-width: 100%;
       align-items: center;
       text-align: center;
     }
@@ -153,8 +151,7 @@ export const LeagueName = styled.h3<{ $cardSize: "small" | "medium" }>`
   hyphens: auto;
   
   ${({ $cardSize }) => $cardSize === "small" && css`
-    /* max-width: 120px; */
-    max-width: 100%;
+    max-width: 120px;
     ${typography.body.mediumBold};
     
   `}
@@ -171,13 +168,11 @@ export const LeagueInfoContainer = styled.div`
   gap: ${layout.space.xSmall};
   align-self: stretch;
   color: ${colors.text.text2};
-  max-width: 100%;
 `
 
 export const LeagueInfoContent = styled.div`
   display: flex;
   gap: ${layout.space.xxSmall};
-  max-width: 100%;
 `
 
 export const LeagueInfoText = styled.p`
@@ -186,15 +181,6 @@ export const LeagueInfoText = styled.p`
   /* white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; */
-`
-
-export const HostingInfoText = styled.p`
-  ${typography.body.smallBold};
-  color: ${colors.text.text2};
-  max-width: 200px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `
 
 export const Divider = styled.div`
@@ -208,9 +194,11 @@ export const Divider = styled.div`
 export const SquadInfoText = styled.p`
   ${typography.body.smallRegular};
   color: ${colors.text.text2};
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
+  
+/* 
+  ${layout.mediaQueries.mobile} {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  } */
 `

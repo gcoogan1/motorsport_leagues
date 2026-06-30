@@ -17,6 +17,7 @@ export const TabsContainer = styled.div`
     grid-template-columns: 100%;
     gap: ${layout.space.xSmall};
     justify-items: center;
+    margin-left: -16px;
   }
 `;
 

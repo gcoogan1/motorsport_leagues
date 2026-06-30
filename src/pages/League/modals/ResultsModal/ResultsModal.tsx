@@ -6,7 +6,6 @@ import Table from "@/components/Tables/Table/Table";
 import { useModal } from "@/providers/modal/useModal";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
 import { sortEvents, sortRounds } from "@/features/leagues/forms/Schedule/Schedule.util";
-import DriverPerformance from "@/pages/League/modals/DriverPerformance/DriverPerformance";
 import {
   useEvent,
   useEventSessionSettings,
@@ -26,7 +25,7 @@ interface ResultsModalProps {
 }
 
 const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
-  const { closeModal, openModal } = useModal();
+  const { closeModal } = useModal();
   const [selectedDivisionId, setSelectedDivisionId] = useState("");
   const [selectedRoundId, setSelectedRoundId] = useState("");
   const [selectedEventId, setSelectedEventId] = useState("");
@@ -149,8 +148,8 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
     const options: Array<{ label: string; value: SessionType }> = [];
 
   const RESULT_TYPE_LABEL: Record<SessionType, string> = {
-    qualifying: "Qualifying Session",
-    race: "Race Session",
+    qualifying: "Qualifying Results",
+    race: "Race Results",
   };
 
     if (sessionSettings.has_qualifying) {
@@ -173,12 +172,6 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
   const effectiveSessionType = useMemo<SessionType | undefined>(() => {
     if (selectedSessionType && sessionOptions.some((option) => option.value === selectedSessionType)) {
       return selectedSessionType;
-    }
-
-    const hasRaceSession = sessionOptions.some((option) => option.value === "race");
-
-    if (hasRaceSession) {
-      return "race";
     }
 
     return sessionOptions[0]?.value;
@@ -212,18 +205,9 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
     [effectiveSessionType, sessionOptions],
   );
 
-  const handleDriverClick = (driverId: string, driverName?: string, teamName?: string) => {
-    closeModal();
-    openModal(
-      <DriverPerformance
-        driverId={driverId}
-        seasonId={seasonId}
-        seasonName={seasonName}
-        driverName={driverName}
-        teamName={teamName}
-      />,
-    );
-  };
+  console.log("Selected Session Label:", selectedSessionLabel);
+  console.log("Selected Session Results:", effectiveSessionType);
+  console.log("Fastest Lap Results:", fastestLapResults);
 
   const filters =
     divisionOptions.length > 0
@@ -304,12 +288,7 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
               avatarValue: driver?.avatar_value ?? "black",
               teamName: result.team_name,
             },
-            onClick: () =>
-              handleDriverClick(
-                result.driver_id,
-                driver?.display_name,
-                result.team_name,
-              ),
+            onClick: () => {},
           };
         })}
       />
@@ -320,7 +299,7 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
             const driver = driverById.get(result.driver_id);
 
             return {
-              position: index,
+              position: index + 1,
               points: result.points ?? 0,
               time: result.time,
               type: "driver" as const,
@@ -331,12 +310,7 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
                 avatarValue: driver?.avatar_value ?? "black",
                 teamName: result.team_name,
               },
-              onClick: () =>
-                handleDriverClick(
-                  result.driver_id,
-                  driver?.display_name,
-                  result.team_name,
-                ),
+              onClick: () => {},
             };
           })}
         />

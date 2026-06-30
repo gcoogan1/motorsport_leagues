@@ -7,7 +7,7 @@ import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import type { LeagueCover, LeagueStatus } from "@/types/league.types";
 import type { Tag } from "../../Tags/Tags.variants";
 import type { GameType } from "@/types/profile.types";
-// import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
+import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import { getCoverVariants } from "./Cover.variants";
 import GameIcon from "@assets/Icon/Game.svg?react";
 import HostIcon from "@assets/Icon/Hosts.svg?react";
@@ -18,7 +18,6 @@ import StatusActiveIcon from "@assets/Icon/Season_Active.svg?react";
 import StatusCompleteIcon from "@assets/Icon/Season_Complete.svg?react";
 import Button from "@/components/Button/Button";
 import Tags from "@/components/Tags/Tags";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   ActionDropdownContainer,
   ActionsContainer,
@@ -28,8 +27,6 @@ import {
   CoverWrapper,
   Description,
   DetailsContainer,
-  GameTypeText,
-  SquadName,
   StatusContainer,
   TextContainer,
   Title,
@@ -96,7 +93,6 @@ const Cover = ({
 
   const participantText = participantsCount === 1 ? "Participant" : "Participants";
   const followerText = followersCount === 1 ? "Follower" : "Followers";
-  const isMobile = useMediaQuery("(max-width: 919px)");
 
   const statusContentMap = {
     setup: {
@@ -151,7 +147,7 @@ const Cover = ({
               rounded
               onClick={onGameClick}
             >
-              <GameTypeText>{gameType}</GameTypeText>
+              {convertGameTypeToFullName(gameType)}
             </Button>
             <Button
               size="small"
@@ -161,7 +157,7 @@ const Cover = ({
               rounded
               onClick={onSquadNameClick}
             >
-              <SquadName>{squadName}</SquadName>
+              {squadName}
             </Button>
           </DetailsContainer>
           <ActionsContainer>
@@ -218,7 +214,7 @@ const Cover = ({
                   color={action.color || "primary"}
                   ariaLabel={action.label}
                 >
-                  {!isMobile && action.label}
+                  {action.label}
                 </Button>
               );
             })}

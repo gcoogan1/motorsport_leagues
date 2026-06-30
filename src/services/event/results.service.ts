@@ -25,8 +25,6 @@ export const normalizeResult = (result: any): NormalizedResultsTable => {
 
     round_name: round?.round_name ?? null,
 
-    event_date: event?.event_date ?? null,
-
     track_name:
       event?.event_track_details?.[0]?.track_name ?? null,
 
@@ -164,7 +162,6 @@ export const getResultsWithDetailsByDriverId = async (
       *,
       round ( round_name ),
       event (
-        event_date,
         event_track_details ( track_name )
       ),
       league_season_driver!driver_id (
@@ -174,7 +171,8 @@ export const getResultsWithDetailsByDriverId = async (
       )
     `)
     .eq("driver_id", driverId)
-    .neq("session_type", "qualifying");
+    .neq("session_type", "qualifying")
+    .neq("fastest_lap", true);
 
   if (error) {
     return {
@@ -213,7 +211,6 @@ export const getResultsWithDetailsPerTeamId = async (
       *,
       round ( round_name ),
       event (
-        event_date,
         event_track_details ( track_name )
       ),
       league_season_driver!driver_id (
@@ -224,6 +221,7 @@ export const getResultsWithDetailsPerTeamId = async (
     `)
     .eq("team_id", teamId)
     .neq("session_type", "qualifying")
+    .neq("fastest_lap", true)
 
   if (error) {
     return {

@@ -78,7 +78,6 @@ export type GetResultsResponse = {
 
 export type NormalizedResultsTable = ResultsTable & {
   round_name: string;
-  event_date: string | null;
   track_name: string;
   display_name: string;
   team_name: string;
