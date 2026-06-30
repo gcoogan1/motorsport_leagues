@@ -9,6 +9,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { newPasswordSchema, type NewPasswordSchema } from "./newPasswordSchema";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import ArrowForward from "@assets/Icon/Arrow_Forward.svg?react";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
@@ -17,6 +18,7 @@ const NewPasswordForm = () => {
   const { resetAuth } = useAuth();
   const { openModal } = useModal();
   const navigate = useNavigate();
+  const { track } = useAnalytics();
   const email = localStorage.getItem("pending_email");
   const [passwordUpdated, setPasswordUpdated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +62,7 @@ const NewPasswordForm = () => {
       }
 
       // Success
+      track("new_password_success", { page_section: "New Password" });
       setPasswordUpdated(true);
     } catch (error: any) {
       // General error handling

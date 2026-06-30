@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useToast } from "@/providers/toast/useToast"
 import { useModal } from '@/providers/modal/useModal';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { handleSupabaseError } from '@/utils/handleSupabaseErrors';
 import FormModal from '@/components/Forms/FormModal/FormModal';
 import ReadOnlyInput from '@/components/Inputs/ReadOnlyInput/ReadOnlyInput';
@@ -16,6 +17,7 @@ const ShareSquad = ({ squadUrl, onClose }: ShareSquadProps) => {
 
   const { showToast } = useToast();
   const { openModal } = useModal();
+  const { track } = useAnalytics();
   const [, setCopied] = useState(false);
 
   const handleOnClose = () => {
@@ -27,6 +29,7 @@ const ShareSquad = ({ squadUrl, onClose }: ShareSquadProps) => {
       navigator.clipboard.writeText(squadUrl);
       setCopied(true);
 
+      track("share_squad_link_copied", { page_section: "Share Squad" });
       
       // Reset after 4 seconds
       setTimeout(() => setCopied(false), 4000); 

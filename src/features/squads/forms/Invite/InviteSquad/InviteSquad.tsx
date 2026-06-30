@@ -14,6 +14,7 @@ import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { type EmailInvite, type SquadInviteTable } from "@/types/squad.types";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import MultiUserInput from "@/components/Inputs/MultiUserInput/MultiUserInput";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { inviteSchema } from "./inviteSquadSchema";
 import { useCreateNotification } from "@/rtkQuery/hooks/mutations/useNotificationMutation";
 import Duplicate from "@/features/squads/modals/errors/Duplicate/Duplicate";
@@ -31,6 +32,7 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
   const { openModal, closeModal } = useModal();
   const [loading, setLoading] = useState(false);
   const [createNotification] = useCreateNotification();
+  const { track } = useAnalytics();
 
   const userId = useSelector((state: RootState) => state.account.data?.id);
   const { data: profilesData } = useGetProfilesQuery({ userId });
@@ -174,6 +176,7 @@ const InviteSquad = ({ squadId, squadName, founderName, founderProfileId, founde
       // Update the list of pending invites to reflect the newly sent invites
       await refetchPendingInvites();
 
+      track("squad_invite_sent", { page_section: "Invite Squad" });
       showToast({
         usage: "success",
         message: "Invite(s) sent.",

@@ -10,15 +10,16 @@ import { useCreateNotification, useDeleteNotification } from "@/rtkQuery/hooks/m
 import { useAllNotifications } from "@/rtkQuery/hooks/queries/useNotifications";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
+import {
+  getInviteTableByToken,
+  removeSquadInviteByToken,
+} from "@/services/squad/squadInvite.service";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { navigate } from "@/app/navigation/navigation";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import ProfileSelectInput from "@/components/Inputs/ProfileSelectInput/ProfileSelectInput";
 import { joinSquadSchema, type JoinSquadFormValues } from "./acceptJoinSquad.schema";
-import {
-  getInviteTableByToken,
-  removeSquadInviteByToken,
-} from "@/services/squad/squadInvite.service";
 
 /*
   This component is rendered when a user clicks "Join Squad" from a squad invite notification but doesn't have a profile selected yet (edge case of the main JoinSquad flow). 
@@ -45,6 +46,7 @@ const AcceptJoinSquad = ({
 }: AcceptJoinSquadProps) => {
   const { openModal, closeAllModals } = useModal();
   const { showToast } = useToast();
+  const { track } = useAnalytics();
   const [joinSquadAsMember] = useJoinSquadAsMember();
   const [createNotification] = useCreateNotification();
   const [isLoading, setIsLoading] = useState(false);
@@ -140,6 +142,7 @@ const AcceptJoinSquad = ({
           message: "You’re now a member of this Squad.",
         });
         closeAllModals();
+        track("squad_joined", { page_section: "Join Squad" });
         navigate(`/squad/${squadId}`);
         onSuccess?.();
       } catch {

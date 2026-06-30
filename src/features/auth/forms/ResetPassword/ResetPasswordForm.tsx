@@ -9,6 +9,7 @@ import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { sendVerificationCode } from "@/services/auth.service";
 import { resetPasswordSchema, type ResetPasswordSchema } from "./resetPasswordSchema";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import UnverifiedAccount from "../../modals/errors/UnverifiedAccount/UnverifiedAccount";
@@ -21,6 +22,7 @@ const ResetPasswordForm = ({ onSuccess }: ResetPasswordFormProps) => {
   const { resetAuth } = useAuth();
   const { openModal } = useModal();
   const navigate = useNavigate();
+  const { track } = useAnalytics();
   const [isLoading, setIsLoading] = useState(false);
 
   // -- Clear Auth //
@@ -64,6 +66,7 @@ const ResetPasswordForm = ({ onSuccess }: ResetPasswordFormProps) => {
         return;
       }
       // Success
+      track("reset_password_request_success", { page_section: "Reset Password" });
       onSuccess?.();
     } catch (error: any) {
       handleSupabaseError({ code: error?.code ?? "SERVER_ERROR" }, openModal);

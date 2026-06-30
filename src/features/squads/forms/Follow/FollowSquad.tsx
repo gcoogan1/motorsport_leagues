@@ -8,6 +8,7 @@ import { withMinDelay } from "@/utils/withMinDelay";
 import { useFollowSquadMutation } from "@/rtkQuery/API/squadApi";
 import { useToast } from "@/providers/toast/useToast";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import ProfileSelectInput from "@/components/Inputs/ProfileSelectInput/ProfileSelectInput";
@@ -23,6 +24,7 @@ const FollowSquad = ({ accountId, squadIdToFollow }: FollowSquadProps) => {
   const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
   const [followSquad] = useFollowSquadMutation();
+  const { track } = useAnalytics();
   const [isLoading, setIsLoading] = useState(false);
   const profiles = useSelector((state: RootState) => state.profile.data);
   const formatedProfiles = convertProfilesToSelectOptions(profiles || []);
@@ -56,6 +58,7 @@ const FollowSquad = ({ accountId, squadIdToFollow }: FollowSquadProps) => {
         1000,
       );
 
+      track("follow_squad_success", { page_section: "Follow Squad" });
       showToast({
         usage: "success",
         message: "Now following this Squad.",

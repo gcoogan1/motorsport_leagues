@@ -8,6 +8,7 @@ import { withMinDelay } from "@/utils/withMinDelay";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { loginUser } from "@/services/auth.service";
 import { loginSchema, type LoginFormValues } from "./loginSchema";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import PasswordInput from "@/components/Inputs/PasswordInput/PasswordInput";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
@@ -22,6 +23,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
   const { openModal } = useModal();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const { track } = useAnalytics();
 
   //  - Form setup -- //
   const formMethods = useForm<LoginFormValues>({
@@ -83,6 +85,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
       }
 
       // Successful login
+      track("login_success", { page_section: "Login" });
       onSuccess?.();
     } catch (error: any) {
       handleSupabaseError({ code: error?.code ?? "SERVER_ERROR"}, openModal);

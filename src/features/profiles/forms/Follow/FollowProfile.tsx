@@ -8,10 +8,11 @@ import { useToast } from "@/providers/toast/useToast";
 import { useFollowProfileMutation } from "@/rtkQuery/API/profileApi";
 import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectOptions";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
+import { withMinDelay } from "@/utils/withMinDelay";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import ProfileSelectInput from "@/components/Inputs/ProfileSelectInput/ProfileSelectInput";
 import { followProfileSchema, type FollowProfileFormValues } from "./followProfileSchema";
-import { withMinDelay } from "@/utils/withMinDelay";
 
 type FollowProfileProps = {
   userId: string;
@@ -24,6 +25,7 @@ const FollowProfile = ({ userId, profileIdToFollow }: FollowProfileProps) => {
   const { showToast } = useToast();
   const [followProfile] = useFollowProfileMutation();
   const [isLoading, setIsLoading] = useState(false);
+  const { track } = useAnalytics();
   const profiles = useSelector((state: RootState) => state.profile.data);
   const formatedProfiles = convertProfilesToSelectOptions(profiles || []);
 
@@ -56,6 +58,7 @@ const FollowProfile = ({ userId, profileIdToFollow }: FollowProfileProps) => {
         1000,
       );
 
+      track("follow_profile_success", { page_section: "Follow Profile" });
       showToast({
         usage: "success",
         message: "Now following Profile.",

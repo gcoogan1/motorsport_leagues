@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createSquadThunk } from "@/store/squads/squad.thunk";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { clearSquadDraft } from "@/store/squads/squad.slice";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import ImageUploadInput from "@/components/Inputs/ImageUploadInput/ImageUploadInput";
@@ -23,6 +24,7 @@ const Banner = ({ onBack }: BannerProps) => {
   const { openModal } = useModal();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const { track } = useAnalytics();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
   const currentProfileId = useSelector((state: RootState) => state.profile.currentProfile?.id);
   const draft = useSelector((state: RootState) => state.squad.draft);
@@ -72,6 +74,8 @@ const Banner = ({ onBack }: BannerProps) => {
         })(),
         1000,
       );
+
+      track("create_squad_success", { page_section: "Create Squad" });
       if (result) navigate(`/squad/${result.data.id}`);
       openModal(<SquadCreated />);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

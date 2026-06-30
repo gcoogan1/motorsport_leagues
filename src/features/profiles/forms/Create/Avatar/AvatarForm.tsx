@@ -6,6 +6,9 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type AppDispatch, type RootState } from "@/store";
 import { withMinDelay } from "@/utils/withMinDelay";
+import { useModal } from "@/providers/modal/useModal";
+import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import FormBlock from "@/components/Forms/FormBlock/FormBlock";
 import ImageUploadInput from "@/components/Inputs/ImageUploadInput/ImageUploadInput";
 import SelectGraphicInput from "@/components/Inputs/SelectGraphicInput/SelectGraphicInput";
@@ -13,8 +16,6 @@ import { avatarFormSchema, type AvatarFormValues } from "./avatarFormSchema";
 import { createProfileThunk } from "@/store/profile/profile.thunk";
 import { clearProfileDraft } from "@/store/profile/profile.slice";
 import ProfileCreated from "@/features/profiles/modals/success/ProfileCreated/ProfileCreated";
-import { useModal } from "@/providers/modal/useModal";
-import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 
 type AvatarFormProps = {
   onBack?: () => void;
@@ -23,6 +24,7 @@ type AvatarFormProps = {
 const AvatarForm = ({ onBack }: AvatarFormProps) => {
   const navigate = useNavigate();
   const { openModal } = useModal();
+  const { track } = useAnalytics();
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -77,6 +79,7 @@ const AvatarForm = ({ onBack }: AvatarFormProps) => {
       );
 
       // Navigate to created profile
+      track("create_profile_success", { page_section: "Create Profile" });
       if (result) navigate(`/profile/${result.data.id}`);
       openModal(<ProfileCreated />);
     } catch (error: any) {
