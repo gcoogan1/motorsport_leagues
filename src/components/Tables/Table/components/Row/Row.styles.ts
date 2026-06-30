@@ -82,6 +82,10 @@ export const TimeCell = styled.div`
   width: 96px;
   flex-shrink: 0;
   text-align: left;
+
+  ${layout.mediaQueries.mobile} {
+    width: 40px;
+  }
 `;
 
 export const RacesCell = styled.div`
