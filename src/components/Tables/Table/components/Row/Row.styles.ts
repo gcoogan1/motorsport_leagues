@@ -52,7 +52,7 @@ export const RowContainer = styled.button`
 `;
 
 export const RowText = styled.p`
-  ${typography.body.medium};
+  ${typography.body.mediumBold};
   color: ${colors.text.text1};
   white-space: nowrap;
   overflow: hidden;
@@ -82,6 +82,10 @@ export const TimeCell = styled.div`
   width: 96px;
   flex-shrink: 0;
   text-align: left;
+
+  ${layout.mediaQueries.mobile} {
+    width: 64px;
+  }
 `;
 
 export const RacesCell = styled.div`
