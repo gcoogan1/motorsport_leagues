@@ -57,7 +57,7 @@ export const typographyTokens: FontTheme = {
         fontSize: "13px",
         fontFamily: "Quantico, sans-serif",
         fontWeight: 700,
-        lineHeight: "20px",
+        lineHeight: "18px",
       },
       mediumRegular: {
         fontSize: "15px",
