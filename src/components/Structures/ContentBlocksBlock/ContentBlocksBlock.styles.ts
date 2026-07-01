@@ -116,6 +116,7 @@ export const ImageContainer = styled.div<{ $imageSrc?: string, $isFlipped?: bool
 export const ContentTextContainer = styled.div`
   display: flex;
   flex: 1;
+  width: 100%;
   min-width: 0;
   flex-direction: column;
   justify-content: center;
