@@ -32,3 +32,7 @@ export const RightContainer = styled.div`
   display: flex;
   justify-content: right;
 `;
+
+export const AccountMenuContainer = styled.div`
+  position: relative;
+`;
