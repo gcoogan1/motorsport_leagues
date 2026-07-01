@@ -9,7 +9,6 @@ import LeMansImage from "@/assets/Homepage/Games/LeMans.png";
 import ProfileIcon from "@assets/Icon/Profile.svg?react";
 import SquadIcon from "@assets/Icon/Squad.svg?react";
 import LeagueIcon from "@assets/Icon/League.svg?react";
-import LeagueImage from "@assets/Homepage/leagueCard.png";
 import CardsImage from "@assets/Homepage/Features/Cards.png";
 import DriverImage from "@assets/Homepage/Features/Driver.png";
 import ExternalIcon from "@assets/Icon/External.svg?react";
@@ -17,8 +16,7 @@ import FollowIcon from "@assets/Icon/Follow.svg?react";
 import ProfilesPath from "@/assets/Homepage/Paths/profilesPath.png";
 import SquadsPath from "@/assets/Homepage/Paths/squadPath.png";
 import LeaguesPath from "@/assets/Homepage/Paths/leaguePath.png";
-import VipLeagueImage from "@/assets/Cover/cover1.png";
-import JokerImage from "@/assets/Homepage/jokerCard.png";
+import { getCoverVariants } from "@/components/Structures/Cover/Cover.variants";
 import LeagueTab from "@assets/Homepage/Tabs/leagueTab.png";
 import SeasonTab from "@assets/Homepage/Tabs/seasonTab.png";
 import DivisionTab from "@assets/Homepage/Tabs/divisionTab.png";
@@ -74,7 +72,6 @@ import {
   BlueFeaturedLeagueItem,
   FeaturedLeagueItemContents,
   FeaturedLeagueContentsButtons,
-  RedFeaturedLeagueItem,
   AboutContainer,
   AboutSection,
   AboutContents,
@@ -110,6 +107,10 @@ import LeagueCard from "@/components/Cards/LeagueCard/LeagueCard";
 import { useRef, useState } from "react";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import LeagueTabs from "@/components/Tabs/LeagueTabs/LeagueTabs";
+import {
+  useGetLeagueByIdQuery,
+  useGetLeagueParticipantsQuery,
+} from "@/rtkQuery/API/leagueApi";
 
 const TabsData = [
   { id: "league", label: "League" },
@@ -131,6 +132,31 @@ const Homepage = () => {
   const squadSectionRef = useRef<HTMLDivElement>(null);
   const leagueSectionRef = useRef<HTMLDivElement>(null);
   const { track } = useAnalytics();
+
+  const vipLeagueId = "45c95fc0-5a0e-4706-99e1-970173ab6353";
+  const lobbyLeagueId = "4c3c1283-cc49-432d-8c53-869470ddced0";
+
+  const { data: vipLeague } = useGetLeagueByIdQuery(vipLeagueId);
+  const { data: vipLeagueParticipants } =
+    useGetLeagueParticipantsQuery(vipLeagueId);
+
+  const { data: lobbyLeague } = useGetLeagueByIdQuery(lobbyLeagueId);
+  const { data: lobbyLeagueParticipants } =
+    useGetLeagueParticipantsQuery(lobbyLeagueId);
+
+  const vipLeagueCoverUrl =
+    vipLeague?.cover_type === "preset"
+      ? getCoverVariants()[
+          vipLeague.cover_value as keyof ReturnType<typeof getCoverVariants>
+        ]
+      : vipLeague?.cover_value || "";
+
+  const lobbyLeagueCoverUrl =
+    lobbyLeague?.cover_type === "preset"
+      ? getCoverVariants()[
+          lobbyLeague.cover_value as keyof ReturnType<typeof getCoverVariants>
+        ]
+      : lobbyLeague?.cover_value || "";
 
   const tabContent = {
     league: {
@@ -186,7 +212,7 @@ const Homepage = () => {
   const tab = tabContent[activeTab as keyof typeof tabContent];
 
   const ManageList = [
-    "Announcements", 
+    "Announcements",
     "·",
     "League Chat",
     "·",
@@ -217,12 +243,18 @@ const Homepage = () => {
 
   // Redirect to Create Account
   const handleGetStarted = () => {
-    track("sign_up_initiated", { cta_position: "hero", page_section: "Homepage" });
+    track("sign_up_initiated", {
+      cta_position: "hero",
+      page_section: "Homepage",
+    });
     return navigate("/create-account");
   };
 
   const handleSearch = (tab: "Leagues" | "Profiles" | "Squads") => {
-    track("search_initiated", { search_tab: tab.toLowerCase(), page_section: "Homepage" });
+    track("search_initiated", {
+      search_tab: tab.toLowerCase(),
+      page_section: "Homepage",
+    });
     openModal(<SearchForm startingTab={tab} />);
     return;
   };
@@ -236,14 +268,19 @@ const Homepage = () => {
     return;
   };
 
-  const handleScrollToSection = (sectionRef: React.RefObject<HTMLDivElement | null>) => {
+  const handleScrollToSection = (
+    sectionRef: React.RefObject<HTMLDivElement | null>,
+  ) => {
     if (sectionRef.current) {
       sectionRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   const handleLearnMore = (type: string) => {
-    track("learn_more_click", { learn_type: type.toLowerCase(), page_section: "Homepage" });
+    track("learn_more_click", {
+      learn_type: type.toLowerCase(),
+      page_section: "Homepage",
+    });
     if (type === "Profiles") {
       handleScrollToSection(profileSectionRef);
     } else if (type === "Squads") {
@@ -255,43 +292,73 @@ const Homepage = () => {
   };
 
   const handleViewSeasonGuide = () => {
-    track("navigation_click_download", { navigation_type: "view_season_guide", page_section: "Homepage" });
-    const url = "https://drive.google.com/file/d/1iG0xOqE32Oqwqzsv1CKEPfsTvvo8FuT6/view";
+    track("navigation_click_download", {
+      navigation_type: "view_season_guide",
+      page_section: "Homepage",
+    });
+    const url =
+      "https://drive.google.com/file/d/1iG0xOqE32Oqwqzsv1CKEPfsTvvo8FuT6/view";
     return window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const handleJoinDiscord = () => {
-    track("navigation_click_outside", { navigation_type: "join_discord", page_section: "Homepage" });
+    track("navigation_click_outside", {
+      navigation_type: "join_discord",
+      page_section: "Homepage",
+    });
     const url = "https://discord.com/invite/yjTMKydM9f";
     return window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const handleGoToDrivers = () => {
-    track("navigation_click_outside", { navigation_type: "go_to_drivers_legacy", page_section: "Homepage" });
+    track("navigation_click_outside", {
+      navigation_type: "go_to_drivers_legacy",
+      page_section: "Homepage",
+    });
     const url = "https://www.MotorsportLeaguesDrivers.com";
     return window.open(url, "_blank", "noopener,noreferrer");
     return;
   };
 
   const handleGoToFantasy = () => {
-    track("navigation_click_outside", { navigation_type: "go_to_fantasy", page_section: "Homepage" });
+    track("navigation_click_outside", {
+      navigation_type: "go_to_fantasy",
+      page_section: "Homepage",
+    });
     const url = "https://www.MotorsportLeaguesFantasy.com";
     return window.open(url, "_blank", "noopener,noreferrer");
     return;
   };
 
-  // const handleJoinLeague = (leagueName: string) => {
-  //   track("join_league_click", `join_league_${leagueName.toLowerCase()}`);
-  //   return;
-  // };
+  const handleGoToLeagues = (leagueId: string) => {
+    track("navigation_click", {
+      navigation_type: "go_to_league",
+      page_section: "Homepage",
+    });
+    return navigate(`/league/${leagueId}`);
+  };
 
-  // const handleFollowLeague = (leagueName: string) => {
-  //   track("follow_league_click", `follow_league_${leagueName.toLowerCase()}`);
-  //   return;
-  // };
+  const handleJoinLeague = (leagueId: string) => {
+    track("join_league_click", {
+      league_id: leagueId,
+      page_section: "Homepage",
+    });
+    navigate(`/league/${leagueId}?action=join`);
+  };
+
+  const handleFollowLeague = (leagueId: string) => {
+    track("follow_league_click", {
+      league_id: leagueId,
+      page_section: "Homepage",
+    });
+    navigate(`/league/${leagueId}?action=follow`);
+  };
 
   const handleOnTabChange = (tabName: string) => {
-    track("tab_change", { tab_name: tabName.toLowerCase(), page_section: "Homepage" });
+    track("tab_change", {
+      tab_name: tabName.toLowerCase(),
+      page_section: "Homepage",
+    });
     setActiveTab(tabName);
     return;
   };
@@ -301,7 +368,9 @@ const Homepage = () => {
       <Hero>
         <Container>
           <TextContainer>
-            <Title>The Home of <br /> Sim Racing Leagues</Title>
+            <Title>
+              The Home of <br /> Sim Racing Leagues
+            </Title>
             <SubTitle>
               Create and compete in custom sim racing leagues.
             </SubTitle>
@@ -517,13 +586,17 @@ const Homepage = () => {
               <VIPItemTop>
                 <VIPLeagueContainer>
                   <LeagueCard
-                    name={"VIP GT World Championship"}
-                    coverImageUrl={LeagueImage}
-                    seasonStatus={"setup"}
+                    name={vipLeague?.league_name || "VIP GT World Championship"}
+                    coverImageUrl={vipLeagueCoverUrl}
+                    seasonStatus={vipLeague?.league_status || "setup"}
                     size={"medium"}
-                    gameType={"gt7"}
-                    numOfParticipants={100}
-                    hostingSquad="VIP Racing Team"
+                    gameType={vipLeague?.game_type || "gt7"}
+                    numOfParticipants={vipLeagueParticipants?.length || 0}
+                    hostingSquad={
+                      vipLeague?.hosting_squad_name || "VIP Racing Team"
+                    }
+                    themeColor={vipLeague?.theme_color || "yellow"}
+                    onClick={() => handleGoToLeagues(vipLeague?.id || "")}
                   />
                   <VIPLeagueContents>
                     <VIPLeagueContentsTextContainer>
@@ -561,7 +634,8 @@ const Homepage = () => {
                 <TextContainer>
                   <SectionTitle>Custom Features</SectionTitle>
                   <SectionSubTitle>
-                    The VIP GT World Championship offers two extra features that are unique to its series.
+                    The VIP GT World Championship offers two extra features that
+                    are unique to its series.
                   </SectionSubTitle>
                 </TextContainer>
                 <SectionList>
@@ -571,7 +645,9 @@ const Homepage = () => {
                       <ItemTextContainer>
                         <ItemTitle>Build Your Legacy</ItemTitle>
                         <ItemSubTitle>
-                          View driver’s league specific performance metrics, including their League Rating, within the Drivers’ Cards.
+                          View driver’s league specific performance metrics,
+                          including their League Rating, within the Drivers’
+                          Cards.
                         </ItemSubTitle>
                       </ItemTextContainer>
                       <Button
@@ -589,7 +665,9 @@ const Homepage = () => {
                       <ItemTextContainer>
                         <ItemTitle>Build Your Team</ItemTitle>
                         <ItemSubTitle>
-                          Play along with the championship as a fantasy manager and get the opportunity to shake things up in the actual league.
+                          Play along with the championship as a fantasy manager
+                          and get the opportunity to shake things up in the
+                          actual league.
                         </ItemSubTitle>
                       </ItemTextContainer>
                       <Button
@@ -612,20 +690,24 @@ const Homepage = () => {
           <TextContainer>
             <SectionTitle>Featured Leagues</SectionTitle>
             <SectionSubTitle>
-              Check out some of our most prestigious series partnered with Motorsport Leagues.
+              Check out some of our most prestigious series partnered with
+              Motorsport Leagues.
             </SectionSubTitle>
           </TextContainer>
           <FeaturedLeaguesList>
             <BlueFeaturedLeagueItem>
               <LeagueCard
-                name={"VIP GT World Championship"}
-                coverImageUrl={VipLeagueImage}
-                seasonStatus={"setup"}
+                name={lobbyLeague?.league_name || "VIP GT World Championship"}
+                coverImageUrl={lobbyLeagueCoverUrl}
+                seasonStatus={lobbyLeague?.league_status || "setup"}
                 size={"medium"}
-                gameType={"gt7"}
-                numOfParticipants={100}
-                hostingSquad="VIP Racing Team"
-                themeColor={"blue"}
+                gameType={lobbyLeague?.game_type || "gt7"}
+                numOfParticipants={lobbyLeagueParticipants?.length || 0}
+                hostingSquad={
+                  lobbyLeague?.hosting_squad_name || "VIP Racing Team"
+                }
+                themeColor={lobbyLeague?.theme_color || "blue"}
+                onClick={() => handleGoToLeagues(lobbyLeague?.id || "")}
               />
               <FeaturedLeagueItemContents>
                 <ItemTextContainer>
@@ -637,11 +719,17 @@ const Homepage = () => {
                   </ItemSubTitle>
                 </ItemTextContainer>
                 <FeaturedLeagueContentsButtons>
-                  <Button color="base">Join League</Button>
+                  <Button
+                    color="base"
+                    onClick={() => handleJoinLeague(lobbyLeague?.id || "")}
+                  >
+                    Join League
+                  </Button>
                   <Button
                     color="base"
                     variant="outlined"
                     icon={{ left: <FollowIcon /> }}
+                    onClick={() => handleFollowLeague(lobbyLeague?.id || "")}
                   >
                     Follow
                   </Button>
@@ -650,14 +738,17 @@ const Homepage = () => {
             </BlueFeaturedLeagueItem>
             <YellowFeaturedLeagueItem>
               <LeagueCard
-                name={"VIP GT World Championship"}
-                coverImageUrl={LeagueImage}
-                seasonStatus={"setup"}
+                name={vipLeague?.league_name || "VIP GT World Championship"}
+                coverImageUrl={vipLeagueCoverUrl}
+                seasonStatus={vipLeague?.league_status || "setup"}
                 size={"medium"}
-                gameType={"gt7"}
-                numOfParticipants={100}
-                hostingSquad="VIP Racing Team"
-                themeColor={"yellow"}
+                gameType={vipLeague?.game_type || "gt7"}
+                numOfParticipants={vipLeagueParticipants?.length || 0}
+                hostingSquad={
+                  vipLeague?.hosting_squad_name || "VIP Racing Team"
+                }
+                themeColor={vipLeague?.theme_color || "yellow"}
+                onClick={() => handleGoToLeagues(vipLeague?.id || "")}
               />
               <FeaturedLeagueItemContents>
                 <ItemTextContainer>
@@ -669,27 +760,34 @@ const Homepage = () => {
                   </ItemSubTitle>
                 </ItemTextContainer>
                 <FeaturedLeagueContentsButtons>
-                  <Button color="base">Join League</Button>
+                  <Button
+                    color="base"
+                    onClick={() => handleJoinLeague(vipLeague?.id || "")}
+                  >
+                    Join League
+                  </Button>
                   <Button
                     color="base"
                     variant="outlined"
                     icon={{ left: <FollowIcon /> }}
+                    onClick={() => handleFollowLeague(vipLeague?.id || "")}
                   >
                     Follow
                   </Button>
                 </FeaturedLeagueContentsButtons>
               </FeaturedLeagueItemContents>
             </YellowFeaturedLeagueItem>
-            <RedFeaturedLeagueItem>
+            {/* <RedFeaturedLeagueItem>
               <LeagueCard
-                name={"VIP GT World Championship"}
-                coverImageUrl={JokerImage}
-                seasonStatus={"setup"}
+                name={vipLeague?.league_name || "VIP GT World Championship"}
+                coverImageUrl={vipLeagueCoverUrl}
+                seasonStatus={vipLeague?.league_status || "setup"}
                 size={"medium"}
-                gameType={"gt7"}
-                numOfParticipants={100}
-                hostingSquad="VIP Racing Team"
-                themeColor={"red"}
+                gameType={vipLeague?.game_type || "gt7"}
+                numOfParticipants={vipLeagueParticipants?.length || 0}
+                hostingSquad={
+                  vipLeague?.hosting_squad_name || "VIP Racing Team"
+                }
               />
               <FeaturedLeagueItemContents>
                 <ItemTextContainer>
@@ -711,7 +809,7 @@ const Homepage = () => {
                   </Button>
                 </FeaturedLeagueContentsButtons>
               </FeaturedLeagueItemContents>
-            </RedFeaturedLeagueItem>
+            </RedFeaturedLeagueItem> */}
           </FeaturedLeaguesList>
         </FeaturedLeaguesContainer>
       </FeaturedLeaguesSection>
@@ -811,7 +909,11 @@ const Homepage = () => {
             </SectionSubTitle>
           </TextContainer>
           <TabWrapper>
-            <LeagueTabs leagues={TabsData} activeLeague={activeTab} onLeagueChange={handleOnTabChange} />
+            <LeagueTabs
+              leagues={TabsData}
+              activeLeague={activeTab}
+              onLeagueChange={handleOnTabChange}
+            />
             <TabContent>
               <TabTextContainer>
                 <AboutItemTitleContainer>
@@ -856,7 +958,9 @@ const Homepage = () => {
         <ContactContainer>
           <TextContainer>
             <SectionTitle>Ready to Race?</SectionTitle>
-            <SectionSubTitle>Create your Profile, join a Squad, and design your perfect League.</SectionSubTitle>
+            <SectionSubTitle>
+              Create your Profile, join a Squad, and design your perfect League.
+            </SectionSubTitle>
           </TextContainer>
           <ContactButtons>
             <Button
@@ -867,7 +971,7 @@ const Homepage = () => {
             >
               Search
             </Button>
-                {!user && (
+            {!user && (
               <Button
                 color="base"
                 icon={{ right: <ArrowForwardIcon /> }}

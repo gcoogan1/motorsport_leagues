@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
 import { LEAGUE_PARTICIPANT_ROLES } from "@/types/league.types";
@@ -56,6 +56,7 @@ const League = () => {
   const { openModal, closeModal } = useModal();
   const { openPanel } = usePanel();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch<AppDispatch>();
   const { setOverrideThemeName, clearOverrideThemeName } = useAppTheme();
   const [activeLeagueTab, setActiveLeagueTab] = useState("schedule");
@@ -159,12 +160,14 @@ const League = () => {
     leagueStatus,
   });
   const hasStoredInvite = useRef(false);
+  const hasHandledAction = useRef(false);
 
   // -- Effects -- //
   // Fetch the active league when the route changes.
   useEffect(() => {
     if (leagueId && currentLeague?.id !== leagueId) {
       dispatch(getLeagueByIdThunk(leagueId));
+      hasHandledAction.current = false; // Reset action handler for new league
     }
   }, [leagueId, currentLeague?.id, dispatch]);
 
@@ -233,6 +236,70 @@ const League = () => {
     !currentLeague ||
     currentLeague.id !== leagueId;
 
+  // Define handlers with useCallback to use in effect before they're declared
+  const handleJoinLeague = useCallback(() => {
+    if (viewType === "guest" || !accountId) {
+      return openModal(<LeagueGuestFollow type="join" />);
+    }
+
+    if (viewType === "user" && !hasProfile) {
+      return openModal(<LeagueNoProfile type="join" />);
+    }
+
+    if (!currentLeague) return;
+    openPanel("LEAGUE_JOIN", { leagueId: currentLeague.id });
+  }, [viewType, accountId, hasProfile, currentLeague, openModal, openPanel]);
+
+  const handleFollowLeague = useCallback(() => {
+    if (viewType === "guest" || !accountId) {
+      return openModal(<LeagueGuestFollow />);
+    }
+
+    if (viewType === "user" && !hasProfile) {
+      return openModal(<LeagueNoProfile />);
+    }
+
+    if (!currentLeague) return;
+
+    if (isFollowing) {
+      openModal(
+        <UnfollowLeague leagueId={currentLeague.id} accountId={accountId} />,
+      );
+      return;
+    }
+
+    openModal(
+      <FollowLeague
+        leagueIdToFollow={currentLeague.id}
+        accountId={accountId}
+      />,
+    );
+  }, [viewType, accountId, hasProfile, isFollowing, currentLeague, openModal]);
+
+  // Handle action query parameter (e.g., ?action=join or ?action=follow)
+  // Must be called before early return to comply with hook rules
+  useEffect(() => {
+    if (isLeagueLoading) {
+      return;
+    }
+
+    const action = searchParams.get("action");
+    if (!action || viewType === "loading" || hasHandledAction.current) {
+      return;
+    }
+
+    hasHandledAction.current = true;
+
+    if (action === "join") {
+      handleJoinLeague();
+    } else if (action === "follow") {
+      handleFollowLeague();
+    }
+
+    // Clear the action parameter after triggering the modal
+    setSearchParams({}, { replace: true });
+  }, [searchParams, viewType, isLeagueLoading, handleJoinLeague, handleFollowLeague, setSearchParams]);
+
   if (isLeagueLoading) {
     return <LoadingScreen />;
   }
@@ -263,43 +330,6 @@ const League = () => {
 
   const handleFollowersClick = () => {
     openPanel("LEAGUE_FOLLOWERS", { leagueId: currentLeague.id });
-  };
-
-  const handleJoinLeague = () => {
-    if (viewType === "guest" || !accountId) {
-      return openModal(<LeagueGuestFollow type="join" />);
-    }
-
-    if (viewType === "user" && !hasProfile) {
-      return openModal(<LeagueNoProfile type="join" />);
-    }
-
-    openPanel("LEAGUE_JOIN", { leagueId: currentLeague.id });
-  };
-
-  const handleFollowLeague = () => {
-    if (viewType === "guest" || !accountId) {
-      return openModal(<LeagueGuestFollow />);
-    }
-
-    if (viewType === "user" && !hasProfile) {
-      return openModal(<LeagueNoProfile />);
-    }
-
-    if (isFollowing) {
-      openModal(
-        <UnfollowLeague leagueId={currentLeague.id} accountId={accountId} />,
-      );
-      return;
-    }
-
-    openModal(
-      <FollowLeague
-        leagueIdToFollow={currentLeague.id}
-        accountId={accountId}
-      />,
-    );
-    return;
   };
 
   const handleLeaveLeague = () => {

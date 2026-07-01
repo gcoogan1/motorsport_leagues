@@ -32,7 +32,7 @@ const Icon = ({ size = "medium", ariaLabel, onClick, children }: IconProps) => {
         height: sizeValue,
         alignItems: "center",
         justifyContent: "center",
-        alignSelf: "center",
+        // alignSelf: "center",
         color: "inherit",
       }}
       aria-label={ariaLabel}

@@ -8,6 +8,7 @@ import {
   type AddLeagueParticipantRoleResult,
   type CreateLeagueJoinRequestPayload,
   type CreateLeagueJoinRequestResult,
+  type CreateLeagueResult,
   type CreateLeagueSeasonDriverPayload,
   type CreateLeagueSeasonDriverResult,
   type CreateLeagueSeasonPayload,
@@ -101,6 +102,7 @@ import {
   getLeaguesWithInfoByAccountId,
   getLeaguesWithInfoByProfileId,
   getLeaguesWithInfoBySquadId,
+  getLeagueById,
 } from "@/services/league/league.service";
 import {
   addLeagueApplicationOptions,
@@ -260,6 +262,30 @@ export const leagueApi = createApi({
       },
       providesTags: (_result, _error, accountId) => [
         { type: "Leagues", id: `participant-leagues-${accountId}` },
+      ],
+    }),
+    getLeagueById: builder.query<LeagueTable, string>({
+      queryFn: async (leagueId) => {
+        try {
+          const result: CreateLeagueResult =
+            await getLeagueById(leagueId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data as LeagueTable };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: (_result, _error, leagueId) => [
+        { type: "Leagues", id: leagueId },
       ],
     }),
     getLeaguesByProfileId: builder.query<LeagueWithInfo[], string>({
@@ -1645,6 +1671,7 @@ export const {
   useGetLeagueFollowingQuery,
   useGetLeaguesQuery,
   useGetParticipantLeaguesQuery,
+  useGetLeagueByIdQuery,
   useGetLeaguesByProfileIdQuery,
   useGetLeaguesBySquadIdQuery,
   useIsFollowingLeagueQuery,
