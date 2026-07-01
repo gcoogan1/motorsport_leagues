@@ -26,8 +26,19 @@ export const TabsViewport = styled.div`
 
   ${layout.mediaQueries.mobile} {
     overflow-x: scroll;
-    justify-items: center;
+    justify-items: start; /* Changed from center to allow smooth scrolling */
     display: grid;
+
+    /* Pull the container to the absolute screen edges */
+    margin-left: -${layout.space.medium}; /* Replace with your actual global mobile padding token */
+    margin-right: -${layout.space.medium};
+    
+    /* Re-add padding inside so text doesn't touch the glass */
+    padding-left: ${layout.space.medium};
+    padding-right: ${layout.space.medium};
+    
+    /* Ensure the component takes full viewport width plus the offset */
+    width: calc(100% + (${layout.space.medium} * 2)); 
   }
 `;
 
@@ -38,8 +49,8 @@ export const TabsContainer = styled.div`
   gap: ${layout.space.xxxSmall};
 
   justify-content: center;
-
-  /* ${layout.mediaQueries.mobile} {
+/* 
+  ${layout.mediaQueries.mobile} {
     justify-content: flex-start;
   } */
 `;
