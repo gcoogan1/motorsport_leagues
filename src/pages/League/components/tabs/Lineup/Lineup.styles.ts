@@ -25,6 +25,7 @@ export const LineupContainer = styled.div<{ $isEmpty: boolean, isDriversTab?: bo
     ${(props) => props.isDriversTab && css`
         gap: ${layout.space.xLarge};
     `}
+    gap: ${layout.space.xLarge};
   }
 `;
 
