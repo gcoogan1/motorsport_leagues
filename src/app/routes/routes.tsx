@@ -1,4 +1,4 @@
-import AlphaHomepage from "@/pages/AlphaHomepage/AlphaHomepage";
+// import AlphaHomepage from "@/pages/AlphaHomepage/AlphaHomepage";
 import ComingSoon from "@/pages/ComingSoon/ComingSoon";
 import CreateAccount from "@/pages/CreateAccount/CreateAccount";
 import CreateLeague from "@/pages/CreateLeague/CreateLeague";
@@ -15,13 +15,13 @@ import Squad from "@/pages/Squad/Squad";
 import Unavailable from "@/pages/Unavailable/Unavailable";
 import VerifyAccount from "@/pages/VerifyAccount/VerifyAccount";
 
-const context = import.meta.env.VITE_CONTEXT;
+// const context = import.meta.env.VITE_CONTEXT;
 
-export const ENV = {
-  isProduction: context === "production",
-  isBranchDeploy: context === "branch-deploy",
-  isPreview: context === "deploy-preview",
-};
+// export const ENV = {
+//   isProduction: context === "production",
+//   isBranchDeploy: context === "branch-deploy",
+//   isPreview: context === "deploy-preview",
+// };
 
 export type Route = {
   path: string;
@@ -30,16 +30,16 @@ export type Route = {
   protected?: boolean; // If true, only accessible to authenticated users
 };
 
-const DEV_ROUTES: Route[] = [
+const PROD_ROUTES: Route[] = [
   { 
     path: "/", 
     element: <Homepage />,
   },
-  {
-    path: "/alpha",
-    element: <AlphaHomepage />,
-    navbar: "alpha",
-  },
+  // {
+  //   path: "/alpha",
+  //   element: <AlphaHomepage />,
+  //   navbar: "alpha",
+  // },
   {
     path: "/verify-account",
     element: <VerifyAccount />,
@@ -127,17 +127,17 @@ const DEV_ROUTES: Route[] = [
   },
 ];
 
-const PRODUCTION_ROUTES: Route[] = [
-  {
-    path: "/",
-    element: <AlphaHomepage />,
-    navbar: "alpha",
-  },
-  {
-    path: "*",
-    element: <AlphaHomepage />,
-    navbar: "alpha",
-  },
-];
+// const PRODUCTION_ROUTES: Route[] = [
+//   {
+//     path: "/",
+//     element: <AlphaHomepage />,
+//     navbar: "alpha",
+//   },
+//   {
+//     path: "*",
+//     element: <AlphaHomepage />,
+//     navbar: "alpha",
+//   },
+// ];
 
-export const ROUTES: Route[] = ENV.isProduction ? PRODUCTION_ROUTES : DEV_ROUTES;
+export const ROUTES: Route[] = PROD_ROUTES;
