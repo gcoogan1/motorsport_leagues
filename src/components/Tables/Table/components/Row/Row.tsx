@@ -42,6 +42,7 @@ type RowProps = {
   showPosition?: boolean;
   roundInfo?: RoundInfo;
   onClick: () => void;
+  hidePoints?: boolean;
 };
 
 const Row = ({
@@ -55,6 +56,7 @@ const Row = ({
   resultPerRound,
   showPosition = true,
   roundInfo,
+  hidePoints = false,
 }: RowProps) => {
   return (
     <RowWrapper>
@@ -98,9 +100,11 @@ const Row = ({
             <RowText>{time}</RowText>
           </TimeCell>
         )}
-        <PointsCell>
-          <RowText>{points}</RowText>
-        </PointsCell>
+        {!hidePoints && (
+          <PointsCell>
+            <RowText>{points}</RowText>
+          </PointsCell>
+        )}
       </RowContainer>
     </RowWrapper>
   );

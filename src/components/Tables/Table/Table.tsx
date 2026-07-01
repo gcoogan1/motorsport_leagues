@@ -46,6 +46,7 @@ type TableProps = {
   results: ResultRow[];
   metricLabel?: string;
   resultPerRound?: boolean;
+  hidePoints?: boolean;
 };
 
 const Table= ({
@@ -53,6 +54,7 @@ const Table= ({
   results,
   metricLabel,
   resultPerRound,
+  hidePoints = false,
 }: TableProps) => {
   const hasTime = results.some((result) => typeof result.time === "string" && result.type === "driver");
   const hasTeam = results.some((result) => result.type === "team");
@@ -90,9 +92,11 @@ const Table= ({
               )}
             </>
           )}
-          <PointsHeaderRow>
-            <HeaderCell>Points</HeaderCell>
-          </PointsHeaderRow>
+          {!hidePoints && (
+            <PointsHeaderRow>
+              <HeaderCell>Points</HeaderCell>
+            </PointsHeaderRow>
+          )}
         </TableContentHeader>
         {results.map(({ position, points, driver, time, races, onClick, roundInfo }) => (
           <TableRows key={driver.id}>
@@ -106,6 +110,7 @@ const Table= ({
               onClick={onClick}
               resultPerRound={resultPerRound}
               roundInfo={roundInfo}
+              hidePoints={hidePoints}
             />
           </TableRows>
         ))}

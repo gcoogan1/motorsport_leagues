@@ -25,9 +25,24 @@ export const useDriverPerformanceResults = (driverId: string) => {
   // fall back to live season-driver/team queries when no results exist yet.
   const rawDriverData = rawResults[0] ?? null;
 
-  // Hide zero-point events in performance views.
+  // Hide zero-point events in performance views and sort by event date (oldest to newest)
   const results = useMemo(
-    () => rawResults.filter((result) => (result.points ?? 0) > 0),
+    () => {
+      const filtered = rawResults.filter((result) => (result.points ?? 0) > 0);
+      return filtered.sort((left, right) => {
+        // Sort by event_date first (oldest to newest)
+        if (!left.event_date && !right.event_date) {
+          return left.created_at.localeCompare(right.created_at);
+        }
+        if (!left.event_date) {
+          return 1;
+        }
+        if (!right.event_date) {
+          return -1;
+        }
+        return new Date(left.event_date).getTime() - new Date(right.event_date).getTime();
+      });
+    },
     [rawResults],
   );
 

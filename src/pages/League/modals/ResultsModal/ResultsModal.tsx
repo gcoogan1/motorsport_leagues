@@ -5,7 +5,7 @@ import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
 import Table from "@/components/Tables/Table/Table";
 import { useModal } from "@/providers/modal/useModal";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
-import { sortEvents, sortRounds } from "@/features/leagues/forms/Schedule/Schedule.util";
+import { sortEventsByDate, sortRoundsByMostRecentEventDate } from "@/features/leagues/forms/Schedule/Schedule.util";
 import {
   useEvent,
   useEventSessionSettings,
@@ -45,12 +45,12 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
   );
 
   const allRounds = useMemo(
-    () => sortRounds(roundsBySeason.data ?? []),
-    [roundsBySeason.data],
+    () => sortRoundsByMostRecentEventDate(roundsBySeason.data ?? [], eventsBySeason.data ?? []),
+    [roundsBySeason.data, eventsBySeason.data],
   );
 
   const allEvents = useMemo(
-    () => sortEvents(eventsBySeason.data ?? []),
+    () => sortEventsByDate(eventsBySeason.data ?? []),
     [eventsBySeason.data],
   );
 
@@ -80,8 +80,11 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
   }, [divisionOptions, initialEvent, selectedDivisionId]);
 
   const roundsForDivision = useMemo(
-    () => allRounds.filter((round) => round.division_id === effectiveDivisionId),
-    [allRounds, effectiveDivisionId],
+    () => {
+      const filtered = allRounds.filter((round) => round.division_id === effectiveDivisionId);
+      return sortRoundsByMostRecentEventDate(filtered, eventsBySeason.data ?? []);
+    },
+    [allRounds, effectiveDivisionId, eventsBySeason.data],
   );
 
   const roundOptions = useMemo(
@@ -102,12 +105,14 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
   }, [effectiveDivisionId, initialRound, roundsForDivision, selectedRoundId]);
 
   const eventsForRound = useMemo(
-    () =>
-      allEvents.filter(
+    () => {
+      const filtered = allEvents.filter(
         (event) =>
           event.division_id === effectiveDivisionId
           && event.round_id === effectiveRoundId,
-      ),
+      );
+      return sortEventsByDate(filtered);
+    },
     [allEvents, effectiveDivisionId, effectiveRoundId],
   );
 
@@ -148,8 +153,8 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
     const options: Array<{ label: string; value: SessionType }> = [];
 
   const RESULT_TYPE_LABEL: Record<SessionType, string> = {
-    qualifying: "Qualifying Results",
-    race: "Race Results",
+    qualifying: "Qualifying Session",
+    race: "Race Session",
   };
 
     if (sessionSettings.has_qualifying) {
@@ -174,7 +179,9 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
       return selectedSessionType;
     }
 
-    return sessionOptions[0]?.value;
+    // Prefer race session if available, otherwise use first available
+    const raceOption = sessionOptions.find((option) => option.value === "race");
+    return raceOption?.value ?? sessionOptions[0]?.value;
   }, [selectedSessionType, sessionOptions]);
 
   const driverById = useMemo(
@@ -204,10 +211,6 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
     () => sessionOptions.find((option) => option.value === effectiveSessionType)?.label ?? "Results",
     [effectiveSessionType, sessionOptions],
   );
-
-  console.log("Selected Session Label:", selectedSessionLabel);
-  console.log("Selected Session Results:", effectiveSessionType);
-  console.log("Fastest Lap Results:", fastestLapResults);
 
   const filters =
     divisionOptions.length > 0
@@ -273,6 +276,7 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
     <>
       <Table
         title={selectedSessionLabel}
+        hidePoints={effectiveSessionType === "qualifying"}
         results={selectedSessionResults.map((result) => {
           const driver = driverById.get(result.driver_id);
 
@@ -295,11 +299,12 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
       {fastestLapResults.length > 0 && (
         <Table
           title="Fastest Lap"
+          hidePoints={effectiveSessionType === "qualifying"}
           results={fastestLapResults.map((result, index) => {
             const driver = driverById.get(result.driver_id);
 
             return {
-              position: index + 1,
+              position: index,
               points: result.points ?? 0,
               time: result.time,
               type: "driver" as const,

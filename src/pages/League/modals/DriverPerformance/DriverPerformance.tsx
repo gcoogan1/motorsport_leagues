@@ -28,7 +28,7 @@ const DriverPerformance = ({
     useDriverPerformanceResults(driverId);
 
   const eventResults = useMemo(() => {
-    return (results ?? []).filter((entry) => (entry.points ?? 0) > 0);
+    return results ?? [];
   }, [results]);
 
   const totalPoints = eventResults.reduce((acc, entry) => acc + (entry.points ?? 0), 0);
