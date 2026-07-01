@@ -53,6 +53,7 @@ const ShareLeague = ({ leagueUrl, onClose }: ShareLeagueProps) => {
         <ReadOnlyInput 
           label="Copy Link"
           textValue={leagueUrl}
+          fullContent={true}
         />
       </FormModal>
   )

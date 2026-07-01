@@ -56,6 +56,7 @@ const ShareSquad = ({ squadUrl, onClose }: ShareSquadProps) => {
         <ReadOnlyInput 
           label="Copy Link"
           textValue={squadUrl}
+          fullContent={true}
         />
       </FormModal>
   )

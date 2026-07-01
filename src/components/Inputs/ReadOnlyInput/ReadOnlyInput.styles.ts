@@ -35,15 +35,18 @@ export const InputField = styled.div<{ $centerContent?: boolean }>`
   margin: ${({ $centerContent }) => ($centerContent ? "0 auto" : "0")};
 `;
 
-export const TextValue = styled.p`
+export const TextValue = styled.p<{ $fullContent?: boolean }>`
   ${typography.body.mediumBold}
   color: ${colors.text.text1};
   min-width: 0;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`
+  
+  ${({ $fullContent }) => (!$fullContent ? `
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  ` : '')};
+`;
 
 export const HelperText = styled.span`
   ${typography.body.smallRegular};

@@ -24,6 +24,7 @@ type ReadOnlyInputProps = {
   profile?: User;
   textValue?: string;
   centerContent?: boolean;
+  fullContent?: boolean;
 };
 
 const ReadOnlyInput = ({
@@ -32,6 +33,7 @@ const ReadOnlyInput = ({
   profile,
   textValue,
   centerContent = false,
+  fullContent = false,
 }: ReadOnlyInputProps) => {
   return (
     <InputWrapper $centerContent={centerContent}>
@@ -48,7 +50,7 @@ const ReadOnlyInput = ({
             centerContent={centerContent}
           />
         ) : (
-          <TextValue>{textValue || "No profile available"}</TextValue>
+          <TextValue $fullContent={fullContent}>{textValue || "No profile available"}</TextValue>
         )}
       </InputField>
       {helperText && <HelperText>{helperText}</HelperText>}
