@@ -65,15 +65,28 @@ export const ImageContainer = styled.div<{ $imageSrc?: string, $isFlipped?: bool
   border-top-left-radius: ${borders.radius.large};
   border-bottom-left-radius: ${borders.radius.large};
   
-  &::before {
-    background: linear-gradient(90deg, rgba(21, 21, 21, 0) 69.71%, #151515 100%);
-  }
+  ${({ $isFlipped }) =>
+    $isFlipped &&
+    css`
+      border-top-right-radius: ${borders.radius.large};
+      border-bottom-right-radius: 0px;
+      border-bottom-left-radius: ${borders.radius.large};
+      
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(90deg, rgba(21, 21, 21, 0) 69.71%, #151515 100%);
+      }
+    `};
   
   ${({ $isFlipped }) =>
     !$isFlipped &&
-  css`
-  border-top-right-radius: ${borders.radius.large};
-  border-bottom-right-radius: ${borders.radius.large};
+    css`
+      border-top-right-radius: ${borders.radius.large};
+      border-bottom-right-radius: ${borders.radius.large};
+      
       &::before {
         content: "";
         position: absolute;
@@ -81,7 +94,6 @@ export const ImageContainer = styled.div<{ $imageSrc?: string, $isFlipped?: bool
         pointer-events: none;
         background: linear-gradient(270deg, rgba(21, 21, 21, 0) 69.71%, #151515 100%);
       }
-
     `};
 
   ${layout.mediaQueries.mobile} {
@@ -93,10 +105,13 @@ export const ImageContainer = styled.div<{ $imageSrc?: string, $isFlipped?: bool
     border-radius: ${borders.radius.large};
 
     &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
       background: linear-gradient(180deg, rgba(21, 21, 21, 0) 69.71%, #151515 100%);
     }
   }
-`
+`;
 
 export const ContentTextContainer = styled.div`
   display: flex;

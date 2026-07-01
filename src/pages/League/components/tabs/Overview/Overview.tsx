@@ -5,7 +5,7 @@ import ContentBlocksBlock from "@/components/Structures/ContentBlocksBlock/Conte
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import SeasonPoster from "@/components/Structures/SeasonPoster/SeasonPoster";
 import { useGetLeagueSeasonChampPointsQuery, useGetLeagueSeasonContentBlocksQuery, useGetLeagueSeasonDriversBySeasonIdQuery, useGetLeagueSeasonTeamsBySeasonIdQuery, useGetLeagueSeasonDivisionsQuery, useGetLeagueSeasonDriversByDivisionQuery, useGetLeagueSeasonTeamsByDivisionQuery } from "@/rtkQuery/API/leagueApi";
-import { useGetEventsBySeasonIdQuery } from "@/rtkQuery/API/eventApi";
+import { useRoundsBySeason } from "@/rtkQuery/hooks/queries/useRounds";
 import { useMemo } from "react";
 import { resolveLeagueSeasonPosterUrl } from "@/services/league/leagueSeason.service";
 import type { LeagueSeasonTable, LeagueStatus } from "@/types/league.types";
@@ -66,7 +66,7 @@ const Overview = ({ seasonStatus, seasonData }: OverviewProps) => {
 
   const teamsData = hasPreQual ? preQualTeamsData : seasonTeamsData;
 
-  const { data: eventsData } = useGetEventsBySeasonIdQuery(seasonId, { skip: !seasonId });
+  const { data: roundsData } = useRoundsBySeason(seasonId);
 
   const hasPoster = Boolean(seasonData?.poster_url);
   const hasContentBlocks = (contentBlocksData?.length ?? 0) > 0;
@@ -124,7 +124,7 @@ const Overview = ({ seasonStatus, seasonData }: OverviewProps) => {
                 points: row.points,
               }))}
               numOfDivisions={seasonData.num_of_divisions}
-              numOfRounds={eventsData?.length}
+              numOfRounds={roundsData?.length}
               numOfDrivers={driversData?.length}
               numOfTeams={seasonData.is_team_championship ? teamsData?.length : undefined}
             />
