@@ -22,7 +22,7 @@ export const TeamLineupWrapper = styled.div`
     })};
 
   ${layout.mediaQueries.mobile} {
-    /* min-width: 100%; */
+    min-width: 100%;
     /* max-width: 320px; */
   }
 `;
