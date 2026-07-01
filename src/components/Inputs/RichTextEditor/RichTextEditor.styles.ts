@@ -80,16 +80,19 @@ export const StyledEditorContent = styled(EditorContent)`
     min-height: 260px;
     height: auto;
     width: 100%;
-    padding: 18px;
+    padding: ${layout.space.xSmall};
     outline: none;
     color: white;
-    font-size: 14px;
-    line-height: 1.6;
+    ${typography.body.mediumRegular};
+    color: ${colors.text.text2};
     overflow-wrap: anywhere;
+    white-space: pre-wrap;
+     word-break: break-word;
   }
 
   .ProseMirror p {
-    margin: 0;
+    ${typography.body.mediumRegular};
+    color: ${colors.text.text2};
   }
 
   .ProseMirror .is-editor-empty:first-child::before {
@@ -100,19 +103,28 @@ export const StyledEditorContent = styled(EditorContent)`
     height: 0;
   }
 
+  .ProseMirror a {
+      ${typography.body.mediumRegular};
+    color: ${colors.text.text1};
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
   .ProseMirror ul,
   .ProseMirror ol {
     padding-left: 24px;
+    ${typography.body.mediumRegular};
+    color: ${colors.text.text2};
   }
 
   .ProseMirror h1 {
-    font-size: 32px;
-    font-weight: 700;
+    ${typography.subtitle.xLarge};
+    color: ${colors.text.text1};
   }
 
   .ProseMirror h2 {
-    font-size: 24px;
-    font-weight: 700;
+    ${typography.subtitle.large};
+    color: ${colors.text.text1};
   }
 
   .ProseMirror img {

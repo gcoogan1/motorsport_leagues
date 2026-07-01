@@ -43,7 +43,7 @@ const Rules = ({ seasonStatus, seasonData }: RulesProps) => {
           />
           <TextContainer>
             <RulesContent>
-              <div dangerouslySetInnerHTML={{ __html: content }} />
+              <div className="ProseMirror" dangerouslySetInnerHTML={{ __html: content }} />
             </RulesContent>
           </TextContainer>
         </RulesContainer>

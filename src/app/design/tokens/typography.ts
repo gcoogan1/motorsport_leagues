@@ -126,6 +126,13 @@ export const typographyTokens: FontTheme = {
         fontStyle: "italic",
         textTransform: "uppercase",
       },
+      xLarge: {
+        fontSize: "22px",
+        fontFamily: "Quantico, sans-serif",
+        fontWeight: 700,
+        lineHeight: "28px",
+        textTransform: "uppercase",
+      },
     },
     title: {
       xSmall: {

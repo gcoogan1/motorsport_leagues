@@ -50,4 +50,5 @@ export const ActionsContainer = styled.div`
   display: flex;
   align-items: center;
   gap: ${layout.space.xSmall};
+  flex-wrap: wrap;
 `

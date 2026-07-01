@@ -1,20 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useEditor, type Editor } from "@tiptap/react";
+import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import CharacterCount from "@tiptap/extension-character-count";
 import TextAlign from "@tiptap/extension-text-align";
 import Image from "@tiptap/extension-image";
+// import Link from "@tiptap/extension-link";
 import { FormProvider, useForm } from "react-hook-form";
 
+import HardBreak from "@tiptap/extension-hard-break";
 import BoldIcon from "@assets/Icon/Bold.svg?react";
 import ItalicIcon from "@assets/Icon/Italic.svg?react";
 import UnderlineIcon from "@assets/Icon/Underlined.svg?react";
 import NumberListIcon from "@assets/Icon/Numbered.svg?react";
 import BulletListIcon from "@assets/Icon/Bulleted.svg?react";
 import CenterAlignIcon from "@assets/Icon/Centered.svg?react";
-import LinkIcon from "@assets/Icon/Link.svg?react";
+// import LinkIcon from "@assets/Icon/Link.svg?react";
 import ImageIcon from "@assets/Icon/Image.svg?react";
 import Error_Outlined from "@assets/Icon/Error_Outlined.svg?react";
 // import VideoIcon from "@assets/Icon/Video.svg?react";
@@ -85,6 +88,14 @@ const RichTextEditor = ({
     },
   });
 
+const EnterAsLineBreak = Extension.create({
+  addKeyboardShortcuts() {
+    return {
+      Enter: () => this.editor.commands.setHardBreak(),
+    };
+  },
+});
+
   // Initialize the editor with the useEditor hook
   const editor = useEditor({
     extensions: [
@@ -92,6 +103,7 @@ const RichTextEditor = ({
         heading: {
           levels: [1, 2, 3, 4, 5, 6],
         },
+        hardBreak: false,
       }),
       Underline,
       TextAlign.configure({
@@ -106,6 +118,12 @@ const RichTextEditor = ({
         limit: maxCharacters,
       }),
       Image,
+      HardBreak,
+      EnterAsLineBreak,
+      // Link.configure({
+      //   openOnClick: false,
+      //   autolink: true,
+      // }),
     ],
 
     content,
@@ -150,11 +168,11 @@ const RichTextEditor = ({
 
     syncHeading();
     editor.on("selectionUpdate", syncHeading);
-    editor.on("transaction", syncHeading);
+    // editor.on("transaction", syncHeading);
 
     return () => {
       editor.off("selectionUpdate", syncHeading);
-      editor.off("transaction", syncHeading);
+      // editor.off("transaction", syncHeading);
     };
   }, [editor, formMethods]);
 
@@ -247,6 +265,30 @@ const RichTextEditor = ({
     event.preventDefault();
   };
 
+//   const handleLink = () => {
+//   if (!editor) return;
+
+//   const previousUrl = editor.getAttributes("link").href;
+
+//   const url = window.prompt("Enter URL", previousUrl);
+
+//   if (url === null) {
+//     return;
+//   }
+
+//   if (url === "") {
+//     editor.chain().focus().unsetLink().run();
+//     return;
+//   }
+
+//   editor
+//     .chain()
+//     .focus()
+//     .extendMarkRange("link")
+//     .setLink({ href: url })
+//     .run();
+// };
+
   if (!editor) {
     return null;
   }
@@ -290,7 +332,7 @@ const RichTextEditor = ({
               <Button
                 size="small"
                 color="base"
-                variant="ghost"
+                variant={editor.isActive("bold") ? "filled" : "ghost"}
                 icon={{ left: <BoldIcon /> }}
                 onClick={() => editor.chain().focus().toggleBold().run()}
               />
@@ -302,7 +344,7 @@ const RichTextEditor = ({
               <Button
                 size="small"
                 color="base"
-                variant="ghost"
+                variant={editor.isActive("italic") ? "filled" : "ghost"}
                 icon={{ left: <ItalicIcon /> }}
                 onClick={() => editor.chain().focus().toggleItalic().run()}
               />
@@ -314,19 +356,19 @@ const RichTextEditor = ({
               <Button
                 size="small"
                 color="base"
-                variant="ghost"
+                variant={editor.isActive("underline") ? "filled" : "ghost"}
                 icon={{ left: <UnderlineIcon /> }}
                 onClick={() => editor.chain().focus().toggleUnderline().run()}
               />
             </ToolbarButton>
             <ToolbarButton
-              $isActive={editor.isActive("numberedList")}
+              $isActive={editor.isActive("orderedList")}
               onMouseDown={handleToolbarMouseDown}
             >
               <Button
                 size="small"
                 color="base"
-                variant="ghost"
+                variant={editor.isActive("orderedList") ? "filled" : "ghost"}
                 icon={{ left: <NumberListIcon /> }}
                 onClick={() => editor.chain().focus().toggleOrderedList().run()}
               />
@@ -338,19 +380,19 @@ const RichTextEditor = ({
               <Button
                 size="small"
                 color="base"
-                variant="ghost"
+                variant={editor.isActive("bulletList") ? "filled" : "ghost"}
                 icon={{ left: <BulletListIcon /> }}
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
               />
             </ToolbarButton>
             <ToolbarButton
-              $isActive={editor.isActive("center")}
+              $isActive={editor.isActive({ textAlign: "center" })}
               onMouseDown={handleToolbarMouseDown}
             >
               <Button
                 size="small"
                 color="base"
-                variant="ghost"
+                variant={editor.isActive({ textAlign: "center" }) ? "filled" : "ghost"}
                 icon={{ left: <CenterAlignIcon /> }}
                 onClick={() =>
                   editor.chain().focus().toggleTextAlign("center").run()
@@ -358,19 +400,21 @@ const RichTextEditor = ({
               />
             </ToolbarButton>
             <ToolbarButton $isActive={editor.isActive("link")}>
-              <Button
+              {/* <Button
                 size="small"
                 color="base"
-                variant="ghost"
+                variant={editor.isActive("link") ? "filled" : "ghost"}
                 icon={{ left: <LinkIcon /> }}
                 ariaLabel="Insert link"
-              />
+                onClick={handleLink}
+
+              /> */}
             </ToolbarButton>
             <ToolbarButton $isActive={editor.isActive("image")}>
               <Button
                 size="small"
                 color="base"
-                variant="ghost"
+                variant={editor.isActive("image") ? "filled" : "ghost"}
                 icon={{ left: <ImageIcon /> }}
                 ariaLabel="Insert image"
                 // isLoading={isUploadingImage}

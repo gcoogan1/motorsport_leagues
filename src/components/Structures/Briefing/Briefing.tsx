@@ -7,7 +7,7 @@ type BriefingProps = {
 const Briefing = ({ content }: BriefingProps) => {
   return (
     <Wrapper>
-      <div dangerouslySetInnerHTML={{ __html: content }} />
+      <div className="ProseMirror" dangerouslySetInnerHTML={{ __html: content }} />
     </Wrapper>
   )
 }
