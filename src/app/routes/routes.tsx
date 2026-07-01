@@ -1,7 +1,7 @@
 // import AlphaHomepage from "@/pages/AlphaHomepage/AlphaHomepage";
 import ComingSoon from "@/pages/ComingSoon/ComingSoon";
 import CreateAccount from "@/pages/CreateAccount/CreateAccount";
-import CreateLeague from "@/pages/CreateLeague/CreateLeague";
+// import CreateLeague from "@/pages/CreateLeague/CreateLeague";
 import CreateProfile from "@/pages/CreateProfile/CreateProfile";
 import CreateSquad from "@/pages/CreateSquad/CreateSquad";
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
@@ -84,12 +84,12 @@ const PROD_ROUTES: Route[] = [
     navbar: "core",
     protected: true,
   },
-  {
-    path: "/create-league",
-    element: <CreateLeague />,
-    navbar: "core",
-    protected: true,
-  },
+  // {
+  //   path: "/create-league",
+  //   element: <CreateLeague />,
+  //   navbar: "core",
+  //   protected: true,
+  // },
   {
     path: "/coming-soon",
     element: <ComingSoon />,

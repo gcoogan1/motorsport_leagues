@@ -152,8 +152,8 @@ const Profile = () => {
   }
 
   const handleCreateLeague = () => {
-    navigate("/create-league");
-    return
+    // navigate("/create-league");
+    return navigate("/coming-soon");
   };
 
   const handleFindLeague = () => {

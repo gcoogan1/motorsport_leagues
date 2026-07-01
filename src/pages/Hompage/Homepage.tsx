@@ -210,10 +210,6 @@ const Homepage = () => {
     "·",
     "Steward Decisions",
     "·",
-    "Steward Decisions",
-    "·",
-    "Steward Decisions",
-    "·",
     "Rules & Regulations",
   ];
 
