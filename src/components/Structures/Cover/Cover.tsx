@@ -217,7 +217,7 @@ const Cover = ({
                   color={action.color || "primary"}
                   ariaLabel={action.label}
                 >
-                  {!isMobile && action.label}
+                  {isMobile && action.id !== "join" ? null : action.label}
                 </Button>
               );
             })}
