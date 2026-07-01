@@ -41,10 +41,29 @@ import {
   REQ_TIRE_TYPE_CHANGE_OPTIONS,
   NITRO_OVERTAKE_USAGE_OPTIONS,
   SETTINGS_OPTIONS,
+  TIRE_WEAR_RATE_FORMATTER,
+  TIRE_WEAR_RATE_DEFAULT,
+  FUEL_CONSUMPTION_RATE_FORMATTER,
+  FUEL_CONSUMPTION_RATE_DEFAULT,
+  REFUELING_SPEED_FORMATTER,
+  REFUELING_SPEED_DEFAULT,
+  INITIAL_FUEL_FORMATTER,
+  INITIAL_FUEL_DEFAULT,
+  FINISH_DELAY_FORMATTER,
+  FINISH_DELAY_DEFAULT,
+  MIN_NUM_STOPS_DEFAULT,
 } from "@/lib/constants/raceSettings";
 import {
   TIME_LIMIT_OPTIONS_DISPLAY,
   SLIPSTREAM_STRENGTH_QUAL_OPTIONS,
+  QUALIFYING_CONTINUE_TIME_FORMATTER,
+  QUALIFYING_CONTINUE_TIME_DEFAULT,
+  TIRE_WEAR_RT_QUAL_FORMATTER,
+  TIRE_WEAR_RT_QUAL_DEFAULT,
+  FUEL_CONSUMPTION_RT_QUAL_FORMATTER,
+  FUEL_CONSUMPTION_RT_QUAL_DEFAULT,
+  INITIAL_FUEL_QUAL_FORMATTER,
+  INITIAL_FUEL_QUAL_DEFAULT,
 } from "@/lib/constants/qualifierSettings";
 import {
   FILTER_BY_CATEGORY_OPTIONS,
@@ -482,31 +501,19 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
           },
           {
             detailSetting: "Tire Wear Rate",
-            detailOption:
-              advancedSettings?.tire_wear_rate !== undefined
-                ? `${advancedSettings.tire_wear_rate}x`
-                : "Not Set",
+            detailOption: TIRE_WEAR_RATE_FORMATTER(advancedSettings?.tire_wear_rate ?? TIRE_WEAR_RATE_DEFAULT),
           },
           {
             detailSetting: "Fuel Consumption Rate",
-            detailOption:
-              advancedSettings?.fuel_consumption_rate !== undefined
-                ? `${advancedSettings.fuel_consumption_rate}x`
-                : "Not Set",
+            detailOption: FUEL_CONSUMPTION_RATE_FORMATTER(advancedSettings?.fuel_consumption_rate ?? FUEL_CONSUMPTION_RATE_DEFAULT),
           },
           {
             detailSetting: "Refueling Speed",
-            detailOption:
-              advancedSettings?.refueling_speed !== undefined
-                ? `${advancedSettings.refueling_speed} L/sec`
-                : "Not Set",
+            detailOption: REFUELING_SPEED_FORMATTER(advancedSettings?.refueling_speed ?? REFUELING_SPEED_DEFAULT),
           },
           {
             detailSetting: "Initial Fuel",
-            detailOption:
-              advancedSettings?.initial_fuel !== undefined
-                ? `${advancedSettings.initial_fuel} liters`
-                : "Not Set",
+            detailOption: INITIAL_FUEL_FORMATTER(advancedSettings?.initial_fuel ?? INITIAL_FUEL_DEFAULT),
           },
           {
             detailSetting: "Grip Reduction Off Track",
@@ -517,14 +524,11 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
           },
           {
             detailSetting: "Race Finish Delay",
-            detailOption:
-              advancedSettings?.race_finish_delay !== undefined
-                ? `${advancedSettings.race_finish_delay} second(s)`
-                : "Not Set",
+            detailOption: FINISH_DELAY_FORMATTER(advancedSettings?.race_finish_delay ?? FINISH_DELAY_DEFAULT),
           },
           {
             detailSetting: "Minimum No. of Pit Stops",
-            detailOption: formatValue(advancedSettings?.min_num_stops),
+            detailOption: formatValue(advancedSettings?.min_num_stops ?? MIN_NUM_STOPS_DEFAULT),
           },
           {
             detailSetting: "Required Tire Type Change",
@@ -556,31 +560,19 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
                 },
                 {
                   detailSetting: "Qualifying Continuation Time",
-                  detailOption:
-                    advancedSettings?.qual_contin_time !== undefined
-                      ? `${advancedSettings.qual_contin_time} seconds(s)`
-                      : "Not Set",
+                  detailOption: QUALIFYING_CONTINUE_TIME_FORMATTER(advancedSettings?.qual_contin_time ?? QUALIFYING_CONTINUE_TIME_DEFAULT),
                 },
                 {
                   detailSetting: "Tire Wear Rate (Qualifier)",
-                  detailOption:
-                    advancedSettings?.tire_wear_rt_qual !== undefined
-                      ? `${advancedSettings.tire_wear_rt_qual}x`
-                      : "Not Set",
+                  detailOption: TIRE_WEAR_RT_QUAL_FORMATTER(advancedSettings?.tire_wear_rt_qual ?? TIRE_WEAR_RT_QUAL_DEFAULT),
                 },
                 {
                   detailSetting: "Fuel Consumption Rate (Qualifier)",
-                  detailOption:
-                    advancedSettings?.fuel_consumption_rt_qual !== undefined
-                      ? `${advancedSettings.fuel_consumption_rt_qual}x`
-                      : "Not Set",
+                  detailOption: FUEL_CONSUMPTION_RT_QUAL_FORMATTER(advancedSettings?.fuel_consumption_rt_qual ?? FUEL_CONSUMPTION_RT_QUAL_DEFAULT),
                 },
                 {
                   detailSetting: "Initial Fuel (Qualifier)",
-                  detailOption:
-                    advancedSettings?.initial_fuel_qual !== undefined
-                      ? `${advancedSettings.initial_fuel_qual} liters`
-                      : "Not Set",
+                  detailOption: INITIAL_FUEL_QUAL_FORMATTER(advancedSettings?.initial_fuel_qual ?? INITIAL_FUEL_QUAL_DEFAULT),
                 },
                 {
                   detailSetting: "Slipstream Strength (Qualifier)",
