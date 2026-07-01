@@ -799,6 +799,34 @@ export const updateLeagueSettings = async (
   };
 };
 
+// -- Delete League Storage Assets -- //
+// Deletes all briefing and rules files for a league
+const deleteLeagueStorageAssets = async (
+  leagueId: string,
+  roundIds: string[],
+): Promise<void> => {
+  // Delete league rules images from storage
+  const { data: rulesList, error: rulesListError } = await supabase.storage
+    .from("rules")
+    .list(leagueId);
+
+  if (!rulesListError && rulesList && rulesList.length > 0) {
+    const ruleFilePaths = rulesList.map((file) => `${leagueId}/${file.name}`);
+    await supabase.storage.from("rules").remove(ruleFilePaths);
+  }
+
+  // Delete round briefing images from storage
+  for (const roundId of roundIds) {
+    const { data: briefingsList, error: briefingsListError } = await supabase.storage
+      .from("briefings")
+      .list(roundId);
+
+    if (!briefingsListError && briefingsList && briefingsList.length > 0) {
+      const briefingFilePaths = briefingsList.map((file) => `${roundId}/${file.name}`);
+      await supabase.storage.from("briefings").remove(briefingFilePaths);
+    }
+  }
+};
 
 // -- Delete League By ID -- //
 export const deleteLeagueById = async (
@@ -857,6 +885,17 @@ export const deleteLeagueById = async (
 
   const seasonIds = (seasonRows ?? []).map((season) => season.id as string);
 
+  // Fetch round IDs for storage cleanup before deletion
+  let roundIds: string[] = [];
+  if (seasonIds.length > 0) {
+    const { data: roundRows } = await supabase
+      .from("round")
+      .select("id")
+      .in("season_id", seasonIds);
+
+    roundIds = (roundRows ?? []).map((round) => round.id as string);
+  }
+
   const { data: participantRows, error: participantsFetchError } = await supabase
     .from("league_participants")
     .select("id")
@@ -874,6 +913,9 @@ export const deleteLeagueById = async (
   }
 
   const participantIds = (participantRows ?? []).map((participant) => participant.id as string);
+
+  // Delete all storage assets (rules and briefings) before deleting database records
+  await deleteLeagueStorageAssets(leagueId, roundIds);
 
   const { error: followsDeleteError } = await supabase
     .from("league_follows")
