@@ -27,6 +27,22 @@ export const resolveBannerValue = (
   return data.publicUrl;
 };
 
+// -- Delete Old Banner If It's An Upload -- //
+const deleteOldBannerIfUpload = async (
+  bannerType: string | null,
+  bannerValue: string | null,
+): Promise<void> => {
+  if (bannerType === "upload" && bannerValue) {
+    const { error } = await supabase.storage
+      .from("banners")
+      .remove([bannerValue]);
+
+    if (error) {
+      console.error(`Failed to delete old banner: ${bannerValue}`, error);
+    }
+  }
+};
+
 // --- Squad Service --- //
 
 // -- Get Squads by Account ID -- //
@@ -415,6 +431,13 @@ export const getSquadById = async (
 export const editSquadBanner = async (
   { squadId, banner, accountId }: EditBannerPayload,
 ): Promise<EditBannerResult> => {
+  // Fetch the old banner to delete it if it's an upload
+  const { data: oldSquadData } = await supabase
+    .from("squads")
+    .select("banner_type, banner_value")
+    .eq("id", squadId)
+    .single();
+
   let bannerType: "preset" | "upload";
   let bannerValue: string;
 
@@ -461,6 +484,12 @@ export const editSquadBanner = async (
 
     // If upload is successful, set the bannerValue to the file path in storage
     bannerValue = filePath;
+  }
+
+  // Delete old banner if it was an upload and we're either switching to preset or uploading new image
+  if (oldSquadData && (banner.type === "preset" || bannerType === "upload")) {
+    console.log("Here")
+    await deleteOldBannerIfUpload(oldSquadData.banner_type, oldSquadData.banner_value);
   }
 
   // --- Update squad with new banner ---

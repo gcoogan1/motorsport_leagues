@@ -29,6 +29,22 @@ export const resolveAvatarValue = (
   return data.publicUrl;
 };
 
+// -- Delete Old Avatar If It's An Upload -- //
+const deleteOldAvatarIfUpload = async (
+  avatarType: string | null,
+  avatarValue: string | null,
+): Promise<void> => {
+  if (avatarType === "upload" && avatarValue) {
+    const { error } = await supabase.storage
+      .from("avatars")
+      .remove([avatarValue]);
+
+    if (error) {
+      console.error(`Failed to delete old avatar: ${avatarValue}`, error);
+    }
+  }
+};
+
 const syncLeagueSeasonDriverProfileSnapshot = async (
   profileId: string,
   updates: {
@@ -269,6 +285,13 @@ export const updateProfileAvatar = async ({
   accountId,
   avatar,
 }: UpdateAvatarPayload): Promise<CreateProfileResult> => {
+  // Fetch the old avatar to delete it if it's an upload
+  const { data: oldProfileData } = await supabase
+    .from("profiles")
+    .select("avatar_type, avatar_value")
+    .eq("id", profileId)
+    .single();
+
   let avatarType: "preset" | "upload";
   let avatarValue: string;
 
@@ -302,6 +325,11 @@ export const updateProfileAvatar = async ({
     }
 
     avatarValue = filePath;
+  }
+
+  // Delete old avatar if it was an upload and we're either switching to preset or uploading new image
+  if (oldProfileData && (avatar.type === "preset" || avatarType === "upload")) {
+    await deleteOldAvatarIfUpload(oldProfileData.avatar_type, oldProfileData.avatar_value);
   }
 
   // ---- UPDATE PROFILE ----
@@ -436,12 +464,11 @@ export const deleteAvatarFromStorage = async (avatarValue: string) => {
 // -- Delete Profile -- //
 export const deleteProfile = async (
   profileId: string,
-  avatarValue?: string,
 ) => {
-  // Get the profile's account ID for any necessary cleanup of related data (like founded squads) before deleting the profile itself
-  const { error: profileLookupError } = await supabase
+  // Fetch the profile to get avatar and account ID for cleanup
+  const { data: profileData, error: profileLookupError } = await supabase
     .from("profiles")
-    .select("account_id")
+    .select("account_id, avatar_type, avatar_value")
     .eq("id", profileId)
     .single();
 
@@ -456,21 +483,9 @@ export const deleteProfile = async (
     };
   }
 
-  if (avatarValue) {
-    // Delete any uploaded avatar from Supabase Storage
-    const avatarDeletionResult = await deleteAvatarFromStorage(avatarValue);
-
-    if (!avatarDeletionResult.success) {
-      return {
-        success: false,
-        error: {
-          message: avatarDeletionResult.error?.message ||
-            "Failed to delete avatar",
-          code: "AVATAR_DELETION_FAILED",
-          status: 500,
-        },
-      };
-    }
+  // Delete uploaded avatar from storage if it's an upload type (non-blocking)
+  if (profileData.avatar_type === "upload" && profileData.avatar_value) {
+    await deleteOldAvatarIfUpload(profileData.avatar_type, profileData.avatar_value);
   }
 
   // Remove all follow relationships linked to this profile before deleting it.

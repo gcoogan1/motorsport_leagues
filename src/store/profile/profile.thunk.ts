@@ -89,12 +89,11 @@ export const deleteProfileThunk = createAsyncThunk(
   async (
     {
       profileId,
-      avatarValue,
       accountId,
-    }: { profileId: string; avatarValue?: string; accountId?: string },
+    }: { profileId: string; accountId?: string },
     { rejectWithValue, dispatch }
   ) => {
-    const result = await deleteProfile(profileId, avatarValue);
+    const result = await deleteProfile(profileId);
 
     if (!result.success) {
       return rejectWithValue(result.error);

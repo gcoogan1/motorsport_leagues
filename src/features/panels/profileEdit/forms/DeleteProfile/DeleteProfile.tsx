@@ -48,30 +48,15 @@ const DeleteProfile = ({ closePanel }: DeleteProfileProps) => {
   const handleOnSubmit = async () => {
     setIsLoading(true);
     try {
-      if (profile?.avatar_type === "upload") {
-        // If the profile has an uploaded avatar
-        await withMinDelay(
-          dispatch(
-            deleteProfileThunk({
-              profileId: profile.id,
-              avatarValue: profile.avatar_value,
-              accountId: profile.account_id,
-            }),
-          ),
-          1000,
-        );
-      } else {
-        // If the profile has a preset avatar (which doesn't require deletion from storage)
-        await withMinDelay(
-          dispatch(
-            deleteProfileThunk({
-              profileId: profile.id,
-              accountId: profile.account_id,
-            }),
-          ),
-          1000,
-        );
-      }
+      await withMinDelay(
+        dispatch(
+          deleteProfileThunk({
+            profileId: profile.id,
+            accountId: profile.account_id,
+          }),
+        ),
+        1000,
+      );
 
       navigate("/");
       closeModal();

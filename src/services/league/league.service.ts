@@ -125,6 +125,21 @@ export const resolveCoverValue = (
   return data.publicUrl;
 };
 
+// -- Delete Old Cover If It's An Upload -- //
+const deleteOldCoverIfUpload = async (
+  coverType: string | null,
+  coverValue: string | null,
+): Promise<void> => {
+  if (coverType === "upload" && coverValue) {
+    const { error } = await supabase.storage
+      .from("covers")
+      .remove([coverValue]);
+
+    if (error) {
+      console.error(`Failed to delete old cover: ${coverValue}`, error);
+    }
+  }
+};
 
 // -- League Service --- //
 
@@ -734,6 +749,23 @@ export const updateLeagueSettings = async (
     leagueStatus,
   }: UpdateLeaguePayload,
 ): Promise<UpdateLeagueResult> => {
+  // Fetch old cover to delete it if it's an upload and we're updating the cover
+  let oldCoverType: string | null = null;
+  let oldCoverValue: string | null = null;
+
+  if (coverImage !== undefined) {
+    const { data: oldLeagueData } = await supabase
+      .from("leagues")
+      .select("cover_type, cover_value")
+      .eq("id", leagueId)
+      .single();
+
+    if (oldLeagueData) {
+      oldCoverType = oldLeagueData.cover_type;
+      oldCoverValue = oldLeagueData.cover_value;
+    }
+  }
+
   // Build the update object with only provided fields
   const updateData: Record<string, unknown> = {};
 
@@ -768,6 +800,11 @@ export const updateLeagueSettings = async (
 
     updateData.cover_type = coverResult.coverType;
     updateData.cover_value = coverResult.coverValue;
+
+    // Delete old cover if it was an upload and we're either switching to preset or uploading new image
+    if (coverResult.coverType === "preset" || (coverResult.coverType === "upload" && oldCoverType === "upload")) {
+      await deleteOldCoverIfUpload(oldCoverType, oldCoverValue);
+    }
   }
 
   // Update the league in the database
