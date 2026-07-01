@@ -7,7 +7,6 @@ import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import type { LeagueCover, LeagueStatus } from "@/types/league.types";
 import type { Tag } from "../../Tags/Tags.variants";
 import type { GameType } from "@/types/profile.types";
-import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getCoverVariants } from "./Cover.variants";
 import GameIcon from "@assets/Icon/Game.svg?react";
