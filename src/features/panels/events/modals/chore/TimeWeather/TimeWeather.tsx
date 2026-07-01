@@ -173,7 +173,7 @@ const TimeWeather = ({
                 options={EQUAL_CONDITION_OPTIONS}
               />
             </FormRow>
-            {equalCondition === "true" && (
+            {equalCondition === "false" && (
               <IncrementInput
                 name={"variableTimeSpeedRate"}
                 label="Variable Time Speed Rate"

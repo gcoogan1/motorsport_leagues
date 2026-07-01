@@ -358,7 +358,6 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
     ? `${regulationCategory} Regulation Settings`
     : "Regulation Settings";
 
-
   // Detail groups for the details table (weather/time settings, race settings, qualifier settings if applicable, regulation settings, penalty settings)
   const detailGroups = useMemo(
     () => [
@@ -372,7 +371,7 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
               advancedSettings?.time_of_day,
             ),
           },
-          ...(advancedSettings?.equal_con_mode === "true"
+          ...(advancedSettings?.equal_con_mode === "false" || advancedSettings?.weather_selection === "customWeatherSelection"
             ? [
                 {
                 detailSetting: "Variable Time Speed Rate",
