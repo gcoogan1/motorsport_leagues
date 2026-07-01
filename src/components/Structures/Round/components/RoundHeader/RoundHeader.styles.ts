@@ -13,7 +13,6 @@ export const HeaderContainer = styled.div`
   align-items: center;
   align-content: center;
   row-gap: 8px;
-  flex-wrap: wrap;
   overflow: hidden;
   padding-top: ${layout.space.large};
   padding-bottom: ${layout.space.large};
@@ -23,12 +22,17 @@ export const HeaderContainer = styled.div`
   border-bottom: ${borders.width.medium} solid ${colors.base.base4};
   border-top-left-radius: ${borders.radius.xxLarge};
   border-top-right-radius: ${borders.radius.xxLarge};
+
+  ${layout.mediaQueries.mobile} {
+    flex-direction: column;
+    align-items: flex-start;
+  };
 `
 
 export const TextContainer = styled.div`
   display: flex;
-  padding-right: ${layout.space.xxLarge};
   justify-content: center;
+  justify-content: left;
   align-items: center;
   gap: 10px;
 `

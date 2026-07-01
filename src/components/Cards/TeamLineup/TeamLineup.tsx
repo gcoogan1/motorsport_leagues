@@ -54,7 +54,7 @@ const TeamLineup = ({
                 avatarType={driver.avatarType}
                 avatarValue={driver.avatarValue}
                 size="small"
-                tags={driver.tags}
+                // tags={driver.tags}
               />
             </DriverInfo>
           ))}

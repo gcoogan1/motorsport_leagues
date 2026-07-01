@@ -128,7 +128,7 @@ const Standings = ({ seasonStatus, seasonData }: StandingsProps) => {
                   driverNumber: "0",
                   avatarType: entry.avatarType,
                   avatarValue: entry.avatarValue,
-                  tags: entry.tags,
+                  // tags: entry.tags,
                   teamName: entry.teamName,
                 },
                 onClick: () => {

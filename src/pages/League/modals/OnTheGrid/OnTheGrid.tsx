@@ -22,12 +22,11 @@ import {
   TableWrapper,
 } from "./OnTheGrid.styles";
 import { useModal } from "@/providers/modal/useModal";
-import { useLeagueSeasonDivisions, useLeagueSeasonDivisionDrivers } from "@/rtkQuery/hooks/queries/useLeagueSeasonDivisions";
+import { useLeagueSeasonDivisions, useLeagueSeasonDivisionDrivers, useLeagueSeasonDivisionTeams } from "@/rtkQuery/hooks/queries/useLeagueSeasonDivisions";
 import { useRoundsBySeason } from "@/rtkQuery/hooks/queries/useRounds";
 import { useEventsBySeason, useEventDrivers } from "@/rtkQuery/hooks/queries/useEvents";
-import { sortRounds, sortEvents } from "@/features/leagues/forms/Schedule/Schedule.util";
+import { sortRoundsByMostRecentEventDate, sortEventsByDate } from "@/features/leagues/forms/Schedule/Schedule.util";
 import ReadOnlyInput from "@/components/Inputs/ReadOnlyInput/ReadOnlyInput";
-import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import { formatEventDate } from "@/utils/dates";
 
 type OnTheGridProps = {
@@ -58,12 +57,12 @@ const OnTheGrid = ({ eventId, seasonId, seasonName }: OnTheGridProps) => {
   );
 
   const allRounds = useMemo(
-    () => sortRounds(roundsBySeason.data ?? []),
-    [roundsBySeason.data],
+    () => sortRoundsByMostRecentEventDate(roundsBySeason.data ?? [], eventsBySeason.data ?? []),
+    [roundsBySeason.data, eventsBySeason.data],
   );
 
   const allEvents = useMemo(
-    () => sortEvents(eventsBySeason.data ?? []),
+    () => sortEventsByDate(eventsBySeason.data ?? []),
     [eventsBySeason.data],
   );
 
@@ -88,8 +87,11 @@ const OnTheGrid = ({ eventId, seasonId, seasonName }: OnTheGridProps) => {
   }, [divisionOptions, initialEvent, selectedDivisionId]);
 
   const roundsForDivision = useMemo(
-    () => allRounds.filter((round) => round.division_id === effectiveDivisionId),
-    [effectiveDivisionId, allRounds],
+    () => {
+      const filtered = allRounds.filter((round) => round.division_id === effectiveDivisionId);
+      return sortRoundsByMostRecentEventDate(filtered, eventsBySeason.data ?? []);
+    },
+    [effectiveDivisionId, allRounds, eventsBySeason.data],
   );
 
   const roundOptions = useMemo(
@@ -108,7 +110,10 @@ const OnTheGrid = ({ eventId, seasonId, seasonName }: OnTheGridProps) => {
   }, [effectiveDivisionId, initialRound, roundsForDivision, selectedRoundId]);
 
   const eventsForRound = useMemo(
-    () => allEvents.filter((event) => event.round_id === effectiveRoundId),
+    () => {
+      const filtered = allEvents.filter((event) => event.round_id === effectiveRoundId);
+      return sortEventsByDate(filtered);
+    },
     [effectiveRoundId, allEvents],
   );
 
@@ -133,20 +138,25 @@ const OnTheGrid = ({ eventId, seasonId, seasonName }: OnTheGridProps) => {
   );
 
   const seasonDrivers = useLeagueSeasonDivisionDrivers(effectiveDivisionId);
+  const divisionTeams = useLeagueSeasonDivisionTeams(effectiveDivisionId);
   const eventDrivers = useEventDrivers(effectiveEventId);
+
+  const teamsByIdMap = useMemo(
+    () => new Map((divisionTeams.data ?? []).map((team) => [team.id, team.team_name] as const)),
+    [divisionTeams.data],
+  );
 
   type DriverRow = {
     profileId: string;
     displayName: string;
     avatarType: "preset" | "upload";
     avatarValue: string;
-    gameType?: string;
+    teamName?: string;
   };
 
   const driverRows = useMemo((): DriverRow[] => {
     const drivers = seasonDrivers.data ?? [];
     const assigned = eventDrivers.data ?? [];
-
 
     return assigned.reduce<DriverRow[]>((acc, ed) => {
       const driver = drivers.find((d) => d.id === ed.season_driver_id);
@@ -156,11 +166,11 @@ const OnTheGrid = ({ eventId, seasonId, seasonName }: OnTheGridProps) => {
         displayName: driver.display_name ?? "Unknown Driver",
         avatarType: driver.avatar_type ?? "preset",
         avatarValue: driver.avatar_value ?? "black",
-        gameType: driver.game_type ? convertGameTypeToFullName(driver.game_type) : undefined,
+        teamName: driver.team_id ? teamsByIdMap.get(driver.team_id) : undefined,
       });
       return acc;
     }, []);
-  }, [seasonDrivers.data, eventDrivers.data]);
+  }, [seasonDrivers.data, eventDrivers.data, teamsByIdMap]);
 
   useEffect(() => {
     if (!openMenuId) return;
@@ -202,10 +212,9 @@ const OnTheGrid = ({ eventId, seasonId, seasonName }: OnTheGridProps) => {
               </NumberCell>
               <ParticipantCell>
                 <ReadOnlyInput
-                
                   profile={{
                     username: row.displayName,
-                    information: row.gameType,
+                    information: row.teamName,
                     avatarType: row.avatarType,
                     avatarValue: row.avatarValue,
                     size: "medium",

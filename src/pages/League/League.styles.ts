@@ -11,7 +11,7 @@ export const Wrapper = styled.div`
   align-self: stretch;
   flex: 1;
   background-color: ${colors.base.base2};
-  padding: ${layout.space.xxLarge} 0;
+  padding: 0 0 ${layout.space.xxLarge} 0;
   gap: ${layout.space.xxLarge};
 `;
 
