@@ -93,6 +93,9 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
       <FormBlock
         title={"Create Account"}
         question={"Let's Get Started"}
+        helperMessage={
+          "Your account details, name and email, are always private. The Profile you create after, for your specific games, is public facing."
+        }
         buttons={{
           onCancel: { label: "Go to Log in", action: handleGoToLogin },
           onContinue: {
