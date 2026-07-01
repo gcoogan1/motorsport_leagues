@@ -33,6 +33,7 @@ export const TextContainer = styled.div<{ $size: "small" | "medium" | "large" }>
   flex-direction: column;
   align-items: flex-start;
   gap: ${layout.space.xxSmall};
+  max-width: 100%;
   min-width: 0;
   flex: 1;
   overflow: hidden;
@@ -51,6 +52,7 @@ export const UsernameContainer = styled.div<{ isLarge: boolean }>`
   align-items: center;
   gap: ${layout.space.xxSmall};
   min-width: 0;
+  max-width: 100%;
   overflow: hidden;
 
   ${({ isLarge }) =>
@@ -80,7 +82,7 @@ export const Username = styled.h2<{ $size: "small" | "medium" | "large" }>`
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
-  max-width: 100%
+  max-width: 100%;
 `;
 
 export const Information = styled.p<{ $size: "small" | "medium" | "large" }>`

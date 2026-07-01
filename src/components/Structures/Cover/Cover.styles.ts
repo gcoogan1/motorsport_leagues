@@ -119,7 +119,7 @@ export const TextContainer = styled.div`
   max-width: 960px;
 
   ${layout.mediaQueries.mobile} {
-    max-width: 320px;
+    max-width: 100%;
   }
 `;
 

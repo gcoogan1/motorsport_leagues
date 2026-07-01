@@ -45,6 +45,7 @@ export const MobileDriverLineup = styled(LineupContainer)`
 
   ${layout.mediaQueries.mobile} {
     display: flex;
+    gap: ${layout.space.xSmall};
   }
 `;
 

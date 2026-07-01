@@ -8,6 +8,7 @@ import type { LeagueCover, LeagueStatus } from "@/types/league.types";
 import type { Tag } from "../../Tags/Tags.variants";
 import type { GameType } from "@/types/profile.types";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getCoverVariants } from "./Cover.variants";
 import GameIcon from "@assets/Icon/Game.svg?react";
 import HostIcon from "@assets/Icon/Hosts.svg?react";
@@ -27,6 +28,8 @@ import {
   CoverWrapper,
   Description,
   DetailsContainer,
+  GameTypeText,
+  SquadName,
   StatusContainer,
   TextContainer,
   Title,
@@ -86,6 +89,7 @@ const Cover = ({
 }: CoverProps) => {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const coverVariants = getCoverVariants();
+  const isMobile = useMediaQuery("(max-width: 919px)");
   const resolvedBackgroundImageUrl =
     backgroundImageUrl && backgroundImageUrl in coverVariants
       ? coverVariants[backgroundImageUrl as LeagueCover]
@@ -147,7 +151,7 @@ const Cover = ({
               rounded
               onClick={onGameClick}
             >
-              {convertGameTypeToFullName(gameType)}
+              <GameTypeText>{gameType}</GameTypeText>
             </Button>
             <Button
               size="small"
@@ -157,7 +161,7 @@ const Cover = ({
               rounded
               onClick={onSquadNameClick}
             >
-              {squadName}
+              <SquadName>{squadName}</SquadName>
             </Button>
           </DetailsContainer>
           <ActionsContainer>
@@ -214,7 +218,7 @@ const Cover = ({
                   color={action.color || "primary"}
                   ariaLabel={action.label}
                 >
-                  {action.label}
+                  {!isMobile && action.label}
                 </Button>
               );
             })}

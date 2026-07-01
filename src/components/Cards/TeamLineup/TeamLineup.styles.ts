@@ -22,8 +22,8 @@ export const TeamLineupWrapper = styled.div`
     })};
 
   ${layout.mediaQueries.mobile} {
-    min-width: 100%;
-    max-width: 320px;
+    /* min-width: 100%; */
+    /* max-width: 320px; */
   }
 `;
 
@@ -116,9 +116,9 @@ export const TeamTitle = styled.p`
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  ${layout.mediaQueries.mobile} {
+  /* ${layout.mediaQueries.mobile} {
     max-width: 200px;
-  }
+  } */
 `;
 
 export const EmptyTeamSubtitle = styled.p`
