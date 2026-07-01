@@ -69,9 +69,11 @@ const Table= ({
       </TableHeader>
       <TableContent>
         <TableContentHeader>
-          <PositionHeaderRow>
-            <HeaderCell>P</HeaderCell>
-          </PositionHeaderRow>
+          {results.some((result) => result.position !== undefined) && (
+            <PositionHeaderRow>
+              <HeaderCell>P</HeaderCell>
+            </PositionHeaderRow>
+          )}
           <ParticipantHeaderRow>
             <HeaderCell>{participantLabel}</HeaderCell>
           </ParticipantHeaderRow>

@@ -44,7 +44,7 @@ const EventDetails = ({
   fallbackImageUrls = [],
   fallbackText = "Assigned Car",
 }: EventDetailsProps) => {
-  // Automatically find and set the middle card on load
+  // Automatically find and set the middle card on load, or first if only 2 cars
   const [activeIndex, setActiveIndex] = useState(() => {
     const count =
       items.length > 0
@@ -52,6 +52,11 @@ const EventDetails = ({
         : fallbackImageUrls.length > 0
           ? fallbackImageUrls.length
           : 1; // 1 represents the single "Hidden" fallback item
+
+    // If there are exactly 2 cars, select the first one
+    if (count === 2) {
+      return 0;
+    }
 
     return Math.floor(count / 2);
   });
@@ -83,12 +88,6 @@ const EventDetails = ({
       ),
     [sessions],
   );
-
-  // useEffect(() => {
-  //   if (activeIndex >= resolvedItems.length) {
-  //     setActiveIndex(0);
-  //   }
-  // }, [activeIndex, resolvedItems.length]);
 
   const safeActiveIndex = Math.max(
     0,

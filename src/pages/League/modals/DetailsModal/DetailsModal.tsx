@@ -43,7 +43,7 @@ import {
   SETTINGS_OPTIONS,
 } from "@/lib/constants/raceSettings";
 import {
-  TIME_LIMIT_OPTIONS,
+  TIME_LIMIT_OPTIONS_DISPLAY,
   SLIPSTREAM_STRENGTH_QUAL_OPTIONS,
 } from "@/lib/constants/qualifierSettings";
 import {
@@ -57,6 +57,16 @@ import {
   TUNING_PARTS_OPTIONS,
   DRIVETRAIN_OPTIONS,
   ASPIRATION_OPTIONS,
+  PP_LIMIT_FORMATTER,
+  PP_LIMIT_DEFAULT,
+  MAX_POWER_OUTPUT_FORMATTER,
+  MAX_POWER_OUTPUT_DEFAULT,
+  MIN_WEIGHT_FORMATTER,
+  MIN_WEIGHT_DEFAULT,
+  YEAR_LOWER_LIMIT_FORMATTER,
+  YEAR_LOWER_LIMIT_DEFAULT,
+  YEAR_UPPER_LIMIT_FORMATTER,
+  YEAR_UPPER_LIMIT_DEFAULT,
 } from "@/lib/constants/regulationSettings";
 import {
   SHORTCUT_PENALTY_OPTIONS,
@@ -358,6 +368,7 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
     ? `${regulationCategory} Regulation Settings`
     : "Regulation Settings";
 
+
   // Detail groups for the details table (weather/time settings, race settings, qualifier settings if applicable, regulation settings, penalty settings)
   const detailGroups = useMemo(
     () => [
@@ -508,7 +519,7 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
             detailSetting: "Race Finish Delay",
             detailOption:
               advancedSettings?.race_finish_delay !== undefined
-                ? `${advancedSettings.race_finish_delay} sec`
+                ? `${advancedSettings.race_finish_delay} second(s)`
                 : "Not Set",
           },
           {
@@ -539,7 +550,7 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
                 {
                   detailSetting: "Time Limit",
                   detailOption: getLabelFromOptions(
-                    TIME_LIMIT_OPTIONS,
+                    TIME_LIMIT_OPTIONS_DISPLAY,
                     advancedSettings?.time_limit,
                   ),
                 },
@@ -547,7 +558,7 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
                   detailSetting: "Qualifying Continuation Time",
                   detailOption:
                     advancedSettings?.qual_contin_time !== undefined
-                      ? `${advancedSettings.qual_contin_time} sec`
+                      ? `${advancedSettings.qual_contin_time} seconds(s)`
                       : "Not Set",
                 },
                 {
@@ -589,18 +600,15 @@ ${regulationTitle}
         details: [
           {
             detailSetting: "PP Limit",
-            detailOption: formatValue(advancedSettings?.pp_limit),
+            detailOption: PP_LIMIT_FORMATTER(advancedSettings?.pp_limit ?? PP_LIMIT_DEFAULT),
           },
           {
             detailSetting: "Max. Power Output",
-            detailOption: formatValue(advancedSettings?.max_power_output),
+            detailOption: MAX_POWER_OUTPUT_FORMATTER(advancedSettings?.max_power_output ?? MAX_POWER_OUTPUT_DEFAULT),
           },
           {
             detailSetting: "Minimum Weight",
-            detailOption:
-              advancedSettings?.min_weight !== undefined
-                ? `${advancedSettings.min_weight} lb`
-                : "Not Set",
+            detailOption: MIN_WEIGHT_FORMATTER(advancedSettings?.min_weight ?? MIN_WEIGHT_DEFAULT),
           },
           {
             detailSetting: "Usable Tires",
@@ -612,11 +620,13 @@ ${regulationTitle}
           {
             detailSetting: "Usable Tire & Types",
             detailOption:
-              parseStringArrayField(advancedSettings?.usable_tires_types)
-                .map((value) =>
-                  getLabelFromOptions(USABLE_TIRE_WEAR_OPTIONS, value),
-                )
-                .join(", ") || "Not Set",
+              advancedSettings?.usable_tires_types?.length === 24 // FIX LATER
+                ? "All"
+                : parseStringArrayField(advancedSettings?.usable_tires_types)
+                    .map((value) =>
+                      getLabelFromOptions(USABLE_TIRE_WEAR_OPTIONS, value),
+                    )
+                    .join(", ") || "Not Set",
           },
           {
             detailSetting: "Required Tire Type",
@@ -625,7 +635,7 @@ ${regulationTitle}
                 .map((value) =>
                   getLabelFromOptions(REQUIRED_TIRE_TYPE_OPTIONS, value),
                 )
-                .join(", ") || "Not Set",
+                .join(", ") || "None",
           },
           {
             detailSetting: "Nitrous",
@@ -657,11 +667,11 @@ ${regulationTitle}
           },
           {
             detailSetting: "Year (Lower Limit)",
-            detailOption: formatValue(advancedSettings?.year_lower_limit),
+            detailOption: YEAR_LOWER_LIMIT_FORMATTER(advancedSettings?.year_lower_limit ?? YEAR_LOWER_LIMIT_DEFAULT),
           },
           {
             detailSetting: "Year (Upper Limit)",
-            detailOption: formatValue(advancedSettings?.year_upper_limit),
+            detailOption: YEAR_UPPER_LIMIT_FORMATTER(advancedSettings?.year_upper_limit ?? YEAR_UPPER_LIMIT_DEFAULT),
           },
           {
             detailSetting: "Drivetrain",
