@@ -232,6 +232,9 @@ const Homepage = () => {
   };
 
   const handleCreate = (type: string) => {
+    if (type === "league") {
+      return navigate("/coming-soon");
+    }
     track("navigation_click", { create_type: type, page_section: "Homepage" });
     navigate(`/create-${type.toLowerCase()}`);
     return;
@@ -474,7 +477,7 @@ const Homepage = () => {
                     onClick={
                       user
                         ? () => {
-                            handleCreate("League");
+                            handleCreate("league");
                           }
                         : handleGetStarted
                     }

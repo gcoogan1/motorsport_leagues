@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useModal } from "@/providers/modal/useModal";
+import { usePanel } from "@/providers/panel/usePanel";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
 import PlaceholderImage from "@assets/Cars/Hidden.png";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
@@ -28,6 +29,7 @@ type ScheduleProps = {
 
 const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
   const { openModal } = useModal();
+  const { openPanel } = usePanel(); 
   const [selectedDivisionLabel, setSelectedDivisionLabel] = useState("");
   const { data: carsData } = useGetCarsQuery();
   const seasonDivisions = useLeagueSeasonDivisions(seasonData?.id);
@@ -201,6 +203,10 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
     );
   }
 
+  const openReportPanel = () => {
+    return openPanel("REPORT");
+  }
+
   const openOnTheGridModal = (eventId: string) => {
     if (!seasonData) {
       return;
@@ -310,6 +316,9 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
                       }
                     : {}),
                 }))}
+                reportButton={{
+                  onClick: () => openReportPanel(),
+                }}
                 briefingButton={{
                   onClick: () => openBriefingModal(round.roundId)
                 }}

@@ -1,4 +1,5 @@
 import AlphaHomepage from "@/pages/AlphaHomepage/AlphaHomepage";
+import ComingSoon from "@/pages/ComingSoon/ComingSoon";
 import CreateAccount from "@/pages/CreateAccount/CreateAccount";
 import CreateLeague from "@/pages/CreateLeague/CreateLeague";
 import CreateProfile from "@/pages/CreateProfile/CreateProfile";
@@ -88,6 +89,11 @@ const DEV_ROUTES: Route[] = [
     element: <CreateLeague />,
     navbar: "core",
     protected: true,
+  },
+  {
+    path: "/coming-soon",
+    element: <ComingSoon />,
+    navbar: "core",
   },
   {
     path: "/league/:leagueId",

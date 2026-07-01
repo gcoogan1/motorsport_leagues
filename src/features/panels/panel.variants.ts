@@ -24,6 +24,7 @@ import AdvancedSettings from "./events/forms/AdvancedSettings/AdvancedSettings";
 import SquadChat from "./squadChat/SquadChat";
 import Announcements from "./announcements/Announcements";
 import LeagueChat from "./leagueChat/LeagueChat";
+import ReportIncident from "./reportIncident/ReportIncident";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,4 +54,5 @@ export const panelVariants: Record<PanelTypes, React.ComponentType<any>> = {
   SQUAD_CHAT: SquadChat,
   LEAGUE_CHAT: LeagueChat,
   LEAGUE_ANNOUNCEMENTS: Announcements,
+  REPORT: ReportIncident,
 };
