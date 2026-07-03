@@ -71,8 +71,8 @@ const LeaguesPanel = () => {
 
   const handleCreateLeague = () => {
     closePanel();
-    return navigate("/coming-soon");
-    // navigate("/create-league");
+    // return navigate("/coming-soon");
+    navigate("/create-league");
     return;
   };
 
