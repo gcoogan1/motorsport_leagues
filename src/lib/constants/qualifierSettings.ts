@@ -1,17 +1,17 @@
 export const TIME_LIMIT_OPTIONS = [
-  { label: "1 Min", value: "1min" },
-  { label: "2 Mins", value: "2min" },
-  { label: "3 Mins", value: "3min" },
-  { label: "5 Mins", value: "5min" },
-  { label: "10 Mins", value: "10min" },
-  { label: "15 Mins", value: "15min" },
-  { label: "20 Mins", value: "20min" },
-  { label: "25 Mins", value: "25min" },
-  { label: "30 Mins", value: "30min" },
-  { label: "40 Mins", value: "40min" },
-  { label: "50 Mins", value: "50min" },
-  { label: "60 Mins", value: "60min" },
-  { label: "90 Mins", value: "90min" },
+  { label: "1 minute", value: "1min" },
+  { label: "2 minute(s)", value: "2min" },
+  { label: "3 minute(s)", value: "3min" },
+  { label: "5 minute(s)", value: "5min" },
+  { label: "10 minute(s)", value: "10min" },
+  { label: "15 minute(s)", value: "15min" },
+  { label: "20 minute(s)", value: "20min" },
+  { label: "25 minute(s)", value: "25min" },
+  { label: "30 minute(s)", value: "30min" },
+  { label: "40 minute(s)", value: "40min" },
+  { label: "50 minute(s)", value: "50min" },
+  { label: "60 minute(s)", value: "60min" },
+  { label: "90 minute(s)", value: "90min" },
 ]
 
 export const TIME_LIMIT_OPTIONS_DISPLAY = [
@@ -35,7 +35,7 @@ export const QUALIFYING_CONTINUE_TIME_MIN = 30;
 export const QUALIFYING_CONTINUE_TIME_MAX = 180;
 export const QUALIFYING_CONTINUE_TIME_STEP = 10;
 export const QUALIFYING_CONTINUE_TIME_DEFAULT = 90;
-export const QUALIFYING_CONTINUE_TIME_FORMATTER = (value: number) => `${value} secs`;
+export const QUALIFYING_CONTINUE_TIME_FORMATTER = (value: number) => `${value} second(s)`;
 
 export const TIRE_WEAR_RT_QUAL_MIN = 0;
 export const TIRE_WEAR_RT_QUAL_MAX = 50;

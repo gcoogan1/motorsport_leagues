@@ -89,6 +89,7 @@ export const SheetContainer = styled.div<{ $fullScreen?: boolean }>`
 
   overflow-y: ${({ $fullScreen }) => ($fullScreen ? "auto" : "visible")};
   -webkit-overflow-scrolling: touch;
+  overflow-x: ${({ $fullScreen }) => ($fullScreen ? "hidden" : "visible")};
 
   ${layout.mediaQueries.mobile} {
     padding: ${layout.space.xxLarge} ${layout.space.medium};

@@ -65,7 +65,7 @@ export const REFUELING_SPEED_MIN = 1;
 export const REFUELING_SPEED_MAX =20;
 export const REFUELING_SPEED_STEP = 1;
 export const REFUELING_SPEED_DEFAULT = 3;
-export const REFUELING_SPEED_FORMATTER = (value: number) => `${value}L/sec`;
+export const REFUELING_SPEED_FORMATTER = (value: number) => `${value} L/sec`;
 
 export const INITIAL_FUEL_MIN = 0;
 export const INITIAL_FUEL_MAX = 100;
@@ -85,7 +85,7 @@ export const FINISH_DELAY_MIN = 30;
 export const FINISH_DELAY_MAX = 180;
 export const FINISH_DELAY_STEP = 10;
 export const FINISH_DELAY_DEFAULT = 90;
-export const FINISH_DELAY_FORMATTER = (value: number) => `${value} sec[s]`;
+export const FINISH_DELAY_FORMATTER = (value: number) => `${value} second[s]`;
 
 export const MIN_NUM_STOPS_MIN = 0;
 export const MIN_NUM_STOPS_MAX = 2;

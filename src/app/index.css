@@ -35,7 +35,7 @@ html {
 
 /* For Chrome, Edge, and Safari */
 html::-webkit-scrollbar {
-  width: 12px; /* Width of the vertical scrollbar */
+  width: 8px; /* Width of the vertical scrollbar */
 }
 
 html::-webkit-scrollbar-track {
@@ -45,5 +45,5 @@ html::-webkit-scrollbar-track {
 html::-webkit-scrollbar-thumb {
   background: #080808; /* Color of the scroll thumb */
   border-radius: 20px; /* Rounded edges of the thumb */
-  border: 3px solid #858585; /* Creates a clean gap around the thumb */
+  border: 2px solid #858585; /* Creates a clean gap around the thumb */
 }

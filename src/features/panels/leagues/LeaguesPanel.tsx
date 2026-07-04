@@ -101,7 +101,7 @@ const LeaguesPanel = () => {
       tabs={LEAGUE_TABS}
       onTabChange={handleTabChange}
       actions={
-        activeTab === "My Leagues" || (activeTab === "Following" && following && following.length > 0)
+        (activeTab === "My Leagues" && myLeagues && myLeagues.length > 0) || (activeTab === "Following" && following && following.length > 0)
           ? {
               primary: {
                 label: "Create League",
