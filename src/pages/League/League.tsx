@@ -456,6 +456,7 @@ const League = () => {
           <ActiveLeagueTabComponent
             seasonStatus={activeSeasonStatus}
             seasonData={activeSeasonData}
+            isParticipant={isParticipantView}
           />
         </TabContainer>
       </ContentContainer>

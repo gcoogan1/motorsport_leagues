@@ -25,11 +25,12 @@ import { useGetResultsByDivisionId } from "@/rtkQuery/hooks/queries/useResults";
 type ScheduleProps = {
   seasonStatus: LeagueStatus;
   seasonData?: LeagueSeasonTable;
+  isParticipant?: boolean;
 };
 
-const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
+const ScheduleLineup = ({ seasonStatus, seasonData, isParticipant = false }: ScheduleProps) => {
   const { openModal } = useModal();
-  const { openPanel } = usePanel(); 
+  const { openPanel } = usePanel();
   const [selectedDivisionLabel, setSelectedDivisionLabel] = useState("");
   const { data: carsData } = useGetCarsQuery();
   const seasonDivisions = useLeagueSeasonDivisions(seasonData?.id);
@@ -316,12 +317,16 @@ const ScheduleLineup = ({ seasonStatus, seasonData }: ScheduleProps) => {
                       }
                     : {}),
                 }))}
-                reportButton={{
-                  onClick: () => openReportPanel(),
-                }}
-                briefingButton={{
-                  onClick: () => openBriefingModal(round.roundId)
-                }}
+                {...(isParticipant
+                  ? {
+                      reportButton: {
+                        onClick: () => openReportPanel(),
+                      },
+                      briefingButton: {
+                        onClick: () => openBriefingModal(round.roundId),
+                      },
+                    }
+                  : {})}
               />
             ))
           )}
