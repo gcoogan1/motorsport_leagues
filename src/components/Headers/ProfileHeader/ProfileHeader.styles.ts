@@ -108,7 +108,7 @@ export const TextContent = styled.div`
   ${layout.mediaQueries.mobile} {
     align-items: center;
     gap: ${layout.space.xxxSmall};
-    max-width: 296px;
+    max-width: 100%;
     text-align: center;
   }
 `;
@@ -116,10 +116,9 @@ export const TextContent = styled.div`
 export const Username = styled.h2`
   ${typography.title.large};
   color: ${colors.text.text1};
-  /* overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap; */
   width: 100%;
+  word-break: break-word;
+  overflow-wrap: break-word;
 `;
 
 export const UserGame = styled.p<{ $isIRacing?: boolean }>`
