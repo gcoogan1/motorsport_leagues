@@ -70,7 +70,6 @@ export const RulesContent = styled.div`
   }
 
   p {
-    margin: 0 0 ${layout.space.medium};
     ${typography.body.mediumRegular};
     color: ${colors.text.text2};
   }
@@ -89,7 +88,6 @@ export const RulesContent = styled.div`
 
   ul,
   ol {
-    margin: 0 0 ${layout.space.medium};
     padding-left: 24px;
     ${typography.body.mediumRegular};
     color: ${colors.text.text2};

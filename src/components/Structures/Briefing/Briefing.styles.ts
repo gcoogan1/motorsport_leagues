@@ -48,26 +48,22 @@ export const Wrapper = styled.div`
   }
 
   p {
-    margin: 0 0 ${layout.space.medium};
     ${typography.body.mediumRegular};
     color: ${colors.text.text2};
   }
 
   h1 {
-    margin: 0 0 ${layout.space.large};
     ${typography.subtitle.xLarge};
     color: ${colors.text.text1};
   }
 
   h2 {
-    margin: ${layout.space.xLarge} 0 ${layout.space.medium};
     ${typography.subtitle.large};
     color: ${colors.text.text1};
   }
 
   ul,
   ol {
-    margin: 0 0 ${layout.space.medium};
     padding-left: 24px;
     ${typography.body.mediumRegular};
     color: ${colors.text.text2};

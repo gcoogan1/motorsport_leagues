@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useEditor, type Editor } from "@tiptap/react";
-import { Extension } from "@tiptap/core";
+// import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
@@ -88,13 +88,13 @@ const RichTextEditor = ({
     },
   });
 
-const EnterAsLineBreak = Extension.create({
-  addKeyboardShortcuts() {
-    return {
-      Enter: () => this.editor.commands.setHardBreak(),
-    };
-  },
-});
+// const EnterAsLineBreak = Extension.create({
+//   addKeyboardShortcuts() {
+//     return {
+//       Enter: () => this.editor.commands.setHardBreak(),
+//     };
+//   },
+// });
 
   // Initialize the editor with the useEditor hook
   const editor = useEditor({
@@ -119,7 +119,7 @@ const EnterAsLineBreak = Extension.create({
       }),
       Image,
       HardBreak,
-      EnterAsLineBreak,
+      // EnterAsLineBreak,
       // Link.configure({
       //   openOnClick: false,
       //   autolink: true,
