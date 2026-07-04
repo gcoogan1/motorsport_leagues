@@ -20,6 +20,7 @@ import {
 } from "@/rtkQuery/hooks/queries/useProfileFollowers";
 import { useSquadsByProfileId } from "@/rtkQuery/hooks/queries/useSquads";
 import { useProfileLeagues } from "@/rtkQuery/hooks/queries/useLeagues";
+import { useGetProfileStatsQuery } from "@/rtkQuery/API/profileApi";
 import ProfileHeader from "@/components/Headers/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/Structures/ProfileStats/ProfileStats";
 import SquadsListCard from "@/components/Cards/CardList/SquadsListCard/SquadsListCard";
@@ -30,30 +31,6 @@ import GuestFollow from "@/features/profiles/modals/errors/GuestFollow/GuestFoll
 import Unfollow from "@/features/profiles/modals/errors/Unfollow/Unfollow";
 import SearchForm from "@/features/search/forms/SearchForm";
 import { Container, Content, ListContainer, Wrapper } from "./Profile.styles";
-
-// TEMP HARDCODED STATS
-const stats = [
-  {
-    number: 0,
-    labelStat: "Leagues",
-    labelFact: "Joined",
-  },
-  {
-    number: 0,
-    labelStat: "Seasons",
-    labelFact: "Entered",
-  },
-  {
-    number: 0,
-    labelStat: "Rounds",
-    labelFact: "Completed",
-  },
-  {
-    number: 0,
-    labelStat: "Races",
-    labelFact: "Won",
-  },
-];
 
 const Profile = () => {
   const { profileId } = useParams();
@@ -76,11 +53,38 @@ const Profile = () => {
   const { data: followers = [] } = useProfileFollowers(profileId ?? "");
   const { data: mySquads = [] } = useSquadsByProfileId(profileId);
   const { data: myLeagues = [] } = useProfileLeagues(profileId);
+  const { data: profileStats } = useGetProfileStatsQuery(profileId ?? "", {
+    skip: !profileId,
+  });
   // Check if the logged in user is following the profile being viewed (used to determine follow/unfollow behavior)
   const { data: isFollowing = false } = useIsFollowingProfile(
     user?.id ?? "",
     profileId ?? "",
   );
+
+  // Build stats array with actual data
+  const stats = [
+    {
+      number: profileStats?.leagues ?? 0,
+      labelStat: "Leagues",
+      labelFact: "Joined",
+    },
+    {
+      number: profileStats?.seasons ?? 0,
+      labelStat: "Seasons",
+      labelFact: "Entered",
+    },
+    {
+      number: profileStats?.rounds ?? 0,
+      labelStat: "Rounds",
+      labelFact: "Completed",
+    },
+    {
+      number: profileStats?.raceWins ?? 0,
+      labelStat: "Races",
+      labelFact: "Won",
+    },
+  ];
 
   useEffect(() => {
     // Always fetch by route param so stale cached currentProfile (e.g. recently deleted)

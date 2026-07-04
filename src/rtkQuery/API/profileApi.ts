@@ -6,7 +6,7 @@ import type {
   RemoveFollowerVariables,
   UnfollowProfileVariables,
 } from "@/types/profile.types";
-import { getAllProfiles } from "@/services/profile/profile.service";
+import { getAllProfiles, getProfileStats } from "@/services/profile/profile.service";
 import { getFollowersService, getFollowingService, isFollowingService, followProfileService, unfollowProfileService, removeFollowerService } from "@/services/profile/profileFollow.service";
 
 
@@ -27,10 +27,17 @@ export type IsFollowingArgs = {
 };
 
 
+export type ProfileStats = {
+  leagues: number;
+  seasons: number;
+  rounds: number;
+  raceWins: number;
+};
+
 export const profileApi = createApi({
   reducerPath: "profileApi",
   baseQuery: fakeBaseQuery(),
-  tagTypes: ["Profiles", "Followers", "Following", "IsFollowing"],
+  tagTypes: ["Profiles", "Followers", "Following", "IsFollowing", "ProfileStats"],
   endpoints: (builder) => ({
     getProfiles: builder.query<ProfileTable[], ProfilesQueryArgs>({
       queryFn: async ({ userId, search, includeOwnProfiles }, api) => {
@@ -155,6 +162,25 @@ export const profileApi = createApi({
         { type: "IsFollowing", id: `${variables.currentProfileId}-${variables.followerProfileId}` },
       ],
     }),
+    getProfileStats: builder.query<ProfileStats, string>({
+      queryFn: async (profileId) => {
+        const result = await getProfileStats(profileId);
+
+        if (!result.success) {
+          return {
+            error: {
+              status: 500,
+              data: result.error,
+            },
+          };
+        }
+
+        return { data: result.data };
+      },
+      providesTags: (_result, _error, profileId) => [
+        { type: "ProfileStats", id: profileId },
+      ],
+    }),
   }),
 });
 
@@ -166,4 +192,5 @@ export const {
   useFollowProfileMutation,
   useUnfollowProfileMutation,
   useRemoveFollowerMutation,
+  useGetProfileStatsQuery,
 } = profileApi;

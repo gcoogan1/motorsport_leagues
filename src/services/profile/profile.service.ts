@@ -769,3 +769,73 @@ export const getAllProfiles = async (
   };
 };
 
+// -- Get Profile Statistics -- //
+export const getProfileStats = async (profileId: string) => {
+  try {
+    // 1. Count leagues the profile is a participant in
+    const { count: leaguesCount } = await supabase
+      .from("league_participants")
+      .select("*", { count: "exact", head: true })
+      .eq("profile_id", profileId);
+
+    // 2. Count distinct seasons the profile was a league season driver (may be in multiple divisions per season)
+    const { data: seasonsData } = await supabase
+      .from("league_season_driver")
+      .select("id, season_id")
+      .eq("profile_id", profileId);
+
+    const distinctSeasonsCount = seasonsData
+      ? new Set(seasonsData.map((s) => s.season_id)).size
+      : 0;
+
+    // Get all driver IDs for this profile to query results
+    const driverIds = seasonsData?.map((s) => s.id) ?? [];
+
+    // 3. Count completed rounds the profile participated in as a driver (must have results)
+    let completedRoundsCount = 0;
+    if (driverIds.length > 0) {
+      const { data: roundsData } = await supabase
+        .from("results")
+        .select("round_id")
+        .in("driver_id", driverIds);
+
+      completedRoundsCount = roundsData
+        ? new Set(roundsData.map((r) => r.round_id)).size
+        : 0;
+    }
+
+    // 4. Count races won (results with position = 1, race session only - not qualifying)
+    let racesWonCount = 0;
+    if (driverIds.length > 0) {
+      const { count } = await supabase
+        .from("results")
+        .select("*", { count: "exact", head: true })
+        .in("driver_id", driverIds)
+        .eq("position", 1)
+        .eq("session_type", "race");
+
+      racesWonCount = count ?? 0;
+    }
+
+    return {
+      success: true,
+      data: {
+        leagues: leaguesCount ?? 0,
+        seasons: distinctSeasonsCount,
+        rounds: completedRoundsCount,
+        raceWins: racesWonCount ?? 0,
+      },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        message: error instanceof Error ? error.message : "Failed to fetch profile stats",
+        code: "STATS_FETCH_FAILED",
+        status: 500,
+      },
+    };
+  }
+};
+
+
