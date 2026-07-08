@@ -13,6 +13,8 @@ export const DropdownContainer = styled.div<{ $isStandAlone?: boolean }>`
   flex-direction: column;
   width: ${({ $isStandAlone }) => ($isStandAlone ? "240px" : "100%")};
   min-width: 240px;
+  max-height: 300px;
+  overflow-y: auto;
 
   border-radius: ${borders.radius.xxLarge};
   background-color: ${colors.base.base3};

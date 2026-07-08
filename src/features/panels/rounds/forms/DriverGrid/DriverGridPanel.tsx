@@ -10,7 +10,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { useEvent, useEventDrivers } from "@/rtkQuery/hooks/queries/useEvents";
 import { useCreateEventDriver, useDeleteEventDriver } from "@/rtkQuery/hooks/mutations/useEventMutaion";
-import { useLeagueSeasonDivisionDrivers } from "@/rtkQuery/hooks/queries/useLeagueSeasonDivisions";
+import { useLeagueSeasonDivisionDrivers, useLeagueSeasonDivisionTeams } from "@/rtkQuery/hooks/queries/useLeagueSeasonDivisions";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { withMinDelay } from "@/utils/withMinDelay";
 import RemoveIcon from "@assets/Icon/Remove.svg?react";
@@ -44,9 +44,19 @@ const DriverGridPanel = ({ eventId }: DriverGridPanelProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const event = useEvent(eventId);
   const seasonDrivers = useLeagueSeasonDivisionDrivers(event.data?.division_id);
+  const seasonTeams = useLeagueSeasonDivisionTeams(event.data?.division_id);
   const eventDrivers = useEventDrivers(eventId);
   const [createEventDriver] = useCreateEventDriver();
   const [deleteEventDriver] = useDeleteEventDriver();
+
+  // Merge drivers with team names
+  const driversWithTeams = useMemo(() => {
+    const teamMap = new Map((seasonTeams.data ?? []).map((team) => [team.id, team.team_name]));
+    return (seasonDrivers.data ?? []).map((driver) => ({
+      ...driver,
+      team_name: driver.team_id ? teamMap.get(driver.team_id) : undefined,
+    }));
+  }, [seasonDrivers.data, seasonTeams.data]);
 
   const formMethods = useForm<DriverGridFormValues>({
     defaultValues: {
@@ -108,8 +118,8 @@ const DriverGridPanel = ({ eventId }: DriverGridPanelProps) => {
   );
 
   const seasonDriverOptions = useMemo(
-    () => (seasonDrivers.data ?? []).map(toSeasonDriverOption),
-    [seasonDrivers.data],
+    () => driversWithTeams.map(toSeasonDriverOption),
+    [driversWithTeams],
   );
 
   const seasonDriverOptionsById = useMemo(
