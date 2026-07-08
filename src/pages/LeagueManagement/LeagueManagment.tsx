@@ -176,7 +176,7 @@ const LeagueManagment = () => {
         )}
       </>
     ) : activeSection === "schedule-rounds" && activeSeasonData ? (
-      <Schedule seasonData={activeSeasonData} />
+      <Schedule seasonData={activeSeasonData} leagueTimezone={currentLeague?.timezone} />
     ) : activeSection === "enter-results" && activeSeasonData ? (
       <Results
         seasonData={activeSeasonData}

@@ -42,10 +42,11 @@ import DeleteEvent from "../../modals/core/DeleteEvent/DeleteEvent";
 
 type ScheduleProps = {
   seasonData: LeagueSeasonTable;
+  leagueTimezone?: string;
 };
 
 
-const Schedule = ({ seasonData }: ScheduleProps) => {
+const Schedule = ({ seasonData, leagueTimezone }: ScheduleProps) => {
   const { openModal } = useModal();
   const { openPanel } = usePanel();
   const { showToast } = useToast();
@@ -182,9 +183,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
 
     const roundEvents = eventsByRoundId[roundId] ?? [];
     const eventName = getNextEventName(roundEvents);
-    const getUserTimeZone = (): string => {
-      return Intl.DateTimeFormat().resolvedOptions().timeZone; 
-    };
+    const eventTimezone = leagueTimezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     try {
       setCreatingEventRoundId(roundId);
@@ -193,7 +192,7 @@ const Schedule = ({ seasonData }: ScheduleProps) => {
         createEvent({
           eventName,
           // eventDate: new Date().toISOString(),
-          eventTimeZone: getUserTimeZone(),
+          eventTimeZone: eventTimezone,
           roundId,
           divisionId: effectiveDivisionId,
           seasonId: seasonData.id,
