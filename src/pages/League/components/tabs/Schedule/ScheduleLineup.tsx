@@ -210,7 +210,6 @@ const ScheduleLineup = ({ seasonStatus, seasonData, isParticipant = false }: Sch
       <ReportIncidentModal
         roundId={roundId}
         seasonId={seasonData.id}
-        seasonName={seasonData.season_name}
       />,
     );
   }
