@@ -97,7 +97,6 @@ const ScheduleLineup = ({ seasonStatus, seasonData, isParticipant = false }: Sch
 
   const stockFallbackImage = useMemo(() => {
     const stockCar = (carsData ?? []).find((car) => car.car_category === "stock" && car.car_name === "hidden");
-    console.log("Stock car details:", stockCar);
     return stockCar?.car_image_url || PlaceholderImage;
   }, [carsData]);
 

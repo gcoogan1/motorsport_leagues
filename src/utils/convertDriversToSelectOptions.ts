@@ -1,4 +1,3 @@
-import { GAME_FULL_NAMES } from "@/types/profile.types";
 import type { LeagueSeasonDriverTable } from "@/types/league.types";
 
 export type ProfileSelectOption = {
@@ -12,14 +11,12 @@ export type ProfileSelectOption = {
 };
 
 export const convertDriversToSelectOptions = (
-  drivers: LeagueSeasonDriverTable[] | null | undefined,
+  drivers: (LeagueSeasonDriverTable & { team_name?: string })[] | null | undefined,
 ): ProfileSelectOption[] =>
   (drivers ?? []).map((driver) => ({
     label: driver.display_name ?? "",
     value: driver.id,
-    secondaryInfo: driver.game_type
-      ? GAME_FULL_NAMES[driver.game_type]
-      : undefined,
+    secondaryInfo: driver.team_name || undefined,
     avatar: {
       avatarType: driver.avatar_type as "preset" | "upload",
       avatarValue: driver.avatar_value ?? "",

@@ -327,7 +327,7 @@ export const getEventSessionSettingsByEventId = async (eventId: string): Promise
     .from("event_session_settings")
     .select("*")
     .eq("event_id", eventId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     return {

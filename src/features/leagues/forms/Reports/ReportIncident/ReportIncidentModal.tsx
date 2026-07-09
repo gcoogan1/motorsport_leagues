@@ -1,9 +1,5 @@
 import { useMemo, useState } from "react";
-import {
-  Controller,
-  FormProvider,
-  useForm,
-} from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
@@ -17,11 +13,16 @@ import { convertDriversToSelectOptions } from "@/utils/convertDriversToSelectOpt
 import {
   createTicketSchema,
   type CreateTicketSchema,
-} from "./ReportIncident.schema";
+} from "./ReportIncidentModal.schema";
 import { sortRounds, sortEventsByDate } from "../../Schedule/Schedule.util";
 import { useLeagueSeasonDivisions } from "@/rtkQuery/hooks/queries/useLeagueSeasonDivisions";
 import { useRoundsBySeason } from "@/rtkQuery/hooks/queries/useRounds";
-import { useEvents, useEventSessionSettings } from "@/rtkQuery/hooks/queries/useEvents";
+import {
+  useEvents,
+  useEventSessionSettings,
+} from "@/rtkQuery/hooks/queries/useEvents";
+import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
+import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 
 type ReportIncidentModalProps = {
   roundId: string;
@@ -32,13 +33,15 @@ const ReportIncidentModal = ({
   roundId,
   seasonId,
 }: ReportIncidentModalProps) => {
-  const { closeModal } = useModal();
+  const { openModal, closeModal } = useModal();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDivisionId, setSelectedDivisionId] = useState("");
   const [selectedRoundId, setSelectedRoundId] = useState("");
   const [selectedEventId, setSelectedEventId] = useState("");
-  const [selectedSessionType, setSelectedSessionType] = useState<"qualifying" | "race" | "">("");
+  const [selectedSessionType, setSelectedSessionType] = useState<
+    "qualifying" | "race"
+  >("race");
 
   // Mutations and queries
   const [createTicket] = useCreateTicket();
@@ -57,18 +60,11 @@ const ReportIncidentModal = ({
   );
 
   // Get preliminary effective division for queries
-  const preliminaryEffectiveDivisionId = selectedDivisionId || divisionOptions[0]?.value || "";
+  const preliminaryEffectiveDivisionId =
+    selectedDivisionId || divisionOptions[0]?.value || "";
 
   // Now we can call the queries
   const eventsByDivision = useEvents(preliminaryEffectiveDivisionId);
-  
-  // Get preliminary effective event id for queries (based on all events by division)
-  const preliminaryEffectiveEventId = useMemo(() => {
-    if (selectedEventId) return selectedEventId;
-    return (eventsByDivision.data ?? [])[0]?.id ?? "";
-  }, [eventsByDivision.data, selectedEventId]);
-
-  const eventSessionSettings = useEventSessionSettings(preliminaryEffectiveEventId);
 
   // Convert season drivers to select options
   const profiles = useMemo(
@@ -137,13 +133,12 @@ const ReportIncidentModal = ({
   }, [effectiveDivisionId, initialRound, roundsForDivision, selectedRoundId]);
 
   // Get events for the effective division and sort by date (oldest to newest)
-  const eventsForDivision = useMemo(
-    () => {
-      const filtered = (eventsByDivision.data ?? []).filter((event) => event.round_id === effectiveRoundId);
-      return sortEventsByDate(filtered);
-    },
-    [eventsByDivision.data, effectiveRoundId],
-  );
+  const eventsForDivision = useMemo(() => {
+    const filtered = (eventsByDivision.data ?? []).filter(
+      (event) => event.round_id === effectiveRoundId,
+    );
+    return sortEventsByDate(filtered);
+  }, [eventsByDivision.data, effectiveRoundId]);
 
   // Convert events to select options
   const eventOptions = useMemo(
@@ -166,19 +161,31 @@ const ReportIncidentModal = ({
     return eventsForDivision[0]?.id ?? "";
   }, [eventsForDivision, selectedEventId]);
 
+  // Fetch session settings for the effective event
+  const eventSessionSettings = useEventSessionSettings(effectiveEventId);
+
   // Get available session types based on event session settings
   const sessionOptions = useMemo(() => {
-    if (!eventSessionSettings.data) return [];
-    
+    if (!eventSessionSettings.currentData) return [];
+
     const sessions = [];
-    if (eventSessionSettings.data.has_qualifying) {
-      sessions.push({ label: "Qualifying", value: "qualifying" });
+    if (eventSessionSettings.currentData.has_qualifying) {
+      sessions.push({ label: "Qualifying Session", value: "qualifying" });
     }
-    if (eventSessionSettings.data.has_race) {
-      sessions.push({ label: "Race", value: "race" });
+    if (eventSessionSettings.currentData.has_race) {
+      sessions.push({ label: "Race Session", value: "race" });
     }
     return sessions;
-  }, [eventSessionSettings.data]);
+  }, [eventSessionSettings.currentData]);
+
+  // Derive the effective session — default to race if available, else first option
+  const effectiveSessionType = useMemo(() => {
+    if (sessionOptions.some((o) => o.value === selectedSessionType)) {
+      return selectedSessionType;
+    }
+    const raceOption = sessionOptions.find((o) => o.value === "race");
+    return raceOption?.value ?? sessionOptions[0]?.value ?? "";
+  }, [sessionOptions, selectedSessionType]);
 
   // Form setup -- //
   const formMethods = useForm<CreateTicketSchema>({
@@ -207,22 +214,19 @@ const ReportIncidentModal = ({
         divisionId: effectiveDivisionId,
         roundId,
         eventId: effectiveEventId,
-        isRaceSession: selectedSessionType === "race",
+        isRaceSession: effectiveSessionType === "race",
         driverId: data.offendingDriver,
         seasonId,
         incidentDescription: data.description,
       }).unwrap();
-      
+
       showToast({
         usage: "success",
-        message: "Incident report submitted successfully.",
+        message: "Incident has been reported.",
       });
       closeModal();
     } catch {
-      showToast({
-        usage: "error",
-        message: "Failed to submit incident report. Please try again.",
-      });
+      handleSupabaseError({ code: "SERVER_ERROR" }, openModal);
     } finally {
       setIsLoading(false);
     }
@@ -254,38 +258,47 @@ const ReportIncidentModal = ({
           selectedDivision={effectiveDivisionId}
           selectedRound={effectiveRoundId}
           selectedEvent={selectedEventId}
-          selectedSession={selectedSessionType}
+          selectedSession={effectiveSessionType}
           onDivisionChange={setSelectedDivisionId}
           onRoundChange={setSelectedRoundId}
           onEventChange={setSelectedEventId}
-          onSessionChange={(session) => setSelectedSessionType(session as "qualifying" | "race" | "")}
+          onSessionChange={(session) =>
+            setSelectedSessionType(session as "qualifying" | "race")
+          }
+          displayAsMobile={true}
         />
-        <ProfileSelectInput
-          name="offendingDriver"
-          fieldLabel="Offending Driver"
-          type={"profile"}
-          profiles={profiles}
-          placeholder="Select driver..."
-          hasError={!!errors.offendingDriver}
-          errorMessage={errors.offendingDriver?.message}
-        />
-
-        <Controller
-          name="description"
-          control={control}
-          render={({ field }) => (
-            <RichTextEditor
-              value={field.value}
-              onChange={field.onChange}
-              hasError={!!errors.description}
-              errorMessage={errors.description?.message}
-              label="Incident Description"
-              placeholder="Describe the incident with all the details..."
-              maxCharacters={2000}
-              showCount
+        {sessionOptions.length > 0 ? (
+          <>
+            <ProfileSelectInput
+              name="offendingDriver"
+              fieldLabel="Offending Driver"
+              type={"profile"}
+              profiles={profiles}
+              placeholder="Select driver..."
+              hasError={!!errors.offendingDriver}
+              errorMessage={errors.offendingDriver?.message}
             />
-          )}
-        />
+
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <RichTextEditor
+                  value={field.value}
+                  onChange={field.onChange}
+                  hasError={!!errors.description}
+                  errorMessage={errors.description?.message}
+                  label="Incident Description"
+                  placeholder="Describe the incident with all the details..."
+                  maxCharacters={2000}
+                  showCount
+                />
+              )}
+            />
+          </>
+        ) : (
+          <EmptyMessage hideIcon title="No Sessions Available" subtitle="Incident reporting is only available for active sessions." />
+        )}
       </FormModal>
     </FormProvider>
   );
