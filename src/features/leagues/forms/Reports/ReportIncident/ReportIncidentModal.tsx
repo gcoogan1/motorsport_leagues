@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useModal } from "@/providers/modal/useModal";
@@ -8,8 +9,10 @@ import { useCreateTicket } from "@/rtkQuery/hooks/mutations/useReportsMutation";
 import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
 import ProfileSelectInput from "@/components/Inputs/ProfileSelectInput/ProfileSelectInput";
 import RichTextEditor from "@/components/Inputs/RichTextEditor/RichTextEditor";
-import { useLeagueSeasonDrivers } from "@/rtkQuery/hooks/queries/useLeagueSeasons";
+import { useLeagueSeasonDrivers, useLeagueSeasonTeams } from "@/rtkQuery/hooks/queries/useLeagueSeasons";
 import { convertDriversToSelectOptions } from "@/utils/convertDriversToSelectOptions";
+import type { RootState } from "@/store";
+import { selectAllProfiles } from "@/store/profile/profile.selectors";
 import {
   createTicketSchema,
   type CreateTicketSchema,
@@ -45,9 +48,39 @@ const ReportIncidentModal = ({
 
   // Mutations and queries
   const [createTicket] = useCreateTicket();
+  const accountId = useSelector((state: RootState) => state?.account?.data?.id);
+  const allProfiles = useSelector(selectAllProfiles);
   const { data: seasonDrivers } = useLeagueSeasonDrivers(seasonId);
+  const { data: seasonTeams } = useLeagueSeasonTeams(seasonId);
   const seasonDivisions = useLeagueSeasonDivisions(seasonId);
   const roundsBySeason = useRoundsBySeason(seasonId);
+
+  // Check if there are any teams in this season
+  const hasTeams = useMemo(() => {
+    return seasonTeams && seasonTeams.length > 0;
+  }, [seasonTeams]);
+
+  // Set profile select type based on whether teams exist
+  const profileSelectType: "profile" | "driver" = hasTeams
+    ? "profile"
+    : "driver";
+
+  // Get current user's profile IDs (account_id and profile_id are different)
+  const myProfileIds = useMemo(() => {
+    if (!accountId || !allProfiles) return [];
+    return allProfiles
+      .filter((profile) => profile?.account_id === accountId)
+      .map((profile) => profile?.id)
+      .filter(Boolean) as string[];
+  }, [accountId, allProfiles]);
+
+  // Filter season drivers to only those belonging to current user's profiles
+  const mySeasonDrivers = useMemo(() => {
+    if (!seasonDrivers || myProfileIds.length === 0) return [];
+    return seasonDrivers.filter((driver) =>
+      myProfileIds.includes(driver.profile_id)
+    );
+  }, [seasonDrivers, myProfileIds]);
 
   // Convert season divisions to select options (early to use in queries)
   const divisionOptions = useMemo(
@@ -66,10 +99,16 @@ const ReportIncidentModal = ({
   // Now we can call the queries
   const eventsByDivision = useEvents(preliminaryEffectiveDivisionId);
 
-  // Convert season drivers to select options
+  // Convert my season drivers to select options (for reporting driver dropdown)
+  const reportingDriverProfiles = useMemo(
+    () => convertDriversToSelectOptions(mySeasonDrivers, seasonTeams),
+    [mySeasonDrivers, seasonTeams],
+  );
+
+  // Convert all season drivers to select options (for offending driver dropdown)
   const profiles = useMemo(
-    () => convertDriversToSelectOptions(seasonDrivers || []),
-    [seasonDrivers],
+    () => convertDriversToSelectOptions(seasonDrivers, seasonTeams),
+    [seasonDrivers, seasonTeams],
   );
 
   // Sort rounds by their order within the season
@@ -215,7 +254,8 @@ const ReportIncidentModal = ({
         roundId,
         eventId: effectiveEventId,
         isRaceSession: effectiveSessionType === "race",
-        driverId: data.offendingDriver,
+        offendingDriverId: data.offendingDriver,
+        reportingDriverId: data.reportingDriver,
         seasonId,
         incidentDescription: data.description,
       }).unwrap();
@@ -270,9 +310,19 @@ const ReportIncidentModal = ({
         {sessionOptions.length > 0 ? (
           <>
             <ProfileSelectInput
+              name="reportingDriver"
+              fieldLabel="Reporting Driver"
+              type={profileSelectType}
+              profiles={reportingDriverProfiles}
+              placeholder="Select driver..."
+              hasError={!!errors.reportingDriver}
+              errorMessage={errors.reportingDriver?.message}
+            />
+
+            <ProfileSelectInput
               name="offendingDriver"
               fieldLabel="Offending Driver"
-              type={"profile"}
+              type={profileSelectType}
               profiles={profiles}
               placeholder="Select driver..."
               hasError={!!errors.offendingDriver}

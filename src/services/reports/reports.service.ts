@@ -47,9 +47,58 @@ export const getTicketsBySeasonId = async (seasonId: string): Promise<GetTickets
     };
   }
 
+  // Fetch results and driver info for each ticket
+  const enrichedData = await Promise.all(
+    data.map(async (ticket) => {
+      const [resultResponse, offendingDriverResponse, reportingDriverResponse, eventResponse] = await Promise.all([
+        supabase
+          .from("results")
+          .select("position")
+          .eq("driver_id", ticket.offending_driver_id)
+          .eq("event_id", ticket.event_id)
+          .maybeSingle(),
+        supabase
+          .from("league_season_driver")
+          .select("display_name, avatar_type, avatar_value, team_id, league_season_team ( team_name )")
+          .eq("id", ticket.offending_driver_id)
+          .maybeSingle(),
+        supabase
+          .from("league_season_driver")
+          .select("display_name, avatar_type, avatar_value, team_id, league_season_team ( team_name )")
+          .eq("id", ticket.reporting_driver_id)
+          .maybeSingle(),
+        supabase
+          .from("event")
+          .select("event_name")
+          .eq("id", ticket.event_id)
+          .maybeSingle(),
+      ]);
+
+      return {
+        ...ticket,
+        driverPosition: resultResponse.data?.position ?? 0,
+        eventName: eventResponse.data?.event_name ?? "Unknown Event",
+        offending_driver: {
+          username: offendingDriverResponse.data?.display_name ?? "Unknown",
+          avatarType: offendingDriverResponse.data?.avatar_type ?? "preset",
+          avatarValue: offendingDriverResponse.data?.avatar_value ?? "black",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          teamName: (offendingDriverResponse.data as any)?.league_season_team?.team_name ?? undefined,
+        },
+        reporting_driver: {
+          username: reportingDriverResponse.data?.display_name ?? "Unknown",
+          avatarType: reportingDriverResponse.data?.avatar_type ?? "preset",
+          avatarValue: reportingDriverResponse.data?.avatar_value ?? "black",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          teamName: (reportingDriverResponse.data as any)?.league_season_team?.team_name ?? undefined,
+        },
+      };
+    })
+  );
+
   return {
     success: true,
-    data: data,
+    data: enrichedData,
   };
 };
 
@@ -88,7 +137,8 @@ export const createTicket = async (
         round_id: payload.roundId,
         event_id: payload.eventId,
         is_race_session: payload.isRaceSession,
-        driver_id: payload.driverId,
+        offending_driver_id: payload.offendingDriverId,
+        reporting_driver_id: payload.reportingDriverId,
         incident_description: payload.incidentDescription,
       },
     ])
@@ -189,7 +239,7 @@ export const createDecision = async (payload: CreateDecisionPayload): Promise<Cr
     .insert([
       {
         ticket_table_id: payload.ticketTableId,
-        driver_id: payload.driverId,
+        offending_driver_id: payload.offendingDriverId,
         season_id: payload.seasonId,
         incident_title: payload.incidentTitle,
         decision_summary: payload.decisionSummary,
@@ -220,7 +270,7 @@ export const updateDecision = async (payload: UpdateDecisionPayload): Promise<Up
   const { data, error } = await supabase
     .from("decisions")
     .update({
-      driver_id: payload.driverId,
+      offending_driver_id: payload.offendingDriverId,
       season_id: payload.seasonId,
       incident_title: payload.incidentTitle,
       decision_summary: payload.decisionSummary,

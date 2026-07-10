@@ -16,11 +16,13 @@ export type TicketsTable = {
     username: string;
     avatarType: "preset" | "upload";
     avatarValue: string;
+    teamName?: string;
   };
   reporting_driver?: {
     username: string;
     avatarType: "preset" | "upload";
     avatarValue: string;
+    teamName?: string;
   };
 }
 
