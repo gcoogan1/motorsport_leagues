@@ -7,8 +7,21 @@ export type TicketsTable = {
   round_id: string;
   event_id: string;
   is_race_session: boolean;
-  driver_id: string;
+  offending_driver_id: string;
+  reporting_driver_id: string;
   incident_description: string;
+  driverPosition?: number;
+  eventName?: string;
+  offending_driver?: {
+    username: string;
+    avatarType: "preset" | "upload";
+    avatarValue: string;
+  };
+  reporting_driver?: {
+    username: string;
+    avatarType: "preset" | "upload";
+    avatarValue: string;
+  };
 }
 
 export type DecisionsTable = {
@@ -17,7 +30,7 @@ export type DecisionsTable = {
   ticket_id: number;
   season_id: string;
   ticket_table_id: string;
-  driver_id: string;
+  offending_driver_id: string;
   incident_title: string;
   decision_summary: string;
   detailed_reasoning: string;
@@ -41,7 +54,8 @@ export type CreateTicketPayload = {
   roundId: string;
   eventId: string;
   isRaceSession: boolean;
-  driverId: string;
+  offendingDriverId: string;
+  reportingDriverId: string;
   seasonId: string;
   incidentDescription: string;
 };
@@ -88,7 +102,7 @@ export type DeleteTicketResponse = DeleteTicketSuccessResponse | SupabaseError;
 
 export type CreateDecisionPayload = {
   ticketTableId: string;
-  driverId: string;
+  offendingDriverId: string;
   seasonId: string;
   incidentTitle: string;
   decisionSummary: string;
@@ -104,7 +118,7 @@ export type CreateDecisionResponse = CreateDecisionSuccessResponse | SupabaseErr
 
 export type UpdateDecisionPayload = {
   decisionTableId: string;
-  driverId: string;
+  offendingDriverId: string;
   seasonId: string;
   incidentTitle: string;
   decisionSummary: string;

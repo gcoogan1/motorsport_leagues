@@ -10,15 +10,26 @@ export type ProfileSelectOption = {
   };
 };
 
+type LeagueSeasonTeam = {
+  id: string;
+  team_name: string;
+};
+
 export const convertDriversToSelectOptions = (
-  drivers: (LeagueSeasonDriverTable & { team_name?: string })[] | null | undefined,
-): ProfileSelectOption[] =>
-  (drivers ?? []).map((driver) => ({
+  drivers: LeagueSeasonDriverTable[] | null | undefined,
+  seasonTeams?: LeagueSeasonTeam[] | null,
+): ProfileSelectOption[] => {
+  const teamMap = new Map(
+    (seasonTeams ?? []).map((team) => [team.id, team.team_name])
+  );
+
+  return (drivers ?? []).map((driver) => ({
     label: driver.display_name ?? "",
     value: driver.id,
-    secondaryInfo: driver.team_name || undefined,
+    secondaryInfo: driver.team_id ? teamMap.get(driver.team_id) : undefined,
     avatar: {
       avatarType: driver.avatar_type as "preset" | "upload",
       avatarValue: driver.avatar_value ?? "",
     },
   }));
+};

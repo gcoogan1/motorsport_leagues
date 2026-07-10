@@ -12,6 +12,7 @@ import { squadApi } from "../rtkQuery/API/squadApi";
 import { carsApi } from "@/rtkQuery/API/carsApi";
 import { eventAdvancedSettingsApi } from "@/rtkQuery/API/eventAdvancedSettingsApi";
 import { resultsApi } from "@/rtkQuery/API/resultsApi";
+import { reportsApi } from "@/rtkQuery/API/reportsApi";
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
     [carsApi.reducerPath]: carsApi.reducer,
     [eventAdvancedSettingsApi.reducerPath]: eventAdvancedSettingsApi.reducer,
     [resultsApi.reducerPath]: resultsApi.reducer,
+    [reportsApi.reducerPath]: reportsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -40,6 +42,7 @@ export const store = configureStore({
       carsApi.middleware,
       eventAdvancedSettingsApi.middleware,
       resultsApi.middleware,
+      reportsApi.middleware,
     ),
 });
 
