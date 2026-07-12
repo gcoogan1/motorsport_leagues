@@ -1,3 +1,5 @@
+import type { Tag } from "@/components/Tags/Tags.variants";
+
 export type TicketsTable = {
   id: string;
   created_at: string;
@@ -10,6 +12,8 @@ export type TicketsTable = {
   offending_driver_id: string;
   reporting_driver_id: string;
   incident_description: string;
+  status: "open" | "closed";
+  // not in supabase
   driverPosition?: number;
   eventName?: string;
   offending_driver?: {
@@ -29,14 +33,34 @@ export type TicketsTable = {
 export type DecisionsTable = {
   id: string;
   created_at: string;
-  ticket_id: number;
+  ticket_num: number;
   season_id: string;
-  ticket_table_id: string;
   offending_driver_id: string;
+  steward_id: string; // steward OR director
   incident_title: string;
   decision_summary: string;
   detailed_reasoning: string;
+  event_id: string;
+  event_name: string;
+  session_type: string;
+  // not in supbase
+  offending_driver?: {
+    username: string;
+    avatarType: "preset" | "upload";
+    avatarValue: string;
+    teamName?: string;
+  };
+  steward_info?: {
+    username: string;
+    avatarType: "preset" | "upload";
+    avatarValue: string;
+    teamName?: string;
+    tags?: Tag[];
+  };
+  driverPosition?: number;
 };
+
+
 
 // -- SUPABASE SERVICE TYPES -- //
 
@@ -103,12 +127,17 @@ export type DeleteTicketResponse = DeleteTicketSuccessResponse | SupabaseError;
 // -- DECISION SERVICE TYPES -- //
 
 export type CreateDecisionPayload = {
-  ticketTableId: string;
+  ticketId: string;
+  ticketNum: number;
   offendingDriverId: string;
+  stewardId: string; // steward OR director
   seasonId: string;
   incidentTitle: string;
   decisionSummary: string;
   detailedReasoning: string;
+  eventId: string;
+  eventName: string;
+  sessionType: string;
 };
 
 export type CreateDecisionSuccessResponse = {
@@ -119,9 +148,9 @@ export type CreateDecisionSuccessResponse = {
 export type CreateDecisionResponse = CreateDecisionSuccessResponse | SupabaseError;
 
 export type UpdateDecisionPayload = {
-  decisionTableId: string;
-  offendingDriverId: string;
+  decisionId: string;
   seasonId: string;
+  offendingDriverId: string;
   incidentTitle: string;
   decisionSummary: string;
   detailedReasoning: string;

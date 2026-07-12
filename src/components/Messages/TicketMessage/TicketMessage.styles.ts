@@ -84,6 +84,10 @@ export const Buttons = styled.div`
   gap: ${layout.space.xxSmall};
 `
 
+export const MoreMenuContainer = styled.div`
+  position: relative;
+`
+
 export const Message = styled.div`
   display: flex;
   padding: ${layout.space.small};

@@ -1,9 +1,13 @@
+import { useEffect, useRef, useState } from "react";
 import type { AvatarVariants } from "@/components/Avatar/Avatar.variants";
 import type { Tag } from "@/components/Tags/Tags.variants";
 import Avatar from "@/components/Avatar/Avatar";
 import Tags from "@/components/Tags/Tags";
 import Button from "@/components/Button/Button";
+import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import MoreIcon from "@assets/Icon/More_Vertical.svg?react";
+import EditIcon from "@assets/Icon/Edit.svg?react";
+import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import {
   Body,
   Bottom,
@@ -24,6 +28,7 @@ import {
   UsernameContainer,
   ValueItem,
   ValueText,
+  MoreMenuContainer,
 } from "./TicketMessage.styles";
 
 type TicketMessageProps = {
@@ -34,7 +39,14 @@ type TicketMessageProps = {
   sessionType: string;
   driverPosition: number;
   createdAt: string;
-  driver: {
+  isStewardOrDirector: boolean;
+  reportingDriver?: {
+    username: string;
+    avatarType: "preset" | "upload";
+    avatarValue: AvatarVariants | string;
+    tags?: Tag[];
+  };
+  offendingDriver?: {
     username: string;
     avatarType: "preset" | "upload";
     avatarValue: AvatarVariants | string;
@@ -44,6 +56,8 @@ type TicketMessageProps = {
   decisionSummary?: string;
   reasoning?: string;
   handleMoreClick?: () => void;
+  handleEditClick?: () => void;
+  handleDeleteClick?: () => void;
   handleViewClick?: () => void;
   handleResolveClick?: () => void;
 };
@@ -55,46 +69,113 @@ const TicketMessage = ({
   eventName,
   sessionType,
   driverPosition,
-  driver,
+  reportingDriver,
+  offendingDriver,
   createdAt,
+  isStewardOrDirector,
   incidentTitle,
   decisionSummary,
   reasoning,
   handleMoreClick,
+  handleEditClick,
+  handleDeleteClick,
   handleViewClick,
   handleResolveClick,
 }: TicketMessageProps) => {
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const moreMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isMoreOpen) {
+      return;
+    }
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      if (moreMenuRef.current && !moreMenuRef.current.contains(target)) {
+        setIsMoreOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [isMoreOpen]);
+
+  const handleMoreMenuToggle = () => {
+    handleMoreClick?.();
+    setIsMoreOpen((prev) => !prev);
+  };
+
+  const handleMoreAction = (value: string) => {
+    if (value === "edit") {
+      handleEditClick?.();
+    }
+
+    if (value === "delete") {
+      handleDeleteClick?.();
+    }
+
+    setIsMoreOpen(false);
+  };
+
   return (
     <MessageWrapper>
       <Avatar
         size="small"
-        avatarType={driver.avatarType}
-        avatarValue={driver.avatarValue}
+        avatarType={reportingDriver?.avatarType || "preset"}
+        avatarValue={reportingDriver?.avatarValue || "black"}
       />
       <MessageContainer>
         <Top>
           <UsernameContainer>
-            <Username>{driver.username}</Username>
-            {driver.tags && driver.tags.length > 0 && (
-              <Tags variants={driver.tags} />
+            <Username>{reportingDriver?.username || "Unknown"}</Username>
+            {reportingDriver?.tags && reportingDriver.tags.length > 0 && (
+              <Tags variants={reportingDriver.tags} />
             )}
           </UsernameContainer>
         </Top>
         <Body>
           <Header>
             <TextContainer>
-              <TicketNumber>{ticketNum}</TicketNumber>
+              <TicketNumber>Ticket #{ticketNum}</TicketNumber>
               <SeasonName>{seasonName}</SeasonName>
             </TextContainer>
             {type === "Decision" ? (
-              <Button
-                size="small"
-                color="base"
-                variant="ghost"
-                rounded
-                icon={{ left: <MoreIcon /> }}
-                onClick={handleMoreClick}
-              />
+              isStewardOrDirector && (
+                <MoreMenuContainer ref={moreMenuRef}>
+                  <Button
+                    size="small"
+                    color="base"
+                    variant="ghost"
+                    rounded
+                    icon={{ left: <MoreIcon /> }}
+                    onClick={handleMoreMenuToggle}
+                  />
+                  {isMoreOpen && (
+                    <MenuDropdown
+                      type="text"
+                      isStandAlone={true}
+                      options={[
+                        {
+                          label: "Edit Decision",
+                          value: "edit",
+                          icon: <EditIcon />,
+                        },
+                        {
+                          label: "Delete Decision",
+                          value: "delete",
+                          icon: <DeleteIcon />,
+                        },
+                      ]}
+                      onSelect={handleMoreAction}
+                    />
+                  )}
+                </MoreMenuContainer>
+              )
             ) : (
               <Buttons>
                 <Button
@@ -138,7 +219,7 @@ const TicketMessage = ({
                 <KeyText>Driver</KeyText>
               </KeyItem>
               <ValueItem>
-                <ValueText># {driverPosition} - {driver.username}</ValueText>
+                <ValueText># {driverPosition} - {offendingDriver?.username}</ValueText>
               </ValueItem>
             </Pair>
             {type == "Decision" && (

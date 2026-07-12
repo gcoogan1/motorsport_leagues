@@ -26,6 +26,7 @@ export type PanelTypes =
   | "LEAGUE_CHAT"
   | "LEAGUE_ANNOUNCEMENTS"
   | "REPORT"
+  | "TICKET"
   
 
 export type PanelProviderTypes = "none" | PanelTypes;

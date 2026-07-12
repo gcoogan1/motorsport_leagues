@@ -1,4 +1,4 @@
-import { useCreateDecisionMutation, useCreateTicketMutation, useDeleteDecisionMutation, useDeleteTicketMutation } from "@/rtkQuery/API/reportsApi";
+import { useCreateDecisionMutation, useCreateTicketMutation, useDeleteDecisionMutation, useDeleteTicketMutation, useUpdateDecisionMutation } from "@/rtkQuery/API/reportsApi";
 
 
 // --- Mutations --- //
@@ -18,6 +18,11 @@ export const useDeleteTicket = () => {
 // Mutation for creating a decision
 export const useCreateDecision = () => {
   return useCreateDecisionMutation();
+};
+
+// Mutation for updating a decision
+export const useUpdateDecision = () => {
+  return useUpdateDecisionMutation();
 };
 
 // Mutation for deleting a decision

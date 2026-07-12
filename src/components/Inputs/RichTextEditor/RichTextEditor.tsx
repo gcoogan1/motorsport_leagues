@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useEditor, type Editor } from "@tiptap/react";
 // import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
@@ -79,6 +79,7 @@ const RichTextEditor = ({
   errorMessage,
 }: RichTextEditorProps) => {
   const [internalContent, setInternalContent] = useState(defaultValue);
+  const [characterCount, setCharacterCount] = useState(0);
   const [, setIsUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const content = value ?? internalContent;
@@ -140,6 +141,7 @@ const RichTextEditor = ({
         setInternalContent(nextContent);
       }
 
+      setCharacterCount(editor.storage.characterCount.characters());
       onChange?.(nextContent);
     },
   });
@@ -155,7 +157,14 @@ const RichTextEditor = ({
     }
 
     editor.commands.setContent(content, { emitUpdate: false });
+    setCharacterCount(editor.storage.characterCount.characters());
   }, [content, editor]);
+
+  // Initialize character count once editor is ready
+  useEffect(() => {
+    if (!editor) return;
+    setCharacterCount(editor.storage.characterCount.characters());
+  }, [editor]);
 
   // Sync the active heading with the form value
   useEffect(() => {
@@ -182,11 +191,7 @@ const RichTextEditor = ({
   }, [editor, formMethods]);
 
   // Calculate the character count
-  const characterCount = useMemo(() => {
-    if (!editor) return 0;
-
-    return editor.storage.characterCount.characters();
-  }, [editor]);
+  // (removed stale useMemo — now tracked in state via onUpdate)
 
   // -- Handlers --- //
   

@@ -1,6 +1,44 @@
 
 import { supabase } from "@/lib/supabase";
+import type { Tag } from "@/components/Tags/Tags.variants";
 import type { CreateDecisionPayload, CreateDecisionResponse, CreateTicketPayload, CreateTicketResponse, DeleteDecisionResponse, DeleteTicketResponse, GetDecisionByIdResponse, GetDecisionsBySeasonIDResponse, GetTicketByIdResponse, GetTicketsBySeasonIdResponse, UpdateDecisionPayload, UpdateDecisionResponse } from "@/types/reports.types";
+
+type LeagueSeasonDriverWithTeam = {
+  display_name?: string | null;
+  avatar_type?: "preset" | "upload" | null;
+  avatar_value?: string | null;
+  league_season_team?:
+    | { team_name?: string | null }
+    | Array<{ team_name?: string | null }>
+    | null;
+};
+
+const getTeamName = (driver: LeagueSeasonDriverWithTeam | null | undefined): string | undefined => {
+  const team = driver?.league_season_team;
+
+  if (!team) {
+    return undefined;
+  }
+
+  if (Array.isArray(team)) {
+    return team[0]?.team_name ?? undefined;
+  }
+
+  return team.team_name ?? undefined;
+};
+
+const isTag = (value: string): value is Tag => {
+  return [
+    "director",
+    "founder",
+    "driver",
+    "host",
+    "steward",
+    "broadcaster",
+    "staff",
+    "champion",
+  ].includes(value);
+};
 
 // -- Reports Service -- //
 
@@ -82,15 +120,17 @@ export const getTicketsBySeasonId = async (seasonId: string): Promise<GetTickets
           username: offendingDriverResponse.data?.display_name ?? "Unknown",
           avatarType: offendingDriverResponse.data?.avatar_type ?? "preset",
           avatarValue: offendingDriverResponse.data?.avatar_value ?? "black",
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          teamName: (offendingDriverResponse.data as any)?.league_season_team?.team_name ?? undefined,
+          teamName: getTeamName(
+            offendingDriverResponse.data as LeagueSeasonDriverWithTeam | null | undefined,
+          ),
         },
         reporting_driver: {
           username: reportingDriverResponse.data?.display_name ?? "Unknown",
           avatarType: reportingDriverResponse.data?.avatar_type ?? "preset",
           avatarValue: reportingDriverResponse.data?.avatar_value ?? "black",
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          teamName: (reportingDriverResponse.data as any)?.league_season_team?.team_name ?? undefined,
+          teamName: getTeamName(
+            reportingDriverResponse.data as LeagueSeasonDriverWithTeam | null | undefined,
+          ),
         },
       };
     })
@@ -140,6 +180,7 @@ export const createTicket = async (
         offending_driver_id: payload.offendingDriverId,
         reporting_driver_id: payload.reportingDriverId,
         incident_description: payload.incidentDescription,
+        status: "open"
       },
     ])
     .select()
@@ -204,9 +245,65 @@ export const getDecisionById = async (decisionTableId: string): Promise<GetDecis
     };
   }
 
+  const [resultResponse, offendingDriverResponse] = await Promise.all([
+    supabase
+      .from("results")
+      .select("position")
+      .eq("driver_id", data.offending_driver_id)
+      .eq("event_id", data.event_id)
+      .maybeSingle(),
+    supabase
+      .from("league_season_driver")
+      .select("display_name, avatar_type, avatar_value, team_id, league_season_team ( team_name )")
+      .eq("id", data.offending_driver_id)
+      .maybeSingle(),
+  ]);
+
+  const participantResponse = await supabase
+    .from("league_participants")
+    .select("profile_id")
+    .eq("id", data.steward_id)
+    .maybeSingle();
+
+  const stewardRolesResponse = await supabase
+    .from("league_participants_role")
+    .select("role")
+    .eq("participant_id", data.steward_id);
+
+  const stewardProfileId = participantResponse.data?.profile_id;
+  const reportingDriverResponse = stewardProfileId
+    ? await supabase
+        .from("profiles")
+        .select("username, avatar_type, avatar_value")
+        .eq("id", stewardProfileId)
+        .maybeSingle()
+    : { data: null };
+
+  const enrichedData = {
+    ...data,
+    driverPosition: resultResponse.data?.position ?? 0,
+    offending_driver: {
+      username: offendingDriverResponse.data?.display_name ?? "Unknown",
+      avatarType: offendingDriverResponse.data?.avatar_type ?? "preset",
+      avatarValue: offendingDriverResponse.data?.avatar_value ?? "black",
+      teamName: getTeamName(
+        offendingDriverResponse.data as LeagueSeasonDriverWithTeam | null | undefined,
+      ),
+    },
+    steward_info: {
+      username: reportingDriverResponse.data?.username ?? "Unknown",
+      avatarType: reportingDriverResponse.data?.avatar_type ?? "preset",
+      avatarValue: reportingDriverResponse.data?.avatar_value ?? "black",
+      tags:
+        stewardRolesResponse.data
+          ?.map((roleRow) => roleRow.role)
+          .filter(isTag) ?? [],
+    },
+  };
+
   return {
     success: true,
-    data: data,
+    data: enrichedData,
   };
 };
 
@@ -227,9 +324,72 @@ export const getDecisionsBySeasonID = async (seasonId: string): Promise<GetDecis
     };
   }
 
+  // Fetch offending driver and steward profile info and position for each decision
+  const enrichedData = await Promise.all(
+    data.map(async (decision) => {
+      // Fetch driver position and offending driver details in parallel
+      const [resultResponse, offendingDriverResponse] = await Promise.all([
+        supabase
+          .from("results")
+          .select("position")
+          .eq("driver_id", decision.offending_driver_id)
+          .eq("event_id", decision.event_id)
+          .maybeSingle(),
+        supabase
+          .from("league_season_driver")
+          .select("display_name, avatar_type, avatar_value, team_id, league_season_team ( team_name )")
+          .eq("id", decision.offending_driver_id)
+          .maybeSingle(),
+      ]);
+
+      // Steward ID points to league_participants.id; resolve to profile first, then fetch profile info.
+      const participantResponse = await supabase
+        .from("league_participants")
+        .select("profile_id")
+        .eq("id", decision.steward_id)
+        .maybeSingle();
+
+      const stewardRolesResponse = await supabase
+        .from("league_participants_role")
+        .select("role")
+        .eq("participant_id", decision.steward_id);
+
+      const stewardProfileId = participantResponse.data?.profile_id;
+      const reportingDriverResponse = stewardProfileId
+        ? await supabase
+            .from("profiles")
+            .select("username, avatar_type, avatar_value")
+            .eq("id", stewardProfileId)
+            .maybeSingle()
+        : { data: null };
+
+      return {
+        ...decision,
+        driverPosition: resultResponse.data?.position ?? 0,
+        offending_driver: {
+          username: offendingDriverResponse.data?.display_name ?? "Unknown",
+          avatarType: offendingDriverResponse.data?.avatar_type ?? "preset",
+          avatarValue: offendingDriverResponse.data?.avatar_value ?? "black",
+          teamName: getTeamName(
+            offendingDriverResponse.data as LeagueSeasonDriverWithTeam | null | undefined,
+          ),
+        },
+        steward_info: {
+          username: reportingDriverResponse.data?.username ?? "Unknown",
+          avatarType: reportingDriverResponse.data?.avatar_type ?? "preset",
+          avatarValue: reportingDriverResponse.data?.avatar_value ?? "black",
+          tags:
+            stewardRolesResponse.data
+              ?.map((roleRow) => roleRow.role)
+              .filter(isTag) ?? [],
+        },
+      };
+    })
+  );
+
   return {
     success: true,
-    data: data,
+    data: enrichedData,
   };
 };
 
@@ -238,12 +398,16 @@ export const createDecision = async (payload: CreateDecisionPayload): Promise<Cr
     .from("decisions")
     .insert([
       {
-        ticket_table_id: payload.ticketTableId,
+        ticket_num: payload.ticketNum,
         offending_driver_id: payload.offendingDriverId,
+        steward_id: payload.stewardId,
         season_id: payload.seasonId,
         incident_title: payload.incidentTitle,
         decision_summary: payload.decisionSummary,
         detailed_reasoning: payload.detailedReasoning,
+        event_id: payload.eventId,
+        event_name: payload.eventName,
+        session_type: payload.sessionType,
       },
     ])
     .select()
@@ -260,6 +424,23 @@ export const createDecision = async (payload: CreateDecisionPayload): Promise<Cr
     };
   }
 
+  // Update ticket status to closed instead of deleting
+  const { error: updateError } = await supabase
+    .from("tickets")
+    .update({ status: "closed" })
+    .eq("id", payload.ticketId);
+
+  if (updateError) {
+    return {
+      success: false,
+      error: {
+        message: updateError.message,
+        code: updateError.code,
+        status: 500,
+      },
+    };
+  }
+
   return {
     success: true,
     data,
@@ -271,12 +452,11 @@ export const updateDecision = async (payload: UpdateDecisionPayload): Promise<Up
     .from("decisions")
     .update({
       offending_driver_id: payload.offendingDriverId,
-      season_id: payload.seasonId,
       incident_title: payload.incidentTitle,
       decision_summary: payload.decisionSummary,
       detailed_reasoning: payload.detailedReasoning,
     })
-    .eq("id", payload.decisionTableId)
+    .eq("id", payload.decisionId)
     .select()
     .single();
 
@@ -298,22 +478,77 @@ export const updateDecision = async (payload: UpdateDecisionPayload): Promise<Up
 };
 
 export const deleteDecision = async (decisionTableId: string): Promise<DeleteDecisionResponse> => {
-  const { error } = await supabase
+  // First get the decision to find the ticket_id
+  const { data: decisionData, error: fetchError } = await supabase
     .from("decisions")
-    .delete()
+    .select("ticket_num, season_id")
     .eq("id", decisionTableId)
-    .select()
-    .single();
+    .maybeSingle();
 
-  if (error) {
+  if (fetchError || !decisionData) {
     return {
       success: false,
       error: {
-        message: error.message,
-        code: error.code,
+        message: fetchError?.message || "Decision not found",
+        code: fetchError?.code || "NOT_FOUND",
         status: 500,
       },
     };
+  }
+
+  // Find the ticket to delete
+  const { data: ticketData, error: ticketFetchError } = await supabase
+    .from("tickets")
+    .select("id")
+    .eq("ticket_id", decisionData.ticket_num)
+    .eq("season_id", decisionData.season_id)
+    .maybeSingle();
+
+  if (ticketFetchError) {
+    return {
+      success: false,
+      error: {
+        message: ticketFetchError.message,
+        code: ticketFetchError.code,
+        status: 500,
+      },
+    };
+  }
+
+  // Delete the decision
+  const { error: deleteDecisionError } = await supabase
+    .from("decisions")
+    .delete()
+    .eq("id", decisionTableId);
+
+  if (deleteDecisionError) {
+    return {
+      success: false,
+      error: {
+        message: deleteDecisionError.message,
+        code: deleteDecisionError.code,
+        status: 500,
+      },
+    };
+  }
+
+  // Delete the associated ticket if it exists
+  if (ticketData?.id) {
+    const { error: deleteTicketError } = await supabase
+      .from("tickets")
+      .delete()
+      .eq("id", ticketData.id);
+
+    if (deleteTicketError) {
+      return {
+        success: false,
+        error: {
+          message: deleteTicketError.message,
+          code: deleteTicketError.code,
+          status: 500,
+        },
+      };
+    }
   }
 
   return {

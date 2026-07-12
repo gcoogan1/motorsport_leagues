@@ -116,9 +116,7 @@ export const reportsApi = createApi({
           return { error };
         }
       },
-      invalidatesTags: (_result, _error, ticketId) => [
-        { type: "Ticket", id: ticketId },
-      ],
+      invalidatesTags: [{ type: "Ticket" }],
     }),
 
     // Decision endpoints - Queries
@@ -169,7 +167,7 @@ export const reportsApi = createApi({
         { type: "Decision", id: `season-${seasonId}` },
       ],
     }),
-    
+
     // Decision endpoints - Mutations
     createDecision: builder.mutation<DecisionsTable, CreateDecisionPayload>({
       queryFn: async (payload) => {
@@ -190,6 +188,7 @@ export const reportsApi = createApi({
       },
       invalidatesTags: (_result, _error, payload) => [
         { type: "Decision", id: `season-${payload.seasonId}` },
+        { type: "Ticket" },
       ],
     }),
     updateDecision: builder.mutation<DecisionsTable, UpdateDecisionPayload>({
@@ -210,7 +209,8 @@ export const reportsApi = createApi({
         }
       },
       invalidatesTags: (_result, _error, payload) => [
-        { type: "Decision", id: payload.decisionTableId },
+        { type: "Decision", id: `season-${payload.seasonId}` },
+        { type: "Decision", id: payload.decisionId },
       ],
     }),
     deleteDecision: builder.mutation<DeleteDecisionResponse, string>({
@@ -230,9 +230,7 @@ export const reportsApi = createApi({
           return { error };
         }
       },
-      invalidatesTags: (_result, _error, decisionId) => [
-        { type: "Decision", id: decisionId },
-      ],
+      invalidatesTags: [{ type: "Decision" }, { type: "Ticket" }],
     }),
   }),
 });
