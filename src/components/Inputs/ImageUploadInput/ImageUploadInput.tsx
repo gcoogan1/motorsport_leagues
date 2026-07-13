@@ -127,6 +127,8 @@ const ImageUploadInput = ({
               <img
                 src={imageSrc}
                 alt="Uploaded preview"
+                loading="lazy"
+                decoding="async"
                 onError={(event) => {
                   if (!defaultImageSrc) {
                     return;

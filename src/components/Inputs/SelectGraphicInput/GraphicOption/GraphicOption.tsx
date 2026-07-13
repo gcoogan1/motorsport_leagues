@@ -24,7 +24,14 @@ const GraphicOption = ({
       title={label}
     >
       <Graphic $swatchColor={swatchColor}>
-        {graphicSrc && <img src={graphicSrc} alt={label ?? "Graphic Option"} />}
+        {graphicSrc && (
+          <img
+            src={graphicSrc}
+            alt={label ?? "Graphic Option"}
+            loading="lazy"
+            decoding="async"
+          />
+        )}
       </Graphic>
     </GraphicContainer>
   );

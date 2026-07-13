@@ -8,6 +8,7 @@ import type {
   UpdateUsernamePayload,
 } from "@/types/profile.types";
 import { deleteSquadsByFounderService } from "../squad/squad.service";
+import { optimizeImage } from "@/utils/optimizeImage";
 
 // TODO: Make sure delete cascades are set up correctly in the database
 
@@ -167,16 +168,19 @@ export const createProfileWithAvatar = async ({
   } else {
     avatarType = "upload";
 
+    // Optimize image
+    const optimizedFile = await optimizeImage(avatar.file);
+
     // Generate a unique file path for the avatar upload
-    const fileExt = avatar.file.name.split(".").pop();
+    const fileExt = optimizedFile.name.split(".").pop();
     const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
 
     // Upload the avatar file to Supabase Storage
     const { error } = await supabase.storage
       .from("avatars")
-      .upload(filePath, avatar.file, {
+      .upload(filePath, optimizedFile, {
         upsert: true,
-        contentType: avatar.file.type,
+        contentType: optimizedFile.type,
       });
 
     if (error) {
@@ -303,14 +307,15 @@ export const updateProfileAvatar = async ({
   else {
     avatarType = "upload";
 
-    const fileExt = avatar.file.name.split(".").pop();
+    const optimizedFile = await optimizeImage(avatar.file);
+    const fileExt = optimizedFile.name.split(".").pop();
     const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
 
     const { error: uploadError } = await supabase.storage
       .from("avatars")
-      .upload(filePath, avatar.file, {
+      .upload(filePath, optimizedFile, {
         upsert: true,
-        contentType: avatar.file.type,
+        contentType: optimizedFile.type,
       });
 
     if (uploadError) {

@@ -117,7 +117,12 @@ const RichTextEditor = ({
       CharacterCount.configure({
         limit: maxCharacters,
       }),
-      Image,
+      Image.configure({
+        HTMLAttributes: {
+          loading: "lazy",
+          decoding: "async",
+        },
+      }),
       HardBreak,
       // EnterAsLineBreak,
       // Link.configure({
