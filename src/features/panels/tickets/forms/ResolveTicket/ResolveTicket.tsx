@@ -17,6 +17,7 @@ import {
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { useCreateDecision } from "@/rtkQuery/hooks/mutations/useReportsMutation";
+import type { Tag } from "@/components/Tags/Tags.variants";
 
 type ResolveTicketProps = {
   ticketId: string;
@@ -31,6 +32,7 @@ type ResolveTicketProps = {
     username: string;
     avatarType: "preset" | "upload";
     avatarValue: string;
+    tags?: Tag[];
   };
 };
 
@@ -138,6 +140,7 @@ const ResolveTicket = ({
                 avatarType: offendingDriver.avatarType,
                 avatarValue: offendingDriver.avatarValue,
               },
+              tags: offendingDriver.tags,
             },
           ]}
         />

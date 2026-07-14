@@ -7,6 +7,7 @@ type LeagueSeasonDriverWithTeam = {
   display_name?: string | null;
   avatar_type?: "preset" | "upload" | null;
   avatar_value?: string | null;
+  profile_id?: string | null;
   league_season_team?:
     | { team_name?: string | null }
     | Array<{ team_name?: string | null }>
@@ -38,6 +39,54 @@ const isTag = (value: string): value is Tag => {
     "staff",
     "champion",
   ].includes(value);
+};
+
+const resolveAvatarValue = (
+  avatarType: "preset" | "upload",
+  avatarValue: string,
+): string => {
+  if (avatarType !== "upload") {
+    return avatarValue;
+  }
+
+  if (/^https?:\/\//i.test(avatarValue)) {
+    return avatarValue;
+  }
+
+  const { data } = supabase.storage
+    .from("avatars")
+    .getPublicUrl(avatarValue);
+
+  return data.publicUrl;
+};
+
+const getParticipantTagsByLeagueAndProfile = async (
+  leagueId: string,
+  profileId: string,
+): Promise<Tag[]> => {
+  const participantResponse = await supabase
+    .from("league_participants")
+    .select("id")
+    .eq("league_id", leagueId)
+    .eq("profile_id", profileId)
+    .maybeSingle();
+
+  const participantId = participantResponse.data?.id;
+
+  if (!participantId) {
+    return [];
+  }
+
+  const rolesResponse = await supabase
+    .from("league_participants_role")
+    .select("role")
+    .eq("participant_id", participantId);
+
+  return (
+    rolesResponse.data
+      ?.map((roleRow: { role: string }) => roleRow.role)
+      .filter(isTag) ?? []
+  );
 };
 
 // -- Reports Service -- //
@@ -74,6 +123,14 @@ export const getTicketsBySeasonId = async (seasonId: string): Promise<GetTickets
     .select("*")
     .eq("season_id", seasonId);
 
+  const seasonResponse = await supabase
+    .from("league_season")
+    .select("league_id")
+    .eq("id", seasonId)
+    .maybeSingle();
+
+  const leagueId = seasonResponse.data?.league_id;
+
   if (error) {
     return {
       success: false,
@@ -97,12 +154,12 @@ export const getTicketsBySeasonId = async (seasonId: string): Promise<GetTickets
           .maybeSingle(),
         supabase
           .from("league_season_driver")
-          .select("display_name, avatar_type, avatar_value, team_id, league_season_team ( team_name )")
+          .select("display_name, avatar_type, avatar_value, profile_id, team_id, league_season_team ( team_name )")
           .eq("id", ticket.offending_driver_id)
           .maybeSingle(),
         supabase
           .from("league_season_driver")
-          .select("display_name, avatar_type, avatar_value, team_id, league_season_team ( team_name )")
+          .select("display_name, avatar_type, avatar_value, profile_id, team_id, league_season_team ( team_name )")
           .eq("id", ticket.reporting_driver_id)
           .maybeSingle(),
         supabase
@@ -111,6 +168,25 @@ export const getTicketsBySeasonId = async (seasonId: string): Promise<GetTickets
           .eq("id", ticket.event_id)
           .maybeSingle(),
       ]);
+
+      const offendingDriverProfileId = offendingDriverResponse.data?.profile_id;
+      const reportingDriverProfileId = reportingDriverResponse.data?.profile_id;
+
+      const offendingDriverTags =
+        leagueId && offendingDriverProfileId
+          ? await getParticipantTagsByLeagueAndProfile(
+              leagueId,
+              offendingDriverProfileId,
+            )
+          : [];
+
+      const reportingDriverTags =
+        leagueId && reportingDriverProfileId
+          ? await getParticipantTagsByLeagueAndProfile(
+              leagueId,
+              reportingDriverProfileId,
+            )
+          : [];
 
       return {
         ...ticket,
@@ -123,6 +199,7 @@ export const getTicketsBySeasonId = async (seasonId: string): Promise<GetTickets
           teamName: getTeamName(
             offendingDriverResponse.data as LeagueSeasonDriverWithTeam | null | undefined,
           ),
+          tags: offendingDriverTags,
         },
         reporting_driver: {
           username: reportingDriverResponse.data?.display_name ?? "Unknown",
@@ -131,6 +208,7 @@ export const getTicketsBySeasonId = async (seasonId: string): Promise<GetTickets
           teamName: getTeamName(
             reportingDriverResponse.data as LeagueSeasonDriverWithTeam | null | undefined,
           ),
+          tags: reportingDriverTags,
         },
       };
     })
@@ -254,10 +332,18 @@ export const getDecisionById = async (decisionTableId: string): Promise<GetDecis
       .maybeSingle(),
     supabase
       .from("league_season_driver")
-      .select("display_name, avatar_type, avatar_value, team_id, league_season_team ( team_name )")
+      .select("display_name, avatar_type, avatar_value, profile_id, team_id, league_season_team ( team_name )")
       .eq("id", data.offending_driver_id)
       .maybeSingle(),
   ]);
+
+  const seasonResponse = await supabase
+    .from("league_season")
+    .select("league_id")
+    .eq("id", data.season_id)
+    .maybeSingle();
+
+  const leagueId = seasonResponse.data?.league_id;
 
   const participantResponse = await supabase
     .from("league_participants")
@@ -279,6 +365,12 @@ export const getDecisionById = async (decisionTableId: string): Promise<GetDecis
         .maybeSingle()
     : { data: null };
 
+  const offendingDriverProfileId = offendingDriverResponse.data?.profile_id;
+  const offendingDriverTags =
+    leagueId && offendingDriverProfileId
+      ? await getParticipantTagsByLeagueAndProfile(leagueId, offendingDriverProfileId)
+      : [];
+
   const enrichedData = {
     ...data,
     driverPosition: resultResponse.data?.position ?? 0,
@@ -289,11 +381,17 @@ export const getDecisionById = async (decisionTableId: string): Promise<GetDecis
       teamName: getTeamName(
         offendingDriverResponse.data as LeagueSeasonDriverWithTeam | null | undefined,
       ),
+      tags: offendingDriverTags,
     },
     steward_info: {
       username: reportingDriverResponse.data?.username ?? "Unknown",
       avatarType: reportingDriverResponse.data?.avatar_type ?? "preset",
-      avatarValue: reportingDriverResponse.data?.avatar_value ?? "black",
+      avatarValue: resolveAvatarValue(
+        (reportingDriverResponse.data?.avatar_type ?? "preset") as
+          | "preset"
+          | "upload",
+        reportingDriverResponse.data?.avatar_value ?? "black",
+      ),
       tags:
         stewardRolesResponse.data
           ?.map((roleRow) => roleRow.role)
@@ -312,6 +410,14 @@ export const getDecisionsBySeasonID = async (seasonId: string): Promise<GetDecis
     .from("decisions")
     .select("*")
     .eq("season_id", seasonId);
+
+  const seasonResponse = await supabase
+    .from("league_season")
+    .select("league_id")
+    .eq("id", seasonId)
+    .maybeSingle();
+
+  const leagueId = seasonResponse.data?.league_id;
 
   if (error) {
     return {
@@ -337,10 +443,19 @@ export const getDecisionsBySeasonID = async (seasonId: string): Promise<GetDecis
           .maybeSingle(),
         supabase
           .from("league_season_driver")
-          .select("display_name, avatar_type, avatar_value, team_id, league_season_team ( team_name )")
+          .select("display_name, avatar_type, avatar_value, profile_id, team_id, league_season_team ( team_name )")
           .eq("id", decision.offending_driver_id)
           .maybeSingle(),
       ]);
+
+      const offendingDriverProfileId = offendingDriverResponse.data?.profile_id;
+      const offendingDriverTags =
+        leagueId && offendingDriverProfileId
+          ? await getParticipantTagsByLeagueAndProfile(
+              leagueId,
+              offendingDriverProfileId,
+            )
+          : [];
 
       // Steward ID points to league_participants.id; resolve to profile first, then fetch profile info.
       const participantResponse = await supabase
@@ -373,11 +488,17 @@ export const getDecisionsBySeasonID = async (seasonId: string): Promise<GetDecis
           teamName: getTeamName(
             offendingDriverResponse.data as LeagueSeasonDriverWithTeam | null | undefined,
           ),
+          tags: offendingDriverTags,
         },
         steward_info: {
           username: reportingDriverResponse.data?.username ?? "Unknown",
           avatarType: reportingDriverResponse.data?.avatar_type ?? "preset",
-          avatarValue: reportingDriverResponse.data?.avatar_value ?? "black",
+          avatarValue: resolveAvatarValue(
+            (reportingDriverResponse.data?.avatar_type ?? "preset") as
+              | "preset"
+              | "upload",
+            reportingDriverResponse.data?.avatar_value ?? "black",
+          ),
           tags:
             stewardRolesResponse.data
               ?.map((roleRow) => roleRow.role)

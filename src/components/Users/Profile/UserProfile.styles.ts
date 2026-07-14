@@ -35,7 +35,7 @@ export const TextContainer = styled.div<{ $size: "small" | "medium" | "large" }>
   gap: ${layout.space.xxSmall};
   max-width: 100%;
   min-width: 0;
-  flex: 1;
+  /* flex: 1; */
   overflow: hidden;
   
   ${({ $size }) =>

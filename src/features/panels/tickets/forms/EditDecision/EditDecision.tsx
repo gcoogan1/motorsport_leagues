@@ -3,6 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
+import type { Tag } from "@/components/Tags/Tags.variants";
 import FormModal from "@/components/Forms/FormModal/FormModal";
 import ProfileSelectInput from "@/components/Inputs/ProfileSelectInput/ProfileSelectInput";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
@@ -28,6 +29,7 @@ type EditDecisionProps = {
     username: string;
     avatarType: "preset" | "upload";
     avatarValue: string;
+    tags?: Tag[];
   };
 };
 
@@ -124,6 +126,7 @@ const EditDecision = ({
                 avatarType: offendingDriver.avatarType,
                 avatarValue: offendingDriver.avatarValue,
               },
+              tags: offendingDriver.tags,
             },
           ]}
         />

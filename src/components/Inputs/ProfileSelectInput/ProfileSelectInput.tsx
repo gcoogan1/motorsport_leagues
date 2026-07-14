@@ -19,12 +19,14 @@ import Avatar from "@/components/Avatar/Avatar";
 import { useController, useFormContext } from "react-hook-form";
 import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import UserProfile from "@/components/Users/Profile/UserProfile";
+import type { Tag } from "@/components/Tags/Tags.variants";
 
 type Profile = {
   label: string;
   value: string;
   secondaryInfo?: string;
   avatar: { avatarType: "preset" | "upload"; avatarValue: string; };
+  tags?: Tag[];
 };
 
 type ProfileSelectInputProps = {
@@ -97,6 +99,7 @@ const ProfileSelectInput = ({
                   avatarType={selectedProfile.avatar.avatarType}
                   avatarValue={selectedProfile.avatar.avatarValue}
                   information={selectedInfo}
+                  tags={selectedProfile.tags}
                 />
               ) : (
                 <>

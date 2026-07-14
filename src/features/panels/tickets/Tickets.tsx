@@ -97,6 +97,7 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
           username: ticket.offending_driver?.username || "Unknown",
           avatarType: ticket.offending_driver?.avatarType || "preset",
           avatarValue: ticket.offending_driver?.avatarValue || "black",
+          tags: ticket.offending_driver?.tags || [],
         }}
       />,
     );
@@ -114,6 +115,7 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
           username: decision.offending_driver?.username || "Unknown",
           avatarType: decision.offending_driver?.avatarType || "preset",
           avatarValue: decision.offending_driver?.avatarValue || "black",
+          tags: decision.offending_driver?.tags || [],
         }}
         incidentTitle={decision.incident_title}
         decisionSummary={decision.decision_summary}
@@ -155,6 +157,7 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
                         ticket.reporting_driver?.avatarType || "preset",
                       avatarValue:
                         ticket.reporting_driver?.avatarValue || "black",
+                      tags: ticket.reporting_driver?.tags || [],
                     }}
                     offendingDriver={{
                       username: ticket.offending_driver?.username || "Unknown",
@@ -162,6 +165,7 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
                         ticket.offending_driver?.avatarType || "preset",
                       avatarValue:
                         ticket.offending_driver?.avatarValue || "black",
+                      tags: ticket.offending_driver?.tags || [],
                     }}
                     handleViewClick={() => onViewClick(ticket)}
                     handleResolveClick={() => onResolveClick(ticket)}
@@ -199,6 +203,7 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
                         decision.offending_driver?.avatarType || "preset",
                       avatarValue:
                         decision.offending_driver?.avatarValue || "black",
+                      tags: decision.offending_driver?.tags || [],
                     }}
                     reportingDriver={{
                       username: decision.steward_info?.username || "Steward",
@@ -243,6 +248,7 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
                   avatarType: decision.offending_driver?.avatarType || "preset",
                   avatarValue:
                     decision.offending_driver?.avatarValue || "black",
+                  tags: decision.offending_driver?.tags || [],
                 }}
                 reportingDriver={{
                   username: decision.steward_info?.username || "Steward",

@@ -21,12 +21,14 @@ export type TicketsTable = {
     avatarType: "preset" | "upload";
     avatarValue: string;
     teamName?: string;
+    tags?: Tag[];
   };
   reporting_driver?: {
     username: string;
     avatarType: "preset" | "upload";
     avatarValue: string;
     teamName?: string;
+    tags?: Tag[];
   };
 }
 
@@ -49,6 +51,7 @@ export type DecisionsTable = {
     avatarType: "preset" | "upload";
     avatarValue: string;
     teamName?: string;
+    tags?: Tag[];
   };
   steward_info?: {
     username: string;
