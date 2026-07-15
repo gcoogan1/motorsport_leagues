@@ -63,6 +63,20 @@ export const RowText = styled.p`
   }
 `;
 
+export const TimeText = styled.p`
+  ${typography.body.mediumBold};
+  color: ${colors.text.text1};
+  
+  ${layout.mediaQueries.mobile} {
+    max-width: 120px;
+
+    
+    overflow-x: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+`;
+
 export const ParticipantCell = styled.div`
   flex: 1 1 0;
   width: 0;

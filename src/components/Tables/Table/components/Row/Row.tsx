@@ -10,6 +10,7 @@ import {
   RoundContainer,
   TrackName,
   RoundName,
+  TimeText,
 } from "./Row.styles";
 import Position from "../Position/Position";
 import UserProfile from "@/components/Users/Profile/UserProfile";
@@ -97,7 +98,7 @@ const Row = ({
           </RacesCell>
         ) : time && (
           <TimeCell>
-            <RowText>{time}</RowText>
+            <TimeText>{time}</TimeText>
           </TimeCell>
         )}
         {!hidePoints && (

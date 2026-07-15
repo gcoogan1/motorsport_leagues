@@ -30,9 +30,9 @@ export const DetailOption = styled.p`
   ${typography.body.mediumBold}
   color: ${colors.text.text1};
   max-width: 100%;
-  white-space: nowrap;
+  /* white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; */
 `;
 
 export const GroupContainer = styled.div`
