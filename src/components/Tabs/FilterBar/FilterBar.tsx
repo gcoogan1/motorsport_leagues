@@ -20,6 +20,7 @@ type FilterBarProps = {
   onEventChange?: (value: string) => void;
   onSessionChange?: (value: string) => void;
   text?: string;
+  displayAsMobile?: boolean;
 }
 
 const FilterBar = ({
@@ -36,10 +37,11 @@ const FilterBar = ({
   onEventChange,
   onSessionChange,
   text,
+  displayAsMobile,
 }: FilterBarProps) => {
   return (
-    <FilterBarContainer $hasText={!!text}>
-      <FilterList>
+    <FilterBarContainer $hasText={!!text} $displayAsMobile={!!displayAsMobile}>
+      <FilterList $displayAsMobile={!!displayAsMobile}>
       {divisions.length > 0 && (
         <SelectButton
           label={divisions[0].label}

@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { useModal } from "@/providers/modal/useModal";
-import { usePanel } from "@/providers/panel/usePanel";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
 import PlaceholderImage from "@assets/Cars/Hidden.png";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
@@ -15,6 +14,7 @@ import { useRoundsBySeason } from "@/rtkQuery/hooks/queries/useRounds";
 import { formatEventDate } from "@/utils/dates";
 import { sortEvents, sortEventsByDate, sortRounds, sortRoundsByMostRecentEventDate } from "@/features/leagues/forms/Schedule/Schedule.util";
 import { buildDivisionOptions, formatActiveDivisionTabLabel, getAdvancedSettings, getCarDetails, getTrackDetails, normalizeDivisionTabLabel } from "./ScheduleLineup.utils";
+import ReportIncidentModal from "@/features/leagues/forms/Reports/ReportIncident/ReportIncidentModal";
 import BriefingModal from "@/pages/League/modals/BriefingModal/BriefingModal";
 import OnTheGrid from "@/pages/League/modals/OnTheGrid/OnTheGrid";
 import DetailsModal from "@/pages/League/modals/DetailsModal/DetailsModal";
@@ -30,7 +30,6 @@ type ScheduleProps = {
 
 const ScheduleLineup = ({ seasonStatus, seasonData, isParticipant = false }: ScheduleProps) => {
   const { openModal } = useModal();
-  const { openPanel } = usePanel();
   const [selectedDivisionLabel, setSelectedDivisionLabel] = useState("");
   const { data: carsData } = useGetCarsQuery();
   const seasonDivisions = useLeagueSeasonDivisions(seasonData?.id);
@@ -98,7 +97,6 @@ const ScheduleLineup = ({ seasonStatus, seasonData, isParticipant = false }: Sch
 
   const stockFallbackImage = useMemo(() => {
     const stockCar = (carsData ?? []).find((car) => car.car_category === "stock" && car.car_name === "hidden");
-    console.log("Stock car details:", stockCar);
     return stockCar?.car_image_url || PlaceholderImage;
   }, [carsData]);
 
@@ -119,8 +117,6 @@ const ScheduleLineup = ({ seasonStatus, seasonData, isParticipant = false }: Sch
       new Set((resultsByDivision.data ?? []).map((result) => result.event_id)),
     [resultsByDivision.data],
   );
-
-
 
   const roundCards = useMemo(
     () =>
@@ -204,8 +200,17 @@ const ScheduleLineup = ({ seasonStatus, seasonData, isParticipant = false }: Sch
     );
   }
 
-  const openReportPanel = () => {
-    return openPanel("REPORT");
+  const openReportPanel = (roundId: string) => {
+    if (!seasonData) {
+      return;
+    }
+
+    return openModal(
+      <ReportIncidentModal
+        roundId={roundId}
+        seasonId={seasonData.id}
+      />,
+    );
   }
 
   const openOnTheGridModal = (eventId: string) => {
@@ -320,7 +325,7 @@ const ScheduleLineup = ({ seasonStatus, seasonData, isParticipant = false }: Sch
                 {...(isParticipant
                   ? {
                       reportButton: {
-                        onClick: () => openReportPanel(),
+                        onClick: () => openReportPanel(round.roundId),
                       },
                       briefingButton: {
                         onClick: () => openBriefingModal(round.roundId),

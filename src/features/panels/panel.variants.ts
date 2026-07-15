@@ -25,6 +25,7 @@ import SquadChat from "./squadChat/SquadChat";
 import Announcements from "./announcements/Announcements";
 import LeagueChat from "./leagueChat/LeagueChat";
 import ReportIncident from "./reportIncident/ReportIncident";
+import Tickets from "./tickets/Tickets";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,4 +56,5 @@ export const panelVariants: Record<PanelTypes, React.ComponentType<any>> = {
   LEAGUE_CHAT: LeagueChat,
   LEAGUE_ANNOUNCEMENTS: Announcements,
   REPORT: ReportIncident,
+  TICKET: Tickets
 };

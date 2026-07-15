@@ -369,7 +369,6 @@ const OverviewForm = ({ seasonData, onDirtyChange }: OverviewFormProps) => {
       </FormContainerBlock>
     </>
   );
-  console.log(errors, "errors");
 
   // -- Handlers -- //
 

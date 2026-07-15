@@ -5,6 +5,7 @@ import {
   InputWrapper,
   Label,
   TextValue,
+  RichTextContent,
 } from "./ReadOnlyInput.styles";
 import UserProfile from "@/components/Users/Profile/UserProfile";
 import type { Tag } from "@/components/Tags/Tags.variants";
@@ -23,6 +24,7 @@ type ReadOnlyInputProps = {
   helperText?: string;
   profile?: User;
   textValue?: string;
+  richText?: string;
   centerContent?: boolean;
   fullContent?: boolean;
 };
@@ -32,27 +34,34 @@ const ReadOnlyInput = ({
   helperText,
   profile,
   textValue,
+  richText,
   centerContent = false,
   fullContent = false,
 }: ReadOnlyInputProps) => {
   return (
     <InputWrapper $centerContent={centerContent}>
       {label && <Label>{label}</Label>}
-      <InputField $centerContent={centerContent}>
-        {profile ? (
-          <UserProfile
-            username={profile.username}
-            avatarType={profile.avatarType}
-            avatarValue={profile.avatarValue}
-            information={profile.information}
-            size={profile.size ?? "medium"}
-            tags={profile.tags}
-            centerContent={centerContent}
-          />
-        ) : (
-          <TextValue $fullContent={fullContent}>{textValue || "No profile available"}</TextValue>
-        )}
-      </InputField>
+      {richText ? (
+        <RichTextContent>
+          <div className="ProseMirror" dangerouslySetInnerHTML={{ __html: richText }} />
+        </RichTextContent>
+      ) : (
+        <InputField $centerContent={centerContent}>
+          {profile ? (
+            <UserProfile
+              username={profile.username}
+              avatarType={profile.avatarType}
+              avatarValue={profile.avatarValue}
+              information={profile.information}
+              size={profile.size ?? "medium"}
+              tags={profile.tags}
+              centerContent={centerContent}
+            />
+          ) : (
+            <TextValue $fullContent={fullContent}>{textValue || "No profile available"}</TextValue>
+          )}
+        </InputField>
+      )}
       {helperText && <HelperText>{helperText}</HelperText>}
     </InputWrapper>
   );

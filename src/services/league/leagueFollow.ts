@@ -25,7 +25,7 @@ export const followLeagueService = async (
       follower_id: profileId,
       follower_account_id: accountId,
       league_id: leagueId,
-    });
+    })
 
   if (error) {
     return {
@@ -75,7 +75,7 @@ export const isFollowingLeagueService = async (
     .select("league_id")
     .eq("follower_account_id", accountId)
     .eq("league_id", leagueId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     if (error.code === "PGRST116") {
@@ -234,7 +234,7 @@ export const followLeague = async (
     .from("profiles")
     .select("account_id")
     .eq("id", profileId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     return false;
@@ -243,7 +243,7 @@ export const followLeague = async (
   const result = await followLeagueService({
     leagueId,
     profileId,
-    accountId: profile.account_id,
+    accountId: profile?.account_id,
   });
 
   return result.success;
@@ -258,7 +258,7 @@ export const unfollowLeague = async (
     .from("profiles")
     .select("account_id")
     .eq("id", profileId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     return false;
@@ -266,7 +266,7 @@ export const unfollowLeague = async (
 
   const result = await unfollowLeagueService({
     leagueId,
-    accountId: profile.account_id,
+    accountId: profile?.account_id,
   });
 
   return result.success;

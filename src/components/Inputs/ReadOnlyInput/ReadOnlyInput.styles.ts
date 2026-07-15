@@ -56,3 +56,79 @@ export const HelperText = styled.span`
   overflow: hidden;
 `;
 
+export const RichTextContent = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: ${layout.space.small};
+  padding: ${layout.space.medium};
+  border-radius: ${borders.radius.medium};
+  background: ${gradients.base.fadeRight10};
+  border: ${borders.width.thin} solid ${colors.base.translucent10};
+  color: ${colors.text.text1};
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  .ProseMirror {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .ProseMirror * {
+    max-width: 100%;
+  }
+
+  pre {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  p {
+    ${typography.body.mediumRegular};
+    color: ${colors.text.text1};
+    margin: 0;
+  }
+
+  h1 {
+    ${typography.subtitle.large};
+    color: ${colors.text.text1};
+    margin: 0;
+  }
+
+  h2 {
+    ${typography.subtitle.medium};
+    color: ${colors.text.text1};
+    margin: 0;
+  }
+
+  ul,
+  ol {
+    padding-left: 24px;
+    ${typography.body.mediumRegular};
+    color: ${colors.text.text2};
+    margin: 0;
+  }
+
+  li {
+    margin-bottom: ${layout.space.xxSmall};
+  }
+
+  a {
+    ${typography.body.mediumRegular};
+    color: ${colors.text.text1};
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 3px solid ${colors.role.director};
+    padding-left: ${layout.space.medium};
+    margin: ${layout.space.xSmall} 0;
+    ${typography.body.mediumRegular};
+    color: ${colors.text.text2};
+  }
+`;
+

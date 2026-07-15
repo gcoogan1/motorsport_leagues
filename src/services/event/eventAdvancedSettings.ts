@@ -1,5 +1,12 @@
 import { supabase } from "@/lib/supabase";
-import type { CreateEventAdvancedSettingsPayload, CreateEventAdvancedSettingsResponse, DeleteEventAdvancedSettingsResponse, GetEventAdvancedSettingsResponse, UpdateEventAdvancedSettingsPayload, UpdateEventAdvancedSettingsResponse } from "@/types/eventAdvancedSettings";
+import type {
+  CreateEventAdvancedSettingsPayload,
+  CreateEventAdvancedSettingsResponse,
+  DeleteEventAdvancedSettingsResponse,
+  GetEventAdvancedSettingsResponse,
+  UpdateEventAdvancedSettingsPayload,
+  UpdateEventAdvancedSettingsResponse,
+} from "@/types/eventAdvancedSettings";
 
 const buildAdvancedSettingsData = (
   payload: CreateEventAdvancedSettingsPayload,
@@ -65,12 +72,14 @@ const buildAdvancedSettingsData = (
   auto_drive: payload.autoDrive,
 });
 
-export const getEventAdvancedSettings = async (eventId: string): Promise<GetEventAdvancedSettingsResponse> => {
-    const { data, error } = await supabase
+export const getEventAdvancedSettings = async (
+  eventId: string,
+): Promise<GetEventAdvancedSettingsResponse> => {
+  const { data, error } = await supabase
     .from("event_advanced_settings")
     .select("*")
     .eq("event_id", eventId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     return {
@@ -89,8 +98,10 @@ export const getEventAdvancedSettings = async (eventId: string): Promise<GetEven
   };
 };
 
-export const createEventAdvancedSettings = async (payload: CreateEventAdvancedSettingsPayload): Promise<CreateEventAdvancedSettingsResponse> => {
-  const { data, error } = await supabase    .from("event_advanced_settings")
+export const createEventAdvancedSettings = async (
+  payload: CreateEventAdvancedSettingsPayload,
+): Promise<CreateEventAdvancedSettingsResponse> => {
+  const { data, error } = await supabase.from("event_advanced_settings")
     .insert(buildAdvancedSettingsData(payload))
     .single();
 
@@ -119,7 +130,7 @@ export const updateEventAdvancedSettings = async (
     .update(buildAdvancedSettingsData(payload))
     .eq("event_id", payload.eventId)
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) {
     return {
@@ -138,7 +149,9 @@ export const updateEventAdvancedSettings = async (
   };
 };
 
-export const deleteEventAdvancedSettings = async (eventId: string): Promise<DeleteEventAdvancedSettingsResponse> => {
+export const deleteEventAdvancedSettings = async (
+  eventId: string,
+): Promise<DeleteEventAdvancedSettingsResponse> => {
   const { error } = await supabase
     .from("event_advanced_settings")
     .delete()
@@ -156,9 +169,11 @@ export const deleteEventAdvancedSettings = async (eventId: string): Promise<Dele
   }
 
   return { success: true };
-}
+};
 
-export const deleteEventAdvancedSettingsByEventIds = async (eventIds: string[]): Promise<DeleteEventAdvancedSettingsResponse> => {
+export const deleteEventAdvancedSettingsByEventIds = async (
+  eventIds: string[],
+): Promise<DeleteEventAdvancedSettingsResponse> => {
   if (eventIds.length === 0) {
     return { success: true };
   }
