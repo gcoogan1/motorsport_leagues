@@ -143,7 +143,7 @@ import {
 } from "@/services/league/leagueSeason.service";
 import {
   createLeagueSeasonDriver,
-  getLeagueSeasonDriverById,
+  getLeagueSeasonDriverByDriverId,
   getLeagueSeasonDriversByDivision,
   getLeagueSeasonDriversBySeasonId,
   removeLeagueSeasonDriver,
@@ -568,10 +568,10 @@ export const leagueApi = createApi({
         { type: "LeagueSeasonDivisions", id: divisionId },
       ],
     }),
-    getLeagueSeasonDriverById: builder.query<LeagueSeasonDriverTable, string>({
+    getLeagueSeasonDriverByDriverId: builder.query<LeagueSeasonDriverTable, string>({
       queryFn: async (driverId) => {
         try {
-          const result = await getLeagueSeasonDriverById(driverId);
+          const result = await getLeagueSeasonDriverByDriverId(driverId);
 
           if (!result.success) {
             return {
@@ -1650,7 +1650,7 @@ export const {
   useAddLeagueParticipantMutation,
   useCreateLeagueJoinRequestMutation,
   useCreateLeagueSeasonDriverMutation,
-  useGetLeagueSeasonDriverByIdQuery,
+  useGetLeagueSeasonDriverByDriverIdQuery,
   useGetLeagueSeasonDriversByDivisionQuery,
   useGetLeagueSeasonDriversBySeasonIdQuery,
   useUpdateLeagueSeasonDriverTeamMutation,

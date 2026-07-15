@@ -204,14 +204,14 @@ export const getLeagueSeasonDriversBySeasonId = async ({
 };
 
 
-// -- Get League Season Driver by ID -- //
-export const getLeagueSeasonDriverById = async (
+// -- Get League Season Driver by Driver ID -- //
+export const getLeagueSeasonDriverByDriverId = async (
   driverId: string,
 ): Promise<{ success: true; data: import("@/types/league.types").LeagueSeasonDriverTable } | { success: false; error: { message: string; code: string; status: number } }> => {
   const { data, error } = await supabase
     .from("league_season_driver")
     .select("*")
-    .eq("id", driverId)
+    .eq("profile_id", driverId)
     .single();
 
   if (error || !data) {

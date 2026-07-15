@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { useGetResultsWithDetailsByDriverId } from "@/rtkQuery/hooks/queries/useResults";
 import {
-  useGetLeagueSeasonDriverByIdQuery,
   useGetLeagueSeasonTeamByIdQuery,
 } from "@/rtkQuery/API/leagueApi";
+import { useLeagueSeasonDriverByDriverId } from "@/rtkQuery/hooks/queries/useLeagueSeasonDivisions";
 
 // Returns driver performance data using a single joined Supabase query.
 // Round name, track name, driver info, and team info are all resolved server-side,
@@ -11,9 +11,7 @@ import {
 export const useDriverPerformanceResults = (driverId: string) => {
   const { data: rawResults = [], isLoading } =
     useGetResultsWithDetailsByDriverId(driverId);
-  const { data: seasonDriver } = useGetLeagueSeasonDriverByIdQuery(driverId, {
-    skip: !driverId,
-  });
+  const { data: seasonDriver } = useLeagueSeasonDriverByDriverId(driverId);
   const { data: seasonTeam } = useGetLeagueSeasonTeamByIdQuery(
     seasonDriver?.team_id ?? "",
     {
