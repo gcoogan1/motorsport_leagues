@@ -11,7 +11,7 @@ import { useGetCarsQuery } from "@/rtkQuery/API/carsApi";
 import { useLeagueSeasonDivisions } from "@/rtkQuery/hooks/queries/useLeagueSeasonDivisions";
 import { useEventsBySeason } from "@/rtkQuery/hooks/queries/useEvents";
 import { useRoundsBySeason } from "@/rtkQuery/hooks/queries/useRounds";
-import { formatEventDate } from "@/utils/dates";
+import { formatEventDateUserSchedule } from "@/utils/dates";
 import { sortEvents, sortEventsByDate, sortRounds, sortRoundsByMostRecentEventDate } from "@/features/leagues/forms/Schedule/Schedule.util";
 import { buildDivisionOptions, formatActiveDivisionTabLabel, getAdvancedSettings, getCarDetails, getTrackDetails, normalizeDivisionTabLabel } from "./ScheduleLineup.utils";
 import ReportIncidentModal from "@/features/leagues/forms/Reports/ReportIncident/ReportIncidentModal";
@@ -148,6 +148,8 @@ const ScheduleLineup = ({ seasonStatus, seasonData, isParticipant = false }: Sch
                   };
                 })
               : [{ imageUrl: stockFallbackImage, label: "STOCK · Hidden", category: "stock" }];
+
+            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
           
          // Card Details
           return {
@@ -156,9 +158,9 @@ const ScheduleLineup = ({ seasonStatus, seasonData, isParticipant = false }: Sch
             eventDate:
               !event.event_date || event.reveal_date === false
                 ? "Date Not Set"
-                : formatEventDate(
+                : formatEventDateUserSchedule(
                     event.event_date,
-                    event.event_time_zone ?? "UTC",
+                    userTimeZone ?? event.event_time_zone ?? "UTC",
                   ),
             trackName:
               trackDetails?.reveal_track !== false && trackDetails?.track_name
