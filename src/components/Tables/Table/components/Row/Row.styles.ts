@@ -32,6 +32,9 @@ export const RowContainer = styled.button`
   border: none;
   background: none;
   cursor: pointer;
+  overflow-x: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 
   /* Hover */
   &:hover {
@@ -70,10 +73,10 @@ export const TimeText = styled.p`
   ${layout.mediaQueries.mobile} {
     max-width: 120px;
 
-    
+/*     
     overflow-x: scroll;
     -ms-overflow-style: none;
-    scrollbar-width: none;
+    scrollbar-width: none; */
   }
 `;
 
