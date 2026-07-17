@@ -77,10 +77,34 @@ const ReportIncidentModal = ({
   // Filter season drivers to only those belonging to current user's profiles
   const mySeasonDrivers = useMemo(() => {
     if (!seasonDrivers || myProfileIds.length === 0) return [];
-    return seasonDrivers.filter((driver) =>
-      myProfileIds.includes(driver.profile_id)
-    );
+    const uniqueDriversByProfile = new Map<string, (typeof seasonDrivers)[number]>();
+
+    seasonDrivers.forEach((driver) => {
+      if (!myProfileIds.includes(driver.profile_id)) {
+        return;
+      }
+
+      if (!uniqueDriversByProfile.has(driver.profile_id)) {
+        uniqueDriversByProfile.set(driver.profile_id, driver);
+      }
+    });
+
+    return [...uniqueDriversByProfile.values()];
   }, [seasonDrivers, myProfileIds]);
+
+  const uniqueSeasonDrivers = useMemo(() => {
+    if (!seasonDrivers) return [];
+
+    const uniqueDriversByProfile = new Map<string, (typeof seasonDrivers)[number]>();
+
+    seasonDrivers.forEach((driver) => {
+      if (!uniqueDriversByProfile.has(driver.profile_id)) {
+        uniqueDriversByProfile.set(driver.profile_id, driver);
+      }
+    });
+
+    return [...uniqueDriversByProfile.values()];
+  }, [seasonDrivers]);
 
   // Convert season divisions to select options (early to use in queries)
   const divisionOptions = useMemo(
@@ -92,13 +116,6 @@ const ReportIncidentModal = ({
     [seasonDivisions.data],
   );
 
-  // Get preliminary effective division for queries
-  const preliminaryEffectiveDivisionId =
-    selectedDivisionId || divisionOptions[0]?.value || "";
-
-  // Now we can call the queries
-  const eventsByDivision = useEvents(preliminaryEffectiveDivisionId);
-
   // Convert my season drivers to select options (for reporting driver dropdown)
   const reportingDriverProfiles = useMemo(
     () => convertDriversToSelectOptions(mySeasonDrivers, seasonTeams),
@@ -107,8 +124,8 @@ const ReportIncidentModal = ({
 
   // Convert all season drivers to select options (for offending driver dropdown)
   const profiles = useMemo(
-    () => convertDriversToSelectOptions(seasonDrivers, seasonTeams),
-    [seasonDrivers, seasonTeams],
+    () => convertDriversToSelectOptions(uniqueSeasonDrivers, seasonTeams),
+    [seasonTeams, uniqueSeasonDrivers],
   );
 
   // Sort rounds by their order within the season
@@ -122,6 +139,14 @@ const ReportIncidentModal = ({
     () => rounds.find((round) => round.id === roundId),
     [roundId, rounds],
   );
+
+  // Get preliminary effective division for queries.
+  // Prefer the selected division, then the round's division, then the first division.
+  const preliminaryEffectiveDivisionId =
+    selectedDivisionId || initialRound?.division_id || divisionOptions[0]?.value || "";
+
+  // Now we can call the queries.
+  const eventsByDivision = useEvents(preliminaryEffectiveDivisionId);
 
   // Determine the effective division id, prioritizing the selected division, then the initial round's division, and finally the first division option
   const effectiveDivisionId = useMemo(() => {
