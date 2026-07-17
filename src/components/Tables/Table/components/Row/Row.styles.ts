@@ -32,9 +32,9 @@ export const RowContainer = styled.button`
   border: none;
   background: none;
   cursor: pointer;
-  overflow-x: scroll;
+  /* overflow-x: scroll;
   -ms-overflow-style: none;
-  scrollbar-width: none;
+  scrollbar-width: none; */
 
   /* Hover */
   &:hover {
@@ -100,9 +100,9 @@ export const TimeCell = styled.div`
   flex-shrink: 0;
   text-align: left;
 
-  ${layout.mediaQueries.mobile} {
+  /* ${layout.mediaQueries.mobile} {
     width: 40px;
-  }
+  } */
 `;
 
 export const RacesCell = styled.div`

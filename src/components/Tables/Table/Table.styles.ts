@@ -7,8 +7,28 @@ const { colors, layout, gradients, borders, typography } = designTokens;
 export const TableWrapper = styled.div`
   display: flex;
   width: 100%;
-  /* min-width: 360px; */
   max-width: 720px;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  ${layout.mediaQueries.mobile} {
+    max-width: 100%;
+  }
+`;
+
+export const TableInner = styled.div`
+  display: flex;
+  width: 100%;
+  min-width: 380px;
   flex-direction: column;
   align-items: center;
   border-radius: ${borders.radius.xxLarge};
@@ -17,6 +37,10 @@ export const TableWrapper = styled.div`
     gradient: gradients.base.fadeBottom10,
     width: borders.width.medium,
   })};
+
+  ${layout.mediaQueries.mobile} {
+    width: 100%;
+  }
 `;
 
 export const TableHeader = styled.div`
@@ -74,9 +98,9 @@ export const TimeHeaderRow = styled.div`
   height: 18px;
   flex-shrink: 0;
 
-  ${layout.mediaQueries.mobile} {
+  /* ${layout.mediaQueries.mobile} {
     width: 40px;
-  }
+  } */
 `;
 
 export const RaceHeaderRow = styled.div`

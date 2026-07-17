@@ -211,7 +211,8 @@ export const List = styled.div<{ $fullScreen?: boolean }>`
   align-items: center;
 
   ${layout.mediaQueries.mobile} {
-    max-width: ${({ $fullScreen }) => ($fullScreen ? "none" : "400px")};
+    /* max-width: ${({ $fullScreen }) => ($fullScreen ? "none" : "400px")}; */
+    max-width: ${({ $fullScreen }) => ($fullScreen ? "none" : "100%")};
   }
 `;
 
