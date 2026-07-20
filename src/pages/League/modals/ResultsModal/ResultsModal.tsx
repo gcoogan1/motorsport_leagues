@@ -18,6 +18,7 @@ import { useGetResultsByEventId } from "@/rtkQuery/hooks/queries/useResults";
 import { useRoundsBySeason } from "@/rtkQuery/hooks/queries/useRounds";
 import type { SessionType } from "@/types/results.types";
 import { formatEventDate } from "@/utils/dates";
+import { isFastestLapOnlyRow, mergeFastestLapPointsForDisplay } from "@/utils/resultsDisplay";
 
 interface ResultsModalProps {
   eventId: string;
@@ -192,11 +193,14 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
   );
 
   const selectedSessionResults = useMemo(
-    () =>
-      (resultsByEvent.data ?? [])
-        .filter((result) => result.session_type === effectiveSessionType)
-        .filter((result) => !result.fastest_lap)
-        .sort((left, right) => left.position - right.position),
+    () => {
+      const sessionRows = (resultsByEvent.data ?? []).filter(
+        (result) => result.session_type === effectiveSessionType,
+      );
+
+      return mergeFastestLapPointsForDisplay(sessionRows)
+        .sort((left, right) => left.position - right.position);
+    },
     [effectiveSessionType, resultsByEvent.data],
   );
 
@@ -204,7 +208,7 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
     () =>
       (resultsByEvent.data ?? [])
         .filter((result) => result.session_type === effectiveSessionType)
-        .filter((result) => result.fastest_lap),
+        .filter((result) => isFastestLapOnlyRow(result)),
     [effectiveSessionType, resultsByEvent.data],
   );
 

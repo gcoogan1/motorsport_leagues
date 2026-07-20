@@ -4,6 +4,7 @@ import {
   useGetLeagueSeasonTeamByIdQuery,
 } from "@/rtkQuery/API/leagueApi";
 import { useLeagueSeasonDriverByDriverId } from "@/rtkQuery/hooks/queries/useLeagueSeasonDivisions";
+import { mergeFastestLapPointsForDisplay } from "@/utils/resultsDisplay";
 
 // Returns driver performance data using a single joined Supabase query.
 // Round name, track name, driver info, and team info are all resolved server-side,
@@ -26,7 +27,10 @@ export const useDriverPerformanceResults = (driverId: string) => {
   // Hide zero-point events in performance views and sort by event date (oldest to newest)
   const results = useMemo(
     () => {
-      const filtered = rawResults.filter((result) => (result.points ?? 0) > 0);
+      const mergedRows = mergeFastestLapPointsForDisplay(rawResults, {
+        excludeQualifying: true,
+      });
+      const filtered = mergedRows.filter((result) => (result.points ?? 0) > 0);
       return filtered.sort((left, right) => {
         // Sort by event_date first (oldest to newest)
         if (!left.event_date && !right.event_date) {

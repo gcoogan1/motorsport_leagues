@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useGetResultsWithDetailsByTeamId } from "@/rtkQuery/hooks/queries/useResults";
+import { mergeFastestLapPointsForDisplay } from "@/utils/resultsDisplay";
 
 export type TeamPerformanceEventRow = {
   eventId: string;
@@ -26,10 +27,15 @@ export const useTeamPerformanceResults = (teamId: string) => {
   const { data: rawResults = [], isLoading } =
     useGetResultsWithDetailsByTeamId(teamId);
 
+  const mergedRows = useMemo(
+    () => mergeFastestLapPointsForDisplay(rawResults, { excludeQualifying: true }),
+    [rawResults],
+  );
+
   const events = useMemo<TeamPerformanceEventRow[]>(() => {
     const grouped = new Map<string, TeamPerformanceEventRow & { participantIds: Set<string>; eventDate: string | null }>();
 
-    for (const result of rawResults) {
+    for (const result of mergedRows) {
       const eventId = result.event_id;
       const existing = grouped.get(eventId);
       const eventDate = result.event_date ?? null;
@@ -83,20 +89,20 @@ export const useTeamPerformanceResults = (teamId: string) => {
 
         return left.eventName.localeCompare(right.eventName);
       });
-  }, [rawResults]);
+  }, [mergedRows]);
 
   const driverCount = useMemo(
-    () => new Set(rawResults.map((result) => result.driver_id)).size,
-    [rawResults],
+    () => new Set(mergedRows.map((result) => result.driver_id)).size,
+    [mergedRows],
   );
 
   // Team and team info are embedded on the first result via the join.
   // All results share the same team, so index 0 is sufficient.
-  const teamData = rawResults[0] ?? null;
+  const teamData = mergedRows[0] ?? null;
   const teamName =
     teamData?.team_name ??
     // Fallback: some result rows may carry a denormalised team_name column
-    rawResults.find((r) => r.team_name)?.team_name ??
+    mergedRows.find((r) => r.team_name)?.team_name ??
     null;
 
   return { events, teamData, teamName, isLoading, driverCount };

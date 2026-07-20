@@ -9,6 +9,7 @@ import { useGetResultsByDivisionIdQuery } from "@/rtkQuery/API/resultsApi";
 import type { LeagueSeasonTable } from "@/types/league.types";
 import type { ResultsTable } from "@/types/results.types";
 import type { Tag } from "@/components/Tags/Tags.variants";
+import { mergeFastestLapPointsForDisplay } from "@/utils/resultsDisplay";
 
 export const ASSIGNMENT_TABS = [{ label: "Teams" }, { label: "Drivers" }];
 
@@ -106,10 +107,9 @@ export const useStandingsData = ({
   );
 
   const driverResults = useMemo<DriverStanding[]>(() => {
-    const source = (divisionResults.data ?? []).filter(
-      (result) =>
-        result.session_type !== "qualifying" &&
-        result.fastest_lap !== true,
+    const source = mergeFastestLapPointsForDisplay(
+      divisionResults.data ?? [],
+      { excludeQualifying: true },
     );
     const standingsByDriver = new Map<
       string,
@@ -182,10 +182,9 @@ export const useStandingsData = ({
   }, [divisionResults.data, driversById, participantTagsByProfileId, teamsById]);
 
   const teamResults = useMemo<TeamStanding[]>(() => {
-    const source = (divisionResults.data ?? []).filter(
-      (result) =>
-        result.session_type !== "qualifying" &&
-        result.fastest_lap !== true,
+    const source = mergeFastestLapPointsForDisplay(
+      divisionResults.data ?? [],
+      { excludeQualifying: true },
     );
     const standingsByTeam = new Map<
       string,

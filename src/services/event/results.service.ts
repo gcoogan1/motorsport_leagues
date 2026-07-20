@@ -171,8 +171,7 @@ export const getResultsWithDetailsByDriverId = async (
       )
     `)
     .eq("driver_id", driverId)
-    .neq("session_type", "qualifying")
-    .neq("fastest_lap", true);
+    .neq("session_type", "qualifying");
 
   if (error) {
     return {
@@ -221,7 +220,6 @@ export const getResultsWithDetailsPerTeamId = async (
     `)
     .eq("team_id", teamId)
     .neq("session_type", "qualifying")
-    .neq("fastest_lap", true)
 
   if (error) {
     return {
