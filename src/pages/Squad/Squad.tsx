@@ -45,13 +45,16 @@ const Squad = () => {
   const { isReady, squadStatus, viewType } = useSquadPageReadyState();
 
   // RTK Query
-  const { data: squadMembers = [] } = useSquadMembers(squadId);
-  const { data: hostedLeagues = [] } = useSquadHostedLeagues(squadId);
-  const { data: followers = [] } = useSquadFollowers(squadId ?? "");
+  const { data: squadMembers = [], isLoading: isMembersLoading } = useSquadMembers(squadId);
+  const { data: hostedLeagues = [], isLoading: isLeaguesLoading } = useSquadHostedLeagues(squadId);
+  const { data: followers = [], isLoading: isFollowersLoading } = useSquadFollowers(squadId ?? "");
   const { data: isFollowing = false } = useIsFollowingSquad(
     squadId ?? "",
     accountId ?? ""
   );
+
+  // Combined loading state
+  const isDataLoading = isMembersLoading || isLeaguesLoading || isFollowersLoading;
 
   // Build a quick lookup of the logged-in account's profile ids.
   const currentUserProfileIds = new Set(currentUserProfiles.map((profile) => profile.id));
@@ -143,7 +146,7 @@ const Squad = () => {
     currentProfileId,
   });
 
-  if (!isReady || !squad || squad.id !== squadId) {
+  if (!isReady || !squad || squad.id !== squadId || isDataLoading) {
     return <LoadingScreen />;
   }
 

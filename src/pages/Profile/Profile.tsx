@@ -14,6 +14,7 @@ import { navigate } from "@/app/navigation/navigation";
 import { getProfileByProfileIdThunk } from "@/store/profile/profile.thunk";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import { getBannerVariants } from "@/components/Banner/Banner.variants";
+import LoadingScreen from "@/components/Messages/LoadingScreen/LoadingScreen";
 import {
   useIsFollowingProfile,
   useProfileFollowers,
@@ -50,10 +51,10 @@ const Profile = () => {
 
   // -- RTK Query -- //
   // Fetch followers for this profile (used to display followers count and determine if current user is following this profile)
-  const { data: followers = [] } = useProfileFollowers(profileId ?? "");
-  const { data: mySquads = [] } = useSquadsByProfileId(profileId);
-  const { data: myLeagues = [] } = useProfileLeagues(profileId);
-  const { data: profileStats } = useGetProfileStatsQuery(profileId ?? "", {
+  const { data: followers = [], isLoading: isFollowersLoading } = useProfileFollowers(profileId ?? "");
+  const { data: mySquads = [], isLoading: isSquadsLoading } = useSquadsByProfileId(profileId);
+  const { data: myLeagues = [], isLoading: isLeaguesLoading } = useProfileLeagues(profileId);
+  const { data: profileStats, isLoading: isProfileStatsLoading } = useGetProfileStatsQuery(profileId ?? "", {
     skip: !profileId,
   });
   // Check if the logged in user is following the profile being viewed (used to determine follow/unfollow behavior)
@@ -105,8 +106,8 @@ const Profile = () => {
     }
   }, [profileId, profileStatus]);
 
-  if (profileStatus === "loading") {
-    return null;
+  if (profileStatus === "loading" || isFollowersLoading || isSquadsLoading || isLeaguesLoading || isProfileStatsLoading) {
+    return <LoadingScreen />;
   }
 
   if (!profileId || !profile || profile.id !== profileId) {
