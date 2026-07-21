@@ -3,6 +3,7 @@ import { navigate } from "@/app/navigation/navigation";
 import SheetModal from "@/components/Sheets/SheetModal/SheetModal";
 import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import Button from "@/components/Button/Button";
 import MenuDropdown from "@/components/Dropdowns/MenuDropdown/MenuDropdown";
 import ProfileIcon from "@assets/Icon/Profile.svg?react";
@@ -141,6 +142,14 @@ const OnTheGrid = ({ eventId, seasonId, seasonName }: OnTheGridProps) => {
   const divisionTeams = useLeagueSeasonDivisionTeams(effectiveDivisionId);
   const eventDrivers = useEventDrivers(effectiveEventId);
 
+  const isLoading =
+    seasonDivisions.isLoading ||
+    roundsBySeason.isLoading ||
+    eventsBySeason.isLoading ||
+    seasonDrivers.isLoading ||
+    divisionTeams.isLoading ||
+    eventDrivers.isLoading;
+
   const teamsByIdMap = useMemo(
     () => new Map((divisionTeams.data ?? []).map((team) => [team.id, team.team_name] as const)),
     [divisionTeams.data],
@@ -191,7 +200,9 @@ const OnTheGrid = ({ eventId, seasonId, seasonName }: OnTheGridProps) => {
   };
 
   const listChildren =
-    driverRows.length > 0 ? (
+    isLoading ? (
+      <LoadingMessage />
+    ) : driverRows.length > 0 ? (
       <TableWrapper style={{ maxWidth: "640px" }}>
         <ParticipantHeader>
           <TableRow>

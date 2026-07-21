@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import SheetModal from "@/components/Sheets/SheetModal/SheetModal";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
 import Table from "@/components/Tables/Table/Table";
 import { useModal } from "@/providers/modal/useModal";
@@ -192,6 +193,13 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
     [divisionDrivers.currentData],
   );
 
+  const isLoading =
+    seasonDivisions.isLoading ||
+    roundsBySeason.isLoading ||
+    eventsBySeason.isLoading ||
+    resultsByEvent.isLoading ||
+    divisionDrivers.isLoading;
+
   const selectedSessionResults = useMemo(
     () => {
       const sessionRows = (resultsByEvent.data ?? []).filter(
@@ -278,7 +286,9 @@ const ResultsModal = ({ eventId, seasonId, seasonName }: ResultsModalProps) => {
         )
       : "No Date Set";
 
-  const listChildren = !effectiveSessionType ? (
+  const listChildren = isLoading ? (
+    <LoadingMessage />
+  ) : !effectiveSessionType ? (
     <EmptyMessage
       icon={<SetupIcon />}
       title="No Session"

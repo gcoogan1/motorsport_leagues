@@ -6,6 +6,7 @@ import { useDriverPerformanceResults } from "./useDriverPerformance";
 import SpecialRow from "@/components/Tables/SpecialRow/SpecialRow";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import ResultsModal from "@/pages/League/modals/ResultsModal/ResultsModal";
 
 type DriverPerformanceProps = {
@@ -24,7 +25,7 @@ const DriverPerformance = ({
   teamName,
 }: DriverPerformanceProps) => {
   const { closeModal, openModal } = useModal();
-  const { driverData, teamName: performanceTeamName, results } =
+  const { driverData, teamName: performanceTeamName, results, isLoading } =
     useDriverPerformanceResults(driverId);
 
   const eventResults = useMemo(() => {
@@ -52,7 +53,9 @@ const DriverPerformance = ({
 
   const listChildren = (
     <>
-      {isEmpty ? (
+      {isLoading ? (
+        <LoadingMessage />
+      ) : isEmpty ? (
         <EmptyMessage
           icon={<SetupIcon />}
           title="No Results"

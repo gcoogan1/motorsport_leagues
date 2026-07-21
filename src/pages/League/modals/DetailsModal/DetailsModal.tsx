@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import SheetModal from "@/components/Sheets/SheetModal/SheetModal";
 import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import EventDetails from "@/components/Structures/EventDetails/EventDetails";
 import Icon from "@/components/Icon/Icon";
 import DetailGroup from "@/components/Tables/DetailGroup/DetailGroup";
@@ -177,6 +178,8 @@ const DetailsModal = ({ eventId, seasonId, seasonName }: DetailsModalProps) => {
 
     return divisionOptions[0]?.value ?? "";
   }, [divisionOptions, initialEvent, selectedDivisionId]);
+
+  const isLoading = seasonDivisions.isLoading || roundsBySeason.isLoading || eventsBySeason.isLoading;
 
   const roundsForDivision = useMemo(
     () =>
@@ -822,7 +825,9 @@ ${regulationTitle}
       }
     : undefined;
 
-  const listChildren = selectedEvent ? (
+  const listChildren = isLoading ? (
+    <LoadingMessage />
+  ) : selectedEvent ? (
     <ListContainer>
       <EventDetails
         sessions={sessionLabels}

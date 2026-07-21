@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import SheetModal from "@/components/Sheets/SheetModal/SheetModal";
 import Briefing from "@/components/Structures/Briefing/Briefing";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
 import BriefingIcon from "@assets/Icon/Briefing.svg?react";
 import { useModal } from "@/providers/modal/useModal";
@@ -14,6 +15,9 @@ type BriefingModalProps = {
   seasonId: string;
   seasonName: string;
 };
+
+// Use stable references so FilterBar doesn't get a new array identity every render
+const EMPTY_OPTIONS: never[] = [];
 
 const BriefingModal = ({ roundId, seasonId, seasonName }: BriefingModalProps) => {
   const { closeModal } = useModal();
@@ -80,18 +84,22 @@ const BriefingModal = ({ roundId, seasonId, seasonName }: BriefingModalProps) =>
     [effectiveRoundId, rounds],
   );
 
-  const filters = divisionOptions.length > 0 || roundOptions.length > 0 ? (
-    <FilterBar
-      divisions={divisionOptions}
-      rounds={roundOptions}
-      events={[]}
-      sessions={[]}
-      selectedDivision={effectiveDivisionId}
-      selectedRound={effectiveRoundId}
-      onDivisionChange={setSelectedDivisionId}
-      onRoundChange={setSelectedRoundId}
-    />
-  ) : undefined;
+  const filters = useMemo(
+    () =>
+      divisionOptions.length > 0 || roundOptions.length > 0 ? (
+        <FilterBar
+          divisions={divisionOptions}
+          rounds={roundOptions}
+          events={EMPTY_OPTIONS}
+          sessions={EMPTY_OPTIONS}
+          selectedDivision={effectiveDivisionId}
+          selectedRound={effectiveRoundId}
+          onDivisionChange={setSelectedDivisionId}
+          onRoundChange={setSelectedRoundId}
+        />
+      ) : undefined,
+    [divisionOptions, roundOptions, effectiveDivisionId, effectiveRoundId],
+  );
 
   const listChildren = selectedRound?.briefing ? (
     <Briefing content={selectedRound.briefing} />
@@ -103,12 +111,14 @@ const BriefingModal = ({ roundId, seasonId, seasonName }: BriefingModalProps) =>
     />
   );
 
+  const isLoading = seasonDivisions.isLoading || roundsBySeason.isLoading;
+
   return (
     <SheetModal
       id={"league-briefing-modal"}
       seasonName={seasonName}
       header={"Driver Briefing"}
-      listChildren={listChildren}
+      listChildren={isLoading ? <LoadingMessage /> : listChildren}
       filters={filters}
       onClose={closeModal}
     ></SheetModal>

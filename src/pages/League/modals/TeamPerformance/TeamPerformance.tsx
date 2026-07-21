@@ -4,6 +4,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { useTeamPerformanceResults } from "./useTeamPerfomance";
 import SpecialRow from "@/components/Tables/SpecialRow/SpecialRow";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import ResultsModal from "@/pages/League/modals/ResultsModal/ResultsModal";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
 
@@ -23,7 +24,7 @@ const TeamPerformance = ({
   seasonName,
 }: TeamPerformanceProps) => {
   const { closeModal, openModal } = useModal();
-  const { teamData, events, driverCount } =
+  const { teamData, events, driverCount, isLoading } =
     useTeamPerformanceResults(teamId);
 
   const resolvedDriverCount = driverCount === 0 ? numOfDrivers ?? 0 : driverCount;
@@ -53,7 +54,9 @@ const TeamPerformance = ({
 
   const listChildren = (
     <>
-      {isEmpty ? (
+      {isLoading ? (
+        <LoadingMessage />
+      ) : isEmpty ? (
         <EmptyMessage
           icon={<SetupIcon />}
           title="No Results"
