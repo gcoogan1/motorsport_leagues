@@ -8,6 +8,9 @@ import SegmentedTab from "@/components/Tabs/SegmentedTabs/SegmentedTab";
 import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
 import DriverPerformance from "@/pages/League/modals/DriverPerformance/DriverPerformance";
 import TeamPerformance from "@/pages/League/modals/TeamPerformance/TeamPerformance";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
+import { ASSIGNMENT_TABS, useLineupData } from "./useLineupData";
+import type { LineupDriver } from "./useLineupData";
 import {
   DriverColumns,
   LeftColumn,
@@ -15,8 +18,6 @@ import {
   MobileDriverLineup,
   RightColumn,
 } from "./Lineup.styles";
-import { ASSIGNMENT_TABS, useLineupData } from "./useLineupData";
-import type { LineupDriver } from "./useLineupData";
 
 type LineupProps = {
   seasonStatus: LeagueStatus;
@@ -37,6 +38,7 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
     rightColumnDrivers,
     countLabel,
     handleTabChange,
+    isLoading,
   } = useLineupData({ seasonData });
   const { openModal } = useModal();
 
@@ -80,7 +82,9 @@ const Lineup = ({ seasonStatus, seasonData }: LineupProps) => {
 
   return (
     <>
-      {seasonStatus === "setup" ? (
+      {isLoading ? (
+          <LoadingMessage />
+      ) : seasonStatus === "setup" ? (
         <EmptyMessage
           icon={<SetupIcon />}
           title="Coming Soon"

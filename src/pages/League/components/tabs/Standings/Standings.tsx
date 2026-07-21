@@ -1,6 +1,7 @@
 import { useModal } from "@/providers/modal/useModal.ts";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import SegmentedTab from "@/components/Tabs/SegmentedTabs/SegmentedTab";
 import FilterBar from "@/components/Tabs/FilterBar/FilterBar";
 import Table from "@/components/Tables/Table/Table";
@@ -26,6 +27,7 @@ const Standings = ({ seasonStatus, seasonData }: StandingsProps) => {
     teamResults,
     countLabel,
     handleTabChange,
+    isLoading,
   } = useStandingsData({ seasonData });
 
   const { openModal } = useModal();
@@ -53,7 +55,9 @@ const Standings = ({ seasonStatus, seasonData }: StandingsProps) => {
 
   return (
     <>
-      {seasonStatus === "setup" ? (
+      {isLoading ? (
+        <LoadingMessage />
+      ) : seasonStatus === "setup" ? (
         <EmptyMessage
           icon={<SetupIcon />}
           title="Coming Soon"

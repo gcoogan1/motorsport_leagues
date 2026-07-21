@@ -9,6 +9,7 @@ import type { LeagueSeasonTable, LeagueStatus } from "@/types/league.types";
 import RulesHeader from "@/components/Structures/RulesHeader/RulesHeader";
 import { RulesContainer, RulesContent, TextContainer } from "./Rules.styles";
 import { usePanel } from "@/providers/panel/usePanel";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 
 type RulesProps = {
   seasonStatus: LeagueStatus;
@@ -51,11 +52,7 @@ const Rules = ({ seasonStatus, seasonData }: RulesProps) => {
           subtitle="The latest Season of this League is being set up!"
         />
       ) : isLoading ? (
-        <EmptyMessage
-          icon={<SetupIcon />}
-          title="Loading Rules"
-          subtitle="Fetching current league rules and regulations."
-        />
+        <LoadingMessage />
       ) : hasRules ? (
         <RulesContainer>
           <RulesHeader

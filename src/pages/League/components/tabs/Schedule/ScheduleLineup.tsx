@@ -3,6 +3,7 @@ import { useModal } from "@/providers/modal/useModal";
 import SetupIcon from "@assets/Icon/Season_Setup.svg?react";
 import PlaceholderImage from "@assets/Cars/Hidden.png";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import type { LeagueSeasonTable, LeagueStatus } from "@/types/league.types";
 import { LineupContainer } from "./ScheduleLineup.styles";
 import SegmentedTab from "@/components/Tabs/SegmentedTabs/SegmentedTab";
@@ -35,6 +36,12 @@ const ScheduleLineup = ({ seasonStatus, seasonData, isParticipant = false }: Sch
   const seasonDivisions = useLeagueSeasonDivisions(seasonData?.id);
   const roundsBySeason = useRoundsBySeason(seasonData?.id);
   const eventsBySeason = useEventsBySeason(seasonData?.id);
+
+  const isLoading =
+    seasonDivisions.isLoading ||
+    roundsBySeason.isLoading ||
+    eventsBySeason.isLoading ||
+    !carsData;
 
 
   // -- Memoized values to avoid unnecessary re-renders -- //
@@ -264,7 +271,9 @@ const ScheduleLineup = ({ seasonStatus, seasonData, isParticipant = false }: Sch
 
   return (
     <>
-      {seasonStatus === "setup" ? (
+      {isLoading ? (
+        <LoadingMessage />
+      ) : seasonStatus === "setup" ? (
         <EmptyMessage
           icon={<SetupIcon />}
           title="Coming Soon"

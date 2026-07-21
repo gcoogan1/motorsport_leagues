@@ -387,6 +387,12 @@ export const useLineupData = ({
     setActiveTab(tab);
   };
 
+  const isLoading =
+    seasonDivisions.isLoading ||
+    seasonDriversBySeason.isLoading ||
+    seasonTeamsBySeason.isLoading ||
+    leagueParticipants.isLoading;
+
   return {
     activeView,
     activeDivisionId,
@@ -400,5 +406,6 @@ export const useLineupData = ({
     rightColumnDrivers,
     countLabel,
     handleTabChange,
+    isLoading,
   };
 };

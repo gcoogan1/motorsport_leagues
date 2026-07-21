@@ -273,6 +273,13 @@ export const useStandingsData = ({
     setActiveTab(tab);
   };
 
+  const isLoading =
+    seasonDivisions.isLoading ||
+    seasonDrivers.isLoading ||
+    seasonTeams.isLoading ||
+    leagueParticipants.isLoading ||
+    divisionResults.isLoading;
+
   return {
     activeView,
     activeDivisionId,
@@ -284,5 +291,6 @@ export const useStandingsData = ({
     teamResults,
     countLabel,
     handleTabChange,
+    isLoading,
   };
 };
