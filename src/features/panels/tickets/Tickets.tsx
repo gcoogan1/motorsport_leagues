@@ -14,6 +14,7 @@ import StewardIcon from "@assets/Icon/Stewards.svg?react";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import TicketMessage from "@/components/Messages/TicketMessage/TicketMessage";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import ViewTicket from "./forms/ViewTicket/ViewTicket";
 import ResolveTicket from "./forms/ResolveTicket/ResolveTicket";
 import EditDecision from "./forms/EditDecision/EditDecision";
@@ -37,11 +38,11 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
     (participant) => participant.account_id === accountId,
   );
 
-  const { data: allTickets = [] } = useTicketsBySeasonId(
+  const { data: allTickets = [], isLoading: isTicketsLoading } = useTicketsBySeasonId(
     isStewardOrDirector ? seasonData?.id : undefined,
   );
 
-  const { data: allDecisions = [] } = useDecisionsBySeasonId(
+  const { data: allDecisions = [], isLoading: isDecisionsLoading } = useDecisionsBySeasonId(
     seasonData?.id,
   );
 
@@ -139,7 +140,9 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
         <>
           {activeTab === "For Review" ? (
             <>
-              {openTickets.length > 0 ? (
+              {isTicketsLoading ? (
+                <LoadingMessage />
+              ) : openTickets.length > 0 ? (
                 openTickets.map((ticket) => (
                   <TicketMessage
                     key={ticket.id}
@@ -181,7 +184,9 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
             </>
           ) : (
             <>
-              {allDecisions.length > 0 ? (
+              {isDecisionsLoading ? (
+                <LoadingMessage />
+              ) : allDecisions.length > 0 ? (
                 allDecisions.map((decision) => (
                   <TicketMessage
                     key={decision.id}
@@ -228,7 +233,9 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
         </>
       ) : (
         <>
-          {allDecisions.length > 0 ? (
+          {isDecisionsLoading ? (
+            <LoadingMessage />
+          ) : allDecisions.length > 0 ? (
             allDecisions.map((decision) => (
               <TicketMessage
                 key={decision.id}
