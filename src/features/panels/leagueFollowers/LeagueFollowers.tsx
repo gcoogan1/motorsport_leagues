@@ -10,6 +10,7 @@ import { selectCurrentLeague, selectLeagueViewType, selectIsCurrentLeaguePartici
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import FollowersIcon from "@assets/Icon/Followers.svg?react";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import ProfileList, { type ProfileAction } from "@/components/Lists/ProfileList/ProfileList";
 import RemoveLeagueFollower from "./modals/core/RemoveLeagueFollower/RemoveLeagueFollower";
 
@@ -27,7 +28,7 @@ const LeagueFollowers = ({ leagueId }: LeagueFollowersProps) => {
   const isDirectorParticipant = useSelector(selectIsCurrentLeagueParticipantDirector);
   const resolvedLeagueId = leagueId ?? currentLeague?.id ?? "";
   const isDirector = isDirectorParticipant === true && leagueViewType !== "loading";
-  const { data: followers = [] } = useLeagueFollowers(resolvedLeagueId);
+  const { data: followers = [], isLoading: isFollowersLoading } = useLeagueFollowers(resolvedLeagueId);
 
   const formatedProfiles = convertProfilesToSelectOptions(followers || []).map(
     (profile) => ({
@@ -58,7 +59,9 @@ const LeagueFollowers = ({ leagueId }: LeagueFollowersProps) => {
       panelTitleIcon={<FollowersIcon />}
     >
       <>
-        {followers && followers.length > 0 ? (
+        {isFollowersLoading ? (
+          <LoadingMessage />
+        ) : followers && followers.length > 0 ? (
           <ProfileList
             key={resolvedLeagueId}
             items={formatedProfiles}

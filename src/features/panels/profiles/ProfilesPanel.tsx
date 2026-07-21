@@ -13,6 +13,7 @@ import SearchIcon from "@assets/Icon/Search.svg?react";
 import Profile from "@assets/Icon/Profile.svg?react";
 import ProfileCard from "@/components/Cards/ProfileCard/ProfileCard";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import SearchForm from "@/features/search/forms/SearchForm";
 
 //TODO: Add functionality to actions and following tab
@@ -29,7 +30,8 @@ const ProfilesPanel = () => {
   const [activeTab, setActiveTab] = useState<string>(PROFILE_TABS[0].label);
 
   const profiles = useSelector((state: RootState) => state.profile.data);
-  const { data: following = [] } = useProfileFollowing(user?.id || "");
+  const profilesStatus = useSelector((state: RootState) => state.profile.status);
+  const { data: following = [], isLoading: isFollowingLoading } = useProfileFollowing(user?.id || "");
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -74,7 +76,9 @@ const ProfilesPanel = () => {
     >
       {activeTab === "My Profiles" ? (
         <>
-          {profiles && profiles.length > 0 ? (
+          {profilesStatus === "loading" ? (
+            <LoadingMessage />
+          ) : profiles && profiles.length > 0 ? (
             profiles.map((prof) => (
               <ProfileCard
                 key={prof.id}
@@ -103,7 +107,9 @@ const ProfilesPanel = () => {
         </>
       ) : (
         <>
-          {following && following.length > 0 ? (
+          {isFollowingLoading ? (
+            <LoadingMessage />
+          ) : following && following.length > 0 ? (
             following.map((prof) => (
               <ProfileCard
                 key={prof.id}

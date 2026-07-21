@@ -9,6 +9,7 @@ import { convertProfilesToSelectOptions } from "@/utils/convertProfilesToSelectO
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import FollowersIcon from "@assets/Icon/Followers.svg?react";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import ProfileList, { type ProfileAction } from "@/components/Lists/ProfileList/ProfileList";
 import RemoveFollower from "./modals/core/RemoveFollower/RemoveFollower";
 
@@ -20,7 +21,7 @@ const ProfileFollowers = ({ profileId }: ProfileFollowersProps) => {
   const { openModal } = useModal();
   const { closePanel } = usePanel();
   const { user } = useAuth();
-  const { data: followers = [] } = useProfileFollowers(profileId ?? "");
+  const { data: followers = [], isLoading: isFollowersLoading } = useProfileFollowers(profileId ?? "");
   const viewType = useSelector(selectProfileViewType());
 
   const formatedProfiles = convertProfilesToSelectOptions(followers || []).map(
@@ -52,7 +53,9 @@ const ProfileFollowers = ({ profileId }: ProfileFollowersProps) => {
       panelTitleIcon={<FollowersIcon />}
     >
       <>
-        {followers && followers.length > 0 ? (
+        {isFollowersLoading ? (
+          <LoadingMessage />
+        ) : followers && followers.length > 0 ? (
           <ProfileList
             key={profileId}
             items={formatedProfiles}

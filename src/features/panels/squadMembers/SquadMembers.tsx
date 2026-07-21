@@ -13,10 +13,12 @@ import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import FollowersIcon from "@assets/Icon/Followers.svg?react";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
-import ProfileList, { type ProfileAction } from "@/components/Lists/ProfileList/ProfileList";
+import ProfileList, {
+  type ProfileAction,
+} from "@/components/Lists/ProfileList/ProfileList";
 import ChangeMemberRole from "./modals/form/ChangeMemberRole/ChangeMemberRole";
 import RemoveSquadMember from "./modals/core/RemoveSquadMember/RemoveSquadMember";
-
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 
 //TODO: Add Tags in SquadMembers when we have them (e.g. founder tag)
 
@@ -31,7 +33,8 @@ const SquadMembers = ({ squadId }: SquadMembersProps) => {
   const currentSquad = useSelector(selectCurrentSquad);
   const squadViewType = useSelector(selectSquadViewType);
   const resolvedSquadId = squadId ?? currentSquad?.id ?? "";
-  const { data: members = [] } = useSquadMembers(resolvedSquadId);
+  const { data: members = [], isLoading: isMembersLoading } =
+    useSquadMembers(resolvedSquadId);
 
   const formatedProfiles = members.map((member) => ({
     id: member.profile_id,
@@ -57,7 +60,12 @@ const SquadMembers = ({ squadId }: SquadMembersProps) => {
       navigate(`/profile/${selectedProfileId}`);
     } else if (action === "remove") {
       if (!user?.id) return;
-      openModal(<RemoveSquadMember squadId={resolvedSquadId} profileId={selectedProfileId} />);
+      openModal(
+        <RemoveSquadMember
+          squadId={resolvedSquadId}
+          profileId={selectedProfileId}
+        />,
+      );
     } else if (action === "changeRole") {
       if (!user?.id) return;
 
@@ -91,25 +99,29 @@ const SquadMembers = ({ squadId }: SquadMembersProps) => {
       panelTitle={membersCount > 0 ? membersPanelTitle : emptyPanelTitle}
       panelTitleIcon={<FollowersIcon />}
     >
-      <>
-        {members && members.length > 0 ? (
-          <ProfileList
-            key={resolvedSquadId}
-            items={formatedProfiles}
-            onClick={handleProfileAction}
-            allowRemoveAction={squadViewType === "founder"}
-            allowChangeRoleAction={squadViewType === "founder"}
-            removeType="member"
-            listType="squad"
-          />
-        ) : (
-          <EmptyMessage
-            title="No Members Yet"
-            icon={<FollowersIcon />}
-            subtitle="Members of this Squad will appear here."
-          />
-        )}
-      </>
+      {isMembersLoading ? (
+        <LoadingMessage />
+      ) : (
+        <>
+          {members && members.length > 0 ? (
+            <ProfileList
+              key={resolvedSquadId}
+              items={formatedProfiles}
+              onClick={handleProfileAction}
+              allowRemoveAction={squadViewType === "founder"}
+              allowChangeRoleAction={squadViewType === "founder"}
+              removeType="member"
+              listType="squad"
+            />
+          ) : (
+            <EmptyMessage
+              title="No Members Yet"
+              icon={<FollowersIcon />}
+              subtitle="Members of this Squad will appear here."
+            />
+          )}
+        </>
+      )}
     </PanelLayout>
   );
 };

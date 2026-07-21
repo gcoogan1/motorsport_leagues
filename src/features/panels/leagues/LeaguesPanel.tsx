@@ -7,6 +7,7 @@ import { useModal } from "@/providers/modal/useModal";
 import { getLeagueByIdThunk } from "@/store/leagues/league.thunk";
 import type { LeagueTable } from "@/types/league.types";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import SearchForm from "@/features/search/forms/SearchForm";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import League from "@assets/Icon/League.svg?react";
@@ -86,14 +87,6 @@ const LeaguesPanel = () => {
     openModal(<SearchForm closePanel={closePanel} startingTab="Leagues" />);
   };
 
-  if (activeTab === "My Leagues" && isMyLeaguesLoading) {
-    return null;
-  }
-
-  if (activeTab === "Following" && isFollowingLoading) {
-    return null;
-  }
-
   return (
     <PanelLayout
       panelTitle="Leagues"
@@ -118,7 +111,9 @@ const LeaguesPanel = () => {
       }
     >
       {activeTab === "My Leagues" ? (
-        myLeagues.length > 0 ? (
+        isMyLeaguesLoading ? (
+          <LoadingMessage />
+        ) : myLeagues.length > 0 ? (
           myLeagues.map((league) => {
             const coverImageUrl =
               league.cover_type === "preset"
@@ -163,7 +158,9 @@ const LeaguesPanel = () => {
         />
         )
       ) : (
-        following && following.length > 0 ?  (
+        isFollowingLoading ? (
+          <LoadingMessage />
+        ) : following && following.length > 0 ?  (
           following.map((league) => {
             return (
               <LeagueListItem

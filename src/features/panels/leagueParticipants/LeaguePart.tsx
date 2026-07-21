@@ -10,6 +10,7 @@ import type { Tag } from "@/components/Tags/Tags.variants";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import ProfileList, { type ProfileAction } from "@/components/Lists/ProfileList/ProfileList";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import { navigate } from "@/app/navigation/navigation";
 
 type LeagueParticipantsProps = {
@@ -24,7 +25,7 @@ const LeagueParticipants = ({ leagueId }: LeagueParticipantsProps) => {
     const isDirectorParticipant = useSelector(selectIsCurrentLeagueParticipantDirector);
     const isDirector = isDirectorParticipant === true && leagueViewType !== "loading";
     const resolvedLeagueId = leagueId ?? currentLeague?.id ?? "";
-    const { data: participants = [] } = useLeagueParticipants(resolvedLeagueId);
+    const { data: participants = [], isLoading: isParticipantsLoading } = useLeagueParticipants(resolvedLeagueId);
 
     const orderedParticipants = useMemo(
       () =>
@@ -82,7 +83,9 @@ const LeagueParticipants = ({ leagueId }: LeagueParticipantsProps) => {
       panelTitleIcon={<ParticipantsIcon />}
     >
       <>
-          {orderedParticipants.length > 0 ? (
+          {isParticipantsLoading ? (
+            <LoadingMessage />
+          ) : orderedParticipants.length > 0 ? (
             <ProfileList
               key={resolvedLeagueId}
               items={formatedProfiles}

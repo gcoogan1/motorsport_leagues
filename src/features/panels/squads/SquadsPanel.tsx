@@ -11,6 +11,7 @@ import SearchIcon from "@assets/Icon/Search.svg?react";
 import { getBannerVariants } from "@/components/Banner/Banner.variants";
 import PanelLayout from "@/components/Panels/components/PanelLayout/PanelLayout";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import SquadCard from "@/components/Cards/SquadCard/SquadCard";
 import SearchForm from "@/features/search/forms/SearchForm";
 import type { SquadTable } from "@/types/squad.types";
@@ -56,8 +57,8 @@ const SquadsPanel = () => {
   const [activeTab, setActiveTab] = useState<string>(SQUAD_TABS[0].label);
   const squads = useSelector((state: RootState) => state.squad.data);
   const accountId = useSelector((state: RootState) => state?.account.data?.id);
-  const { data: memberSquads = [] } = useMemberSquads(accountId);
-  const { data: following = [] } = useSquadFollowing(accountId ?? "");
+  const { data: memberSquads = [], isLoading: isMemberSquadsLoading } = useMemberSquads(accountId);
+  const { data: following = [], isLoading: isFollowingLoading } = useSquadFollowing(accountId ?? "");
   const mySquads = [...(squads ?? []), ...memberSquads].filter(
     (squad, index, allSquads) =>
       allSquads.findIndex((otherSquad) => otherSquad.id === squad.id) === index,
@@ -109,7 +110,9 @@ const SquadsPanel = () => {
     >
       {activeTab === "My Squads" ? (
         <>
-          {mySquads.length > 0 ? (
+          {isMemberSquadsLoading ? (
+            <LoadingMessage />
+          ) : mySquads.length > 0 ? (
             mySquads.map((squad) => (
               <SquadListItem
                 key={squad.id}
@@ -139,7 +142,9 @@ const SquadsPanel = () => {
         </>
       ) : (
         <>
-          {following && following.length > 0 ? (
+          {isFollowingLoading ? (
+            <LoadingMessage />
+          ) : following && following.length > 0 ? (
             following.map((squad) => (
               <SquadListItem
                 key={squad.id}

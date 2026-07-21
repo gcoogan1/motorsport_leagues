@@ -12,6 +12,7 @@ import FollowersIcon from "@assets/Icon/Followers.svg?react";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
 import ProfileList, { type ProfileAction } from "@/components/Lists/ProfileList/ProfileList";
 import RemoveSquadFollower from "./modals/core/RemoveSquadFollower/RemoveSquadFollower";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 
 
 type SquadFollowersProps = {
@@ -25,7 +26,7 @@ const SquadFollowers = ({ squadId }: SquadFollowersProps) => {
   const currentSquad = useSelector(selectCurrentSquad);
   const squadViewType = useSelector(selectSquadViewType);
   const resolvedSquadId = squadId ?? currentSquad?.id ?? "";
-  const { data: followers = [] } = useSquadFollowers(resolvedSquadId);
+  const { data: followers = [], isLoading: isFollowersLoading } = useSquadFollowers(resolvedSquadId);
 
   const formatedProfiles = convertProfilesToSelectOptions(followers || []).map(
     (profile) => ({
@@ -55,7 +56,10 @@ const SquadFollowers = ({ squadId }: SquadFollowersProps) => {
       panelTitle={followersCount > 0 ? followersPanelTitle : emptyPanelTitle}
       panelTitleIcon={<FollowersIcon />}
     >
-      <>
+      {isFollowersLoading ? (
+        <LoadingMessage /> 
+      ) : (
+        <>
         {followers && followers.length > 0 ? (
           <ProfileList
             key={resolvedSquadId}
@@ -72,7 +76,8 @@ const SquadFollowers = ({ squadId }: SquadFollowersProps) => {
             subtitle="Followers of this Squad will appear here."
           />
         )}
-      </>
+        </>
+      )}
     </PanelLayout>
   );
 };
