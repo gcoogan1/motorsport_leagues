@@ -32,6 +32,7 @@ import { DRIVER_TABLE_STYLE, type DriverAssignmentRow } from "../../DriverAssign
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
 import DriversAssigned from "@/features/leagues/modals/errors/DriversAssigned/DriversAssigned";
 import { usePrequalDriverAssignments } from "./hooks/usePrequalDriverAssignments";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 
 type DriverAssignmentsFormValues = {
   assignments: DriverAssignmentRow[];
@@ -91,6 +92,7 @@ const PrequalDriverAssignments = ({
     getDriverOptionsForRow,
     findNextAvailableDriver,
     refetchAfterSave,
+    isLoading,
   } = usePrequalDriverAssignments({
     seasonData,
     reset,
@@ -240,7 +242,9 @@ const PrequalDriverAssignments = ({
       />
     ) : undefined;
 
-  const listChildren = (
+  const listChildren = isLoading ? (
+    <LoadingMessage />
+  ) : (
     <>
       {fields.length > 0 && (
         <TableWrapper style={DRIVER_TABLE_STYLE}>

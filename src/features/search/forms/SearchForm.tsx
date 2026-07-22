@@ -18,6 +18,7 @@ import SquadCard from "@/components/Cards/SquadCard/SquadCard";
 import LeagueCard from "@/components/Cards/LeagueCard/LeagueCard";
 import { getBannerVariants } from "@/components/Banner/Banner.variants";
 import { getCoverVariants } from "@/components/Structures/Cover/Cover.variants";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 
 const SEARCH_TABS = [
   { label: "Profiles" },
@@ -65,7 +66,7 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
   );
 
   // -- Squads Query -- //
-  const { data: squads = [] } = useSquads(
+  const { data: squads = [], isLoading: isSquadsLoading } = useSquads(
     user?.id,
     debouncedSearch,
     activeTab, // Pass the tab here
@@ -73,7 +74,7 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
   );
 
   // -- Leagues Query -- //
-  const { data: leagues = [] } = useLeagues(
+  const { data: leagues = [], isLoading: isLeaguesLoading } = useLeagues(
     user?.id,
     debouncedSearch,
     activeTab, // Pass the tab here
@@ -134,7 +135,9 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
             subtitle="Search for a Profile, Squad, or a League."
           />
         ) : activeTab === "Profiles" ? (
-          profiles.length > 0 && showResults ? (
+          isLoading ? (
+            <LoadingMessage />
+          ) : profiles.length > 0 && showResults ? (
             profiles.map((profile) => (
               <ProfileCard
                 key={profile.id}
@@ -150,7 +153,9 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
             <EmptyMessage title="No Results" subtitle="Try a different search." />
           )
         ) : activeTab === "Squads" ? (
-          squads.length > 0 && showSquadResults ? (
+          isSquadsLoading ? (
+            <LoadingMessage />
+          ) : squads.length > 0 && showSquadResults ? (
             squads.map((squad) => (
               <SquadCard 
                 key={squad.id}
@@ -169,7 +174,9 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
             <EmptyMessage title="No Results" subtitle="Try a different search." />
           )
         ) : activeTab === "Leagues" ? (
-          leagues.length > 0 && showLeagueResults ? (
+          isLeaguesLoading ? (
+            <LoadingMessage />
+          ) : leagues.length > 0 && showLeagueResults ? (
             leagues.map((league) => (
               <LeagueCard
                 key={league.id}

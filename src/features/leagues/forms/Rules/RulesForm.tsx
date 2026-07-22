@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import RichTextEditor from "@/components/Inputs/RichTextEditor/RichTextEditor";
 import SheetForm from "@/components/Sheets/SheetForm/SheetForm";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import {
   useAddLeagueRulesMutation,
   useGetLeagueRulesQuery,
@@ -88,7 +89,9 @@ const RulesForm = ({ leagueId, seasonName, onDirtyChange }: RulesFormProps) => {
     return result.data.src;
   };
 
-  const listChildren = (
+  const listChildren = isFetching ? (
+    <LoadingMessage />
+  ) : (
     <RichTextEditor
       value={rulesContent}
       onChange={setRulesContent}

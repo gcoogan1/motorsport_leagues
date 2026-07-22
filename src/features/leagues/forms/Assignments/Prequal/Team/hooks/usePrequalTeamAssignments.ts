@@ -129,5 +129,11 @@ export const usePrequalTeamAssignments = ({
     ...participants,
 
     refetchAfterSave,
+    isLoading:
+      queries.seasonDivisions.isLoading ||
+      queries.leagueParticipants.isLoading ||
+      queries.seasonDriversBySeason.isLoading ||
+      queries.seasonTeamsBySeason.isLoading ||
+      teams.seasonTeamsByDivision.isLoading,
   };
 };

@@ -275,5 +275,10 @@ export const usePrequalDriverAssignments = ({
     refetchAfterSave,
     // For accessing form values in the save handler
     getValues,
+    // Loading state
+    isLoading:
+      seasonDivisions.isLoading ||
+      leagueParticipants.isLoading ||
+      seasonDriversBySeason.isLoading,
   };
 };

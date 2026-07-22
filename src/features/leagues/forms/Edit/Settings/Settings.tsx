@@ -32,6 +32,7 @@ import { ContentContainer, FormList, ListContainer, LoadingContainer } from "./S
 import { settingsFormSchema, type SettingsFormValues } from "./settingsSchema";
 import { baseTimezoneOptions, getLeagueSettingsValues, getDefaultSettingsValues } from "./Settings.util";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 
 type SettingsProps = {
   leagueId: string;
@@ -143,7 +144,7 @@ const Settings = ({ leagueId, onDirtyChange }: SettingsProps) => {
     !currentLeague ||
     currentLeague.id !== leagueId
   ) {
-    return <LoadingContainer>Loading...</LoadingContainer>;
+    return <LoadingContainer><LoadingMessage /></LoadingContainer>;
   }
 
   // -- Handlers -- //

@@ -362,5 +362,11 @@ export const useTeamAssignments = ({
     findNextAvailableDriver,
     // Post-save sync
     refetchAfterSave,
+    // Loading state
+    isLoading:
+      seasonDivisions.isLoading ||
+      leagueParticipants.isLoading ||
+      seasonDriversBySeason.isLoading ||
+      seasonTeamsByDivision.isLoading,
   };
 };

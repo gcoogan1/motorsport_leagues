@@ -31,6 +31,7 @@ import SheetForm from "@/components/Sheets/SheetForm/SheetForm";
 import ControlPanel from "@/components/Inputs/ControlPanel/ControlPanel";
 import SpecialInputTable from "@/components/Tables/SpecialInputTable/SpecialInputTable";
 import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import ViewRequest from "@/features/leagues/forms/ViewRequest/ViewRequest";
 import ContactInfo from "@/features/leagues/forms/ContactInfo/ContactInfo";
 import RemoveParticipant from "@/features/leagues/modals/core/RemoveParticipant/RemoveParticipant";
@@ -70,7 +71,7 @@ const Roles = ({ leagueId, seasonData, onDirtyChange }: RolesProps) => {
   const currentUserProfiles = useSelector(
     (state: RootState) => state.profile.data ?? [],
   );
-  const { data: otherProfiles = [] } = useOtherProfiles(accountId);
+  const { data: otherProfiles = [], isLoading: isOtherProfilesLoading } = useOtherProfiles(accountId);
   const [addLeagueApplicationOptions] = useAddLeagueApplicationOptions();
   const [addLeagueParticipantRole] = useAddLeagueParticipantRole();
   const [removeLeagueParticipantRole] = useRemoveLeagueParticipantRole();
@@ -78,15 +79,15 @@ const Roles = ({ leagueId, seasonData, onDirtyChange }: RolesProps) => {
   const seasonDriversBySeason = useGetLeagueSeasonDriversBySeasonIdQuery(seasonData.id);
   const { data: leagueApplicationOptions } =
     useLeagueApplicationOptions(leagueId);
-  const { data: joinRequests = [] } = useLeagueJoinRequests(leagueId);
-  const { data: participants = [] } = useLeagueParticipants(leagueId);
+  const { data: joinRequests = [], isLoading: isJoinRequestsLoading } = useLeagueJoinRequests(leagueId);
+  const { data: participants = [], isLoading: isParticipantsLoading } = useLeagueParticipants(leagueId);
   const currentLeague = useSelector(
     (state: RootState) => state.league.currentLeague,
   );
   const currentParticipant = participants.find(
     (participant) => participant.account_id === accountId,
   );
-  const { data: inviteRequests = [] } = useLeagueInvites(leagueId);
+  const { data: inviteRequests = [], isLoading: isInviteRequestsLoading } = useLeagueInvites(leagueId);
 
   // -- Form Setup -- //
   const formMethods = useForm<RolesFormValues>({
@@ -584,7 +585,11 @@ const Roles = ({ leagueId, seasonData, onDirtyChange }: RolesProps) => {
 
   const listChildren = (
     <>
-      {groupedJoinRequests.length > 0 && (
+      {isJoinRequestsLoading || isInviteRequestsLoading || isParticipantsLoading || isOtherProfilesLoading ? (
+        <LoadingMessage />
+      ) : (
+        <>
+        {groupedJoinRequests.length > 0 && (
         <SpecialInputTable
           header="Join Requests"
           rows={groupedJoinRequests.map((request) => ({
@@ -825,6 +830,8 @@ const Roles = ({ leagueId, seasonData, onDirtyChange }: RolesProps) => {
         />
       )}
       <AddItem label="Add Participant" onClick={handleAddParticipant} />
+        </>
+      )}
     </>
   );
 

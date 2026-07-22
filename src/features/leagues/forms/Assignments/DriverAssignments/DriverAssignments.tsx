@@ -40,6 +40,7 @@ import {
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
 import { useDriverAssignments } from "./hooks/useDriverAssignments";
 import DriversAssigned from "@/features/leagues/modals/errors/DriversAssigned/DriversAssigned";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 
 
 type DriverAssignmentsFormValues = {
@@ -209,6 +210,8 @@ const DriverAssignments = ({ seasonData, onDirtyChange }: DriverAssignmentsProps
   };
 
   // -- Components -- //
+  const isLoading = seasonDivisions.isLoading || leagueParticipants.isLoading || seasonDriversBySeason.isLoading;
+
   const divisionFilter = divisionOptions.length > 1 ? (
     <FilterBar
       divisions={divisionOptions}
@@ -220,7 +223,9 @@ const DriverAssignments = ({ seasonData, onDirtyChange }: DriverAssignmentsProps
     />
   ) : undefined;
 
-  const listChildren = (
+  const listChildren = isLoading ? (
+    <LoadingMessage />
+  ) : (
     <>
       {fields.length > 0 && (
         <TableWrapper style={DRIVER_TABLE_STYLE}>

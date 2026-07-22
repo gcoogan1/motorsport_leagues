@@ -43,6 +43,7 @@ import type { RootState } from "@/store";
 import FormContainerBlock from "@/components/Forms/FormContainerBlock/FormContainerBlock";
 import SubFormBlock from "@/components/Forms/SubFormBlock/SubFormBlock";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import {
   overviewFormSchema,
   type OverviewFormValues,
@@ -240,6 +241,10 @@ const OverviewForm = ({ seasonData, onDirtyChange }: OverviewFormProps) => {
 
   const listChildren = (
     <>
+      {contentBlocksQuery.isLoading || champPointsQuery.isLoading ? (
+        <LoadingMessage />
+      ) : (
+        <>
       <FormContainerBlock
         title={"Content Blocks"}
         addItem={{
@@ -367,6 +372,8 @@ const OverviewForm = ({ seasonData, onDirtyChange }: OverviewFormProps) => {
           </TableWrapper>
         )}
       </FormContainerBlock>
+        </>
+      )}
     </>
   );
 

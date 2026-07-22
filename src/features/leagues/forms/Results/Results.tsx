@@ -28,6 +28,7 @@ import { sortEvents, sortRounds } from "@/features/leagues/forms/Schedule/Schedu
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
 import TextInput from "@/components/Inputs/TextInput/TextInput";
 import EmptyMessage from "@/components/Messages/EmptyMessage/EmptyMessage";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 import { useModal } from "@/providers/modal/useModal";
 import { useToast } from "@/providers/toast/useToast";
 import { useEvent, useEventSessionSettings, useEventTrackDetails, useEvents } from "@/rtkQuery/hooks/queries/useEvents";
@@ -673,6 +674,8 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
       />
     ) : undefined;
 
+  const isDataLoading = seasonDivisions.isLoading || resultsBySession.isLoading;
+
   const canEditRows = Boolean(effectiveDivisionId && effectiveRoundId && effectiveEventId && effectiveSessionId);
   const hasSessionForResults = Boolean(sessionOptions.length > 0 && effectiveSessionId);
   const allDriversAdded =
@@ -680,7 +683,9 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
     driverOptions.length > 0 &&
     watchedResults.length >= driverOptions.length;
 
-  const listChildren = hasSessionForResults ? (
+  const listChildren = isDataLoading ? (
+    <LoadingMessage />
+  ) : hasSessionForResults ? (
     <>
       {resultFields.length > 0 && (
         <TableWrapper style={RESULT_TABLE_STYLE}>

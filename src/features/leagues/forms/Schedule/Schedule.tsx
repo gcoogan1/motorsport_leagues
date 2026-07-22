@@ -39,6 +39,7 @@ import RenameRound from "../Edit/RenameRound/RenameRound";
 import DeleteRound from "../../modals/core/DeleteRound/DeleteRound";
 import { usePanel } from "@/providers/panel/usePanel";
 import DeleteEvent from "../../modals/core/DeleteEvent/DeleteEvent";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 
 type ScheduleProps = {
   seasonData: LeagueSeasonTable;
@@ -257,7 +258,11 @@ const Schedule = ({ seasonData, leagueTimezone }: ScheduleProps) => {
   ) : undefined;
 
 
-  const listChildren = (
+  const isLoading = seasonDivisions.isLoading || roundsByDivision.isLoading || eventsByDivision.isLoading;
+
+  const listChildren = isLoading ? (
+    <LoadingMessage />
+  ) : (
     <>
       {rounds.map((round) => (
         <FormContainerBlock

@@ -10,6 +10,7 @@ export const MessageContainer = styled.div`
   justify-content: center;
   width: 100%;
   max-width: 400px;
+  align-self: center;
   padding: ${layout.space.xxLarge} ${layout.space.medium};
   gap: ${layout.space.large};
 `;

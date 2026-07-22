@@ -67,6 +67,7 @@ import PrequalDriversTable from "../Driver/components/PrequalDriversTable";
 import { usePrequalTeamAssignments } from "./hooks/usePrequalTeamAssignments";
 import LinkedDivisionTeamsTable from "./components/LinkedDivisionTeamsTable";
 import TeamAssigned from "@/features/leagues/modals/errors/TeamAssigned/TeamAssigned";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 
 type PrequalTeamAssignmentsProps = {
   seasonData: LeagueSeasonTable;
@@ -197,6 +198,7 @@ const PrequalTeamAssignments = ({
     findNextAvailableDriver,
     findNextAvailableTeam,
     refetchAfterSave,
+    isLoading,
   } = usePrequalTeamAssignments({
     seasonData,
     reset,
@@ -853,7 +855,7 @@ const PrequalTeamAssignments = ({
         seasonName={seasonData.season_name}
         header={"Team Assignments"}
         filters={divisionFilter}
-        listChildren={driverListChildren}
+        listChildren={isLoading ? <LoadingMessage /> : driverListChildren}
         tabs={assignmentTabs}
         onSave={handleSave}
         isSaving={isSaving}

@@ -59,6 +59,7 @@ import NoTeams from "@/features/leagues/modals/errors/NoTeams/NoTeams";
 import NoDrivers from "@/features/leagues/modals/errors/NoDrivers/NoDrivers";
 import TeamAssigned from "@/features/leagues/modals/errors/TeamAssigned/TeamAssigned";
 import { useTeamAssignments } from "./hooks/useTeamAssignments";
+import LoadingMessage from "@/components/Messages/LoadingMessage/LoadingMessage";
 
 
 type TeamAssignmentsProps = {
@@ -142,6 +143,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
     getDriverOptionsForRow,
     findNextAvailableDriver,
     refetchAfterSave,
+    isLoading,
   } = useTeamAssignments({
     seasonData,
     reset,
@@ -517,7 +519,7 @@ const TeamAssignments = ({ seasonData, onDirtyChange }: TeamAssignmentsProps) =>
         seasonName={seasonData.season_name}
         header="Team Assignments"
         filters={divisionFilter}
-        listChildren={activeTab === "Drivers" ? driverListChildren : teamListChildren}
+        listChildren={isLoading ? <LoadingMessage /> : activeTab === "Drivers" ? driverListChildren : teamListChildren}
         tabs={assignmentTabs}
         onSave={handleSave}
         isSaving={isSaving}

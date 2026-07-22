@@ -488,7 +488,6 @@ export const editSquadBanner = async (
 
   // Delete old banner if it was an upload and we're either switching to preset or uploading new image
   if (oldSquadData && (banner.type === "preset" || bannerType === "upload")) {
-    console.log("Here")
     await deleteOldBannerIfUpload(oldSquadData.banner_type, oldSquadData.banner_value);
   }
 
