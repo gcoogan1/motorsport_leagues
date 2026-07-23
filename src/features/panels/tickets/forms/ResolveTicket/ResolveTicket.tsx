@@ -122,7 +122,7 @@ const ResolveTicket = ({
             action: handleOnCancel,
           },
           onContinue: {
-            label: "Report",
+            label: "Resolve",
             loading: isLoading,
             loadingText: "Loading...",
           },
