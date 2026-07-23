@@ -46,7 +46,18 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
     seasonData?.id,
   );
 
-  const openTickets = allTickets.filter((ticket) => ticket.status === "open");
+  const openTickets = allTickets
+    .filter((ticket) => ticket.status === "open")
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    );
+
+  const sortedDecisions = [...allDecisions].sort(
+    (a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+  );
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -186,8 +197,8 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
             <>
               {isDecisionsLoading ? (
                 <LoadingMessage />
-              ) : allDecisions.length > 0 ? (
-                allDecisions.map((decision) => (
+              ) : sortedDecisions.length > 0 ? (
+                sortedDecisions.map((decision) => (
                   <TicketMessage
                     key={decision.id}
                     ticketNum={decision.ticket_num}
@@ -235,8 +246,8 @@ const Tickets = ({ isStewardOrDirector, seasonData }: TicketsProps) => {
         <>
           {isDecisionsLoading ? (
             <LoadingMessage />
-          ) : allDecisions.length > 0 ? (
-            allDecisions.map((decision) => (
+          ) : sortedDecisions.length > 0 ? (
+            sortedDecisions.map((decision) => (
               <TicketMessage
                 key={decision.id}
                 type="Decision"
