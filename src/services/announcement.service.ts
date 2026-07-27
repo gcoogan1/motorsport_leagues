@@ -1,9 +1,64 @@
 // --- Announcement Service --- //
 
 import { supabase } from "@/lib/supabase";
+import { resolveAvatarValue } from "@/services/profile/profile.service";
+import { getParticipantTagsByLeagueAndProfile } from "@/services/shared/tags.service";
 import type { Announcement, CreateAnnouncementPayload, GetAnnouncementByIdPayload, GetAnnouncementByIdResponse, GetAnnouncementsByIdResponse, GetAnnouncementsByLeagueIdPayload, GetAnnouncementsBySeasonIdPayload, UpdateAnnouncementPayload } from "@/types/announcements";
 
-// -- Get Annoucement by ID -- //
+const enrichAnnouncementWithDirector = async (
+  announcement: Record<string, unknown>,
+): Promise<Announcement> => {
+  const directorId = announcement.league_director_id as string | undefined;
+  const leagueId = announcement.league_id as string | undefined;
+
+  if (!directorId || !leagueId) {
+    return announcement as Announcement;
+  }
+
+  // Get the participant record to find the profile_id
+  const { data: participantData } = await supabase
+    .from("league_participants")
+    .select("profile_id")
+    .eq("id", directorId)
+    .eq("league_id", leagueId)
+    .maybeSingle();
+
+    console.log("participantData", participantData);
+
+  if (!participantData?.profile_id) {
+    return announcement as Announcement;
+  }
+
+  const { data: profileData } = await supabase
+    .from("profiles")
+    .select("username, avatar_type, avatar_value, id")
+    .eq("id", participantData.profile_id)
+    .maybeSingle();
+
+    console.log("profileData", profileData);
+
+  if (!profileData) {
+    return announcement as Announcement;
+  }
+
+  const tags = await getParticipantTagsByLeagueAndProfile(leagueId, profileData.id);
+  const avatarValue = resolveAvatarValue(
+    (profileData.avatar_type as "preset" | "upload") || "preset",
+    profileData.avatar_value || "black",
+  );
+
+  return {
+    ...announcement,
+    league_director: {
+      username: profileData.username || "Unknown",
+      avatarType: profileData.avatar_type || "preset",
+      avatarValue,
+      tags,
+    },
+  } as Announcement;
+};
+
+// -- Get Announcement by ID -- //
 export const getAnnouncementById = async (
   { announcementId }: GetAnnouncementByIdPayload,
 ): Promise<GetAnnouncementByIdResponse> => {
@@ -11,7 +66,7 @@ export const getAnnouncementById = async (
     .from("announcements")
     .select("*")
     .eq("id", announcementId)
-    .order("created_at", { ascending: false });
+    .single();
 
   if (error) {
     return {
@@ -24,13 +79,15 @@ export const getAnnouncementById = async (
     };
   }
 
+  const enrichedAnnouncement = await enrichAnnouncementWithDirector(data);
+
   return {
     success: true,
-    data: (data ?? [])[0] as Announcement,
+    data: enrichedAnnouncement,
   };
 };
 
-// -- Get Annoucements by League ID -- //
+// -- Get Announcements by League ID -- //
 export const getAnnouncementsByLeagueId = async (
   { leagueId }: GetAnnouncementsByLeagueIdPayload,
 ): Promise<GetAnnouncementsByIdResponse> => {
@@ -51,13 +108,19 @@ export const getAnnouncementsByLeagueId = async (
     };
   }
 
+  const enrichedAnnouncements = await Promise.all(
+    (data ?? []).map((announcement) =>
+      enrichAnnouncementWithDirector(announcement),
+    ),
+  );
+
   return {
     success: true,
-    data: data ?? [] as Announcement[],
+    data: enrichedAnnouncements,
   };
 };
 
-// -- Get Annoucements by Season ID -- //
+// -- Get Announcements by Season ID -- //
 export const getAnnouncementsBySeasonId = async (
   { seasonId }: GetAnnouncementsBySeasonIdPayload,
 ): Promise<GetAnnouncementsByIdResponse> => {
@@ -78,9 +141,15 @@ export const getAnnouncementsBySeasonId = async (
     };
   }
 
+  const enrichedAnnouncements = await Promise.all(
+    (data ?? []).map((announcement) =>
+      enrichAnnouncementWithDirector(announcement),
+    ),
+  );
+
   return {
     success: true,
-    data: data ?? [] as Announcement[],
+    data: enrichedAnnouncements,
   };
 };
 
@@ -112,11 +181,13 @@ export const createAnnouncement = async (
     };
   }
 
+  const enrichedAnnouncement = await enrichAnnouncementWithDirector(data);
+
   return {
     success: true,
-    data: data as Announcement,
+    data: enrichedAnnouncement,
   };
-}
+};
 
 // -- Update Announcement -- //
 export const updateAnnouncement = async (
@@ -143,9 +214,11 @@ export const updateAnnouncement = async (
     };
   }
 
+  const enrichedAnnouncement = await enrichAnnouncementWithDirector(data);
+
   return {
     success: true,
-    data: data as Announcement,
+    data: enrichedAnnouncement,
   };
 };
 

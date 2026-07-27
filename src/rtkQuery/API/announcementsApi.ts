@@ -66,8 +66,10 @@ export const announcementsApi = createApi({
           return { error };
         }
       },
-      providesTags: (result) =>
-        result?.map((item) => ({ type: "Announcement" as const, id: item.id })) ?? [],
+      providesTags: (result, _error, leagueId) => [
+        { type: "Announcement", id: `league-${leagueId}` },
+        ...(result?.map((item) => ({ type: "Announcement" as const, id: item.id })) ?? []),
+      ],
     }),
 
     getAnnouncementsBySeasonId: builder.query<Announcement[], string>({
@@ -90,8 +92,10 @@ export const announcementsApi = createApi({
           return { error };
         }
       },
-      providesTags: (result) =>
-        result?.map((item) => ({ type: "Announcement" as const, id: item.id })) ?? [],
+      providesTags: (result, _error, seasonId) => [
+        { type: "Announcement", id: `season-${seasonId}` },
+        ...(result?.map((item) => ({ type: "Announcement" as const, id: item.id })) ?? []),
+      ],
     }),
 
     createAnnouncement: builder.mutation<Announcement, CreateAnnouncementPayload>({
@@ -113,12 +117,12 @@ export const announcementsApi = createApi({
           return { error };
         }
       },
-      invalidatesTags: (result) =>
+      invalidatesTags: (result, _error, payload) =>
         result
           ? [
               { type: "Announcement", id: result.id },
-              { type: "Announcement", id: result.league_id },
-              { type: "Announcement", id: result.season_id },
+              { type: "Announcement", id: `season-${payload.seasonId}` },
+              { type: "Announcement", id: `league-${payload.leagueId}` },
             ]
           : ["Announcement"],
     }),
@@ -147,8 +151,10 @@ export const announcementsApi = createApi({
           return { error };
         }
       },
-      invalidatesTags: (_result, _error, payload) => [
+      invalidatesTags: (result, _error, payload) => [
         { type: "Announcement", id: payload.announcementId },
+        result ? { type: "Announcement", id: `season-${result.season_id}` } : undefined,
+        result ? { type: "Announcement", id: `league-${result.league_id}` } : undefined,
       ],
     }),
 
@@ -171,9 +177,7 @@ export const announcementsApi = createApi({
           return { error };
         }
       },
-      invalidatesTags: (_result, _error, announcementId) => [
-        { type: "Announcement", id: announcementId },
-      ],
+      invalidatesTags: [{ type: "Announcement" }],
     }),
   }),
 });
