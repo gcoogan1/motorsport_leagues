@@ -14,6 +14,7 @@ Body,
   Header,
   Message,
   MessageContainer,
+  MessageText,
   MessageWrapper,
   MoreMenuContainer,
   SeasonName,
@@ -130,12 +131,12 @@ const Announcement = ({
                   isStandAlone={true}
                   options={[
                     {
-                      label: "Edit Decision",
+                      label: "Edit Announcement",
                       value: "edit",
                       icon: <EditIcon />,
                     },
                     {
-                      label: "Delete Decision",
+                      label: "Delete Announcement",
                       value: "delete",
                       icon: <DeleteIcon />,
                     },
@@ -145,7 +146,7 @@ const Announcement = ({
               )}
             </MoreMenuContainer>
           </Header>
-          <Message>{message}</Message>
+          <Message><MessageText>{message}</MessageText></Message>
         </Body>
         <Bottom>
           <TimestampText>{createdAt}</TimestampText>

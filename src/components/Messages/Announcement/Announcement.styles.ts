@@ -84,12 +84,10 @@ export const MoreMenuContainer = styled.div`
 
 export const Message = styled.div`
   display: flex;
+  width: 100%;
   padding: ${layout.space.small};
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  align-self: stretch;
   background: transparent;
+  text-align: left;
 `;
 
 export const MessageText = styled.p`
