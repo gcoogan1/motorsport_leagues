@@ -69,6 +69,7 @@ export const useLeagueDirectorContext = ({
       inviterDirectorUsername,
       inviterDirectorProfileId: inviterDirectorProfile?.id ?? "",
       inviterDirectorAccountId: inviterDirectorProfile?.account_id ?? "",
+      inviterDirectorParticipantId: inviterMembership?.id ?? "",
     };
   }, [
     leagueParticipants,

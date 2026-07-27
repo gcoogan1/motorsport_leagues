@@ -146,6 +146,7 @@ const League = () => {
     inviterDirectorUsername,
     inviterDirectorProfileId,
     inviterDirectorAccountId,
+    inviterDirectorParticipantId,
   } = useLeagueDirectorContext({
     leagueParticipants: participants,
     currentUserProfiles,
@@ -387,7 +388,7 @@ const League = () => {
   };
 
   const handleLeagueAnnouncements = () => {
-    openPanel("LEAGUE_ANNOUNCEMENTS");
+    openPanel("LEAGUE_ANNOUNCEMENTS", { leagueId: currentLeague.id, isLeagueDirector: isDirector, seasonId: activeSeason, seasonName: activeSeasonData?.season_name, directorId: inviterDirectorParticipantId });
   };
 
   // -- Action buttons based on view type -- //
