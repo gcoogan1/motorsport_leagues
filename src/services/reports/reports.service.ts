@@ -1,6 +1,7 @@
 
 import { supabase } from "@/lib/supabase";
-import type { Tag } from "@/components/Tags/Tags.variants";
+import { resolveAvatarValue } from "@/services/profile/profile.service";
+import { isTag, getParticipantTagsByLeagueAndProfile } from "@/services/shared/tags.service";
 import type { CreateDecisionPayload, CreateDecisionResponse, CreateTicketPayload, CreateTicketResponse, DeleteDecisionResponse, DeleteTicketResponse, GetDecisionByIdResponse, GetDecisionsBySeasonIDResponse, GetTicketByIdResponse, GetTicketsBySeasonIdResponse, UpdateDecisionPayload, UpdateDecisionResponse } from "@/types/reports.types";
 
 type LeagueSeasonDriverWithTeam = {
@@ -26,67 +27,6 @@ const getTeamName = (driver: LeagueSeasonDriverWithTeam | null | undefined): str
   }
 
   return team.team_name ?? undefined;
-};
-
-const isTag = (value: string): value is Tag => {
-  return [
-    "director",
-    "founder",
-    "driver",
-    "host",
-    "steward",
-    "broadcaster",
-    "staff",
-    "champion",
-  ].includes(value);
-};
-
-const resolveAvatarValue = (
-  avatarType: "preset" | "upload",
-  avatarValue: string,
-): string => {
-  if (avatarType !== "upload") {
-    return avatarValue;
-  }
-
-  if (/^https?:\/\//i.test(avatarValue)) {
-    return avatarValue;
-  }
-
-  const { data } = supabase.storage
-    .from("avatars")
-    .getPublicUrl(avatarValue);
-
-  return data.publicUrl;
-};
-
-const getParticipantTagsByLeagueAndProfile = async (
-  leagueId: string,
-  profileId: string,
-): Promise<Tag[]> => {
-  const participantResponse = await supabase
-    .from("league_participants")
-    .select("id")
-    .eq("league_id", leagueId)
-    .eq("profile_id", profileId)
-    .maybeSingle();
-
-  const participantId = participantResponse.data?.id;
-
-  if (!participantId) {
-    return [];
-  }
-
-  const rolesResponse = await supabase
-    .from("league_participants_role")
-    .select("role")
-    .eq("participant_id", participantId);
-
-  return (
-    rolesResponse.data
-      ?.map((roleRow: { role: string }) => roleRow.role)
-      .filter(isTag) ?? []
-  );
 };
 
 // -- Reports Service -- //
