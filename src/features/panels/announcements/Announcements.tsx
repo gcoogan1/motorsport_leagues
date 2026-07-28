@@ -107,8 +107,8 @@ const Announcements = ({
       ) : (
         <EmptyMessage
           icon={<AnnouncementsIcon />}
-          title="Coming Soon"
-          subtitle="View important Announcements from the League Director(s) when this feature is released."
+          title="Nothing Here"
+          subtitle="No announcements have been posted."
         />
       )}
     </PanelLayout>
