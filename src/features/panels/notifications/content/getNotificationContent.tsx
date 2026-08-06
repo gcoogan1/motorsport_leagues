@@ -6,16 +6,21 @@ export type NotificationHandlers = {
   onJoinLeague: (notification: Notification) => void;
   onRejectLeague: (notification: Notification) => void;
   onDismiss?: (notification: Notification) => void;
-}
+};
 
-export const getNotificationContent = (notification: Notification, handlers: NotificationHandlers) => {
+export const getNotificationContent = (
+  notification: Notification,
+  handlers: NotificationHandlers,
+) => {
   if (notification.type === "INVITE_RECEIVED") {
-    if (notification.entity_type === "squad_invite") {  
-      const invitedUser = notification.metadata.receiver_profile_username ? `${notification.metadata.receiver_profile_username} has` : "You have";    
+    if (notification.entity_type === "squad_invite") {
+      const invitedUser = notification.metadata.receiver_profile_username
+        ? `${notification.metadata.receiver_profile_username} has`
+        : "You have";
       return {
         title: "Squad Invitation",
         message: `${invitedUser} been invited by ${notification.metadata.sender_username} to join the ${notification.metadata.squad_name} Squad.`,
-        actionRight : {
+        actionRight: {
           label: "Join Squad",
           color: "system",
           action: () => {
@@ -67,22 +72,21 @@ export const getNotificationContent = (notification: Notification, handlers: Not
           ? notification.metadata.recipient_username
           : "A user";
       const acceptedWithProfile =
-        invitedByEmail &&
-        notification.metadata.recipient_username
+        invitedByEmail && notification.metadata.recipient_username
           ? ` as ${notification.metadata.recipient_username}`
           : "";
 
       return {
         title: "Invite Accepted",
         message: `${acceptedUser} has accepted your invitation to join the ${notification.metadata.squad_name} Squad${acceptedWithProfile}.`,
-        actionRight : {
+        actionRight: {
           label: "Dismiss",
           color: "base",
           action: () => {
             handlers.onDismiss?.(notification);
-          }
-      }  
-    };
+          },
+        },
+      };
     }
 
     if (notification.entity_type === "league_invite") {
@@ -92,9 +96,8 @@ export const getNotificationContent = (notification: Notification, handlers: Not
         : notification.metadata.recipient_username
           ? notification.metadata.recipient_username
           : "A user";
-        const acceptedWithProfile =
-        invitedByEmail &&
-        notification.metadata.recipient_username
+      const acceptedWithProfile =
+        invitedByEmail && notification.metadata.recipient_username
           ? ` as ${notification.metadata.recipient_username}`
           : "";
 
@@ -116,6 +119,34 @@ export const getNotificationContent = (notification: Notification, handlers: Not
     return {
       title: "Announcement",
       message: notification.metadata.message,
+    };
+  }
+
+  if (notification.type === "TICKET_SENT") {
+    return {
+      title: notification.metadata.title,
+      message: notification.metadata.message,
+      actionRight: {
+        label: "Dismiss",
+        color: "base",
+        action: () => {
+          handlers.onDismiss?.(notification);
+        },
+      },
+    };
+  }
+
+  if (notification.type === "DECISION_SENT") {
+    return {
+      title: notification.metadata.title,
+      message: notification.metadata.message,
+      actionRight: {
+        label: "Dismiss",
+        color: "base",
+        action: () => {
+          handlers.onDismiss?.(notification);
+        },
+      },
     };
   }
 
