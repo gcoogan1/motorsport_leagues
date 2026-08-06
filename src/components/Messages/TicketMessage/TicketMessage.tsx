@@ -68,7 +68,6 @@ const TicketMessage = ({
   seasonName,
   eventName,
   sessionType,
-  driverPosition,
   reportingDriver,
   offendingDriver,
   createdAt,
