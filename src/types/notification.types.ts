@@ -7,7 +7,9 @@ import type { LeagueRole } from "@/features/leagues/forms/Roles/Roles.types";
 export type NotificationType =
   | "INVITE_RECEIVED"
   | "INVITE_ACCEPTED"
-  | "ANNOUNCEMENT";
+  | "ANNOUNCEMENT"
+  | "TICKET_SENT"
+  | "DECISION_SENT";
 
 export type EntityType = "squad" | "squad_invite" | "profile" | "league" | "league_invite";
 
@@ -34,6 +36,24 @@ export type InviteAcceptedMetadata = {
 
 // ANNOUNCEMENT Metadata
 export type AnnouncementMetadata = {
+  title: string;
+  message: string;
+};
+
+// TICKET_SENT Metadata
+export type TicketSentMetadata = {
+  ticket_id: string;
+  ticket_number: string;
+  recipient_username: string;
+  title: string;
+  message: string;
+};
+
+// DECISION_SENT Metadata
+export type DecisionSentMetadata = {
+  decision_id: string;
+  ticket_number: string;
+  recipient_username: string;
   title: string;
   message: string;
 };
@@ -88,13 +108,29 @@ export interface AnnouncementNotification extends NotificationBase {
   metadata: AnnouncementMetadata;
 }
 
+// Ticket Sent Notification --> notification row for a newly created ticket
+export interface TicketSentNotification extends NotificationBase {
+  type: "TICKET_SENT";
+  entity_type: "league";
+  metadata: TicketSentMetadata;
+}
+
+// Decision Sent Notification --> notification row for a published decision
+export interface DecisionSentNotification extends NotificationBase {
+  type: "DECISION_SENT";
+  entity_type: "league";
+  metadata: DecisionSentMetadata;
+}
+
 // Unified Notification Type for application use
 export type Notification =
   | SquadInviteNotification
   | SquadInviteAcceptedNotification
   | LeagueInviteNotification
   | LeagueInviteAcceptedNotification
-  | AnnouncementNotification;
+  | AnnouncementNotification
+  | TicketSentNotification
+  | DecisionSentNotification;
 
 // -- Service Payloads and Results Types  --//
 
@@ -131,10 +167,28 @@ export interface CreateAnnouncementNotificationPayload
   metadata: AnnouncementMetadata;
 }
 
+// Create Ticket Sent Notification --> payload type
+export interface CreateTicketSentNotificationPayload
+  extends CreateNotificationBase {
+  type: "TICKET_SENT";
+  entity_type: "league";
+  metadata: TicketSentMetadata;
+}
+
+// Create Decision Sent Notification --> payload type
+export interface CreateDecisionSentNotificationPayload
+  extends CreateNotificationBase {
+  type: "DECISION_SENT";
+  entity_type: "league";
+  metadata: DecisionSentMetadata;
+}
+
 export type CreateNotificationPayload =
   | CreateInviteReceivedNotificationPayload
   | CreateInviteAcceptedNotificationPayload
-  | CreateAnnouncementNotificationPayload;
+  | CreateAnnouncementNotificationPayload
+  | CreateTicketSentNotificationPayload
+  | CreateDecisionSentNotificationPayload;
 
 // Supabase Error Type --> used in notification service results
 type SupabaseError = {

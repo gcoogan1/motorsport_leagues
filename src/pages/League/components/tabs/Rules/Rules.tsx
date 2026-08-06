@@ -17,7 +17,7 @@ type RulesProps = {
 };
 
 const Rules = ({ seasonStatus, seasonData }: RulesProps) => {
-  const {openPanel} = usePanel()
+  const { openPanel } = usePanel();
   const accountId = useSelector((state: RootState) => state.account.data?.id);
   const leagueId = seasonData?.league_id ?? "";
   const { data: rulesData, isLoading } = useGetLeagueRulesQuery(leagueId, {
@@ -28,10 +28,13 @@ const Rules = ({ seasonStatus, seasonData }: RulesProps) => {
   // Check if current user is a steward or director
   const isStewardOrDirector = useMemo(() => {
     if (!accountId) return false;
-    const currentParticipant = participants.find(
-      (p) => p?.account_id === accountId
+
+    return participants.some(
+      (participant) =>
+        participant.account_id === accountId &&
+        (participant.roles.includes("steward") ||
+          participant.roles.includes("director")),
     );
-    return currentParticipant?.roles.includes("steward") || currentParticipant?.roles.includes("director") ? true : false;
   }, [participants, accountId]);
 
   const content = rulesData?.rules ?? "";
@@ -39,9 +42,8 @@ const Rules = ({ seasonStatus, seasonData }: RulesProps) => {
 
   const handleStewardOnClick = () => {
     openPanel("TICKET", { isStewardOrDirector, seasonData });
-  }
+  };
 
-  
 
   return (
     <>
@@ -63,7 +65,10 @@ const Rules = ({ seasonStatus, seasonData }: RulesProps) => {
           />
           <TextContainer>
             <RulesContent>
-              <div className="ProseMirror" dangerouslySetInnerHTML={{ __html: content }} />
+              <div
+                className="ProseMirror"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
             </RulesContent>
           </TextContainer>
         </RulesContainer>

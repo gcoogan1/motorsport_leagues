@@ -1,5 +1,7 @@
 
 import { supabase } from "@/lib/supabase";
+import { createNotification } from "@/services/notification.service";
+import { getLeagueParticipantsByLeagueId } from "@/services/league/leagueParticipant.service";
 import { resolveAvatarValue } from "@/services/profile/profile.service";
 import { isTag, getParticipantTagsByLeagueAndProfile } from "@/services/shared/tags.service";
 import type { CreateDecisionPayload, CreateDecisionResponse, CreateTicketPayload, CreateTicketResponse, DeleteDecisionResponse, DeleteTicketResponse, GetDecisionByIdResponse, GetDecisionsBySeasonIDResponse, GetTicketByIdResponse, GetTicketsBySeasonIdResponse, UpdateDecisionPayload, UpdateDecisionResponse } from "@/types/reports.types";
@@ -213,6 +215,64 @@ export const createTicket = async (
         status: 500,
       },
     };
+  }
+
+  const reportingDriverResponse = await supabase
+    .from("league_season_driver")
+    .select("profile_id")
+    .eq("id", payload.reportingDriverId)
+    .maybeSingle();
+
+  const senderProfileId = reportingDriverResponse.data?.profile_id;
+
+  const senderAccountResponse = senderProfileId
+    ? await supabase
+        .from("profiles")
+        .select("account_id")
+        .eq("id", senderProfileId)
+        .maybeSingle()
+    : { data: null };
+
+  const senderAccountId = senderAccountResponse.data?.account_id;
+
+  const seasonResponse = await supabase
+    .from("league_season")
+    .select("league_id")
+    .eq("id", payload.seasonId)
+    .maybeSingle();
+
+  const leagueId = seasonResponse.data?.league_id;
+
+  if (leagueId) {
+    const participantsResult = await getLeagueParticipantsByLeagueId(leagueId);
+
+    if (participantsResult.success && senderProfileId && senderAccountId) {
+      const stewardAndDirectorParticipants = participantsResult.data.filter((participant) =>
+        participant.roles.includes("director") || participant.roles.includes("steward"),
+      );
+
+      await Promise.all(
+        stewardAndDirectorParticipants.map((participant) => {
+          const recipientUsername = participant.username ?? "A league official";
+
+          return createNotification({
+            recipient_profile_id: participant.profile_id,
+            sender_account_id: senderAccountId,
+            sender_profile_id: senderProfileId,
+            type: "TICKET_SENT",
+            entity_type: "league",
+            entity_id: data.id,
+            metadata: {
+              ticket_id: data.id,
+              ticket_number: String(data.ticket_id),
+              recipient_username: recipientUsername,
+              title: "New Ticket Created",
+              message: `Ticket #${data.ticket_id} has been created and is ready for review.`,
+            },
+          });
+        }),
+      );
+    }
   }
 
   return {
@@ -500,6 +560,69 @@ export const createDecision = async (payload: CreateDecisionPayload): Promise<Cr
         status: 500,
       },
     };
+  }
+
+  const ticketResponse = await supabase
+    .from("tickets")
+    .select("reporting_driver_id")
+    .eq("id", payload.ticketId)
+    .maybeSingle();
+
+  const reportingDriverId = ticketResponse.data?.reporting_driver_id;
+
+  const recipientProfileResponse = reportingDriverId
+    ? await supabase
+        .from("league_season_driver")
+        .select("profile_id")
+        .eq("id", reportingDriverId)
+        .maybeSingle()
+    : { data: null };
+
+  const recipientProfileId = recipientProfileResponse.data?.profile_id;
+
+  const recipientUsernameResponse = recipientProfileId
+    ? await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", recipientProfileId)
+        .maybeSingle()
+    : { data: null };
+
+  const senderParticipantResponse = await supabase
+    .from("league_participants")
+    .select("profile_id")
+    .eq("id", payload.stewardId)
+    .maybeSingle();
+
+  const senderProfileId = senderParticipantResponse.data?.profile_id;
+
+  const senderAccountResponse = senderProfileId
+    ? await supabase
+        .from("profiles")
+        .select("account_id")
+        .eq("id", senderProfileId)
+        .maybeSingle()
+    : { data: null };
+
+  const senderAccountId = senderAccountResponse.data?.account_id;
+
+  if (recipientProfileId && senderProfileId && senderAccountId) {
+    await createNotification({
+      recipient_profile_id: recipientProfileId,
+      sender_account_id: senderAccountId,
+      sender_profile_id: senderProfileId,
+      type: "DECISION_SENT",
+      entity_type: "league",
+      entity_id: data.id,
+      metadata: {
+        decision_id: data.id,
+        ticket_number: String(payload.ticketNum),
+        recipient_username:
+          recipientUsernameResponse.data?.username ?? "Driver",
+        title: "Decision Published",
+        message: `A steward decision has been published for Ticket #${payload.ticketNum}.`,
+      },
+    });
   }
 
   return {

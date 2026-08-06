@@ -107,7 +107,7 @@ const Announcements = ({
       ) : (
         <EmptyMessage
           icon={<AnnouncementsIcon />}
-          title="Nothing Here"
+          title="Nothing Here "
           subtitle="No announcements have been posted."
         />
       )}

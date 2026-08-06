@@ -68,7 +68,6 @@ const TicketMessage = ({
   seasonName,
   eventName,
   sessionType,
-  driverPosition,
   reportingDriver,
   offendingDriver,
   createdAt,
@@ -219,7 +218,8 @@ const TicketMessage = ({
                 <KeyText>Driver</KeyText>
               </KeyItem>
               <ValueItem>
-                <ValueText># {driverPosition} - {offendingDriver?.username}</ValueText>
+                {/* <ValueText># {driverPosition} - {offendingDriver?.username}</ValueText> */}
+                <ValueText>{offendingDriver?.username}</ValueText>
               </ValueItem>
             </Pair>
             {type == "Decision" && (
