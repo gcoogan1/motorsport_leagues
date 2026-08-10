@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useParams } from "react-router";
+import { useLocation, useParams, useSearchParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import type { SelectButtonOption } from "@/components/SelectButton/SelectButton";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -47,8 +47,11 @@ const LeagueManagment = () => {
   const { setOverrideThemeName, clearOverrideThemeName } = useAppTheme();
   const location = useLocation();
   const { leagueId } = useParams<{ leagueId: string }>();
-  const [activeSection, setActiveSection] =
-    useState<ManageMenuSection>("participant-roles");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeSection: ManageMenuSection =
+    (searchParams.get("section") as ManageMenuSection) ?? "participant-roles";
+  const setActiveSection = (section: ManageMenuSection) =>
+    setSearchParams((prev) => { prev.set("section", section); return prev; }, { replace: true });
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   // const activePanel = panelContent[activeSection];
   const [openManageMenu, setOpenManageMenu] = useState(false);
