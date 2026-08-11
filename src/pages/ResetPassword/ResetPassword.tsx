@@ -15,6 +15,12 @@ const ResetPassword = () => {
     navigate("/verify-account?purpose=reset_password");
   };
 
+  // Prevent direct URL access to the new password step without completing verification.
+  if (status === "new_password" && !sessionStorage.getItem("reset_verified")) {
+    navigate("/reset-password?status=verify", { replace: true });
+    return null;
+  }
+
   return (
     <PageWrapper>
       {status === "verify" ? (

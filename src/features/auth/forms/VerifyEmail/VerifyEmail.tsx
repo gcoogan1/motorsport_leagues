@@ -87,6 +87,7 @@ const VerifyEmail = ({ purpose = "signup" }: VerifyEmailProps) => {
 
       // On successful verification
       if (purpose === "reset_password") {
+        sessionStorage.setItem("reset_verified", "true");
         navigate("/reset-password?status=new_password");
         return;
       }

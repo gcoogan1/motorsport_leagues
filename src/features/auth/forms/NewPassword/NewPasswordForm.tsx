@@ -74,6 +74,7 @@ const NewPasswordForm = () => {
 
   const handleGoToLogin = () => {
     localStorage.removeItem("pending_email");
+    sessionStorage.removeItem("reset_verified");
     navigate("/login");
     return;
   };
