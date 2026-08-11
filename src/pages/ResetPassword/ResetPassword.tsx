@@ -23,10 +23,10 @@ const ResetPassword = () => {
 
   return (
     <PageWrapper>
-      {status === "verify" ? (
-        <ResetPasswordForm onSuccess={handleOnVerifySuccess} />
+      {status === "new_password" ? (
+        <NewPasswordForm />
       ) : (
-        <NewPasswordForm  />
+        <ResetPasswordForm onSuccess={handleOnVerifySuccess} />
       )}
     </PageWrapper>
   );
