@@ -17,9 +17,9 @@ export const useSquads = (
     includeOwnSquads?: boolean;
   },
 ) => {
-  // Allow non-user to search for squads, but only if there's a search term and the active tab is "Squads"
-  const skip = !search || activeTab !== "Squads";
-  // const skip = !userId || !search || activeTab !== "Squads";
+  // Require a minimum of 3 characters before firing a search query.
+  const normalizedSearch = search?.trim() ?? "";
+  const skip = normalizedSearch.length < 3 || activeTab !== "Squads";
   const includeOwnSquads = options?.includeOwnSquads ?? false;
 
   return useGetSquadsQuery(

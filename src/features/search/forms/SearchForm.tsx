@@ -50,8 +50,11 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
       name: "search",
     }) || "";
 
+  const trimmedSearch = searchValue.trim();
+
   // Debounce search input (prevents excessive queries)
-  const debouncedSearch = useDebounce(searchValue, 300);
+  const debouncedSearch = useDebounce(trimmedSearch, 300);
+  const shouldSearch = debouncedSearch.length >= 3;
 
   // -- Profiles Query -- //
   const {
@@ -60,28 +63,28 @@ const SearchForm = ({ closePanel, startingTab }: SearchFormProps) => {
     isError,
   } = useProfiles(
     user?.id,
-    debouncedSearch,
-    activeTab, // Pass the tab here
-    { includeOwnProfiles: true }, // Include user's own profiles in search results
+    shouldSearch ? debouncedSearch : "",
+    activeTab,
+    { includeOwnProfiles: true },
   );
 
   // -- Squads Query -- //
   const { data: squads = [], isLoading: isSquadsLoading } = useSquads(
     user?.id,
-    debouncedSearch,
-    activeTab, // Pass the tab here
-    { includeOwnSquads: true }, // Include user's own squads in search results
+    shouldSearch ? debouncedSearch : "",
+    activeTab,
+    { includeOwnSquads: true },
   );
 
   // -- Leagues Query -- //
   const { data: leagues = [], isLoading: isLeaguesLoading } = useLeagues(
     user?.id,
-    debouncedSearch,
-    activeTab, // Pass the tab here
-    { includeOwnLeagues: true }, // Include user's own leagues in search results
+    shouldSearch ? debouncedSearch : "",
+    activeTab,
+    { includeOwnLeagues: true },
   );
 
-  const hasSearchTerm = debouncedSearch.trim().length > 0;
+  const hasSearchTerm = debouncedSearch.length >= 3;
 
   const showResults =
     activeTab === "Profiles" && hasSearchTerm && !isLoading && !isError;

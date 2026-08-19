@@ -24,14 +24,14 @@ const Overview = ({ seasonStatus, seasonData }: OverviewProps) => {
     seasonId,
     {
       skip: !seasonId,
-      refetchOnMountOrArgChange: true,
+      // refetchOnMountOrArgChange: true,
     },
   );
   const { data: contentBlocksData, isLoading: isContentBlocksLoading } = useGetLeagueSeasonContentBlocksQuery(
     seasonId,
     {
       skip: !seasonId,
-      refetchOnMountOrArgChange: true,
+      // refetchOnMountOrArgChange: true,
     },
   );
 

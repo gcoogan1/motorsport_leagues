@@ -24,7 +24,8 @@ export const useLeagues = (
 		includeOwnLeagues?: boolean;
 	},
 ) => {
-	const skip = !search || activeTab !== "Leagues";
+	const normalizedSearch = search?.trim() ?? "";
+	const skip = normalizedSearch.length < 3 || activeTab !== "Leagues";
 	const includeOwnLeagues = options?.includeOwnLeagues ?? false;
 
 	return useGetLeaguesQuery(
