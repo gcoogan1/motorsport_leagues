@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MAX_CHARACTERS } from "@/components/Inputs/RichTextEditor/RichTextEditor.util";
+// import { MAX_CHARACTERS } from "@/components/Inputs/RichTextEditor/RichTextEditor.util";
 
 const stripHtml = (value: string): string => {
   if (!value) {
@@ -42,10 +42,16 @@ export const briefingPanelSchema = z.object({
         return;
       }
 
-      if (plainText.length > MAX_CHARACTERS) {
+      // if (plainText.length > MAX_CHARACTERS) {
+      //   context.addIssue({
+      //     code: z.ZodIssueCode.custom,
+      //     message: `Briefing cannot be longer than ${MAX_CHARACTERS.toLocaleString()} characters.`,
+      //   });
+      // }
+      if (plainText.length > 3000) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
-          message: `Briefing cannot be longer than ${MAX_CHARACTERS.toLocaleString()} characters.`,
+          message: `Briefing cannot be longer than 3,000 characters.`,
         });
       }
     }),

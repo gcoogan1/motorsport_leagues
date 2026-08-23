@@ -10,7 +10,7 @@ import { handleSupabaseError } from "@/utils/handleSupabaseErrors";
 import { withMinDelay } from "@/utils/withMinDelay";
 import { uploadRoundBriefingImage } from "@/services/round/round.service";
 import UnsavedChanges from "@/features/leagues/modals/errors/UnsavedChanges/UnsavedChanges";
-import { MAX_CHARACTERS } from "@/components/Inputs/RichTextEditor/RichTextEditor.util";
+// import { MAX_CHARACTERS } from "@/components/Inputs/RichTextEditor/RichTextEditor.util";
 import { briefingPanelSchema } from "./briefingPanel.schema";
 
 type BriefingPanelProps = {
@@ -172,7 +172,8 @@ const BriefingPanel = ({ roundId }: BriefingPanelProps) => {
         onChange={handleBriefingChange}
         onImageUpload={handleImageUpload}
         placeholder="Enter notes for drivers about this round..."
-        maxCharacters={MAX_CHARACTERS}
+        // maxCharacters={MAX_CHARACTERS}
+        maxCharacters={3000}
         hasError={Boolean(errorMessage)}
         errorMessage={errorMessage}
       />
