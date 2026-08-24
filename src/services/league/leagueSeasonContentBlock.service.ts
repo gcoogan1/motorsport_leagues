@@ -64,6 +64,7 @@ export const uploadLeagueSeasonContentBlockImage = async ({
 		.upload(filePath, file, {
 			upsert: true,
 			contentType: file.type,
+			cacheControl: "31536000", // 1 year, since each upload gets a unique UUID filename
 		});
 
 	if (error) {

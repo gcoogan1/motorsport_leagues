@@ -313,6 +313,7 @@ export const createSquadWithBanner = async ({
       .upload(filePath, banner.file, {
         upsert: true,
         contentType: banner.file.type,
+        cacheControl: "31536000", // 1 year, since each upload gets a unique UUID filename
       });
 
     if (error) {
@@ -469,6 +470,7 @@ export const editSquadBanner = async (
       .upload(filePath, banner.file, {
         upsert: true,
         contentType: banner.file.type,
+        cacheControl: "31536000", // 1 year, since each upload gets a unique UUID filename
       });
 
     if (error) {

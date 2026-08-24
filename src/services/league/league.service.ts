@@ -258,6 +258,7 @@ const uploadLeagueCoverFile = async (accountId: string, file: File) => {
     .upload(filePath, file, {
       upsert: true,
       contentType: file.type,
+      cacheControl: "31536000", // 1 year, since each upload gets a unique UUID filename
     });
 
   if (error) {
