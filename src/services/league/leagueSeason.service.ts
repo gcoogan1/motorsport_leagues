@@ -10,6 +10,7 @@ import type {
 } from "@/types/league.types";
 import { deleteLeagueSeasonContentBlockImageFromStorage } from "./leagueSeasonContentBlock.service";
 import { createLeagueSeasonDivision } from "./leagueSeasonDivision.service";
+import { optimizeLargeImage } from "@/utils/optimizeImage";
 
 // --- League Season Service --- //
 
@@ -72,14 +73,15 @@ export const uploadLeagueSeasonPosterImage = async ({
   seasonId,
   file,
 }: UploadLeagueSeasonPosterImagePayload): Promise<UploadLeagueSeasonPosterImageResult> => {
-  const fileExt = file.name.split(".").pop();
+  const webpFile = await optimizeLargeImage(file);
+  const fileExt = webpFile.name.split(".").pop();
   const filePath = `${accountId}/${seasonId}-${crypto.randomUUID()}.${fileExt}`;
 
   const { error } = await supabase.storage
     .from(POSTER_BUCKET)
-    .upload(filePath, file, {
+    .upload(filePath, webpFile, {
       upsert: true,
-      contentType: file.type,
+      contentType: webpFile.type,
       cacheControl: "31536000", // 1 year, since each upload gets a unique UUID filename
     });
 

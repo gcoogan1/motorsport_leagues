@@ -8,7 +8,7 @@ import type {
   UpdateUsernamePayload,
 } from "@/types/profile.types";
 import { deleteSquadsByFounderService } from "../squad/squad.service";
-import { optimizeImage } from "@/utils/optimizeImage";
+import { optimizeAvatar } from "@/utils/optimizeImage";
 
 // TODO: Make sure delete cascades are set up correctly in the database
 
@@ -169,7 +169,7 @@ export const createProfileWithAvatar = async ({
     avatarType = "upload";
 
     // Optimize image
-    const optimizedFile = await optimizeImage(avatar.file);
+    const optimizedFile = await optimizeAvatar(avatar.file);
 
     // Generate a unique file path for the avatar upload
     const fileExt = optimizedFile.name.split(".").pop();
@@ -308,7 +308,7 @@ export const updateProfileAvatar = async ({
   else {
     avatarType = "upload";
 
-    const optimizedFile = await optimizeImage(avatar.file);
+    const optimizedFile = await optimizeAvatar(avatar.file);
     const fileExt = optimizedFile.name.split(".").pop();
     const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
 

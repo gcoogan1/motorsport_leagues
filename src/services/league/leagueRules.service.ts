@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { optimizeLargeImage } from "@/utils/optimizeImage";
 import type {
   AddLeagueRulesPayload,
   AddLeagueRulesResult,
@@ -196,15 +197,16 @@ export const updateLeagueRules = async ({
 export const uploadLeagueRulesImage = async (
   { leagueId, file }: UploadLeagueRulesImagePayload,
 ): Promise<UploadLeagueRulesImageResult> => {
-  const safeFileName = sanitizeRulesFileName(file.name) || "rules-image";
+  const webpFile = await optimizeLargeImage(file);
+  const safeFileName = sanitizeRulesFileName(webpFile.name) || "rules-image.webp";
   const filePath = `${leagueId}/${Date.now()}-${Math.random().toString(36).slice(2)}-${safeFileName}`;
 
   const { error } = await supabase.storage
     .from(LEAGUE_RULES_BUCKET)
-    .upload(filePath, file, {
+    .upload(filePath, webpFile, {
       cacheControl: "3600",
       upsert: false,
-      contentType: file.type,
+      contentType: webpFile.type,
     });
 
   if (error) {

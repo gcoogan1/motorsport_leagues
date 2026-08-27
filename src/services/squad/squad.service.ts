@@ -10,6 +10,7 @@ import type {
   GetSquadsResult,
 } from "@/types/squad.types";
 import { normalizeName } from "@/utils/normalizeName";
+import { optimizeLargeImage } from "@/utils/optimizeImage";
 import { addMemberToSquad } from "./squadMember.service";
 
 // -- Resolve Banner Value to Public URL -- //
@@ -302,17 +303,18 @@ export const createSquadWithBanner = async ({
     bannerValue = banner.variant;
   } else {
     bannerType = "upload";
+    const webpFile = await optimizeLargeImage(banner.file);
 
     // Generate a unique file path for the banner upload
-    const fileExt = banner.file.name.split(".").pop();
+    const fileExt = webpFile.name.split(".").pop();
     const filePath = `${founderAccountId}/${crypto.randomUUID()}.${fileExt}`;
 
     // Upload the banner file to Supabase Storage
     const { error } = await supabase.storage
       .from("banners")
-      .upload(filePath, banner.file, {
+      .upload(filePath, webpFile, {
         upsert: true,
-        contentType: banner.file.type,
+        contentType: webpFile.type,
         cacheControl: "31536000", // 1 year, since each upload gets a unique UUID filename
       });
 
@@ -461,15 +463,16 @@ export const editSquadBanner = async (
     }
 
     // Generate a unique file path for the banner upload, scoped by account ID
-    const fileExt = banner.file.name.split(".").pop();
+    const webpFile = await optimizeLargeImage(banner.file);
+    const fileExt = webpFile.name.split(".").pop();
     const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
 
     // Upload the banner file to Supabase Storage
     const { error } = await supabase.storage
       .from("banners")
-      .upload(filePath, banner.file, {
+      .upload(filePath, webpFile, {
         upsert: true,
-        contentType: banner.file.type,
+        contentType: webpFile.type,
         cacheControl: "31536000", // 1 year, since each upload gets a unique UUID filename
       });
 

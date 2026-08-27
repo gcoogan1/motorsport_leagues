@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { optimizeLargeImage } from "@/utils/optimizeImage";
 import type { CreateRoundPayload, CreateRoundResponse, GetRoundByIdResponse, GetRoundsResponse, RoundTable, UpdateRoundResponse, UpdateRoundPayload, DeleteRoundResponse, UploadRoundBriefingImagePayload, UploadRoundBriefingImageResponse } from "@/types/round.types";
 
 
@@ -367,14 +368,15 @@ export const deleteRoundsBySeasonId = async (seasonId: string): Promise<DeleteRo
 export const uploadRoundBriefingImage = async (
  { roundId, file }: UploadRoundBriefingImagePayload
 ): Promise<UploadRoundBriefingImageResponse> => {
-  const safeFileName = sanitizeBriefingFileName(file.name) || "briefing-image";
+  const webpFile = await optimizeLargeImage(file);
+  const safeFileName = sanitizeBriefingFileName(webpFile.name) || "briefing-image.webp";
   const filePath = `${roundId}/${file.lastModified}-${file.size}-${safeFileName}`;
 
   const { error: uploadError } = await supabase.storage
     .from(ROUND_BRIEFING_BUCKET)
-    .upload(filePath, file, {
+    .upload(filePath, webpFile, {
       upsert: true,
-      contentType: file.type,
+      contentType: webpFile.type,
     });
 
   if (uploadError) {

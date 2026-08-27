@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { optimizeLargeImage } from "@/utils/optimizeImage";
 import type {
 	AddLeagueSeasonContentBlockPayload,
 	AddLeagueSeasonContentBlockResult,
@@ -56,14 +57,15 @@ export const uploadLeagueSeasonContentBlockImage = async ({
 	seasonId,
 	file,
 }: UploadLeagueSeasonContentBlockImagePayload): Promise<UploadLeagueSeasonContentBlockImageResult> => {
-	const fileExt = file.name.split(".").pop();
+	const webpFile = await optimizeLargeImage(file);
+	const fileExt = webpFile.name.split(".").pop();
 	const filePath = `${accountId}/${seasonId}-${crypto.randomUUID()}.${fileExt}`;
 
 	const { error } = await supabase.storage
 		.from(CONTENT_BLOCK_BUCKET)
-		.upload(filePath, file, {
+		.upload(filePath, webpFile, {
 			upsert: true,
-			contentType: file.type,
+			contentType: webpFile.type,
 			cacheControl: "31536000", // 1 year, since each upload gets a unique UUID filename
 		});
 

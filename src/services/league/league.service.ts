@@ -13,6 +13,7 @@ import { LEAGUE_PARTICIPANT_ROLES } from "@/types/league.types";
 import { convertGameTypeToFullName } from "@/utils/convertGameTypes";
 import { normalizeName } from "@/utils/normalizeName";
 import { getCurrentTimezone } from "@/utils/timezone";
+import { optimizeLargeImage } from "@/utils/optimizeImage";
 import { addLeagueApplicationOptions } from "./leagueApplication.service";
 import { addLeagueParticipant, addLeagueParticipantRole } from "./leagueParticipant.service";
 import { createLeagueSeason, removeLeagueSeason } from "./leagueSeason.service";
@@ -250,14 +251,15 @@ const buildLeagueInfoFromLeagueIds = async (
 };
 
 const uploadLeagueCoverFile = async (accountId: string, file: File) => {
-  const fileExt = file.name.split(".").pop();
+  const webpFile = await optimizeLargeImage(file);
+  const fileExt = webpFile.name.split(".").pop();
   const filePath = `${accountId}/${crypto.randomUUID()}.${fileExt}`;
 
   const { error } = await supabase.storage
     .from(COVER_BUCKET)
-    .upload(filePath, file, {
+    .upload(filePath, webpFile, {
       upsert: true,
-      contentType: file.type,
+      contentType: webpFile.type,
       cacheControl: "31536000", // 1 year, since each upload gets a unique UUID filename
     });
 
