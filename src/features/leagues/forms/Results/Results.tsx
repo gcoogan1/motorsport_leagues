@@ -621,7 +621,6 @@ const Results = ({ seasonData, onDirtyChange }: ResultsProps) => {
         1000,
       );
 
-      await resultsBySession.refetch();
       showToast({
         usage: "success",
         message: "Results updated.",
