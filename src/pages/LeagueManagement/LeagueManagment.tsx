@@ -204,6 +204,7 @@ const LeagueManagment = () => {
       activeSection === "participant-roles" ||
       activeSection === "season-settings" ||
       activeSection === "driver-assignments" ||
+      activeSection === "enter-results" ||
       activeSection === "rules-and-regulations" ||
       activeSection === "overview-page";
 
