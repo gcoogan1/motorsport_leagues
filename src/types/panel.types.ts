@@ -25,6 +25,7 @@ export type PanelTypes =
   | "SQUAD_CHAT"
   | "LEAGUE_CHAT"
   | "LEAGUE_ANNOUNCEMENTS"
+  | "AI_ASSISTANT"
   | "REPORT"
   | "TICKET"
   
