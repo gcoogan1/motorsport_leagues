@@ -6,6 +6,7 @@ import MoreIcon from "@assets/Icon/More_Vertical.svg?react";
 import LeaveIcon from "@assets/Icon/Leave.svg?react";
 import AnnouncementsIcon from "@assets/Icon/Announcements.svg?react";
 import ChatIcon from "@assets/Icon/Chat.svg?react";
+import MessagesIcon from "@assets/Icon/Messages.svg?react";
 import ManageIcon from "@assets/Icon/Manage.svg?react";
 import InviteIcon from "@assets/Icon/Invite.svg?react";
 
@@ -17,6 +18,7 @@ type GetParticipantActionsParams = {
   onInviteParticipants: () => void;
   onChat: () => void;
   onAnnouncements: () => void;
+  onAiAssistant: () => void;
 };
 
 type GetGuestActionsParams = {
@@ -24,6 +26,7 @@ type GetGuestActionsParams = {
   onShareLeague: () => void;
   onFollowLeague: () => void;
   isFollowing: boolean;
+  onAiAssistant: () => void;
 };
 
 export const getParticipantActions = ({
@@ -34,6 +37,7 @@ export const getParticipantActions = ({
   onInviteParticipants,
   onChat,
   onAnnouncements,
+  onAiAssistant,
 }: GetParticipantActionsParams): CoverAction[] => {
   return [
     ...(isDirector
@@ -60,6 +64,13 @@ export const getParticipantActions = ({
       color: "base" as const,
       leftIcon: <ChatIcon />,
       onClick: onChat,
+    },
+    {
+      id: "ai-assistant",
+      label: "AI Assistant",
+      color: "base" as const,
+      leftIcon: <MessagesIcon />,
+      onClick: onAiAssistant,
     },
     ...(isDirector
       ? [
@@ -107,6 +118,7 @@ export const getGuestActions = ({
   onShareLeague,
   onFollowLeague,
   isFollowing = false,
+  onAiAssistant,
 }: GetGuestActionsParams): CoverAction[] => {
   return [
     {
@@ -121,6 +133,13 @@ export const getGuestActions = ({
       color: isFollowing ? ("system" as const) : ("base" as const),
       leftIcon: isFollowing ? <FollowingIcon /> : <FollowIcon />,
       onClick: onFollowLeague,
+    },
+    {
+      id: "ai-assistant",
+      label: "AI Assistant",
+      color: "base" as const,
+      leftIcon: <MessagesIcon />,
+      onClick: onAiAssistant,
     },
     {
       id: "share",

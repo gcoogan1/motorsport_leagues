@@ -391,6 +391,10 @@ const League = () => {
     openPanel("LEAGUE_ANNOUNCEMENTS", { leagueId: currentLeague.id, isLeagueDirector: isDirector, seasonId: activeSeason, seasonName: activeSeasonData?.season_name, directorId: inviterDirectorParticipantId });
   };
 
+  const handleAiAssistant = () => {
+    openPanel("AI_ASSISTANT");
+  };
+
   // -- Action buttons based on view type -- //
 
   const participantActions = getParticipantActions({
@@ -411,6 +415,7 @@ const League = () => {
     },
     onChat: handleLeagueChat,
     onAnnouncements: handleLeagueAnnouncements,
+    onAiAssistant: handleAiAssistant,
   });
 
   const guestActions = getGuestActions({
@@ -418,6 +423,7 @@ const League = () => {
     onShareLeague: handleShareLeague,
     onFollowLeague: handleFollowLeague,
     isFollowing,
+    onAiAssistant: handleAiAssistant,
   });
 
   return (
