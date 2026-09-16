@@ -20,6 +20,8 @@ const AppContent = () => {
   const { user, loading } = useAuth();
   const dispatch = useDispatch<AppDispatch>();
 
+  // This is a test - deployment
+
   useSquadPendingInviteNotification();
   useLeaguePendingInviteNotification();
 
