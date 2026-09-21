@@ -19,7 +19,7 @@ export const PP_LIMIT_FORMATTER = (value: number) => {
     return "No Limit";
   }
 
-  return `${value}x`;
+  return `${value}`;
 };
 
 export const MAX_POWER_OUTPUT_MIN = 98;
@@ -34,7 +34,7 @@ export const MAX_POWER_OUTPUT_FORMATTER = (value: number) => {
     return "No Limit";
   }
 
-  return `${value}x`;
+  return `${value}`;
 };
 
 export const MIN_WEIGHT_MIN = 1102;
