@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -21,6 +21,7 @@ import {
 } from "@/rtkQuery/hooks/queries/useProfileFollowers";
 import { useSquadsByProfileId } from "@/rtkQuery/hooks/queries/useSquads";
 import { useProfileLeagues } from "@/rtkQuery/hooks/queries/useLeagues";
+import { useLeagueChampionsByProfile } from "@/rtkQuery/hooks/queries/useLeagueChampions";
 import { useGetProfileStatsQuery } from "@/rtkQuery/API/profileApi";
 import ProfileHeader from "@/components/Headers/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/Structures/ProfileStats/ProfileStats";
@@ -54,6 +55,7 @@ const Profile = () => {
   const { data: followers = [], isLoading: isFollowersLoading } = useProfileFollowers(profileId ?? "");
   const { data: mySquads = [], isLoading: isSquadsLoading } = useSquadsByProfileId(profileId);
   const { data: myLeagues = [], isLoading: isLeaguesLoading } = useProfileLeagues(profileId);
+  const { data: leagueChampions = [] } = useLeagueChampionsByProfile(profileId);
   const { data: profileStats, isLoading: isProfileStatsLoading } = useGetProfileStatsQuery(profileId ?? "", {
     skip: !profileId,
   });
@@ -86,6 +88,10 @@ const Profile = () => {
       labelFact: "Won",
     },
   ];
+  const championCount = useMemo(
+    () => leagueChampions.length,
+    [leagueChampions],
+  );
 
   useEffect(() => {
     // Always fetch by route param so stale cached currentProfile (e.g. recently deleted)
@@ -176,6 +182,7 @@ const Profile = () => {
         avatarType={profile?.avatar_type ?? "preset"}
         avatarValue={profile?.avatar_value ?? "none"}
         followersCount={followers.length}
+        championCount={championCount}
         isFollowing={isFollowing}
         followersOnClick={handleGoToFollowers}
         onMemberFollow={handleMemberFollow}

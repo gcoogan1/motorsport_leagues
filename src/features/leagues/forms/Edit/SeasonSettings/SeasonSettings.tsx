@@ -25,6 +25,7 @@ import CreateIcon from "@assets/Icon/Create.svg?react";
 import DeleteIcon from "@assets/Icon/Delete.svg?react";
 import CreateSeason from "@/features/leagues/forms/Create/CreateSeason/CreateSeason";
 import DeleteSeason from "../../Delete/DeleteSeason/DeleteSeason";
+import ChampionForm from "../../Create/Champion/ChampionForm";
 
 const SeasonStatusOptions = [
   { label: "Setup", value: "setup" },
@@ -180,6 +181,15 @@ const SeasonSettings = ({
                 color="primary"
                 icon={{ left: <ChampionIcon /> }}
                 fullWidth
+                onClick={() =>
+                  openModal(
+                    <ChampionForm
+                      leagueId={seasonData.league_id}
+                      seasonId={seasonData.id}
+                      onBack={() => closeModal()}
+                    />,
+                  )
+                }
               >
                 Crown Champion
               </Button>
@@ -215,6 +225,15 @@ const SeasonSettings = ({
                 color="primary"
                 icon={{ left: <ChampionIcon /> }}
                 fullWidth
+                onClick={() =>
+                  openModal(
+                    <ChampionForm
+                      leagueId={seasonData.league_id}
+                      seasonId={seasonData.id}
+                      onBack={() => closeModal()}
+                    />,
+                  )
+                }
               >
                 Crown Champion
               </Button>
