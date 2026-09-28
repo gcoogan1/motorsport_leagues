@@ -97,6 +97,17 @@ import type {
   UpdateLeagueSeasonContentBlockPayload,
   UpdateLeagueSeasonContentBlockResult,
 } from "@/types/contentBlock.types";
+import type {
+  AddLeagueChampionPayload,
+  AddLeagueChampionResult,
+  GetLeagueChampionByIdResult,
+  GetLeagueChampionResult,
+  LeagueChampion,
+  RemoveLeagueChampionPayload,
+  RemoveLeagueChampionResult,
+  UpdateLeagueChampionPayload,
+  UpdateLeagueChampionResult,
+} from "@/types/champion.type";
 import {
   getAllLeaguesWithInfo,
   getLeaguesWithInfoByAccountId,
@@ -178,6 +189,14 @@ import {
   removeLeagueSeasonContentBlock,
   updateLeagueSeasonContentBlock,
 } from "@/services/league/leagueSeasonContentBlock.service";
+import {
+  addLeagueChampion,
+  deleteLeagueChampion,
+  getLeagueChampionById,
+  getLeagueChampionByLeagueAndSeason,
+  getLeagueChampionByProfile,
+  updateLeagueChampion,
+} from "@/services/league/leagueChampion.service";
 
 export type LeaguesQueryArgs = {
   accountId?: string;
@@ -204,6 +223,7 @@ export const leagueApi = createApi({
     "LeagueRules",
     "LeagueSeasonChampPoints",
     "LeagueSeasonContentBlocks",
+    "LeagueChampions",
   ],
   endpoints: (builder) => ({
     // GET Requests
@@ -513,6 +533,75 @@ export const leagueApi = createApi({
       providesTags: (_result, _error, seasonId) => [
         { type: "LeagueSeasonContentBlocks", id: seasonId },
       ],
+    }),
+    getLeagueChampionsByProfile: builder.query<LeagueChampion[], string>({
+      queryFn: async (profileId) => {
+        try {
+          const result: GetLeagueChampionResult =
+            await getLeagueChampionByProfile(profileId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: ["LeagueChampions"],
+    }),
+    getLeagueChampionsByLeagueAndSeason: builder.query<
+      LeagueChampion[],
+      { leagueId: string; seasonId: string }
+    >({
+      queryFn: async ({ leagueId, seasonId }) => {
+        try {
+          const result: GetLeagueChampionResult =
+            await getLeagueChampionByLeagueAndSeason(leagueId, seasonId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: ["LeagueChampions"],
+    }),
+    getLeagueChampionById: builder.query<LeagueChampion, string>({
+      queryFn: async (championId) => {
+        try {
+          const result: GetLeagueChampionByIdResult =
+            await getLeagueChampionById(championId);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result.data };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: ["LeagueChampions"],
     }),
     getLeagueSeasonDivisions: builder.query<
       LeagueSeasonDivisionTable[],
@@ -1015,6 +1104,30 @@ export const leagueApi = createApi({
         { type: "LeagueSeasonContentBlocks", id: payload.seasonId },
       ],
     }),
+    addLeagueChampion: builder.mutation<
+      AddLeagueChampionResult,
+      AddLeagueChampionPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await addLeagueChampion(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: ["LeagueChampions"],
+    }),
     createLeagueJoinRequest: builder.mutation<
       CreateLeagueJoinRequestResult,
       CreateLeagueJoinRequestPayload
@@ -1280,6 +1393,30 @@ export const leagueApi = createApi({
       invalidatesTags: (_result, _error, payload) => [
         { type: "LeagueSeasonContentBlocks", id: payload.seasonId },
       ],
+    }),
+    updateLeagueChampion: builder.mutation<
+      UpdateLeagueChampionResult,
+      UpdateLeagueChampionPayload
+    >({
+      queryFn: async (payload) => {
+        try {
+          const result = await updateLeagueChampion(payload);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: ["LeagueChampions"],
     }),
     updateLeagueSeasonDriverTeam: builder.mutation<
       UpdateLeagueSeasonDriverResult,
@@ -1633,10 +1770,40 @@ export const leagueApi = createApi({
         { type: "LeagueSeasonContentBlocks", id: payload.seasonId },
       ],
     }),
+    deleteLeagueChampion: builder.mutation<
+      RemoveLeagueChampionResult,
+      RemoveLeagueChampionPayload
+    >({
+      queryFn: async ({ id }) => {
+        try {
+          const result = await deleteLeagueChampion(id);
+
+          if (!result.success) {
+            return {
+              error: {
+                status: result.error.status,
+                data: result.error,
+              },
+            };
+          }
+
+          return { data: result };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: ["LeagueChampions"],
+    }),
   }),
 });
 
 export const {
+  useGetLeagueChampionsByProfileQuery,
+  useGetLeagueChampionsByLeagueAndSeasonQuery,
+  useGetLeagueChampionByIdQuery,
+  useAddLeagueChampionMutation,
+  useUpdateLeagueChampionMutation,
+  useDeleteLeagueChampionMutation,
   useGetLeagueRulesQuery,
   useGetLeagueSeasonChampPointsQuery,
   useGetLeagueSeasonContentBlocksQuery,

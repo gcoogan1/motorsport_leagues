@@ -2,38 +2,41 @@
 // Used to modify data //
 
 import {
+  useAddLeagueApplicationOptionsMutation,
+  useAddLeagueChampionMutation,
+  useAddLeagueParticipantMutation,
+  useAddLeagueParticipantRoleMutation,
   useAddLeagueRulesMutation,
   useAddLeagueSeasonChampPointsMutation,
   useAddLeagueSeasonContentBlockMutation,
-  useAddLeagueApplicationOptionsMutation,
-  useAddLeagueParticipantMutation,
-  useAddLeagueParticipantRoleMutation,
   useCreateLeagueJoinRequestMutation,
+  useCreateLeagueSeasonDriverMutation,
   useCreateLeagueSeasonMutation,
+  useCreateLeagueSeasonTeamMutation,
+  useDeleteLeagueChampionMutation,
   useFollowLeagueMutation,
   useJoinLeagueWithRolesMutation,
   useRemoveLeagueApplicationOptionsMutation,
+  useRemoveLeagueFollowerMutation,
   useRemoveLeagueInviteMutation,
   useRemoveLeagueJoinRequestMutation,
-  useRemoveLeagueFollowerMutation,
   useRemoveLeagueParticipantMutation,
   useRemoveLeagueParticipantRoleMutation,
-  useRemoveLeagueSeasonMutation,
   useRemoveLeagueSeasonChampPointsMutation,
   useRemoveLeagueSeasonContentBlockMutation,
+  useRemoveLeagueSeasonDriverMutation,
+  useRemoveLeagueSeasonMutation,
+  useRemoveLeagueSeasonTeamMutation,
   useUnfollowLeagueMutation,
   // useUpdateLeagueParticipantRoleMutation,
   useUpdateLeagueApplicationOptionsMutation,
+  useUpdateLeagueChampionMutation,
   useUpdateLeagueRulesMutation,
-  useUpdateLeagueSeasonMutation,
   useUpdateLeagueSeasonChampPointsMutation,
   useUpdateLeagueSeasonContentBlockMutation,
-  useCreateLeagueSeasonDriverMutation,
-  useRemoveLeagueSeasonDriverMutation,
   useUpdateLeagueSeasonDriverTeamMutation,
-  useCreateLeagueSeasonTeamMutation,
+  useUpdateLeagueSeasonMutation,
   useUpdateLeagueSeasonTeamMutation,
-  useRemoveLeagueSeasonTeamMutation,
 } from "@/rtkQuery/API/leagueApi";
 
 // Mutation for creating league rules content.
@@ -203,3 +206,12 @@ export const useUpdateLeagueSeasonTeam = () => {
 export const useRemoveLeagueSeasonTeam = () => {
   return useRemoveLeagueSeasonTeamMutation();
 };
+
+// Mutation for adding a league champion.
+export const useAddLeagueChampion = () => useAddLeagueChampionMutation();
+
+// Mutation for updating a league champion.
+export const useUpdateLeagueChampion = () => useUpdateLeagueChampionMutation();
+
+// Mutation for deleting a league champion.
+export const useDeleteLeagueChampion = () => useDeleteLeagueChampionMutation();
